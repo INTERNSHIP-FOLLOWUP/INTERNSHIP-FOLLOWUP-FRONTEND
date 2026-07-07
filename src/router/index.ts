@@ -121,10 +121,57 @@ const router = createRouter({
       redirect: '/student',
     },
     {
-      path: '/company/dashboard',
-      name: 'CompanyDashboard',
-      component: () => import('@/views/auth/Login.vue'),
+      path: '/company',
+      component: () => import('@/layouts/CompanyLayout.vue'),
       meta: { requiresAuth: true, role: 'company' },
+      children: [
+        {
+          path: '',
+          name: 'CompanyDashboard',
+          component: () => import('@/views/company/CompanyListView.vue'),
+          meta: { title: 'Dashboard' },
+        },
+        {
+          path: 'internships',
+          name: 'CompanyInternships',
+          component: () => import('@/views/company/CompanyListView.vue'),
+          meta: { title: 'Internships' },
+        },
+        {
+          path: 'students',
+          name: 'CompanyStudents',
+          component: () => import('@/views/student/StudentDashboardView.vue'),
+          meta: { title: 'Students' },
+        },
+        {
+          path: 'worklogs',
+          name: 'CompanyWorklogs',
+          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
+          meta: { title: 'Worklogs' },
+        },
+        {
+          path: 'followups',
+          name: 'CompanyFollowups',
+          component: () => import('@/views/followup/FollowupListView.vue'),
+          meta: { title: 'Follow-ups' },
+        },
+        {
+          path: 'issues',
+          name: 'CompanyIssues',
+          component: () => import('@/views/issue/IssueTrackerView.vue'),
+          meta: { title: 'Issues' },
+        },
+        {
+          path: 'profile',
+          name: 'CompanyProfile',
+          component: () => import('@/views/profile/ProfileView.vue'),
+          meta: { title: 'Profile' },
+        },
+      ],
+    },
+    {
+      path: '/company/dashboard',
+      redirect: '/company',
     },
   ],
 })

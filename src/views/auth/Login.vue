@@ -35,7 +35,7 @@
             />
 
             <div class="w-full text-left">
-              <label class="block text-sm font-medium text-slate-700 mb-1.5">
+              <label for="login-password" class="block text-sm font-medium text-slate-700 mb-1.5">
                 Password <span class="text-error font-bold ml-0.5">*</span>
               </label>
 
@@ -47,6 +47,8 @@
                 </div>
 
                 <input
+                  id="login-password"
+                  name="password"
                   :type="showPassword ? 'text' : 'password'"
                   v-model="form.password"
                   placeholder="Enter your password"

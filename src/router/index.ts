@@ -74,10 +74,51 @@ const router = createRouter({
       meta: { requiresAuth: true, role: 'admin' },
     },
     {
-      path: '/student/dashboard',
-      name: 'StudentDashboard',
-      component: () => import('@/views/auth/Login.vue'),
+      path: '/student',
+      component: () => import('@/layouts/StudentLayout.vue'),
       meta: { requiresAuth: true, role: 'student' },
+      children: [
+        {
+          path: '',
+          name: 'StudentDashboard',
+          component: () => import('@/views/student/StudentDashboardView.vue'),
+          meta: { title: 'Dashboard' },
+        },
+        {
+          path: 'internship',
+          name: 'StudentInternship',
+          component: () => import('@/views/assignment/AssignmentView.vue'),
+          meta: { title: 'My Internship' },
+        },
+        {
+          path: 'worklogs',
+          name: 'StudentWorklogs',
+          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
+          meta: { title: 'Worklogs' },
+        },
+        {
+          path: 'followups',
+          name: 'StudentFollowups',
+          component: () => import('@/views/followup/FollowupListView.vue'),
+          meta: { title: 'Follow-ups' },
+        },
+        {
+          path: 'issues',
+          name: 'StudentIssues',
+          component: () => import('@/views/issue/IssueTrackerView.vue'),
+          meta: { title: 'Issues' },
+        },
+        {
+          path: 'profile',
+          name: 'StudentProfile',
+          component: () => import('@/views/profile/ProfileView.vue'),
+          meta: { title: 'Profile' },
+        },
+      ],
+    },
+    {
+      path: '/student/dashboard',
+      redirect: '/student',
     },
     {
       path: '/company/dashboard',
@@ -113,7 +154,7 @@ router.beforeEach(async (to, _from, next) => {
     const role = auth.user.role
     if (role === 'tutor') return next('/tutor')
     if (role === 'admin') return next('/admin/dashboard')
-    if (role === 'student') return next('/student/dashboard')
+    if (role === 'student') return next('/student')
     if (role === 'company') return next('/company/dashboard')
   }
 

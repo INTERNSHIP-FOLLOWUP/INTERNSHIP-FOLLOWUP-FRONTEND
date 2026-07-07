@@ -30,6 +30,6 @@ export interface AuthResponse {
 export const ROLE_ROUTES: Record<UserRole, string> = {
   admin: '/admin/dashboard',
   tutor: '/tutor',
-  student: '/student/dashboard',
+  student: '/student',
   company: '/company/dashboard',
 }

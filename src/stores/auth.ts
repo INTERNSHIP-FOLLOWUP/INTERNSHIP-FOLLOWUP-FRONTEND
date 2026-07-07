@@ -7,12 +7,28 @@ import { ROLE_ROUTES } from '@/types/auth'
 
 const IS_DEV = import.meta.env.DEV
 
+function detectRoleFromEmail(email: string): UserRole {
+  if (email.includes('admin')) return 'admin'
+  if (email.includes('tutor')) return 'tutor'
+  if (email.includes('company')) return 'company'
+  return 'student'
+}
+
+const MOCK_NAMES: Record<UserRole, string> = {
+  admin: 'Admin User',
+  tutor: 'Tutor User',
+  student: 'Student User',
+  company: 'Company User',
+}
+
 function createMockUser(overrides?: Partial<User>): User {
+  const email = overrides?.email || 'student@example.com'
+  const role = overrides?.role || detectRoleFromEmail(email)
   return {
     id: 1,
-    name: 'Tutor User',
-    email: 'tutor@example.com',
-    role: 'tutor',
+    name: MOCK_NAMES[role],
+    email: `${role}@example.com`,
+    role,
     ...overrides,
   }
 }

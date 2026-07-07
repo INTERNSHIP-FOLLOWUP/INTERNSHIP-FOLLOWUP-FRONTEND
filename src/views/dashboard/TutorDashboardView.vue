@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import { computed, h, defineComponent } from 'vue'
-import { useAuthStore } from '@/stores/authStore'
+import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
 

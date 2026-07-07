@@ -1,7 +1,10 @@
+export type UserRole = 'admin' | 'tutor' | 'student' | 'company'
+
 export interface User {
   id: number
   name: string
   email: string
+  role: UserRole
   email_verified_at?: string | null
   created_at?: string
   updated_at?: string
@@ -22,4 +25,11 @@ export interface RegisterData {
 export interface AuthResponse {
   user: User
   token: string
+}
+
+export const ROLE_ROUTES: Record<UserRole, string> = {
+  admin: '/admin/dashboard',
+  tutor: '/tutor/dashboard',
+  student: '/student/dashboard',
+  company: '/company/dashboard',
 }

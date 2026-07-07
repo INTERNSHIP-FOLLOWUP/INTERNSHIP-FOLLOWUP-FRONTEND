@@ -1,9 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import type { UserRole } from '@/types/auth'
+import { PUBLIC_ROUTES } from '@/types/auth'
+import { AUTH_CONFIG } from '@/constants/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    // ── Public ──
     {
       path: '/',
       redirect: '/login',
@@ -12,18 +16,71 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: () => import('@/views/auth/Login.vue'),
-      meta: { requiresAuth: false },
+      meta: { requiresAuth: false, title: 'Sign In' },
     },
     {
       path: '/forgot-password',
       name: 'ForgotPassword',
       component: () => import('@/views/auth/Login.vue'),
-      meta: { requiresAuth: false },
+      meta: { requiresAuth: false, title: 'Forgot Password' },
     },
+    {
+      path: '/403',
+      name: 'Forbidden',
+      component: () => import('@/views/auth/Login.vue'),
+      meta: { requiresAuth: false, title: 'Forbidden' },
+    },
+    {
+      path: '/404',
+      name: 'NotFound',
+      component: () => import('@/views/auth/Login.vue'),
+      meta: { requiresAuth: false, title: 'Not Found' },
+    },
+
+    // ── Admin ──
+    {
+      path: '/admin',
+      component: () => import('@/layouts/AdminLayout.vue'),
+      meta: {
+        requiresAuth: true,
+        role: 'admin' as UserRole,
+        title: 'Admin',
+      },
+      children: [
+        {
+          path: '',
+          name: 'AdminDashboard',
+          component: () => import('@/views/dashboard/AdminDashboardView.vue'),
+          meta: { title: 'Dashboard' },
+        },
+        {
+          path: 'users',
+          name: 'AdminUsers',
+          component: () => import('@/views/student/StudentDashboardView.vue'),
+          meta: { title: 'Users' },
+        },
+        {
+          path: 'profile',
+          name: 'AdminProfile',
+          component: () => import('@/views/profile/ProfileView.vue'),
+          meta: { title: 'Profile' },
+        },
+      ],
+    },
+    {
+      path: '/admin/dashboard',
+      redirect: '/admin',
+    },
+
+    // ── Tutor ──
     {
       path: '/tutor',
       component: () => import('@/layouts/TutorLayout.vue'),
-      meta: { requiresAuth: true, role: 'tutor' },
+      meta: {
+        requiresAuth: true,
+        role: 'tutor' as UserRole,
+        title: 'Tutor',
+      },
       children: [
         {
           path: '',
@@ -67,39 +124,16 @@ const router = createRouter({
       path: '/tutor/dashboard',
       redirect: '/tutor',
     },
-    {
-      path: '/admin',
-      component: () => import('@/layouts/AdminLayout.vue'),
-      meta: { requiresAuth: true, role: 'admin' },
-      children: [
-        {
-          path: '',
-          name: 'AdminDashboard',
-          component: () => import('@/views/dashboard/AdminDashboardView.vue'),
-          meta: { title: 'Dashboard' },
-        },
-        {
-          path: 'users',
-          name: 'AdminUsers',
-          component: () => import('@/views/student/StudentDashboardView.vue'),
-          meta: { title: 'Users' },
-        },
-        {
-          path: 'profile',
-          name: 'AdminProfile',
-          component: () => import('@/views/profile/ProfileView.vue'),
-          meta: { title: 'Profile' },
-        },
-      ],
-    },
-    {
-      path: '/admin/dashboard',
-      redirect: '/admin',
-    },
+
+    // ── Student ──
     {
       path: '/student',
       component: () => import('@/layouts/StudentLayout.vue'),
-      meta: { requiresAuth: true, role: 'student' },
+      meta: {
+        requiresAuth: true,
+        role: 'student' as UserRole,
+        title: 'Student',
+      },
       children: [
         {
           path: '',
@@ -143,15 +177,21 @@ const router = createRouter({
       path: '/student/dashboard',
       redirect: '/student',
     },
+
+    // ── Company ──
     {
       path: '/company',
       component: () => import('@/layouts/CompanyLayout.vue'),
-      meta: { requiresAuth: true, role: 'company representative' },
+      meta: {
+        requiresAuth: true,
+        role: 'company representative' as UserRole,
+        title: 'Company',
+      },
       children: [
         {
           path: '',
           name: 'CompanyDashboard',
-          component: () => import('@/views/company/CompanyListView.vue'),
+          component: () => import('@/views/company/CompanyDashboardView.vue'),
           meta: { title: 'Dashboard' },
         },
         {
@@ -196,39 +236,73 @@ const router = createRouter({
       path: '/company/dashboard',
       redirect: '/company',
     },
+
+    // ── Catch-all ──
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/404',
+    },
   ],
 })
 
+// ── Multi-role route meta helper ──────────────────────────────
+
+export interface RouteMeta {
+  requiresAuth?: boolean
+  role?: UserRole | UserRole[]
+  title?: string
+  permission?: string
+}
+
+// ── Navigation Guard ──────────────────────────────────────────
+
 router.beforeEach(async (to, _from, next) => {
-  const auth = useAuthStore()
+  const store = useAuthStore()
+  const meta = to.meta as RouteMeta
 
-  if (auth.token && !auth.user) {
-    try {
-      await auth.fetchUser()
-    } catch {
-      // fetchUser already clears token on failure
+  // ── 1. Boot if not initialized ──
+  if (!store.initialized) {
+    await store.boot()
+  }
+
+  // ── 2. Public routes ──
+  if (meta.requiresAuth === false) {
+    if (store.isLoggedIn && (to.path === '/login' || to.path === '/register')) {
+      return next(getRedirectForRole(store.userRole))
+    }
+    return next()
+  }
+
+  // ── 3. Protected routes — must be logged in ──
+  if (!store.isLoggedIn) {
+    return next(`/login?redirect=${encodeURIComponent(to.path)}`)
+  }
+
+  // ── 4. Role-based access ──
+  const routeRoles = meta.role
+  if (routeRoles) {
+    const roles = Array.isArray(routeRoles) ? routeRoles : [routeRoles]
+    if (!store.hasRole(...roles)) {
+      return next('/403')
     }
   }
 
-  if (to.meta.requiresAuth !== false) {
-    if (!auth.token) {
-      return next('/login')
-    }
-    const requiredRole = to.meta.role as string | undefined
-    if (requiredRole && auth.user?.role !== requiredRole) {
-      return next('/login')
-    }
-  }
-
-  if (to.path === '/login' && auth.token && auth.user) {
-    const role = auth.user.role
-    if (role === 'tutor') return next('/tutor')
-    if (role === 'admin') return next('/admin')
-    if (role === 'student') return next('/student')
-    if (role === 'company representative') return next('/company/dashboard')
+  // ── 5. Permission-based access ──
+  if (meta.permission && !store.hasPermission(meta.permission)) {
+    return next('/403')
   }
 
   next()
 })
+
+function getRedirectForRole(role: string | null): string {
+  const map: Record<string, string> = {
+    admin: '/admin',
+    tutor: '/tutor',
+    student: '/student',
+    'company representative': '/company',
+  }
+  return map[role || ''] || '/login'
+}
 
 export default router

@@ -9,23 +9,30 @@
     </transition>
 
     <aside
-      class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-slate-900 shadow-2xl transition-transform duration-300 lg:static lg:translate-x-0"
+      class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col shadow-2xl transition-transform duration-300 lg:static lg:translate-x-0"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+      :style="{ backgroundColor: 'var(--sidebar-bg)' }"
     >
-      <div class="flex h-16 items-center gap-3 border-b border-slate-700/50 px-6">
+      <div
+        class="flex h-16 items-center gap-3 px-6"
+        :style="{ borderBottom: '1px solid var(--sidebar-border)' }"
+      >
         <div
-          class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-bold text-white shadow-lg shadow-blue-500/25"
+          class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white shadow-lg"
+          :style="{ background: 'var(--sidebar-logo-bg)', boxShadow: 'var(--sidebar-logo-shadow)' }"
         >
           C
         </div>
         <div>
-          <h1 class="text-base font-semibold tracking-tight text-white">Company Panel</h1>
-          <p class="text-xs text-slate-400">Internship System</p>
+          <h1 class="text-base font-semibold tracking-tight" :style="{ color: 'var(--sidebar-heading)' }">
+            Company Panel
+          </h1>
+          <p class="text-xs" :style="{ color: 'var(--sidebar-subheading)' }">Internship System</p>
         </div>
       </div>
 
       <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider" :style="{ color: 'var(--sidebar-section-title)' }">
           Menu
         </p>
         <router-link
@@ -33,12 +40,9 @@
           :key="item.name"
           :to="item.to"
           @click="sidebarOpen = false"
-          class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
-          :class="
-            isActive(item.to)
-              ? 'bg-gradient-to-r from-blue-500/15 to-indigo-500/10 text-blue-400 shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
-          "
+          class="sidebar-nav-link group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200"
+          :class="isActive(item.to) ? 'sidebar-nav-active' : ''"
+          :style="navLinkStyle(item.to)"
         >
           <span
             class="flex h-5 w-5 items-center justify-center transition-transform duration-200"
@@ -50,16 +54,17 @@
         </router-link>
       </nav>
 
-      <div class="border-t border-slate-700/50 p-4">
-        <div class="flex items-center gap-3 rounded-lg bg-slate-800/50 p-3">
+      <div class="p-4" :style="{ borderTop: '1px solid var(--sidebar-border)' }">
+        <div class="flex items-center gap-3 rounded-xl p-3" :style="{ backgroundColor: 'var(--sidebar-user-bg)' }">
           <div
-            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 text-sm font-bold text-white shadow-lg"
+            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white shadow-lg"
+            :style="{ background: 'var(--sidebar-avatar-bg)' }"
           >
             {{ userInitials }}
           </div>
           <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-medium text-white">{{ user?.name }}</p>
-            <p class="truncate text-xs text-slate-400">Company Representative</p>
+            <p class="truncate text-sm font-medium" :style="{ color: 'var(--sidebar-user-name)' }">{{ user?.name }}</p>
+            <p class="truncate text-xs" :style="{ color: 'var(--sidebar-user-role)' }">Company Representative</p>
           </div>
         </div>
       </div>
@@ -109,11 +114,17 @@
             </svg>
             <span class="absolute right-2 top-2 flex h-2 w-2">
               <span
-                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75"
+                class="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
+                :style="{ backgroundColor: 'var(--sidebar-accent)' }"
               />
-              <span class="relative inline-flex h-2 w-2 rounded-full bg-blue-500" />
+              <span
+                class="relative inline-flex h-2 w-2 rounded-full"
+                :style="{ backgroundColor: 'var(--sidebar-accent)' }"
+              />
             </span>
           </button>
+
+          <div class="h-6 w-[1px] bg-gray-200" />
 
           <div class="relative">
             <button
@@ -121,7 +132,8 @@
               @click.stop="dropdownOpen = !dropdownOpen"
             >
               <div
-                class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 text-xs font-bold text-white shadow-sm"
+                class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm"
+                :style="{ background: 'var(--sidebar-avatar-bg)' }"
               >
                 {{ userInitials }}
               </div>
@@ -232,6 +244,19 @@ function isActive(path: string) {
     return route.path === '/company'
   }
   return route.path.startsWith(path)
+}
+
+function navLinkStyle(to: string): Record<string, string> {
+  if (isActive(to)) {
+    return {
+      background: 'var(--sidebar-nav-active-bg)',
+      color: 'var(--sidebar-nav-active-text)',
+      borderLeft: '2px solid var(--sidebar-nav-active-border)',
+    }
+  }
+  return {
+    color: 'var(--sidebar-nav-text)',
+  }
 }
 
 async function handleLogout() {
@@ -354,5 +379,15 @@ const navItems: NavItem[] = [
 .dropdown-leave-to {
   opacity: 0;
   transform: translateY(-4px) scale(0.98);
+}
+
+.sidebar-nav-link:hover {
+  background: var(--sidebar-nav-hover-bg) !important;
+  color: var(--sidebar-nav-text-hover) !important;
+}
+
+.sidebar-nav-active {
+  background: var(--sidebar-nav-active-bg) !important;
+  color: var(--sidebar-nav-active-text) !important;
 }
 </style>

@@ -2,7 +2,7 @@
   <button
     :type="type"
     :disabled="disabled || loading"
-    class="relative w-full h-[48px] inline-flex items-center justify-center rounded-xl font-semibold text-[15px] text-white transition-all duration-300 ease-out outline-none focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2"
+    class="w-full h-[48px] inline-flex items-center justify-center rounded-xl font-semibold text-[15px] text-white transition-all duration-300 ease-out outline-none focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2"
     :class="[
       disabled || loading
         ? 'opacity-60 cursor-not-allowed'
@@ -11,15 +11,12 @@
     ]"
     v-bind="$attrs"
   >
-    <span v-if="loading" class="absolute inset-0 flex items-center justify-center">
-      <LoadingSpinner size="sm" color="white" />
-    </span>
-    <span :class="{ 'invisible': loading }">
+    <span class="inline-flex items-center justify-center gap-2">
+      <LoadingSpinner v-if="loading" size="sm" color="white" />
       <slot />
     </span>
   </button>
 </template>
-
 <script setup lang="ts">
 import LoadingSpinner from './LoadingSpinner.vue'
 

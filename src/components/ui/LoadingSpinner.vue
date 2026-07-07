@@ -1,7 +1,7 @@
 <template>
   <svg
     class="animate-spin"
-    :class="[sizeClasses, colorClasses]"
+    :class="[currentSizeClass, currentColorClass]"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
@@ -24,9 +24,12 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(
+import { computed } from 'vue'
+
+// 1. Capture the props into a variable
+const props = withDefaults(
   defineProps<{
-    size?: 'sm' | 'md' | 'lg'
+    size?: 'xs' | 'sm' | 'md' | 'lg'
     color?: 'white' | 'primary'
   }>(),
   {
@@ -35,14 +38,20 @@ withDefaults(
   },
 )
 
-const sizeClasses: Record<string, string> = {
-  sm: 'h-4 w-4',
+// 2. Class dictionaries
+const sizeMap: Record<string, string> = {
+  xs: 'h-3.5 w-3.5',
+  sm: 'h-4 w-4',     // Perfect for your 15px button text!
   md: 'h-5 w-5',
   lg: 'h-8 w-8',
 }
 
-const colorClasses: Record<string, string> = {
+const colorMap: Record<string, string> = {
   white: 'text-white',
   primary: 'text-primary-600',
 }
+
+// 3. Use computed properties to reactively return the string based on the prop value
+const currentSizeClass = computed(() => sizeMap[props.size])
+const currentColorClass = computed(() => colorMap[props.color])
 </script>

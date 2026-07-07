@@ -5,7 +5,12 @@
 </template>
 
 <script setup lang="ts">
-</script>
+import { onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
-<style scoped>
-</style>
+const auth = useAuthStore()
+
+onMounted(() => {
+  auth.boot()
+})
+</script>

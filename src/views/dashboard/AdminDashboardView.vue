@@ -1,0 +1,684 @@
+<template>
+  <div class="space-y-6">
+    <!-- Welcome Header -->
+    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+          Welcome back, Admin!
+        </h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          Monitor your internship activities, student placements, and supervisor updates in
+          real-time.
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- Sync Status Pill -->
+        <div
+          class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold shadow-sm transition-all"
+          :class="
+            loading
+              ? 'border-indigo-200 bg-indigo-50 text-indigo-600'
+              : 'border-emerald-200 bg-emerald-50 text-emerald-700'
+          "
+        >
+          <!-- Loading spinner -->
+          <span
+            v-if="loading"
+            class="inline-flex h-3.5 w-3.5 items-center justify-center"
+          >
+            <svg
+              class="h-3.5 w-3.5 animate-spin text-indigo-500"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          </span>
+          <!-- Idle dot -->
+          <span
+            v-else
+            class="relative flex h-2 w-2"
+          >
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+          </span>
+          <span>{{ loading ? 'Syncing data...' : 'Live · Up to date' }}</span>
+        </div>
+
+        <!-- Refresh Button -->
+        <button
+          @click="fetchDashboardData"
+          :disabled="loading"
+          class="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-xs font-semibold text-white shadow-md shadow-indigo-500/20 transition-all duration-200 hover:from-indigo-700 hover:to-indigo-600 hover:shadow-indigo-500/30 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <svg
+            class="h-3.5 w-3.5 transition-transform duration-500"
+            :class="loading ? 'animate-spin' : 'group-hover:-rotate-180'"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2.5"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.228 5.672L21 9m0 0H9"
+            />
+          </svg>
+          {{ loading ? 'Refreshing...' : 'Refresh Data' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Overview Statistics Cards -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <StatCard
+        label="Total Students"
+        :value="dashboardData.totalStudents"
+        trend="+12%"
+        description="from last semester"
+        color-class="bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-indigo-500/20"
+      >
+        <template #icon>
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 14l9-5-9-5-9 5 9 5z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+            />
+          </svg>
+        </template>
+      </StatCard>
+
+      <StatCard
+        label="Total Companies"
+        :value="dashboardData.totalCompanies"
+        trend="+4"
+        description="new partners added"
+        color-class="bg-gradient-to-br from-purple-500 to-purple-600 shadow-purple-500/20"
+      >
+        <template #icon>
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2-2H5a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+            />
+          </svg>
+        </template>
+      </StatCard>
+
+      <StatCard
+        label="Active Internships"
+        :value="dashboardData.activeInternships"
+        trend="89%"
+        description="placement rate"
+        color-class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-emerald-500/20"
+      >
+        <template #icon>
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+            />
+          </svg>
+        </template>
+      </StatCard>
+
+      <StatCard
+        label="Pending Issues"
+        :value="dashboardData.pendingIssues"
+        trend="-3"
+        description="resolved today"
+        color-class="bg-gradient-to-br from-rose-500 to-rose-600 shadow-rose-500/20"
+      >
+        <template #icon>
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
+          </svg>
+        </template>
+      </StatCard>
+    </div>
+
+    <!-- Quick Actions Module -->
+    <div
+      class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+    >
+      <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">
+        Quick Administrative Actions
+      </h3>
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <button
+          v-for="action in quickActions"
+          :key="action.label"
+          @click="handleQuickAction(action.route)"
+          class="group flex flex-col items-center justify-center rounded-xl border border-slate-100 p-4 text-center transition-all hover:border-indigo-100 hover:bg-indigo-50/20 hover:shadow-sm"
+        >
+          <div
+            class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 group-hover:scale-110 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-all"
+            :class="action.bgColor"
+          >
+            <component :is="action.icon" class="h-5 w-5" />
+          </div>
+          <span class="text-xs font-semibold text-slate-700 group-hover:text-slate-900">{{
+            action.label
+          }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Multi-Column Layout for Reports & Visuals -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <!-- Placement Distribution (Students per Company) -->
+      <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm lg:col-span-2">
+        <div class="mb-5 flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-slate-950">Placement Distribution</h3>
+            <p class="text-xs text-slate-500">Student count by company placements</p>
+          </div>
+          <router-link
+            to="/admin/companies"
+            class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+          >
+            Manage Companies →
+          </router-link>
+        </div>
+
+        <div class="space-y-4" v-if="dashboardData.companyPlacements.length > 0">
+          <div
+            v-for="placement in dashboardData.companyPlacements"
+            :key="placement.name"
+            class="group rounded-xl border border-slate-50 p-3 hover:bg-slate-50/40 transition-colors"
+          >
+            <div
+              class="mb-2 flex items-center justify-between text-xs font-semibold text-slate-800"
+            >
+              <span class="flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full bg-indigo-500"></span>
+                {{ placement.name }}
+              </span>
+              <span>{{ placement.count }} Students ({{ getPercentage(placement.count) }}%)</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
+              <div
+                class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000"
+                :style="{ width: `${getPercentage(placement.count)}%` }"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div v-else class="flex flex-col items-center justify-center py-10 text-center">
+          <svg
+            class="mx-auto h-8 w-8 text-slate-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2-2H5a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+            />
+          </svg>
+          <p class="mt-2 text-xs font-semibold text-slate-400">
+            No company placement records found.
+          </p>
+        </div>
+      </div>
+
+      <!-- Batch Enrollment (Students per Batch) -->
+      <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+        <div class="mb-5 flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-slate-950">Batch Statistics</h3>
+            <p class="text-xs text-slate-500">Student metrics per cohort batch</p>
+          </div>
+          <router-link
+            to="/admin/batches"
+            class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+          >
+            Details →
+          </router-link>
+        </div>
+
+        <div class="space-y-3.5" v-if="dashboardData.batchEnrollments.length > 0">
+          <div
+            v-for="batch in dashboardData.batchEnrollments"
+            :key="batch.name"
+            class="flex items-center justify-between rounded-xl bg-slate-50/50 p-3 hover:bg-slate-50 transition-colors"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="flex h-9.5 w-9.5 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600"
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h4 class="text-xs font-bold text-slate-900">{{ batch.name }}</h4>
+                <p class="text-[10px] font-semibold text-slate-400">{{ batch.duration }}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span
+                class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-bold text-indigo-700"
+              >
+                {{ batch.count }} Students
+              </span>
+            </div>
+          </div>
+        </div>
+        <div v-else class="flex flex-col items-center justify-center py-10 text-center">
+          <svg
+            class="mx-auto h-8 w-8 text-slate-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          <p class="mt-2 text-xs font-semibold text-slate-400">No batches registered.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tutors Assignment & Monitoring -->
+    <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+      <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 class="text-base font-bold text-slate-950">Academic Tutors</h3>
+          <p class="text-xs text-slate-500">Supervisors tracking current internship progress</p>
+        </div>
+        <button
+          @click="handleQuickAction('assign-tutors')"
+          class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-indigo-50 px-3 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 transition-colors"
+        >
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          Assign Tutor
+        </button>
+      </div>
+
+      <!-- Tutors Table -->
+      <div class="overflow-x-auto" v-if="dashboardData.tutors.length > 0">
+        <table class="w-full border-collapse text-left text-sm">
+          <thead>
+            <tr
+              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
+            >
+              <th class="px-4 py-3">Tutor Name</th>
+              <th class="px-4 py-3">Email Address</th>
+              <th class="px-4 py-3">Assigned Students</th>
+              <th class="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-50">
+            <tr
+              v-for="tutor in dashboardData.tutors"
+              :key="tutor.id"
+              class="hover:bg-slate-50/30 transition-colors"
+            >
+              <td class="whitespace-nowrap px-4 py-3 font-semibold text-slate-900">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-600 text-xs"
+                  >
+                    {{ getInitials(tutor.name) }}
+                  </div>
+                  {{ tutor.name }}
+                </div>
+              </td>
+              <td class="whitespace-nowrap px-4 py-3 text-slate-500 font-medium">
+                {{ tutor.email }}
+              </td>
+              <td class="whitespace-nowrap px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-indigo-50 text-xs font-bold text-indigo-700"
+                  >
+                    {{ tutor.studentsCount }}
+                  </span>
+                  <span class="text-xs text-slate-400">students supervised</span>
+                </div>
+              </td>
+              <td class="whitespace-nowrap px-4 py-3 text-right">
+                <button
+                  @click="handleTutorManage(tutor.id)"
+                  class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 hover:text-indigo-800 transition-all"
+                >
+                  Manage Assignments
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div
+        v-else
+        class="flex flex-col items-center justify-center py-10 text-center border border-dashed border-slate-200 rounded-xl"
+      >
+        <svg
+          class="mx-auto h-10 w-10 text-slate-300"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+          />
+        </svg>
+        <p class="mt-2 text-xs font-semibold text-slate-500">
+          No academic tutors assigned yet.
+        </p>
+      </div>
+    </div>
+
+    <!-- Recent Activity Trail -->
+    <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+      <div class="mb-5">
+        <h3 class="text-base font-bold text-slate-950">Recent System Activity</h3>
+        <p class="text-xs text-slate-500">
+          Live timeline of actions across company placements and logs
+        </p>
+      </div>
+
+      <!-- Activities Timeline -->
+      <div
+        class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100"
+        v-if="dashboardData.recentActivity.length > 0"
+      >
+        <div
+          v-for="activity in dashboardData.recentActivity"
+          :key="activity.id"
+          class="relative flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <!-- Bullet Point -->
+          <div
+            class="absolute -left-6 top-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-white ring-4 ring-white"
+          >
+            <div class="h-2 w-2 rounded-full" :class="getActivityColor(activity.type)"></div>
+          </div>
+
+          <div class="space-y-0.5">
+            <p class="text-xs text-slate-700 font-semibold">
+              <span class="font-bold text-slate-900">{{ activity.actor }}</span>
+              {{ activity.action }}
+              <span class="font-bold text-slate-900" v-if="activity.target">{{
+                activity.target
+              }}</span>
+            </p>
+            <p class="text-[10px] text-slate-400 font-semibold">{{ activity.time }}</p>
+          </div>
+
+          <div>
+            <span
+              class="inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase"
+              :class="getActivityBadgeClass(activity.type)"
+            >
+              {{ activity.type }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div v-else class="flex flex-col items-center justify-center py-10 text-center">
+        <svg
+          class="mx-auto h-8 w-8 text-slate-300"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <p class="mt-2 text-xs font-semibold text-slate-400">
+          No recent system activities found.
+        </p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, h, defineComponent } from 'vue'
+import api from '@/services/api'
+import StatCard from '@/components/dashboard/StatCard.vue'
+
+const loading = ref(false)
+
+// Dynamic quick actions icons
+const createActionIcon = (path: string) => {
+  return defineComponent({
+    setup() {
+      return () =>
+        h(
+          'svg',
+          {
+            class: 'h-5 w-5',
+            fill: 'none',
+            stroke: 'currentColor',
+            viewBox: '0 0 24 24',
+          },
+          [
+            h('path', {
+              'stroke-linecap': 'round',
+              'stroke-linejoin': 'round',
+              'stroke-width': 2,
+              d: path,
+            }),
+          ],
+        )
+    },
+  })
+}
+
+const quickActions = [
+  {
+    label: 'Add Company',
+    route: 'create-company',
+    bgColor: 'bg-indigo-50/50',
+    icon: createActionIcon('M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z'),
+  },
+  {
+    label: 'Add Student',
+    route: 'create-student',
+    bgColor: 'bg-purple-50/50',
+    icon: createActionIcon(
+      'M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z',
+    ),
+  },
+  {
+    label: 'Create Batch',
+    route: 'create-batch',
+    bgColor: 'bg-emerald-50/50',
+    icon: createActionIcon(
+      'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
+    ),
+  },
+  {
+    label: 'Assign Student',
+    route: 'assign-students',
+    bgColor: 'bg-amber-50/50',
+    icon: createActionIcon('M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4'),
+  },
+  {
+    label: 'Export Reports',
+    route: 'reports',
+    bgColor: 'bg-rose-50/50',
+    icon: createActionIcon('M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'),
+  },
+  {
+    label: 'Manage Users',
+    route: 'users',
+    bgColor: 'bg-sky-50/50',
+    icon: createActionIcon(
+      'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z',
+    ),
+  },
+]
+
+interface DashboardData {
+  totalStudents: number
+  totalCompanies: number
+  activeInternships: number
+  pendingIssues: number
+  companyPlacements: Array<{ name: string; count: number }>
+  batchEnrollments: Array<{ name: string; duration: string; count: number }>
+  tutors: Array<{ id: number; name: string; email: string; studentsCount: number }>
+  recentActivity: Array<{
+    id: number
+    actor: string
+    action: string
+    target?: string
+    time: string
+    type: 'assignment' | 'worklog' | 'issue' | 'evaluation'
+  }>
+}
+
+const dashboardData = ref<DashboardData>({
+  totalStudents: 0,
+  totalCompanies: 0,
+  activeInternships: 0,
+  pendingIssues: 0,
+  companyPlacements: [],
+  batchEnrollments: [],
+  tutors: [],
+  recentActivity: [],
+})
+
+const getPercentage = (count: number) => {
+  if (dashboardData.value.totalStudents === 0) return 0
+  return Math.round((count / dashboardData.value.totalStudents) * 100)
+}
+
+const getInitials = (name: string) => {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}
+
+const getActivityColor = (type: string) => {
+  switch (type) {
+    case 'assignment':
+      return 'bg-indigo-500'
+    case 'worklog':
+      return 'bg-emerald-500'
+    case 'issue':
+      return 'bg-rose-500'
+    case 'evaluation':
+      return 'bg-amber-500'
+    default:
+      return 'bg-slate-400'
+  }
+}
+
+const getActivityBadgeClass = (type: string) => {
+  switch (type) {
+    case 'assignment':
+      return 'bg-indigo-50 text-indigo-700'
+    case 'worklog':
+      return 'bg-emerald-50 text-emerald-700'
+    case 'issue':
+      return 'bg-rose-50 text-rose-700'
+    case 'evaluation':
+      return 'bg-amber-50 text-amber-700'
+    default:
+      return 'bg-slate-50 text-slate-700'
+  }
+}
+
+const handleQuickAction = (action: string) => {
+  alert(
+    `Navigating to Quick Action: ${action}\n(This action will open the corresponding management page)`,
+  )
+}
+
+const handleTutorManage = (tutorId: number) => {
+  alert(`Manage assigned students for Tutor ID: ${tutorId}`)
+}
+
+async function fetchDashboardData() {
+  loading.value = true
+  try {
+    const response = await api.get('/dashboard')
+    dashboardData.value = response.data
+  } catch (error) {
+    console.error('Failed to fetch dashboard data:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchDashboardData()
+})
+</script>
+
+<style scoped>
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>

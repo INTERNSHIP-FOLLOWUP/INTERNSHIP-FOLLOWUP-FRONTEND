@@ -22,12 +22,25 @@ const MOCK_NAMES: Record<UserRole, string> = {
 }
 
 function createMockUser(overrides?: Partial<User>): User {
-  const email = overrides?.email || 'student@example.com'
-  const role = overrides?.role || detectRoleFromEmail(email)
+  const email = overrides?.email || 'tutor@example.com'
+  let role: UserRole = 'tutor'
+  let name = 'Tutor User'
+
+  if (email.toLowerCase().includes('admin')) {
+    role = 'admin'
+    name = 'Admin User'
+  } else if (email.toLowerCase().includes('student')) {
+    role = 'student'
+    name = 'Student User'
+  } else if (email.toLowerCase().includes('company')) {
+    role = 'company'
+    name = 'Company Representative'
+  }
+
   return {
     id: 1,
-    name: MOCK_NAMES[role],
-    email: `${role}@example.com`,
+    name,
+    email,
     role,
     ...overrides,
   }

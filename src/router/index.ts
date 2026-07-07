@@ -128,7 +128,7 @@ const router = createRouter({
         {
           path: '',
           name: 'CompanyDashboard',
-          component: () => import('@/views/company/CompanyListView.vue'),
+          component: () => import('@/views/company/CompanyDashboardView.vue'),
           meta: { title: 'Dashboard' },
         },
         {

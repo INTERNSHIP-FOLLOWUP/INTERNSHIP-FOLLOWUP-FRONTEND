@@ -68,10 +68,33 @@ const router = createRouter({
       redirect: '/tutor',
     },
     {
-      path: '/admin/dashboard',
-      name: 'AdminDashboard',
-      component: () => import('@/views/auth/Login.vue'),
+      path: '/admin',
+      component: () => import('@/layouts/AdminLayout.vue'),
       meta: { requiresAuth: true, role: 'admin' },
+      children: [
+        {
+          path: '',
+          name: 'AdminDashboard',
+          component: () => import('@/views/dashboard/AdminDashboardView.vue'),
+          meta: { title: 'Dashboard' },
+        },
+        {
+          path: 'users',
+          name: 'AdminUsers',
+          component: () => import('@/views/student/StudentDashboardView.vue'),
+          meta: { title: 'Users' },
+        },
+        {
+          path: 'profile',
+          name: 'AdminProfile',
+          component: () => import('@/views/profile/ProfileView.vue'),
+          meta: { title: 'Profile' },
+        },
+      ],
+    },
+    {
+      path: '/admin/dashboard',
+      redirect: '/admin',
     },
     {
       path: '/student',
@@ -123,7 +146,7 @@ const router = createRouter({
     {
       path: '/company',
       component: () => import('@/layouts/CompanyLayout.vue'),
-      meta: { requiresAuth: true, role: 'company' },
+      meta: { requiresAuth: true, role: 'company representative' },
       children: [
         {
           path: '',
@@ -200,9 +223,9 @@ router.beforeEach(async (to, _from, next) => {
   if (to.path === '/login' && auth.token && auth.user) {
     const role = auth.user.role
     if (role === 'tutor') return next('/tutor')
-    if (role === 'admin') return next('/admin/dashboard')
+    if (role === 'admin') return next('/admin')
     if (role === 'student') return next('/student')
-    if (role === 'company') return next('/company/dashboard')
+    if (role === 'company representative') return next('/company/dashboard')
   }
 
   next()

@@ -8,11 +8,26 @@ import { ROLE_ROUTES } from '@/types/auth'
 const IS_DEV = import.meta.env.DEV
 
 function createMockUser(overrides?: Partial<User>): User {
+  const email = overrides?.email || 'tutor@example.com'
+  let role: UserRole = 'tutor'
+  let name = 'Tutor User'
+
+  if (email.toLowerCase().includes('admin')) {
+    role = 'admin'
+    name = 'Admin User'
+  } else if (email.toLowerCase().includes('student')) {
+    role = 'student'
+    name = 'Student User'
+  } else if (email.toLowerCase().includes('company')) {
+    role = 'company'
+    name = 'Company Representative'
+  }
+
   return {
     id: 1,
-    name: 'Tutor User',
-    email: 'tutor@example.com',
-    role: 'tutor',
+    name,
+    email,
+    role,
     ...overrides,
   }
 }

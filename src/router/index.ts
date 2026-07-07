@@ -68,10 +68,21 @@ const router = createRouter({
       redirect: '/tutor',
     },
     {
-      path: '/admin/dashboard',
-      name: 'AdminDashboard',
-      component: () => import('@/views/auth/Login.vue'),
+      path: '/admin',
+      component: () => import('@/layouts/AdminLayout.vue'),
       meta: { requiresAuth: true, role: 'admin' },
+      children: [
+        {
+          path: '',
+          redirect: '/admin/dashboard',
+        },
+        {
+          path: 'dashboard',
+          name: 'AdminDashboard',
+          component: () => import('@/views/dashboard/AdminDashboardView.vue'),
+          meta: { title: 'Admin Dashboard' },
+        },
+      ],
     },
     {
       path: '/student/dashboard',

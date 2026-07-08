@@ -22,6 +22,11 @@ const FIELD_ERROR_MAP: Record<string, Record<string, string>> = {
     'The provided credentials are incorrect.': 'Your email or password is incorrect. Please try again.',
     'incorrect': 'The password you entered is incorrect. Please try again.',
   },
+  token: {
+    'required': 'Invalid or missing reset token. Please use the link from your email.',
+    'invalid': 'This reset link is invalid or has expired. Please request a new password reset.',
+    'expired': 'This reset link has expired. Please request a new password reset.',
+  },
   name: {
     'required': 'Please enter your full name.',
     'min': 'Name must be at least 2 characters long.',
@@ -174,6 +179,12 @@ function friendlyGlobalMessage(raw: string): string {
   }
   if (lower.includes('not found') || lower.includes('no record')) {
     return 'We couldn\'t find what you\'re looking for. Please check your information.'
+  }
+  if (lower.includes('reset link') || lower.includes('reset token')) {
+    return 'This reset link is invalid or has expired. Please request a new password reset.'
+  }
+  if (lower.includes('we have emailed') || lower.includes('reset link sent')) {
+    return raw
   }
 
   return raw

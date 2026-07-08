@@ -3,10 +3,8 @@
     <!-- Welcome Header -->
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-          Welcome back, Admin!
-        </h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Welcome back, Admin!</h1>
+        <p class="text-sm text-slate-500">
           Monitor your internship activities, student placements, and supervisor updates in
           real-time.
         </p>
@@ -17,20 +15,13 @@
           class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold shadow-sm transition-all"
           :class="
             loading
-              ? 'border-indigo-200 bg-indigo-50 text-indigo-600'
+              ? 'border-primary-200 bg-primary-50 text-primary-600'
               : 'border-emerald-200 bg-emerald-50 text-emerald-700'
           "
         >
           <!-- Loading spinner -->
-          <span
-            v-if="loading"
-            class="inline-flex h-3.5 w-3.5 items-center justify-center"
-          >
-            <svg
-              class="h-3.5 w-3.5 animate-spin text-indigo-500"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
+          <span v-if="loading" class="inline-flex h-3.5 w-3.5 items-center justify-center">
+            <svg class="h-3.5 w-3.5 animate-spin text-primary-500" fill="none" viewBox="0 0 24 24">
               <circle
                 class="opacity-25"
                 cx="12"
@@ -47,11 +38,10 @@
             </svg>
           </span>
           <!-- Idle dot -->
-          <span
-            v-else
-            class="relative flex h-2 w-2"
-          >
-            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+          <span v-else class="relative flex h-2 w-2">
+            <span
+              class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"
+            />
             <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
           </span>
           <span>{{ loading ? 'Syncing data...' : 'Live · Up to date' }}</span>
@@ -61,7 +51,7 @@
         <button
           @click="fetchDashboardData"
           :disabled="loading"
-          class="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-xs font-semibold text-white shadow-md shadow-indigo-500/20 transition-all duration-200 hover:from-indigo-700 hover:to-indigo-600 hover:shadow-indigo-500/30 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+          class="group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-2 text-xs font-semibold text-white shadow-sm shadow-primary-500/20 transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md hover:shadow-primary-500/25 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <svg
             class="h-3.5 w-3.5 transition-transform duration-500"
@@ -83,13 +73,13 @@
     </div>
 
     <!-- Overview Statistics Cards -->
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <StatCard
         label="Total Students"
         :value="dashboardData.totalStudents"
         trend="+12%"
         description="from last semester"
-        color-class="bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-indigo-500/20"
+        color-class="bg-gradient-to-br from-primary-500 to-primary-600 shadow-primary-500/20"
       >
         <template #icon>
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,9 +158,7 @@
     </div>
 
     <!-- Quick Actions Module -->
-    <div
-      class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
-    >
+    <div :class="panelClass">
       <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">
         Quick Administrative Actions
       </h3>
@@ -179,17 +167,18 @@
           v-for="action in quickActions"
           :key="action.label"
           @click="handleQuickAction(action.route)"
-          class="group flex flex-col items-center justify-center rounded-xl border border-slate-100 p-4 text-center transition-all hover:border-indigo-100 hover:bg-indigo-50/20 hover:shadow-sm"
+          class="group flex min-h-28 flex-col items-center justify-center rounded-lg border border-slate-200/70 bg-slate-50/60 p-4 text-center transition-all duration-200 hover:border-primary-200 hover:bg-primary-50/50 hover:shadow-sm"
         >
           <div
-            class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 group-hover:scale-110 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-all"
+            class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 transition-all duration-200 group-hover:scale-105 group-hover:bg-white group-hover:text-primary-600 group-hover:shadow-sm"
             :class="action.bgColor"
           >
             <component :is="action.icon" class="h-5 w-5" />
           </div>
-          <span class="text-xs font-semibold text-slate-700 group-hover:text-slate-900">{{
-            action.label
-          }}</span>
+          <span
+            class="text-xs font-semibold leading-snug text-slate-700 group-hover:text-slate-900"
+            >{{ action.label }}</span
+          >
         </button>
       </div>
     </div>
@@ -197,7 +186,7 @@
     <!-- Multi-Column Layout for Reports & Visuals -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <!-- Placement Distribution (Students per Company) -->
-      <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm lg:col-span-2">
+      <div :class="[panelClass, 'lg:col-span-2']">
         <div class="mb-5 flex items-center justify-between">
           <div>
             <h3 class="text-base font-bold text-slate-950">Placement Distribution</h3>
@@ -205,7 +194,7 @@
           </div>
           <router-link
             to="/admin/companies"
-            class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+            class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800"
           >
             Manage Companies →
           </router-link>
@@ -215,13 +204,13 @@
           <div
             v-for="placement in dashboardData.companyPlacements"
             :key="placement.name"
-            class="group rounded-xl border border-slate-50 p-3 hover:bg-slate-50/40 transition-colors"
+            class="group rounded-lg border border-slate-100 bg-slate-50/40 p-3 transition-colors hover:bg-slate-50"
           >
             <div
               class="mb-2 flex items-center justify-between text-xs font-semibold text-slate-800"
             >
               <span class="flex items-center gap-2">
-                <span class="h-2 w-2 rounded-full bg-indigo-500"></span>
+                <span class="h-2 w-2 rounded-full bg-primary-500"></span>
                 {{ placement.name }}
               </span>
               <span>{{ placement.count }} Students ({{ getPercentage(placement.count) }}%)</span>
@@ -229,7 +218,7 @@
             <!-- Progress Bar -->
             <div class="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
               <div
-                class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000"
+                class="h-full rounded-full bg-gradient-to-r from-primary-500 to-sky-500 transition-all duration-1000"
                 :style="{ width: `${getPercentage(placement.count)}%` }"
               ></div>
             </div>
@@ -256,7 +245,7 @@
       </div>
 
       <!-- Batch Enrollment (Students per Batch) -->
-      <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+      <div :class="panelClass">
         <div class="mb-5 flex items-center justify-between">
           <div>
             <h3 class="text-base font-bold text-slate-950">Batch Statistics</h3>
@@ -264,7 +253,7 @@
           </div>
           <router-link
             to="/admin/batches"
-            class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+            class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800"
           >
             Details →
           </router-link>
@@ -274,11 +263,11 @@
           <div
             v-for="batch in dashboardData.batchEnrollments"
             :key="batch.name"
-            class="flex items-center justify-between rounded-xl bg-slate-50/50 p-3 hover:bg-slate-50 transition-colors"
+            class="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/60 p-3 transition-colors hover:bg-slate-50"
           >
             <div class="flex items-center gap-3">
               <div
-                class="flex h-9.5 w-9.5 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600"
+                class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600"
               >
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -296,7 +285,7 @@
             </div>
             <div class="text-right">
               <span
-                class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-bold text-indigo-700"
+                class="inline-flex items-center rounded-md bg-primary-50 px-2.5 py-0.5 text-xs font-bold text-primary-700"
               >
                 {{ batch.count }} Students
               </span>
@@ -323,7 +312,7 @@
     </div>
 
     <!-- Tutors Assignment & Monitoring -->
-    <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+    <div :class="panelClass">
       <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 class="text-base font-bold text-slate-950">Academic Tutors</h3>
@@ -331,7 +320,7 @@
         </div>
         <button
           @click="handleQuickAction('assign-tutors')"
-          class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-indigo-50 px-3 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 transition-colors"
+          class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-primary-50 px-3 text-xs font-semibold text-primary-700 transition-colors hover:bg-primary-100"
         >
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -380,7 +369,7 @@
               <td class="whitespace-nowrap px-4 py-3">
                 <div class="flex items-center gap-2">
                   <span
-                    class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-indigo-50 text-xs font-bold text-indigo-700"
+                    class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary-50 text-xs font-bold text-primary-700"
                   >
                     {{ tutor.studentsCount }}
                   </span>
@@ -390,7 +379,7 @@
               <td class="whitespace-nowrap px-4 py-3 text-right">
                 <button
                   @click="handleTutorManage(tutor.id)"
-                  class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 hover:text-indigo-800 transition-all"
+                  class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800"
                 >
                   Manage Assignments
                 </button>
@@ -401,7 +390,7 @@
       </div>
       <div
         v-else
-        class="flex flex-col items-center justify-center py-10 text-center border border-dashed border-slate-200 rounded-xl"
+        class="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 py-10 text-center"
       >
         <svg
           class="mx-auto h-10 w-10 text-slate-300"
@@ -416,14 +405,12 @@
             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
           />
         </svg>
-        <p class="mt-2 text-xs font-semibold text-slate-500">
-          No academic tutors assigned yet.
-        </p>
+        <p class="mt-2 text-xs font-semibold text-slate-500">No academic tutors assigned yet.</p>
       </div>
     </div>
 
     <!-- Recent Activity Trail -->
-    <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+    <div :class="panelClass">
       <div class="mb-5">
         <h3 class="text-base font-bold text-slate-950">Recent System Activity</h3>
         <p class="text-xs text-slate-500">
@@ -483,9 +470,7 @@
             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <p class="mt-2 text-xs font-semibold text-slate-400">
-          No recent system activities found.
-        </p>
+        <p class="mt-2 text-xs font-semibold text-slate-400">No recent system activities found.</p>
       </div>
     </div>
   </div>
@@ -497,6 +482,8 @@ import api from '@/services/api'
 import StatCard from '@/components/dashboard/StatCard.vue'
 
 const loading = ref(false)
+const panelClass =
+  'rounded-lg border border-slate-200/80 bg-white p-5 shadow-sm ring-1 ring-white/70 transition-shadow duration-200 hover:shadow-md'
 
 // Dynamic quick actions icons
 const createActionIcon = (path: string) => {
@@ -528,7 +515,7 @@ const quickActions = [
   {
     label: 'Add Company',
     route: 'create-company',
-    bgColor: 'bg-indigo-50/50',
+    bgColor: 'bg-primary-50/80',
     icon: createActionIcon('M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z'),
   },
   {
@@ -615,7 +602,7 @@ const getInitials = (name: string) => {
 const getActivityColor = (type: string) => {
   switch (type) {
     case 'assignment':
-      return 'bg-indigo-500'
+      return 'bg-primary-500'
     case 'worklog':
       return 'bg-emerald-500'
     case 'issue':
@@ -630,7 +617,7 @@ const getActivityColor = (type: string) => {
 const getActivityBadgeClass = (type: string) => {
   switch (type) {
     case 'assignment':
-      return 'bg-indigo-50 text-indigo-700'
+      return 'bg-primary-50 text-primary-700'
     case 'worklog':
       return 'bg-emerald-50 text-emerald-700'
     case 'issue':

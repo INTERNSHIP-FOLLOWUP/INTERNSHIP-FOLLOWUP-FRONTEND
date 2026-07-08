@@ -33,14 +33,14 @@ const router = createRouter({
     {
       path: '/forgot-password',
       name: 'ForgotPassword',
-      component: () => import('@/views/auth/Login.vue'),
-      meta: { guest: true, title: 'Forgot Password' } as AppRouteMeta,
+      component: () => import('@/views/auth/ForgotPassword.vue'),
+      meta: { requiresAuth: false, title: 'Forgot Password' },
     },
     {
       path: '/reset-password',
       name: 'ResetPassword',
-      component: () => import('@/views/auth/Login.vue'),
-      meta: { guest: true, title: 'Reset Password' } as AppRouteMeta,
+      component: () => import('@/views/auth/ResetPassword.vue'),
+      meta: { requiresAuth: false, title: 'Reset Password' },
     },
     {
       path: '/403',

@@ -1,25 +1,21 @@
 <template>
   <div
-    class="relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
+    class="group relative overflow-hidden rounded-lg border border-slate-200/80 bg-white p-5 shadow-sm ring-1 ring-white/70 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-md"
   >
-    <!-- Background subtle gradient circle -->
-    <div
-      class="absolute -right-4 -top-4 h-24 w-24 rounded-full opacity-5 transition-transform duration-500 group-hover:scale-110"
-      :class="gradientColor"
-    />
+    <div class="absolute inset-x-0 top-0 h-1 opacity-90" :class="accentColor" />
 
     <div class="flex items-center justify-between">
-      <div class="space-y-1.5">
-        <p class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <div class="min-w-0 space-y-1">
+        <p class="truncate text-xs font-semibold uppercase tracking-wide text-slate-500">
           {{ label }}
         </p>
-        <h3 class="text-3xl font-bold tracking-tight text-slate-950 dark:text-white">
+        <h3 class="text-3xl font-bold leading-tight tracking-tight text-slate-950">
           {{ value }}
         </h3>
       </div>
 
       <div
-        class="flex h-12 w-12 items-center justify-center rounded-xl shadow-sm text-white"
+        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-white shadow-sm transition-transform duration-200 group-hover:scale-105"
         :class="colorClass"
       >
         <slot name="icon">
@@ -29,10 +25,10 @@
     </div>
 
     <!-- Trend Indicator -->
-    <div class="mt-4 flex items-center gap-1.5" v-if="trend || description">
+    <div class="mt-4 flex flex-wrap items-center gap-1.5" v-if="trend || description">
       <span
         v-if="trend"
-        class="inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium"
+        class="inline-flex items-center gap-0.5 rounded-md px-2 py-0.5 text-xs font-semibold"
         :class="trendClass"
       >
         <svg
@@ -65,7 +61,7 @@
         </svg>
         {{ trend }}
       </span>
-      <span class="text-xs text-slate-500 dark:text-slate-400">
+      <span class="text-xs font-medium text-slate-500">
         {{ description || 'vs last batch' }}
       </span>
     </div>
@@ -81,7 +77,7 @@ const props = withDefaults(
     value: string | number
     trend?: string
     description?: string
-    colorClass?: string // e.g. 'bg-gradient-to-br from-indigo-500 to-purple-600'
+    colorClass?: string
     icon?: any
   }>(),
   {
@@ -94,18 +90,20 @@ const isTrendNegative = computed(() => props.trend?.startsWith('-') ?? false)
 
 const trendClass = computed(() => {
   if (isTrendPositive.value) {
-    return 'bg-emerald-50/80 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400'
+    return 'bg-emerald-50/80 text-emerald-600'
   }
   if (isTrendNegative.value) {
-    return 'bg-rose-50/80 text-rose-600 dark:bg-rose-950/30 dark:text-rose-400'
+    return 'bg-rose-50/80 text-rose-600'
   }
-  return 'bg-slate-50/80 text-slate-600 dark:bg-slate-800/30 dark:text-slate-400'
+  return 'bg-slate-50/80 text-slate-600'
 })
 
-const gradientColor = computed(() => {
-  // Infer a matching subtle gradient/background indicator based on colorClass
+const accentColor = computed(() => {
   if (props.colorClass.includes('indigo') || props.colorClass.includes('primary')) {
-    return 'bg-indigo-500'
+    return 'bg-primary-500'
+  }
+  if (props.colorClass.includes('purple')) {
+    return 'bg-purple-500'
   }
   if (props.colorClass.includes('emerald') || props.colorClass.includes('success')) {
     return 'bg-emerald-500'

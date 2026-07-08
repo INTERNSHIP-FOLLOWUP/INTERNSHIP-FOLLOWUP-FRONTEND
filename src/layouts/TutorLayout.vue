@@ -174,10 +174,10 @@
                 </router-link>
                 <hr class="my-1 border-gray-100" />
                 <button
-                  @click="handleLogout"
+                  @click="openLogoutModal"
                   class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
                 >
-                  Sign Out
+                  Log Out
                 </button>
               </div>
             </transition>
@@ -192,6 +192,45 @@
         </div>
       </main>
     </div>
+
+    <!-- Logout Confirmation Modal -->
+    <transition name="fade">
+      <div
+        v-if="logoutModalOpen"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="logout-modal-title"
+        @click="closeLogoutModal"
+      >
+        <div
+          class="w-[92%] max-w-md rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl"
+          @click.stop
+        >
+          <h3 id="logout-modal-title" class="text-base font-semibold text-gray-900">
+            Are you sure you want to log out?
+          </h3>
+          <p class="mt-1 text-sm text-gray-600">You can cancel if you changed your mind.</p>
+
+          <div class="mt-5 flex items-center justify-end gap-3">
+            <button
+              class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+              @click="closeLogoutModal"
+              :disabled="loggingOut"
+            >
+              Cancel
+            </button>
+            <button
+              class="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
+              @click="confirmLogout"
+              :disabled="loggingOut"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -244,10 +283,29 @@ function isActive(path: string) {
   return route.path.startsWith(path)
 }
 
-async function handleLogout() {
+const logoutModalOpen = ref(false)
+const loggingOut = ref(false)
+
+function openLogoutModal() {
   dropdownOpen.value = false
-  await auth.logout()
+  logoutModalOpen.value = true
 }
+
+function closeLogoutModal() {
+  if (loggingOut.value) return
+  logoutModalOpen.value = false
+}
+
+async function confirmLogout() {
+  loggingOut.value = true
+  try {
+    await auth.logout()
+  } finally {
+    loggingOut.value = false
+    logoutModalOpen.value = false
+  }
+}
+
 
 function createIcon(path: string) {
   return defineComponent({

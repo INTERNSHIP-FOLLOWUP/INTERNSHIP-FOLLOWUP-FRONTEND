@@ -34,7 +34,11 @@ export const useAuthStore = defineStore('auth', () => {
   const isAdmin = computed(() => user.value?.role === 'admin')
 
   // ── RBAC ──
-  function hasRole(...roles: UserRole[]): boolean {
+  function hasRole(role: UserRole): boolean {
+    return userRole.value === role
+  }
+
+  function hasAnyRole(...roles: UserRole[]): boolean {
     if (!userRole.value) return false
     return roles.includes(userRole.value)
   }
@@ -199,7 +203,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     user, hasSession, loading, error, initialized, lastActivity, isSessionTimedOut,
     isLoggedIn, userRole, userName, isAdmin,
-    hasRole, hasPermission, canAccess, roleLevel,
+    hasRole, hasAnyRole, hasPermission, canAccess, roleLevel,
     updateActivity, checkSessionTimeout,
     boot, login, register, logout, forceLogout,
   }

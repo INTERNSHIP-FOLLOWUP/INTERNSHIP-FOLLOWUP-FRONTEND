@@ -1,13 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import type { UserRole } from '@/types/auth'
-import { PUBLIC_ROUTES } from '@/types/auth'
-import { AUTH_CONFIG } from '@/constants/auth'
+import type { AppRouteMeta } from './guards'
+import {
+  ensureBooted,
+  isGuestRoute,
+  redirectAuthenticatedGuest,
+  requireAuth,
+  checkRoles,
+} from './guards'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // ── Public ──
+    // ── Public (Guest) ──
     {
       path: '/',
       redirect: '/login',
@@ -16,36 +22,44 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: () => import('@/views/auth/Login.vue'),
-      meta: { requiresAuth: false, title: 'Sign In' },
+      meta: { guest: true, title: 'Sign In' } as AppRouteMeta,
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      component: () => import('@/views/auth/Login.vue'),
+      meta: { guest: true, title: 'Register' } as AppRouteMeta,
     },
     {
       path: '/forgot-password',
       name: 'ForgotPassword',
       component: () => import('@/views/auth/Login.vue'),
-      meta: { requiresAuth: false, title: 'Forgot Password' },
+      meta: { guest: true, title: 'Forgot Password' } as AppRouteMeta,
+    },
+    {
+      path: '/reset-password',
+      name: 'ResetPassword',
+      component: () => import('@/views/auth/Login.vue'),
+      meta: { guest: true, title: 'Reset Password' } as AppRouteMeta,
     },
     {
       path: '/403',
       name: 'Forbidden',
       component: () => import('@/views/auth/Login.vue'),
-      meta: { requiresAuth: false, title: 'Forbidden' },
+      meta: { guest: true, title: 'Forbidden' } as AppRouteMeta,
     },
     {
       path: '/404',
       name: 'NotFound',
       component: () => import('@/views/auth/Login.vue'),
-      meta: { requiresAuth: false, title: 'Not Found' },
+      meta: { guest: true, title: 'Not Found' } as AppRouteMeta,
     },
 
     // ── Admin ──
     {
       path: '/admin',
       component: () => import('@/layouts/AdminLayout.vue'),
-      meta: {
-        requiresAuth: true,
-        role: 'admin' as UserRole,
-        title: 'Admin',
-      },
+      meta: { roles: ['admin'] as UserRole[], title: 'Admin' } as AppRouteMeta,
       children: [
         {
           path: '',
@@ -54,10 +68,20 @@ const router = createRouter({
           meta: { title: 'Dashboard' },
         },
         {
+          path: 'dashboard',
+          redirect: { name: 'AdminDashboard' },
+        },
+        {
           path: 'users',
           name: 'AdminUsers',
           component: () => import('@/views/student/StudentDashboardView.vue'),
           meta: { title: 'Users' },
+        },
+        {
+          path: 'companies',
+          name: 'AdminCompanies',
+          component: () => import('@/views/company/CompanyListView.vue'),
+          meta: { title: 'Companies' },
         },
         {
           path: 'profile',
@@ -67,26 +91,22 @@ const router = createRouter({
         },
       ],
     },
-    {
-      path: '/admin/dashboard',
-      redirect: '/admin',
-    },
 
     // ── Tutor ──
     {
       path: '/tutor',
       component: () => import('@/layouts/TutorLayout.vue'),
-      meta: {
-        requiresAuth: true,
-        role: 'tutor' as UserRole,
-        title: 'Tutor',
-      },
+      meta: { roles: ['tutor'] as UserRole[], title: 'Tutor' } as AppRouteMeta,
       children: [
         {
           path: '',
           name: 'TutorDashboard',
           component: () => import('@/views/dashboard/TutorDashboardView.vue'),
           meta: { title: 'Dashboard' },
+        },
+        {
+          path: 'dashboard',
+          redirect: { name: 'TutorDashboard' },
         },
         {
           path: 'students',
@@ -120,26 +140,22 @@ const router = createRouter({
         },
       ],
     },
-    {
-      path: '/tutor/dashboard',
-      redirect: '/tutor',
-    },
 
     // ── Student ──
     {
       path: '/student',
       component: () => import('@/layouts/StudentLayout.vue'),
-      meta: {
-        requiresAuth: true,
-        role: 'student' as UserRole,
-        title: 'Student',
-      },
+      meta: { roles: ['student'] as UserRole[], title: 'Student' } as AppRouteMeta,
       children: [
         {
           path: '',
           name: 'StudentDashboard',
           component: () => import('@/views/student/StudentDashboardView.vue'),
           meta: { title: 'Dashboard' },
+        },
+        {
+          path: 'dashboard',
+          redirect: { name: 'StudentDashboard' },
         },
         {
           path: 'internship',
@@ -173,20 +189,12 @@ const router = createRouter({
         },
       ],
     },
-    {
-      path: '/student/dashboard',
-      redirect: '/student',
-    },
 
     // ── Company ──
     {
       path: '/company',
       component: () => import('@/layouts/CompanyLayout.vue'),
-      meta: {
-        requiresAuth: true,
-        role: 'company representative' as UserRole,
-        title: 'Company',
-      },
+      meta: { roles: ['company representative'] as UserRole[], title: 'Company' } as AppRouteMeta,
       children: [
         {
           path: '',
@@ -195,10 +203,20 @@ const router = createRouter({
           meta: { title: 'Dashboard' },
         },
         {
+          path: 'dashboard',
+          redirect: { name: 'CompanyDashboard' },
+        },
+        {
           path: 'internships',
           name: 'CompanyInternships',
           component: () => import('@/views/company/CompanyListView.vue'),
           meta: { title: 'Internships' },
+        },
+        {
+          path: 'evaluations',
+          name: 'CompanyEvaluations',
+          component: () => import('@/views/company/CompanyListView.vue'),
+          meta: { title: 'Evaluations' },
         },
         {
           path: 'students',
@@ -232,10 +250,6 @@ const router = createRouter({
         },
       ],
     },
-    {
-      path: '/company/dashboard',
-      redirect: '/company',
-    },
 
     // ── Catch-all ──
     {
@@ -245,64 +259,29 @@ const router = createRouter({
   ],
 })
 
-// ── Multi-role route meta helper ──────────────────────────────
-
-export interface RouteMeta {
-  requiresAuth?: boolean
-  role?: UserRole | UserRole[]
-  title?: string
-  permission?: string
-}
-
-// ── Navigation Guard ──────────────────────────────────────────
+// ── Global Navigation Guard ──────────────────────────────────
 
 router.beforeEach(async (to, _from, next) => {
   const store = useAuthStore()
-  const meta = to.meta as RouteMeta
+  const meta = to.meta as AppRouteMeta
+  const isGuest = isGuestRoute(meta, to.path)
 
-  // ── 1. Boot if not initialized ──
-  if (!store.initialized) {
-    await store.boot()
-  }
+  // 1. Boot the auth store if needed
+  await ensureBooted()
 
-  // ── 2. Public routes ──
-  if (meta.requiresAuth === false) {
-    if (store.isLoggedIn && (to.path === '/login' || to.path === '/register')) {
-      return next(getRedirectForRole(store.userRole))
-    }
+  // 2. Guest-only routes — redirect authenticated users to their dashboard
+  if (isGuest) {
+    redirectAuthenticatedGuest(store, next)
     return next()
   }
 
-  // ── 3. Protected routes — must be logged in ──
-  if (!store.isLoggedIn) {
-    return next(`/login?redirect=${encodeURIComponent(to.path)}`)
-  }
+  // 3. All other routes require authentication
+  if (requireAuth(store, to, next)) return
 
-  // ── 4. Role-based access ──
-  const routeRoles = meta.role
-  if (routeRoles) {
-    const roles = Array.isArray(routeRoles) ? routeRoles : [routeRoles]
-    if (!store.hasRole(...roles)) {
-      return next('/403')
-    }
-  }
-
-  // ── 5. Permission-based access ──
-  if (meta.permission && !store.hasPermission(meta.permission)) {
-    return next('/403')
-  }
+  // 4. Role-based access control
+  if (checkRoles(store, meta, next)) return
 
   next()
 })
-
-function getRedirectForRole(role: string | null): string {
-  const map: Record<string, string> = {
-    admin: '/admin',
-    tutor: '/tutor',
-    student: '/student',
-    'company representative': '/company',
-  }
-  return map[role || ''] || '/login'
-}
 
 export default router

@@ -6,6 +6,11 @@ export interface Student {
   email: string
   role: UserRole
   avatar: string | null
+  student_code?: string
+  gender?: string
+  phone?: string
+  batch_id?: number | null
+  tutor_id?: number | null
   batch?: string
   tutor?: string
   status?: string
@@ -15,11 +20,27 @@ export interface Student {
 }
 
 export interface StudentFormData {
+  student_code: string
   name: string
   email: string
+  gender: string
+  phone: string
+  batch_id: number | null
+  tutor_id: number | null
   password?: string
   password_confirmation?: string
-  avatar?: string | null
+  avatar?: File | string | null
+}
+
+export interface Batch {
+  id: number
+  name: string
+}
+
+export interface Tutor {
+  id: number
+  name: string
+  email: string
 }
 
 export interface StudentPaginationMeta {

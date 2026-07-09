@@ -74,7 +74,7 @@ export const useStudentStore = defineStore('student', () => {
     error.value = null
 
     try {
-      const { user: updated } = await studentService.update(id, data)
+      const updated = await studentService.update(id, data)
 
       const index = students.value.findIndex((s) => s.id === id)
       if (index !== -1) {

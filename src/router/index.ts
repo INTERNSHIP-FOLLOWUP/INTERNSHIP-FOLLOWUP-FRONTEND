@@ -245,8 +245,8 @@ const router = createRouter({
         {
           path: 'profile',
           name: 'CompanyProfile',
-          component: () => import('@/views/profile/ProfileView.vue'),
-          meta: { title: 'Profile' },
+          component: () => import('@/views/company/CompanyFormView.vue'),
+          meta: { title: 'Company Profile' },
         },
       ],
     },

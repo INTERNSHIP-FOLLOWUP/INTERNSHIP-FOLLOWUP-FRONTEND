@@ -5,7 +5,7 @@
     @saved="goToList"
     @cancel="goToList"
   />
-  <StudentList v-else @view="handleView" @add="handleAdd" />
+  <StudentList v-else @view="handleView" @add="handleAdd" @delete="handleDelete" />
 </template>
 
 <script setup lang="ts">
@@ -26,6 +26,10 @@ function handleView(id: number): void {
 
 function handleAdd(): void {
   router.push({ name: 'AdminUsersCreate' })
+}
+
+function handleDelete(_id: number): void {
+  // List is already updated by store
 }
 
 function goToList(): void {

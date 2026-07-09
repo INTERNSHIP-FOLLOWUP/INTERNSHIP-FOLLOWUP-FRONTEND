@@ -26,13 +26,17 @@
       >
         <div
           class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white shadow-lg shadow-indigo-500/25 animate-float"
-          :style="{ background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))` }"
+          :style="{
+            background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
+          }"
         >
           A
         </div>
         <div v-show="!sidebarCollapsed" class="min-w-0">
           <h1 class="truncate text-base font-semibold tracking-tight text-white">Admin Portal</h1>
-          <p class="truncate text-xs" :style="{ color: 'var(--sidebar-logo-text)' }">Internship Management</p>
+          <p class="truncate text-xs" :style="{ color: 'var(--sidebar-logo-text)' }">
+            Internship Management
+          </p>
         </div>
       </div>
 
@@ -53,13 +57,18 @@
               :to="item.to!"
               @click="sidebarOpen = false"
               class="sidebar-nav-link group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200"
-              :class="[isActive(item.to!) ? 'shadow-sm border-l-2' : '', sidebarCollapsed ? 'justify-center px-2' : '']"
+              :class="[
+                isActive(item.to!) ? 'shadow-sm border-l-2' : '',
+                sidebarCollapsed ? 'justify-center px-2' : '',
+              ]"
               :style="navLinkStyle(item.to!, undefined, item)"
             >
               <span
                 class="flex h-5 w-5 shrink-0 items-center justify-center transition-transform duration-200"
                 :class="isActive(item.to!) ? 'scale-110' : 'group-hover:scale-110'"
-                :style="isActive(item.to!) && item.trackShade ? { color: resolveTrackColor(item) } : {}"
+                :style="
+                  isActive(item.to!) && item.trackShade ? { color: resolveTrackColor(item) } : {}
+                "
               >
                 <component :is="item.icon" />
               </span>
@@ -73,17 +82,26 @@
               <button
                 @click.stop="toggleSubMenu(parent.name)"
                 class="sidebar-nav-link group flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200"
-                :class="[isParentActive(parent) ? 'shadow-sm border-l-2' : '', sidebarCollapsed ? 'justify-center px-2' : '']"
+                :class="[
+                  isParentActive(parent) ? 'shadow-sm border-l-2' : '',
+                  sidebarCollapsed ? 'justify-center px-2' : '',
+                ]"
                 :style="navLinkStyle(parent.to || '', parent)"
               >
                 <span
                   class="flex h-5 w-5 shrink-0 items-center justify-center transition-transform duration-200"
                   :class="isParentActive(parent) ? 'scale-110' : 'group-hover:scale-110'"
-                  :style="isParentActive(parent) && parent.trackShade ? { color: resolveTrackColor(parent) } : {}"
+                  :style="
+                    isParentActive(parent) && parent.trackShade
+                      ? { color: resolveTrackColor(parent) }
+                      : {}
+                  "
                 >
                   <component :is="parent.icon" />
                 </span>
-                <span v-show="!sidebarCollapsed" class="flex-1 truncate text-left">{{ parent.label }}</span>
+                <span v-show="!sidebarCollapsed" class="flex-1 truncate text-left">{{
+                  parent.label
+                }}</span>
                 <!-- Chevron -->
                 <svg
                   v-show="!sidebarCollapsed"
@@ -93,7 +111,12 @@
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2.5"
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </button>
 
@@ -109,21 +132,17 @@
                     :to="child.to"
                     @click="sidebarOpen = false"
                     class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200"
-                    :class="[
-                      route.path === child.to
-                        ? 'shadow-sm'
-                        : '',
-                      'pl-8',
-                    ]"
+                    :class="[route.path === child.to ? 'shadow-sm' : '', 'pl-8']"
                     :style="navChildStyle(child.to, parent)"
                   >
                     <span
                       class="h-1.5 w-1.5 shrink-0 rounded-full transition-all duration-200"
                       :class="route.path === child.to ? 'scale-125' : 'group-hover:scale-125'"
                       :style="{
-                        backgroundColor: route.path === child.to
-                          ? resolveTrackColor(parent)
-                          : 'var(--sidebar-nav-text)',
+                        backgroundColor:
+                          route.path === child.to
+                            ? resolveTrackColor(parent)
+                            : 'var(--sidebar-nav-text)',
                       }"
                     />
                     <span class="truncate">{{ child.label }}</span>
@@ -151,7 +170,12 @@
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+            />
           </svg>
           <span v-show="!sidebarCollapsed" class="truncate text-xs opacity-70">Collapse</span>
         </button>
@@ -164,7 +188,9 @@
         >
           <div
             class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white shadow-md"
-            :style="{ background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))` }"
+            :style="{
+              background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
+            }"
           >
             {{ userInitials }}
           </div>
@@ -172,7 +198,9 @@
             <p class="truncate text-sm font-semibold text-white">
               {{ user?.name || 'Administrator' }}
             </p>
-            <p class="truncate text-xs" :style="{ color: 'var(--sidebar-logo-text)' }">System Admin</p>
+            <p class="truncate text-xs" :style="{ color: 'var(--sidebar-logo-text)' }">
+              System Admin
+            </p>
           </div>
         </div>
       </div>
@@ -272,7 +300,9 @@
             >
               <div
                 class="flex h-8.5 w-8.5 items-center justify-center rounded-xl text-xs font-bold text-white shadow-sm"
-                :style="{ background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))` }"
+                :style="{
+                  background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
+                }"
               >
                 {{ userInitials }}
               </div>
@@ -392,9 +422,7 @@
           <h3 id="logout-modal-title" class="text-base font-semibold text-slate-900">
             Are you sure you want to log out?
           </h3>
-          <p class="mt-1 text-sm text-slate-600">
-            You can cancel if you changed your mind.
-          </p>
+          <p class="mt-1 text-sm text-slate-600">You can cancel if you changed your mind.</p>
 
           <div class="mt-5 flex items-center justify-end gap-3">
             <button

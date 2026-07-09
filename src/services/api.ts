@@ -21,7 +21,7 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
   },
   timeout: 15000,
@@ -55,7 +55,7 @@ async function attemptTokenRefresh(): Promise<string> {
   const response = await axios.post(
     `${api.defaults.baseURL}${AUTH_CONFIG.ENDPOINTS.REFRESH}`,
     { refresh_token: refreshToken },
-    { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
+    { headers: { 'Content-Type': 'application/json', Accept: 'application/json' } },
   )
 
   const { access_token, refresh_token, expires_in } = response.data
@@ -81,7 +81,12 @@ api.interceptors.request.use(
 
     // Add CSRF token if available (for non-get requests)
     const csrfToken = getCsrfToken()
-    if (csrfToken && config.method && !['get', 'head', 'options'].includes(config.method) && config.headers) {
+    if (
+      csrfToken &&
+      config.method &&
+      !['get', 'head', 'options'].includes(config.method) &&
+      config.headers
+    ) {
       config.headers['X-CSRF-TOKEN'] = csrfToken
     }
 
@@ -102,7 +107,7 @@ api.interceptors.request.use(
 
     return config
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 )
 
 // Cleanup completed request keys
@@ -115,7 +120,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.config?.cancel) error.config.cancel()
     return Promise.reject(error)
-  }
+  },
 )
 
 // ── Response Interceptor (Token Refresh) ────────────────────────
@@ -223,7 +228,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error)
-  }
+  },
 )
 
 // ── CSRF Helpers ────────────────────────────────────────────────

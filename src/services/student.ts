@@ -15,8 +15,14 @@ function toFormData(data: Record<string, unknown>): FormData {
 }
 
 export const studentService = {
-  async list(params?: { role?: string; per_page?: number; page?: number }): Promise<StudentListResponse> {
-    const response = await api.get<StudentListResponse>('/admin/users', { params: { role: 'student', ...params } })
+  async list(params?: {
+    role?: string
+    per_page?: number
+    page?: number
+  }): Promise<StudentListResponse> {
+    const response = await api.get<StudentListResponse>('/admin/users', {
+      params: { role: 'student', ...params },
+    })
     return response.data
   },
 
@@ -26,7 +32,10 @@ export const studentService = {
   },
 
   async create(data: StudentFormData): Promise<Student> {
-    const payload = data.avatar instanceof File ? toFormData({ ...data, role: 'student' }) : { ...data, role: 'student' }
+    const payload =
+      data.avatar instanceof File
+        ? toFormData({ ...data, role: 'student' })
+        : { ...data, role: 'student' }
     const response = await api.post<Student>('/admin/users', payload, {
       headers: payload instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {},
     })

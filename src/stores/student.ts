@@ -130,9 +130,19 @@ export const useStudentStore = defineStore('student', () => {
   }
 
   return {
-    students, currentStudent, loading, error, pagination,
-    studentCount, getStudentById,
-    fetchStudents, fetchStudent, createStudent, updateStudent, deleteStudent,
-    clearError, reset,
+    students,
+    currentStudent,
+    loading,
+    error,
+    pagination,
+    studentCount,
+    getStudentById,
+    fetchStudents,
+    fetchStudent,
+    createStudent,
+    updateStudent,
+    deleteStudent,
+    clearError,
+    reset,
   }
 })

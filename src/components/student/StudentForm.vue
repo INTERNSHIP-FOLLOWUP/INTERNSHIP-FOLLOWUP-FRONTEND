@@ -7,7 +7,11 @@
           {{ isEdit ? 'Edit Student' : 'Add Student' }}
         </h2>
         <p class="mt-1 text-sm text-slate-500">
-          {{ isEdit ? 'Update the student record below.' : 'Fill in the details to register a new student.' }}
+          {{
+            isEdit
+              ? 'Update the student record below.'
+              : 'Fill in the details to register a new student.'
+          }}
         </p>
       </div>
     </div>
@@ -170,11 +174,7 @@
         >
           <option :value="null" disabled>Select batch</option>
           <option v-if="batchStore.loading" disabled>Loading...</option>
-          <option
-            v-for="b in batchStore.batches"
-            :key="b.id"
-            :value="b.id"
-          >
+          <option v-for="b in batchStore.batches" :key="b.id" :value="b.id">
             {{ b.name }}
           </option>
         </select>
@@ -196,11 +196,7 @@
         >
           <option :value="null" disabled>Select tutor</option>
           <option v-if="tutorStore.loading" disabled>Loading...</option>
-          <option
-            v-for="t in tutorStore.tutors"
-            :key="t.id"
-            :value="t.id"
-          >
+          <option v-for="t in tutorStore.tutors" :key="t.id" :value="t.id">
             {{ t.name }}
           </option>
         </select>
@@ -209,9 +205,7 @@
 
       <!-- Password (create only) -->
       <div v-if="!isEdit" class="space-y-1.5">
-        <label for="password" class="block text-sm font-medium text-slate-700">
-          Password
-        </label>
+        <label for="password" class="block text-sm font-medium text-slate-700"> Password </label>
         <input
           id="password"
           v-model="form.password"
@@ -248,14 +242,20 @@
         :disabled="submitting"
         class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary-500/20 transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        <svg
-          v-if="submitting"
-          class="h-4 w-4 animate-spin"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        <svg v-if="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          />
         </svg>
         {{ isEdit ? 'Update Student' : 'Add Student' }}
       </button>
@@ -311,7 +311,15 @@ const originalAvatar = ref<string | null>(null)
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_RE = /^[\d\s\-+()]{7,20}$/
 
-const requiredFields = ['student_code', 'name', 'email', 'gender', 'phone', 'batch_id', 'tutor_id'] as const
+const requiredFields = [
+  'student_code',
+  'name',
+  'email',
+  'gender',
+  'phone',
+  'batch_id',
+  'tutor_id',
+] as const
 
 function inputClass(field: string): string {
   return errors[field]
@@ -327,7 +335,7 @@ function clearFieldError(field: string): void {
 function validateField(field: string): boolean {
   const value = (form as Record<string, unknown>)[field]
 
-  if (requiredFields.includes(field as typeof requiredFields[number]) && !value) {
+  if (requiredFields.includes(field as (typeof requiredFields)[number]) && !value) {
     errors[field] = 'This field is required.'
     return false
   }

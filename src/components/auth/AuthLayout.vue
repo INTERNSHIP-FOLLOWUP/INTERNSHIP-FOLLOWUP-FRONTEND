@@ -55,7 +55,8 @@
         <div class="mt-8 text-center text-white">
           <h2 class="text-2xl font-semibold">Track Your Internship Journey</h2>
           <p class="mt-2 text-primary-100 text-sm max-w-md mx-auto">
-            Connect students with companies, manage internships, and monitor progress all in one place.
+            Connect students with companies, manage internships, and monitor progress all in one
+            place.
           </p>
         </div>
       </div>
@@ -66,9 +67,7 @@
       <div
         class="absolute bottom-20 right-16 w-48 h-48 bg-white/5 rounded-full blur-3xl animate-float-slow"
       />
-      <div
-        class="absolute top-1/2 left-1/3 w-40 h-40 bg-white/5 rounded-full blur-2xl"
-      />
+      <div class="absolute top-1/2 left-1/3 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
     </div>
 
     <div class="flex-1 flex items-center justify-center px-8 lg:px-16">

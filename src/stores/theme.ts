@@ -218,7 +218,10 @@ export const useThemeStore = defineStore('theme', () => {
       root.style.setProperty('--sidebar-user-bg', 'rgba(30, 41, 59, 0.4)')
       root.style.setProperty('--sidebar-nav-active-text', s[400])
       root.style.setProperty('--sidebar-nav-active-border', s[500])
-      root.style.setProperty('--sidebar-nav-active-bg', `linear-gradient(to right, ${s[500]}26, ${s[400]}1a)`)
+      root.style.setProperty(
+        '--sidebar-nav-active-bg',
+        `linear-gradient(to right, ${s[500]}26, ${s[400]}1a)`,
+      )
       root.style.setProperty('--sidebar-section-text', '#64748b')
       root.style.setProperty('--sidebar-logo-text', '#94a3b8')
     } else if (style === 'colored') {
@@ -230,7 +233,10 @@ export const useThemeStore = defineStore('theme', () => {
       root.style.setProperty('--sidebar-user-bg', 'rgba(255, 255, 255, 0.06)')
       root.style.setProperty('--sidebar-nav-active-text', s[300])
       root.style.setProperty('--sidebar-nav-active-border', s[400])
-      root.style.setProperty('--sidebar-nav-active-bg', `linear-gradient(to right, ${s[500]}33, ${s[400]}1a)`)
+      root.style.setProperty(
+        '--sidebar-nav-active-bg',
+        `linear-gradient(to right, ${s[500]}33, ${s[400]}1a)`,
+      )
       root.style.setProperty('--sidebar-section-text', 'rgba(255, 255, 255, 0.35)')
       root.style.setProperty('--sidebar-logo-text', 'rgba(255, 255, 255, 0.5)')
     } else {
@@ -243,7 +249,10 @@ export const useThemeStore = defineStore('theme', () => {
       root.style.setProperty('--sidebar-user-bg', '#f8fafc')
       root.style.setProperty('--sidebar-nav-active-text', s[600])
       root.style.setProperty('--sidebar-nav-active-border', s[500])
-      root.style.setProperty('--sidebar-nav-active-bg', `linear-gradient(to right, ${s[500]}15, ${s[400]}0d)`)
+      root.style.setProperty(
+        '--sidebar-nav-active-bg',
+        `linear-gradient(to right, ${s[500]}15, ${s[400]}0d)`,
+      )
       root.style.setProperty('--sidebar-section-text', '#94a3b8')
       root.style.setProperty('--sidebar-logo-text', '#64748b')
     }

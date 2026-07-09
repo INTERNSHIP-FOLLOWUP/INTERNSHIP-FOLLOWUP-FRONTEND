@@ -24,7 +24,10 @@
           C
         </div>
         <div>
-          <h1 class="text-base font-semibold tracking-tight" :style="{ color: 'var(--sidebar-heading)' }">
+          <h1
+            class="text-base font-semibold tracking-tight"
+            :style="{ color: 'var(--sidebar-heading)' }"
+          >
             Company Panel
           </h1>
           <p class="text-xs" :style="{ color: 'var(--sidebar-subheading)' }">Internship System</p>
@@ -32,7 +35,10 @@
       </div>
 
       <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider" :style="{ color: 'var(--sidebar-section-title)' }">
+        <p
+          class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider"
+          :style="{ color: 'var(--sidebar-section-title)' }"
+        >
           Menu
         </p>
         <router-link
@@ -55,7 +61,10 @@
       </nav>
 
       <div class="p-4" :style="{ borderTop: '1px solid var(--sidebar-border)' }">
-        <div class="flex items-center gap-3 rounded-xl p-3" :style="{ backgroundColor: 'var(--sidebar-user-bg)' }">
+        <div
+          class="flex items-center gap-3 rounded-xl p-3"
+          :style="{ backgroundColor: 'var(--sidebar-user-bg)' }"
+        >
           <div
             class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white shadow-lg"
             :style="{ background: 'var(--sidebar-avatar-bg)' }"
@@ -63,8 +72,12 @@
             {{ userInitials }}
           </div>
           <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-medium" :style="{ color: 'var(--sidebar-user-name)' }">{{ user?.name }}</p>
-            <p class="truncate text-xs" :style="{ color: 'var(--sidebar-user-role)' }">Company Representative</p>
+            <p class="truncate text-sm font-medium" :style="{ color: 'var(--sidebar-user-name)' }">
+              {{ user?.name }}
+            </p>
+            <p class="truncate text-xs" :style="{ color: 'var(--sidebar-user-role)' }">
+              Company Representative
+            </p>
           </div>
         </div>
       </div>
@@ -353,7 +366,6 @@ async function confirmLogout() {
   }
 }
 
-
 function createIcon(path: string) {
   return defineComponent({
     setup() {
@@ -439,9 +451,7 @@ const navItems: NavItem[] = [
     name: 'profile',
     label: 'Profile',
     to: '/company/profile',
-    icon: createIcon(
-      'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
-    ),
+    icon: createIcon('M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'),
   },
 ]
 </script>

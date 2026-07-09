@@ -1,9 +1,6 @@
 <template>
   <div class="space-y-1.5">
-    <label
-      :for="inputId"
-      class="block text-sm font-medium text-slate-700"
-    >
+    <label :for="inputId" class="block text-sm font-medium text-slate-700">
       {{ label }}
       <span v-if="required" class="text-error ml-0.5">*</span>
     </label>
@@ -53,13 +50,7 @@
             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
           />
         </svg>
-        <svg
-          v-else
-          class="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -70,11 +61,7 @@
       </button>
     </div>
 
-    <p
-      v-if="error"
-      class="text-sm text-error flex items-center gap-1 mt-1"
-      role="alert"
-    >
+    <p v-if="error" class="text-sm text-error flex items-center gap-1 mt-1" role="alert">
       <svg class="h-4 w-4 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
         <path
           fill-rule="evenodd"

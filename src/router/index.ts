@@ -96,6 +96,24 @@ const router = createRouter({
           meta: { title: 'Companies' },
         },
         {
+          path: 'assignments',
+          name: 'AdminAssignments',
+          component: () => import('@/views/assignment/AssignmentView.vue'),
+          meta: { title: 'Assignments' },
+        },
+        {
+          path: 'assignments/create',
+          name: 'AdminAssignmentsCreate',
+          component: () => import('@/views/assignment/AssignmentView.vue'),
+          meta: { title: 'New Assignment' },
+        },
+        {
+          path: 'assignments/:id',
+          name: 'AdminAssignmentsEdit',
+          component: () => import('@/views/assignment/AssignmentView.vue'),
+          meta: { title: 'Edit Assignment' },
+        },
+        {
           path: 'profile',
           name: 'AdminProfile',
           component: () => import('@/views/profile/ProfileView.vue'),

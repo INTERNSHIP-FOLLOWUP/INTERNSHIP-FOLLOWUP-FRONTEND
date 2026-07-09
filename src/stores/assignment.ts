@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import api from '@/services/api'
+import { assignmentService } from '@/services/assignment'
 import { parseApiError } from '@/utils/errorParser'
 import type {
   Assignment,
   CreateAssignmentPayload,
   UpdateAssignmentPayload,
-  AssignmentPaginationMeta,
+  AssignmentListResponse,
 } from '@/types/assignment'
 
 export const useAssignmentStore = defineStore('assignment', () => {
@@ -14,24 +14,18 @@ export const useAssignmentStore = defineStore('assignment', () => {
   const currentAssignment = ref<Assignment | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
-  const pagination = ref<AssignmentPaginationMeta | null>(null)
+  const pagination = ref<AssignmentListResponse['meta'] | null>(null)
 
-  const assignmentCount = computed(() =>
-    pagination.value ? pagination.value.total : assignments.value.length,
-  )
+  const assignmentCount = computed(() => pagination.value?.total ?? assignments.value.length)
 
-  function getAssignmentById(id: number): Assignment | null {
-    return assignments.value.find((a) => a.id === id) ?? null
-  }
-
-  async function fetchAssignments(params: Record<string, unknown> = {}): Promise<void> {
+  async function fetchAssignments(params?: { page?: number; per_page?: number; status?: string; company_id?: number }): Promise<void> {
     loading.value = true
     error.value = null
 
     try {
-      const res = await api.get('/assignments', { params })
-      const data = res.data as Assignment[] | { data: Assignment[] }
-      assignments.value = Array.isArray(data) ? data : (data?.data ?? [])
+      const response = await assignmentService.list(params)
+      assignments.value = response.data
+      pagination.value = response.meta
     } catch (err: unknown) {
       const parsed = parseApiError(err)
       error.value = parsed.message
@@ -42,29 +36,28 @@ export const useAssignmentStore = defineStore('assignment', () => {
   }
 
   async function createAssignment(payload: CreateAssignmentPayload): Promise<Assignment> {
+    loading.value = true
     error.value = null
 
     try {
-      const res = await api.post('/assignments', payload)
-      const record = res.data as Assignment
+      const record = await assignmentService.create(payload)
       assignments.value.push(record)
       return record
     } catch (err: unknown) {
       const parsed = parseApiError(err)
       error.value = parsed.message
       throw err
+    } finally {
+      loading.value = false
     }
   }
 
-  async function updateAssignment(
-    id: number,
-    payload: UpdateAssignmentPayload,
-  ): Promise<Assignment> {
+  async function updateAssignment(id: number, payload: UpdateAssignmentPayload): Promise<Assignment> {
+    loading.value = true
     error.value = null
 
     try {
-      const res = await api.put(`/assignments/${id}`, payload)
-      const updated = res.data as Assignment
+      const updated = await assignmentService.update(id, payload)
       const idx = assignments.value.findIndex((a) => a.id === id)
       if (idx !== -1) {
         assignments.value[idx] = updated
@@ -77,11 +70,35 @@ export const useAssignmentStore = defineStore('assignment', () => {
       const parsed = parseApiError(err)
       error.value = parsed.message
       throw err
+    } finally {
+      loading.value = false
     }
   }
 
   async function updateStatus(id: number, status: Assignment['status']): Promise<Assignment> {
     return updateAssignment(id, { status })
+  }
+
+  async function deleteAssignment(id: number): Promise<void> {
+    loading.value = true
+    error.value = null
+
+    try {
+      await assignmentService.delete(id)
+      assignments.value = assignments.value.filter((a) => a.id !== id)
+      if (currentAssignment.value?.id === id) {
+        currentAssignment.value = null
+      }
+      pagination.value = pagination.value
+        ? { ...pagination.value, total: pagination.value.total - 1 }
+        : null
+    } catch (err: unknown) {
+      const parsed = parseApiError(err)
+      error.value = parsed.message
+      throw err
+    } finally {
+      loading.value = false
+    }
   }
 
   function clearError(): void {
@@ -103,11 +120,11 @@ export const useAssignmentStore = defineStore('assignment', () => {
     error,
     pagination,
     assignmentCount,
-    getAssignmentById,
     fetchAssignments,
     createAssignment,
     updateAssignment,
     updateStatus,
+    deleteAssignment,
     clearError,
     reset,
   }

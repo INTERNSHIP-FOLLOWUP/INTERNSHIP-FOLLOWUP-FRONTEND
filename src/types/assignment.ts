@@ -1,10 +1,13 @@
-export type AssignmentStatus = 'Assigned' | 'In Progress' | 'Completed' | 'Terminated'
+export type AssignmentStatus = 'assigned' | 'in_progress' | 'completed' | 'terminated'
 
 export interface Assignment {
   id: number
   student_id: number
   company_id: number
   tutor_id: number
+  student_name: string
+  company_name: string
+  tutor_name: string
   position: string
   start_date: string
   end_date: string
@@ -36,4 +39,9 @@ export interface AssignmentPaginationMeta {
   total: number
   from: number | null
   to: number | null
+}
+
+export interface AssignmentListResponse {
+  data: Assignment[]
+  meta: AssignmentPaginationMeta
 }

@@ -52,53 +52,12 @@
       </table>
     </div>
 
-    <!-- Modal -->
-    <div
+    <BatchForm
       v-if="showModal"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-      @click.self="closeModal"
-    >
-      <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-        <h2 class="text-lg font-semibold text-gray-900">
-          {{ editingBatch ? 'Edit Batch' : 'New Batch' }}
-        </h2>
-        <form @submit.prevent="handleSubmit" class="mt-4 space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Batch Name</label>
-            <input
-              v-model="form.batch_name"
-              type="text"
-              required
-              class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Year</label>
-            <input
-              v-model="form.year"
-              type="number"
-              required
-              class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </div>
-          <div class="flex justify-end gap-3">
-            <button
-              type="button"
-              @click="closeModal"
-              class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-            >
-              {{ editingBatch ? 'Update' : 'Create' }}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      :batch="editingBatch"
+      @saved="onSaved"
+      @cancelled="closeModal"
+    />
 
     <!-- Delete Confirmation -->
     <div
@@ -131,9 +90,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useBatchStore } from '@/stores/batchStore'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import BatchForm from './BatchForm.vue'
 
 const store = useBatchStore()
 
@@ -142,26 +102,17 @@ const showDeleteConfirm = ref(false)
 const editingBatch = ref<Record<string, unknown> | null>(null)
 const deletingBatch = ref<Record<string, unknown> | null>(null)
 
-const form = reactive({
-  batch_name: '',
-  year: new Date().getFullYear().toString(),
-})
-
 onMounted(() => {
   store.fetchBatches()
 })
 
 function openCreateModal() {
   editingBatch.value = null
-  form.batch_name = ''
-  form.year = new Date().getFullYear().toString()
   showModal.value = true
 }
 
 function openEditModal(batch: Record<string, unknown>) {
   editingBatch.value = batch
-  form.batch_name = (batch.batch_name as string) || (batch.name as string) || ''
-  form.year = (batch.year as string) || ''
   showModal.value = true
 }
 
@@ -170,13 +121,7 @@ function closeModal() {
   editingBatch.value = null
 }
 
-async function handleSubmit() {
-  const payload = { ...form }
-  if (editingBatch.value) {
-    await store.updateBatch(editingBatch.value.id as number | string, payload)
-  } else {
-    await store.createBatch(payload)
-  }
+function onSaved() {
   closeModal()
 }
 

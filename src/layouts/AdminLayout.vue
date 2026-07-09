@@ -11,61 +11,164 @@
 
     <!-- Sidebar -->
     <aside
-      class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col shadow-2xl transition-transform duration-300 lg:static lg:translate-x-0"
-      :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+      class="fixed inset-y-0 left-0 z-30 flex flex-col shadow-2xl transition-all duration-300 lg:static lg:translate-x-0"
+      :class="[
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+        sidebarCollapsed ? 'w-16' : 'w-64',
+      ]"
       :style="sidebarStyles"
     >
       <!-- Logo / Branding -->
-      <div class="flex h-16 items-center gap-3 px-6" :style="{ borderBottom: '1px solid var(--sidebar-border)' }">
+      <div
+        class="flex h-16 items-center px-4 transition-all duration-300"
+        :class="sidebarCollapsed ? 'justify-center' : 'gap-3 px-6'"
+        :style="{ borderBottom: '1px solid var(--sidebar-border)' }"
+      >
         <div
-          class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white shadow-lg shadow-indigo-500/25 animate-float"
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white shadow-lg shadow-indigo-500/25 animate-float"
           :style="{ background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))` }"
         >
           A
         </div>
-        <div>
-          <h1 class="text-base font-semibold tracking-tight text-white">Admin Portal</h1>
-          <p class="text-xs" :style="{ color: 'var(--sidebar-logo-text)' }">Internship Management</p>
+        <div v-show="!sidebarCollapsed" class="min-w-0">
+          <h1 class="truncate text-base font-semibold tracking-tight text-white">Admin Portal</h1>
+          <p class="truncate text-xs" :style="{ color: 'var(--sidebar-logo-text)' }">Internship Management</p>
         </div>
       </div>
 
       <!-- Navigation Links -->
-      <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        <p class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider" :style="{ color: 'var(--sidebar-section-text)' }">
+      <nav class="flex-1 overflow-y-auto px-2 py-4">
+        <p
+          v-show="!sidebarCollapsed"
+          class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider"
+          :style="{ color: 'var(--sidebar-section-text)' }"
+        >
           Core Modules
         </p>
-        <router-link
-          v-for="item in navItems"
-          :key="item.name"
-          :to="item.to"
-          @click="sidebarOpen = false"
-          class="sidebar-nav-link group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200"
-          :class="isActive(item.to) ? 'shadow-sm border-l-2' : ''"
-          :style="navLinkStyle(item.to)"
-        >
-          <span
-            class="flex h-5 w-5 items-center justify-center transition-transform duration-200"
-            :class="isActive(item.to) ? 'scale-110' : 'group-hover:scale-110'"
-          >
-            <component :is="item.icon" />
-          </span>
-          {{ item.label }}
-        </router-link>
+
+        <div class="space-y-1">
+          <!-- Single items (no children) -->
+          <template v-for="item in flatItems" :key="item.name">
+            <router-link
+              :to="item.to!"
+              @click="sidebarOpen = false"
+              class="sidebar-nav-link group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200"
+              :class="[isActive(item.to!) ? 'shadow-sm border-l-2' : '', sidebarCollapsed ? 'justify-center px-2' : '']"
+              :style="navLinkStyle(item.to!, undefined, item)"
+            >
+              <span
+                class="flex h-5 w-5 shrink-0 items-center justify-center transition-transform duration-200"
+                :class="isActive(item.to!) ? 'scale-110' : 'group-hover:scale-110'"
+                :style="isActive(item.to!) && item.trackShade ? { color: resolveTrackColor(item) } : {}"
+              >
+                <component :is="item.icon" />
+              </span>
+              <span v-show="!sidebarCollapsed" class="truncate">{{ item.label }}</span>
+            </router-link>
+          </template>
+
+          <!-- Parent items (with children) -->
+          <template v-for="parent in parentItems" :key="parent.name">
+            <div>
+              <button
+                @click.stop="toggleSubMenu(parent.name)"
+                class="sidebar-nav-link group flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200"
+                :class="[isParentActive(parent) ? 'shadow-sm border-l-2' : '', sidebarCollapsed ? 'justify-center px-2' : '']"
+                :style="navLinkStyle(parent.to || '', parent)"
+              >
+                <span
+                  class="flex h-5 w-5 shrink-0 items-center justify-center transition-transform duration-200"
+                  :class="isParentActive(parent) ? 'scale-110' : 'group-hover:scale-110'"
+                  :style="isParentActive(parent) && parent.trackShade ? { color: resolveTrackColor(parent) } : {}"
+                >
+                  <component :is="parent.icon" />
+                </span>
+                <span v-show="!sidebarCollapsed" class="flex-1 truncate text-left">{{ parent.label }}</span>
+                <!-- Chevron -->
+                <svg
+                  v-show="!sidebarCollapsed"
+                  class="h-3.5 w-3.5 transition-transform duration-200"
+                  :class="isSubMenuOpen(parent.name) ? 'rotate-90' : ''"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+
+              <!-- Sub-menu children -->
+              <transition name="submenu">
+                <div
+                  v-if="isSubMenuOpen(parent.name) && !sidebarCollapsed"
+                  class="mt-0.5 space-y-0.5 overflow-hidden pl-3"
+                >
+                  <router-link
+                    v-for="child in parent.children!"
+                    :key="child.name"
+                    :to="child.to"
+                    @click="sidebarOpen = false"
+                    class="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200"
+                    :class="[
+                      route.path === child.to
+                        ? 'shadow-sm'
+                        : '',
+                      'pl-8',
+                    ]"
+                    :style="navChildStyle(child.to, parent)"
+                  >
+                    <span
+                      class="h-1.5 w-1.5 shrink-0 rounded-full transition-all duration-200"
+                      :class="route.path === child.to ? 'scale-125' : 'group-hover:scale-125'"
+                      :style="{
+                        backgroundColor: route.path === child.to
+                          ? resolveTrackColor(parent)
+                          : 'var(--sidebar-nav-text)',
+                      }"
+                    />
+                    <span class="truncate">{{ child.label }}</span>
+                  </router-link>
+                </div>
+              </transition>
+            </div>
+          </template>
+        </div>
       </nav>
 
-      <!-- Bottom User details -->
-      <div class="p-4" :style="{ borderTop: '1px solid var(--sidebar-border)' }">
+      <!-- Bottom: Collapse Toggle + User -->
+      <div class="border-t p-3" :style="{ borderColor: 'var(--sidebar-border)' }">
+        <!-- Collapse toggle -->
+        <button
+          @click="toggleSidebarCollapse"
+          class="sidebar-nav-link mb-2 flex w-full items-center justify-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200"
+          :style="{ color: 'var(--sidebar-nav-text)' }"
+          :title="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+        >
+          <svg
+            class="h-4 w-4 transition-transform duration-300"
+            :class="sidebarCollapsed ? 'rotate-180' : ''"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+          </svg>
+          <span v-show="!sidebarCollapsed" class="truncate text-xs opacity-70">Collapse</span>
+        </button>
+
+        <!-- User info -->
         <div
-          class="flex items-center gap-3 rounded-xl p-3 transition-colors"
+          class="flex items-center rounded-xl p-2.5 transition-colors"
+          :class="sidebarCollapsed ? 'justify-center' : 'gap-3'"
           :style="{ backgroundColor: 'var(--sidebar-user-bg)' }"
         >
           <div
-            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white shadow-md"
+            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white shadow-md"
             :style="{ background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))` }"
           >
             {{ userInitials }}
           </div>
-          <div class="min-w-0 flex-1">
+          <div v-show="!sidebarCollapsed" class="min-w-0 flex-1">
             <p class="truncate text-sm font-semibold text-white">
               {{ user?.name || 'Administrator' }}
             </p>
@@ -126,7 +229,6 @@
                 d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
               />
             </svg>
-            <!-- Color swatch indicator -->
             <span
               class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white shadow-sm"
               :style="{ backgroundColor: themeStore.currentTheme().shades[500] }"
@@ -317,12 +419,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, h, defineComponent } from 'vue'
-
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
+import { NAV_ITEMS, type NavItem } from '@/composables/useNavigation'
 import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
+
+const SIDEBAR_COLLAPSED_KEY = 'admin-sidebar-collapsed'
 
 const route = useRoute()
 const auth = useAuthStore()
@@ -331,28 +435,81 @@ const themeStore = useThemeStore()
 const sidebarOpen = ref(false)
 const dropdownOpen = ref(false)
 const themeSettingsOpen = ref(false)
+const sidebarCollapsed = ref(localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === 'true')
+
+const expandedMenus = ref<Record<string, boolean>>({})
+
+function isParentActive(parent: NavItem): boolean {
+  if (!parent.children) return false
+  return parent.children.some((child) => route.path.startsWith(child.to))
+}
+
+function isActive(path: string): boolean {
+  if (path === '/admin/dashboard') {
+    return route.path === '/admin/dashboard'
+  }
+  return route.path.startsWith(path)
+}
+
+const flatItems = computed(() => NAV_ITEMS.filter((item) => !item.children))
+const parentItems = computed(() => NAV_ITEMS.filter((item) => item.children))
+
+function toggleSubMenu(name: string): void {
+  expandedMenus.value[name] = !expandedMenus.value[name]
+}
+
+function isSubMenuOpen(name: string): boolean {
+  return !!expandedMenus.value[name]
+}
+
+// Auto-open submenu if a child is active
+NAV_ITEMS.filter((item) => item.children).forEach((parent) => {
+  if (parent.children!.some((child) => route.path.startsWith(child.to))) {
+    expandedMenus.value[parent.name] = true
+  }
+})
 
 const sidebarStyles = computed(() => ({
   backgroundColor: 'var(--sidebar-bg)',
 }))
 
-function navLinkStyle(to: string): Record<string, string> {
-  if (isActive(to)) {
-    return {
-      background: 'var(--sidebar-nav-active-bg)',
-      color: 'var(--sidebar-nav-active-text)',
-      borderColor: 'var(--sidebar-nav-active-border)',
-    }
-  }
-  return {
-    color: 'var(--sidebar-nav-text)',
-  }
+function resolveTrackColor(item?: NavItem): string {
+  if (!item?.trackShade) return 'var(--sidebar-nav-active-border)'
+  return themeStore.currentTheme().shades[item.trackShade]
 }
 
-function handleClickOutside() {
-  if (dropdownOpen.value) {
-    dropdownOpen.value = false
+function navLinkStyle(to: string, _parent?: NavItem, item?: NavItem): Record<string, string> {
+  const navItem = item || _parent
+  const active = _parent ? isParentActive(_parent) : isActive(to)
+  if (active) {
+    const color = resolveTrackColor(navItem)
+    return {
+      background: `linear-gradient(to right, ${color}18, ${color}0a)`,
+      color,
+      borderLeftColor: color,
+    }
   }
+  return { color: 'var(--sidebar-nav-text)' }
+}
+
+function navChildStyle(to: string, parent?: NavItem): Record<string, string> {
+  if (route.path === to) {
+    const color = resolveTrackColor(parent)
+    return {
+      background: `linear-gradient(to right, ${color}12, ${color}06)`,
+      color,
+    }
+  }
+  return { color: 'var(--sidebar-nav-text)' }
+}
+
+function toggleSidebarCollapse(): void {
+  sidebarCollapsed.value = !sidebarCollapsed.value
+  localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(sidebarCollapsed.value))
+}
+
+function handleClickOutside(): void {
+  dropdownOpen.value = false
 }
 
 onMounted(() => {
@@ -380,27 +537,20 @@ const pageTitle = computed(() => {
   return typeof title === 'string' ? title : 'Admin Dashboard'
 })
 
-function isActive(path: string) {
-  if (path === '/admin/dashboard') {
-    return route.path === '/admin/dashboard'
-  }
-  return route.path.startsWith(path)
-}
-
 const logoutModalOpen = ref(false)
 const loggingOut = ref(false)
 
-function openLogoutModal() {
+function openLogoutModal(): void {
   dropdownOpen.value = false
   logoutModalOpen.value = true
 }
 
-function closeLogoutModal() {
+function closeLogoutModal(): void {
   if (loggingOut.value) return
   logoutModalOpen.value = false
 }
 
-async function confirmLogout() {
+async function confirmLogout(): Promise<void> {
   loggingOut.value = true
   try {
     await auth.logout()
@@ -409,90 +559,6 @@ async function confirmLogout() {
     logoutModalOpen.value = false
   }
 }
-
-
-function createIcon(path: string) {
-  return defineComponent({
-    setup() {
-      return () =>
-        h(
-          'svg',
-          {
-            class: 'h-5.5 w-5.5',
-            fill: 'none',
-            stroke: 'currentColor',
-            viewBox: '0 0 24 24',
-          },
-          [
-            h('path', {
-              'stroke-linecap': 'round',
-              'stroke-linejoin': 'round',
-              'stroke-width': 2,
-              d: path,
-            }),
-          ],
-        )
-    },
-  })
-}
-
-interface NavItem {
-  name: string
-  label: string
-  to: string
-  icon: ReturnType<typeof defineComponent>
-}
-
-const navItems: NavItem[] = [
-  {
-    name: 'dashboard',
-    label: 'Dashboard',
-    to: '/admin/dashboard',
-    icon: createIcon(
-      'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
-    ),
-  },
-  {
-    name: 'companies',
-    label: 'Companies',
-    to: '/admin/companies',
-    icon: createIcon(
-      'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
-    ),
-  },
-  {
-    name: 'students',
-    label: 'Students',
-    to: '/admin/students',
-    icon: createIcon(
-      'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',
-    ),
-  },
-  {
-    name: 'batches',
-    label: 'Batches',
-    to: '/admin/batches',
-    icon: createIcon(
-      'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
-    ),
-  },
-  {
-    name: 'assignments',
-    label: 'Assignments',
-    to: '/admin/assignments',
-    icon: createIcon(
-      'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01',
-    ),
-  },
-  {
-    name: 'reports',
-    label: 'Reports',
-    to: '/admin/reports',
-    icon: createIcon(
-      'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
-    ),
-  },
-]
 </script>
 
 <style scoped>
@@ -518,6 +584,18 @@ const navItems: NavItem[] = [
 .dropdown-leave-to {
   opacity: 0;
   transform: translateY(-4px) scale(0.98);
+}
+
+.submenu-enter-active {
+  transition: all 0.2s ease-out;
+}
+.submenu-leave-active {
+  transition: all 0.15s ease-in;
+}
+.submenu-enter-from,
+.submenu-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 
 .sidebar-nav-link:hover {

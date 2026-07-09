@@ -1,10 +1,22 @@
 <template>
   <div class="rounded-2xl border border-gray-100 bg-white shadow-sm p-6">
-    <div class="mb-6">
-      <h1 class="text-xl font-semibold text-gray-900">Company Profile</h1>
-      <p class="mt-1 text-sm text-gray-500">
-        Update your company details. Changes are saved locally for now (backend wiring pending).
-      </p>
+    <div class="mb-6 flex items-start justify-between gap-4">
+      <div>
+        <h1 class="text-xl font-semibold text-gray-900">{{ modeLabel }} Company</h1>
+        <p class="mt-1 text-sm text-gray-500">
+          {{ mode === 'create' ? 'Create a new company profile.' : 'Edit the company profile.' }}
+        </p>
+      </div>
+
+      <button
+        v-if="showCancel"
+        type="button"
+        class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
+        :disabled="submitting"
+        @click="emit('cancel')"
+      >
+        Cancel
+      </button>
     </div>
 
     <form class="space-y-5" @submit.prevent="handleSubmit" novalidate>
@@ -59,7 +71,7 @@
 
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="text-xs text-gray-400">
-          Tip: You can use this form as the foundation for Create/Update company flows.
+          Required fields will be validated client-side before submit.
         </div>
 
         <div class="flex gap-3">
@@ -78,7 +90,7 @@
             :disabled="submitting"
             class="sm:w-[160px]"
           >
-            {{ submitting ? 'Saving…' : 'Save Changes' }}
+            {{ submitting ? (mode === 'create' ? 'Creating…' : 'Saving…') : (mode === 'create' ? 'Create' : 'Save Changes') }}
           </PrimaryButton>
         </div>
       </div>
@@ -87,11 +99,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import InputField from '@/components/ui/InputField.vue'
 import PrimaryButton from '@/components/ui/PrimaryButton.vue'
 
-type CompanyFormState = {
+export type CompanyFormMode = 'create' | 'edit'
+
+export type CompanyFormData = {
   companyName: string
   companyEmail: string
   location: string
@@ -99,12 +113,32 @@ type CompanyFormState = {
   website: string
 }
 
-type CompanyFormErrors = Partial<Record<keyof CompanyFormState, string>>
+type CompanyFormErrors = Partial<Record<keyof CompanyFormData, string>>
+
+type Props = {
+  mode: CompanyFormMode
+  /** Used in edit mode (and also allows prefill in create mode if desired). */
+  initialData?: Partial<CompanyFormData>
+  /** When used inside a modal/dialog, you may want an explicit cancel button. */
+  showCancel?: boolean
+}
+
+type Emits = {
+  submit: [payload: CompanyFormData]
+  cancel: []
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  initialData: () => ({}),
+  showCancel: false,
+})
+
+const emit = defineEmits<Emits>()
 
 const submitting = ref(false)
 const formError = ref('')
 
-const initialForm: CompanyFormState = {
+const initialForm: CompanyFormData = {
   companyName: '',
   companyEmail: '',
   location: '',
@@ -112,8 +146,11 @@ const initialForm: CompanyFormState = {
   website: '',
 }
 
-const form = reactive<CompanyFormState>({ ...initialForm })
+const form = reactive<CompanyFormData>({ ...initialForm })
 const errors = reactive<CompanyFormErrors>({})
+
+const modeLabel = computed(() => (props.mode === 'create' ? 'Create' : 'Edit'))
+const showCancel = computed(() => props.showCancel)
 
 function validateEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
@@ -122,8 +159,11 @@ function validateEmail(value: string): boolean {
 function validateUrl(value: string): boolean {
   if (!value.trim()) return true
   try {
-    // Accept http(s) and also plain domains if user types them.
-    const normalized = value.startsWith('http://') || value.startsWith('https://') ? value : `https://${value}`
+    const normalized =
+      value.startsWith('http://') || value.startsWith('https://')
+        ? value
+        : `https://${value}`
+
     // eslint-disable-next-line no-new
     new URL(normalized)
     return true
@@ -136,11 +176,9 @@ function validate(): boolean {
   formError.value = ''
   let ok = true
 
-  errors.companyName = ''
-  errors.companyEmail = ''
-  errors.location = ''
-  errors.contactPhone = ''
-  errors.website = ''
+  ;(Object.keys(initialForm) as Array<keyof CompanyFormData>).forEach((k) => {
+    errors[k] = ''
+  })
 
   if (!form.companyName.trim()) {
     errors.companyName = 'Company name is required.'
@@ -172,12 +210,21 @@ function validate(): boolean {
 }
 
 function reset() {
-  Object.assign(form, { ...initialForm })
-  Object.keys(errors).forEach((k) => {
-    delete (errors as any)[k]
+  Object.assign(form, {
+    ...initialForm,
+    ...props.initialData,
+  })
+  ;(Object.keys(initialForm) as Array<keyof CompanyFormData>).forEach((k) => {
+    errors[k] = ''
   })
   formError.value = ''
 }
+
+watch(
+  () => props.initialData,
+  () => reset(),
+  { deep: true, immediate: true },
+)
 
 async function handleSubmit() {
   if (!validate()) return
@@ -186,13 +233,10 @@ async function handleSubmit() {
   formError.value = ''
 
   try {
-    // Backend not wired yet.
-    // Replace this with: await companyStore.updateCompanyProfile(form)
-    // when API endpoints are available.
-    // eslint-disable-next-line no-console
-    console.log('CompanyForm payload:', { ...form })
+    emit('submit', { ...form })
   } catch (e: unknown) {
-    formError.value = e instanceof Error ? e.message : 'Failed to save changes.'
+    // Parent API wiring errors (or any thrown error) can be surfaced here.
+    formError.value = e instanceof Error ? e.message : 'Failed to submit.'
   } finally {
     submitting.value = false
   }

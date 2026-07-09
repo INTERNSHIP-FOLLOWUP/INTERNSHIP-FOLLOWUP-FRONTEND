@@ -35,6 +35,7 @@
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">ID</th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Batch Name</th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Year</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Students</th>
             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
           </tr>
         </thead>
@@ -43,6 +44,7 @@
             <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ batch.id }}</td>
             <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{{ batch.batch_name || batch.name }}</td>
             <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ batch.year }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ studentCount(batch) }}</td>
             <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
               <button @click="openEditModal(batch)" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
               <button @click="confirmDelete(batch)" class="text-red-600 hover:text-red-900">Delete</button>
@@ -119,6 +121,14 @@ function openEditModal(batch: Record<string, unknown>) {
 function closeModal() {
   showModal.value = false
   editingBatch.value = null
+}
+
+function studentCount(batch: Record<string, unknown>) {
+  const count = batch.students_count
+  if (typeof count === 'number') return count
+  const students = batch.students
+  if (Array.isArray(students)) return students.length
+  return '-'
 }
 
 function onSaved() {

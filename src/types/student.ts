@@ -6,6 +6,9 @@ export interface Student {
   email: string
   role: UserRole
   avatar: string | null
+  batch?: string
+  tutor?: string
+  status?: string
   created_at?: string
   updated_at?: string
   deleted_at?: string | null

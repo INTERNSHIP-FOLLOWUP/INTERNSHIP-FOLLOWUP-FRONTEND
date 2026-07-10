@@ -71,16 +71,18 @@
           v-model.number="form.tutor_id"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
           :class="inputClass('tutor_id')"
+          :disabled="isTutorDisabled"
           @change="clearFieldError('tutor_id')"
           @blur="validateField('tutor_id')"
         >
           <option :value="null" disabled>Select tutor</option>
           <option v-if="tutorStore.loading" disabled>Loading...</option>
-          <option v-for="t in tutorStore.tutors" :key="t.id" :value="t.id">
-            {{ t.name }}
+          <option v-for="t in tutorStore.tutorOptions" :key="t.value" :value="t.value">
+            {{ t.label }}
           </option>
         </select>
         <p v-if="errors.tutor_id" class="text-sm text-error">{{ errors.tutor_id }}</p>
+        <p v-if="tutorStore.error" class="text-sm text-error">{{ tutorStore.error }}</p>
       </div>
 
       <!-- Position -->
@@ -234,6 +236,11 @@ const emit = defineEmits<{
 
 const assignmentStore = useAssignmentStore()
 const tutorStore = useTutorStore()
+
+const isTutorDisabled = computed(() => {
+  const current = form.status as AssignmentStatus
+  return current === 'completed' || current === 'terminated'
+})
 
 const isEdit = computed(() => !!props.assignmentId)
 

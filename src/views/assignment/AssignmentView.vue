@@ -1,10 +1,42 @@
 <!-- src/views/assignment/AssignmentView.vue -->
 <template>
-  <div class="p-6">
-    <h1 class="text-xl font-semibold mb-4">Assignment</h1>
-    <p class="text-sm text-gray-500">Assignment view is under development.</p>
-  </div>
+  <AssignmentList v-if="isListMode" @view="handleView" @add="handleAdd" />
+  <AssignmentForm
+    v-else
+    :assignment-id="assignmentId"
+    @saved="handleSaved"
+    @cancel="handleCancel"
+  />
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import AssignmentList from '@/components/assignment/AssignmentList.vue'
+import AssignmentForm from '@/components/assignment/AssignmentForm.vue'
+
+const route = useRoute()
+const router = useRouter()
+
+const isListMode = computed(() => route.name === 'AdminAssignments')
+const assignmentId = computed(() => {
+  const id = route.params.id
+  return id ? Number(id) : undefined
+})
+
+function handleView(id: number): void {
+  router.push(`/admin/assignments/${id}`)
+}
+
+function handleAdd(): void {
+  router.push('/admin/assignments/create')
+}
+
+function handleSaved(): void {
+  router.push('/admin/assignments')
+}
+
+function handleCancel(): void {
+  router.push('/admin/assignments')
+}
 </script>

@@ -7,34 +7,37 @@ export interface ParsedApiError {
 
 const FIELD_ERROR_MAP: Record<string, Record<string, string>> = {
   email: {
-    'required': 'Please enter your email address.',
-    'email': 'Please enter a valid email address.',
-    'unique': 'An account with this email already exists. Please sign in or use a different email.',
-    'exists': 'We couldn\'t find an account with that email. Please check your email or create a new account.',
+    required: 'Please enter your email address.',
+    email: 'Please enter a valid email address.',
+    unique: 'An account with this email already exists. Please sign in or use a different email.',
+    exists:
+      "We couldn't find an account with that email. Please check your email or create a new account.",
     'The email has already been taken.': 'An account with this email already exists.',
-    'The selected email is invalid.': 'We couldn\'t find an account with that email.',
-    'The provided credentials are incorrect.': 'Your email or password is incorrect. Please try again.',
+    'The selected email is invalid.': "We couldn't find an account with that email.",
+    'The provided credentials are incorrect.':
+      'Your email or password is incorrect. Please try again.',
   },
   password: {
-    'required': 'Please enter your password.',
-    'min': 'Password must be at least 8 characters long.',
-    'current_password': 'The password you entered is incorrect. Please try again.',
-    'The provided credentials are incorrect.': 'Your email or password is incorrect. Please try again.',
-    'incorrect': 'The password you entered is incorrect. Please try again.',
+    required: 'Please enter your password.',
+    min: 'Password must be at least 8 characters long.',
+    current_password: 'The password you entered is incorrect. Please try again.',
+    'The provided credentials are incorrect.':
+      'Your email or password is incorrect. Please try again.',
+    incorrect: 'The password you entered is incorrect. Please try again.',
   },
   token: {
-    'required': 'Invalid or missing reset token. Please use the link from your email.',
-    'invalid': 'This reset link is invalid or has expired. Please request a new password reset.',
-    'expired': 'This reset link has expired. Please request a new password reset.',
+    required: 'Invalid or missing reset token. Please use the link from your email.',
+    invalid: 'This reset link is invalid or has expired. Please request a new password reset.',
+    expired: 'This reset link has expired. Please request a new password reset.',
   },
   name: {
-    'required': 'Please enter your full name.',
-    'min': 'Name must be at least 2 characters long.',
-    'max': 'Name is too long. Please use a shorter name.',
+    required: 'Please enter your full name.',
+    min: 'Name must be at least 2 characters long.',
+    max: 'Name is too long. Please use a shorter name.',
   },
   password_confirmation: {
-    'required': 'Please confirm your password.',
-    'same': 'Passwords do not match. Please try again.',
+    required: 'Please confirm your password.',
+    same: 'Passwords do not match. Please try again.',
   },
 }
 
@@ -80,7 +83,7 @@ export function parseApiError(err: unknown): ParsedApiError {
 
     return {
       message: isNetworkError
-        ? 'We couldn\'t connect to the server. Please check your internet connection and try again.'
+        ? "We couldn't connect to the server. Please check your internet connection and try again."
         : 'An unexpected error occurred. Please try again later.',
     }
   }
@@ -105,7 +108,7 @@ export function parseApiError(err: unknown): ParsedApiError {
     if (hasFields) {
       // Check if the primary issue is credentials (no need for banner when field errors cover it)
       const hasCredentialsError = Object.values(fields).some(
-        (m) => m.includes('email or password') || m.includes('incorrect')
+        (m) => m.includes('email or password') || m.includes('incorrect'),
       )
 
       return {
@@ -131,7 +134,7 @@ export function parseApiError(err: unknown): ParsedApiError {
 
   // ── 403 Forbidden ──
   if (status === 403) {
-    return { message: 'You don\'t have permission to access this resource.' }
+    return { message: "You don't have permission to access this resource." }
   }
 
   // ── 419 CSRF mismatch ──
@@ -146,7 +149,10 @@ export function parseApiError(err: unknown): ParsedApiError {
 
   // ── 423 Account inactive / locked ──
   if (status === 423) {
-    return { message: 'Your account is currently unavailable. Please contact support if you believe this is a mistake.' }
+    return {
+      message:
+        'Your account is currently unavailable. Please contact support if you believe this is a mistake.',
+    }
   }
 
   // ── 500+ Server ──
@@ -165,7 +171,11 @@ export function parseApiError(err: unknown): ParsedApiError {
 function friendlyGlobalMessage(raw: string): string {
   const lower = raw.toLowerCase()
 
-  if (lower.includes('credentials are incorrect') || lower.includes('invalid email') || lower.includes('invalid password')) {
+  if (
+    lower.includes('credentials are incorrect') ||
+    lower.includes('invalid email') ||
+    lower.includes('invalid password')
+  ) {
     return 'Your email or password is incorrect. Please try again.'
   }
   if (lower.includes('too many attempts') || lower.includes('throttle')) {
@@ -178,7 +188,7 @@ function friendlyGlobalMessage(raw: string): string {
     return 'Please review the highlighted fields and try again.'
   }
   if (lower.includes('not found') || lower.includes('no record')) {
-    return 'We couldn\'t find what you\'re looking for. Please check your information.'
+    return "We couldn't find what you're looking for. Please check your information."
   }
   if (lower.includes('reset link') || lower.includes('reset token')) {
     return 'This reset link is invalid or has expired. Please request a new password reset.'

@@ -74,14 +74,44 @@ const router = createRouter({
         {
           path: 'users',
           name: 'AdminUsers',
-          component: () => import('@/views/student/StudentDashboardView.vue'),
+          component: () => import('@/views/user/AdminUsersView.vue'),
           meta: { title: 'Users' },
+        },
+        {
+          path: 'users/create',
+          name: 'AdminUsersCreate',
+          component: () => import('@/views/user/AdminUsersView.vue'),
+          meta: { title: 'Add Student' },
+        },
+        {
+          path: 'users/:id',
+          name: 'AdminUsersEdit',
+          component: () => import('@/views/user/AdminUsersView.vue'),
+          meta: { title: 'Edit Student' },
         },
         {
           path: 'companies',
           name: 'AdminCompanies',
           component: () => import('@/views/company/CompanyListView.vue'),
           meta: { title: 'Companies' },
+        },
+        {
+          path: 'assignments',
+          name: 'AdminAssignments',
+          component: () => import('@/views/assignment/AssignmentView.vue'),
+          meta: { title: 'Assignments' },
+        },
+        {
+          path: 'assignments/create',
+          name: 'AdminAssignmentsCreate',
+          component: () => import('@/views/assignment/AssignmentView.vue'),
+          meta: { title: 'New Assignment' },
+        },
+        {
+          path: 'assignments/:id',
+          name: 'AdminAssignmentsEdit',
+          component: () => import('@/views/assignment/AssignmentView.vue'),
+          meta: { title: 'Edit Assignment' },
         },
         {
           path: 'profile',

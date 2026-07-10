@@ -7,14 +7,7 @@
     viewBox="0 0 24 24"
     aria-hidden="true"
   >
-    <circle
-      class="opacity-25"
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      stroke-width="4"
-    />
+    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
     <path
       class="opacity-75"
       fill="currentColor"
@@ -41,7 +34,7 @@ const props = withDefaults(
 // 2. Class dictionaries
 const sizeMap: Record<string, string> = {
   xs: 'h-3.5 w-3.5',
-  sm: 'h-4 w-4',     // Perfect for your 15px button text!
+  sm: 'h-4 w-4', // Perfect for your 15px button text!
   md: 'h-5 w-5',
   lg: 'h-8 w-8',
 }

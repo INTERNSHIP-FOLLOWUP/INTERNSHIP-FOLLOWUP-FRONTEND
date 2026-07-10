@@ -48,7 +48,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function roleLevel(role?: UserRole | null): number {
-    return role ? AUTH_CONFIG.ROLE_HIERARCHY[role] ?? 0 : 0
+    return role ? (AUTH_CONFIG.ROLE_HIERARCHY[role] ?? 0) : 0
   }
 
   function canAccess(minRoleLevel: number): boolean {
@@ -97,10 +97,13 @@ export const useAuthStore = defineStore('auth', () => {
   async function getCsrfCookie(): Promise<void> {
     try {
       const { default: axios } = await import('axios')
-      await axios.get(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/sanctum/csrf-cookie`, {
-        withCredentials: true,
-        headers: { Accept: 'application/json' },
-      })
+      await axios.get(
+        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/sanctum/csrf-cookie`,
+        {
+          withCredentials: true,
+          headers: { Accept: 'application/json' },
+        },
+      )
     } catch {
       // Bearer-token APIs don't need the CSRF cookie
     }
@@ -147,7 +150,8 @@ export const useAuthStore = defineStore('auth', () => {
       setSession(data)
       updateActivity()
 
-      const redirect = (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
+      const redirect =
+        (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
       await router.push(redirect)
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -169,7 +173,8 @@ export const useAuthStore = defineStore('auth', () => {
       setSession(data)
       updateActivity()
 
-      const redirect = (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
+      const redirect =
+        (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
       await router.push(redirect)
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -201,12 +206,28 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-    user, hasSession, loading, error, initialized, lastActivity, isSessionTimedOut,
-    isLoggedIn, userRole, userName, isAdmin,
-    hasRole, hasAnyRole, hasPermission, canAccess, roleLevel,
-    updateActivity, checkSessionTimeout,
-    boot, login, register, logout, forceLogout,
+    user,
+    hasSession,
+    loading,
+    error,
+    initialized,
+    lastActivity,
+    isSessionTimedOut,
+    isLoggedIn,
+    userRole,
+    userName,
+    isAdmin,
+    hasRole,
+    hasAnyRole,
+    hasPermission,
+    canAccess,
+    roleLevel,
+    updateActivity,
+    checkSessionTimeout,
+    boot,
+    login,
+    register,
+    logout,
+    forceLogout,
   }
 })
-
-

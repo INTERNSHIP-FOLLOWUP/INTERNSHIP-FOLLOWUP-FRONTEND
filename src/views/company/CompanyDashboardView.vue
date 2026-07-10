@@ -156,12 +156,20 @@
             >
               <div
                 class="flex h-2 w-2 mt-1.5 shrink-0 rounded-full"
-                :class="followup.priority === 'high' ? 'bg-rose-500' : followup.priority === 'medium' ? 'bg-amber-500' : 'bg-emerald-500'"
+                :class="
+                  followup.priority === 'high'
+                    ? 'bg-rose-500'
+                    : followup.priority === 'medium'
+                      ? 'bg-amber-500'
+                      : 'bg-emerald-500'
+                "
               />
               <div class="min-w-0 flex-1">
                 <p class="text-sm font-medium text-gray-900">{{ followup.student }}</p>
                 <p class="mt-0.5 text-xs text-gray-400">{{ followup.topic }}</p>
-                <p class="mt-1 text-xs font-medium" :class="followup.dueClass">{{ followup.due }}</p>
+                <p class="mt-1 text-xs font-medium" :class="followup.dueClass">
+                  {{ followup.due }}
+                </p>
               </div>
             </div>
 
@@ -186,7 +194,9 @@
                 </svg>
               </div>
               <h3 class="mt-3 text-sm font-semibold text-gray-700">No follow-ups scheduled</h3>
-              <p class="mt-1 text-xs text-gray-400">Create a follow-up to track student progress.</p>
+              <p class="mt-1 text-xs text-gray-400">
+                Create a follow-up to track student progress.
+              </p>
             </div>
           </div>
         </div>
@@ -229,7 +239,9 @@
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm">
           <thead>
-            <tr class="border-b border-gray-50 text-xs font-medium uppercase tracking-wider text-gray-400">
+            <tr
+              class="border-b border-gray-50 text-xs font-medium uppercase tracking-wider text-gray-400"
+            >
               <th class="px-6 py-3 font-medium">Name</th>
               <th class="px-6 py-3 font-medium">University</th>
               <th class="px-6 py-3 font-medium">Department</th>
@@ -268,7 +280,13 @@
                         : 'bg-gray-50 text-gray-500'
                   "
                 >
-                  {{ intern.status === 'active' ? 'Active' : intern.status === 'pending' ? 'Pending' : 'Completed' }}
+                  {{
+                    intern.status === 'active'
+                      ? 'Active'
+                      : intern.status === 'pending'
+                        ? 'Pending'
+                        : 'Completed'
+                  }}
                 </span>
               </td>
             </tr>
@@ -351,7 +369,9 @@ const stats = [
     trendClass: 'bg-emerald-50 text-emerald-600',
     gradientBg: 'bg-emerald-500',
     color: 'bg-gradient-to-br from-emerald-500 to-green-600',
-    icon: createIcon('M21 13.255A23.893 23.893 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'),
+    icon: createIcon(
+      'M21 13.255A23.893 23.893 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+    ),
   },
   {
     label: 'Assigned Students',
@@ -360,7 +380,9 @@ const stats = [
     trendClass: 'bg-gray-50 text-gray-500',
     gradientBg: 'bg-blue-500',
     color: 'bg-gradient-to-br from-blue-500 to-indigo-600',
-    icon: createIcon('M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z'),
+    icon: createIcon(
+      'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',
+    ),
   },
   {
     label: 'Pending Reviews',
@@ -369,7 +391,9 @@ const stats = [
     trendClass: 'bg-amber-50 text-amber-600',
     gradientBg: 'bg-amber-500',
     color: 'bg-gradient-to-br from-amber-500 to-orange-600',
-    icon: createIcon('M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4'),
+    icon: createIcon(
+      'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
+    ),
   },
   {
     label: 'Open Issues',
@@ -378,7 +402,9 @@ const stats = [
     trendClass: 'bg-rose-50 text-rose-600',
     gradientBg: 'bg-rose-500',
     color: 'bg-gradient-to-br from-rose-500 to-pink-600',
-    icon: createIcon('M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z'),
+    icon: createIcon(
+      'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z',
+    ),
   },
 ]
 
@@ -410,19 +436,25 @@ const quickActions = [
   },
   {
     label: 'View Students',
-    icon: createIcon('M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857'),
+    icon: createIcon(
+      'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857',
+    ),
     iconBg: 'bg-blue-50',
     iconColor: 'text-blue-600',
   },
   {
     label: 'Review Worklogs',
-    icon: createIcon('M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'),
+    icon: createIcon(
+      'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
+    ),
     iconBg: 'bg-amber-50',
     iconColor: 'text-amber-600',
   },
   {
     label: 'Schedule Follow-up',
-    icon: createIcon('M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'),
+    icon: createIcon(
+      'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
+    ),
     iconBg: 'bg-purple-50',
     iconColor: 'text-purple-600',
   },

@@ -21,13 +21,13 @@ const router = createRouter({
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/views/auth/Login.vue'),
+      component: () => import('@/views/auth/SignIn.vue'),
       meta: { guest: true, title: 'Sign In' } as AppRouteMeta,
     },
     {
       path: '/register',
       name: 'Register',
-      component: () => import('@/views/auth/Login.vue'),
+      component: () => import('@/views/auth/SignIn.vue'),
       meta: { guest: true, title: 'Register' } as AppRouteMeta,
     },
     {
@@ -45,13 +45,13 @@ const router = createRouter({
     {
       path: '/403',
       name: 'Forbidden',
-      component: () => import('@/views/auth/Login.vue'),
+      component: () => import('@/views/auth/SignIn.vue'),
       meta: { guest: true, title: 'Forbidden' } as AppRouteMeta,
     },
     {
       path: '/404',
       name: 'NotFound',
-      component: () => import('@/views/auth/Login.vue'),
+      component: () => import('@/views/auth/SignIn.vue'),
       meta: { guest: true, title: 'Not Found' } as AppRouteMeta,
     },
 
@@ -88,6 +88,12 @@ const router = createRouter({
           name: 'AdminProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
           meta: { title: 'Profile' },
+        },
+        {
+          path: 'tutors',
+          name: 'AdminTutors',
+          component: () => import('@/views/tutor/TutorList.vue'),
+          meta: { requiresAuth: true, roles: ['admin'] as UserRole[], title: 'Tutors' } as AppRouteMeta,
         },
       ],
     },

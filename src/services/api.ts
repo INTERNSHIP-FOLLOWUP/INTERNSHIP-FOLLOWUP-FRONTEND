@@ -10,11 +10,6 @@ interface QueueItem {
   reject: (error: unknown) => void
 }
 
-interface FailedRequest {
-  config: InternalAxiosRequestConfig
-  reject: (error: unknown) => void
-}
-
 // ── Axios Instance ──────────────────────────────────────────────
 
 const api = axios.create({
@@ -32,7 +27,7 @@ const api = axios.create({
 
 let isRefreshing = false
 let failedQueue: QueueItem[] = []
-let pendingRequests: Map<string, InternalAxiosRequestConfig> = new Map()
+const pendingRequests: Map<string, InternalAxiosRequestConfig> = new Map()
 let isLoggingOut = false
 
 function processQueue(error: unknown, token: string | null = null) {
@@ -90,10 +85,12 @@ api.interceptors.request.use(
     if (config.method?.toLowerCase() === 'get' && pendingRequests.has(requestKey)) {
       return Promise.reject({ cancelled: true, key: requestKey })
     }
+
     if (config.method?.toLowerCase() === 'get') {
       pendingRequests.set(requestKey, config)
-      config.cancelToken = new axios.CancelToken((cancel) => {
-        config.cancel = () => {
+      const cancelConfig = config as InternalAxiosRequestConfig & { cancel?: () => void }
+      cancelConfig.cancelToken = new axios.CancelToken((cancel) => {
+        cancelConfig.cancel = () => {
           pendingRequests.delete(requestKey)
           cancel('Request cancelled due to duplicate')
         }
@@ -126,7 +123,8 @@ api.interceptors.response.use(
     const { config, response } = error
 
     // Gracefully handle cancelled requests
-    if ((error as any)?.cancelled) return Promise.reject(error)
+    const cancelled = (error as { cancelled?: boolean } | undefined)?.cancelled
+    if (cancelled) return Promise.reject(error)
 
     // No response = network error
     if (!response) {

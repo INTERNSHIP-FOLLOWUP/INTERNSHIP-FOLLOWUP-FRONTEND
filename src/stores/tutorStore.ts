@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import api from '@/services/api'
-import type { User } from '@/types/auth'
+import type { TutorWorkload } from '@/types/user'
 import { parseApiError } from '@/utils/errorParser'
 
 export interface TutorOption {
@@ -9,7 +9,7 @@ export interface TutorOption {
 }
 
 export interface TutorState {
-  tutors: User[]
+  tutors: TutorWorkload[]
   loading: boolean
   error: string | null
   loaded: boolean
@@ -30,6 +30,9 @@ export const useTutorStore = defineStore('tutor', {
   getters: {
     tutorOptions: (state): TutorOption[] =>
       state.tutors.map(t => ({ value: t.id, label: t.name })),
+    workload: (state): TutorWorkload[] => state.tutors,
+    workloadLoading: (state): boolean => state.loading,
+    workloadError: (state): string | null => state.error,
   },
 
   actions: {
@@ -40,7 +43,7 @@ export const useTutorStore = defineStore('tutor', {
       this.error = null
 
       try {
-        const res = await api.get<PaginatedResponse<User> | User[]>('/users', {
+        const res = await api.get<PaginatedResponse<TutorWorkload> | TutorWorkload[]>('/users', {
           params: { role: 'Tutor' },
         })
 
@@ -54,6 +57,10 @@ export const useTutorStore = defineStore('tutor', {
       } finally {
         this.loading = false
       }
+    },
+
+    async fetchWorkload(force: boolean = false): Promise<void> {
+      await this.fetchTutors(force)
     },
   },
 })

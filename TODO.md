@@ -1,6 +1,10 @@
-- [ ] Update `src/stores/company.ts` to implement full `companyStore` state + CRUD actions.
-- [ ] Add typed payloads for create/update and implement API wiring using existing `src/services/api.ts` (generic endpoints if backend routes not fixed).
-- [ ] Ensure state updates (list add/update/remove) and `loading/error` handling around each action.
-- [ ] Run `npm run lint` and `npm run build` (or `npm test` if available) to verify TypeScript/ESLint.
-- [ ] (Optional) Wire `CompanyListView.vue` / `CompanyFormView.vue` to store actions if UI currently expects them.
+# TODO
+
+## Company CRUD wiring (CompanyListView + CompanyFormView + companyStore)
+
+- [x] Confirmed companyStore implements create/read/update/delete via `/companies` endpoints.
+- [x] Fixed navigation from Companies list to correct routes: `CompaniesCreate` and `CompaniesEdit`.
+- [ ] Verify edit form loads and updates correctly against real API.
+- [ ] Ensure companyStore response mapping matches backend list/get payloads.
+- [ ] Run full end-to-end CRUD manual test (Create → Read → Update → Delete).
 

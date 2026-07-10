@@ -92,12 +92,9 @@ api.interceptors.request.use(
     }
     if (config.method?.toLowerCase() === 'get') {
       pendingRequests.set(requestKey, config)
-      config.cancelToken = new axios.CancelToken((cancel) => {
-        config.cancel = () => {
-          pendingRequests.delete(requestKey)
-          cancel('Request cancelled due to duplicate')
-        }
-      })
+      ;(config as any).cancel = () => {
+        pendingRequests.delete(requestKey)
+      }
     }
 
     return config

@@ -53,8 +53,24 @@
         />
 
         <InputField
+          v-model="form.industry"
+          label="Industry"
+          placeholder="e.g. Banking, Telecom"
+          :error="errors.industry"
+          autocomplete="organization"
+        />
+
+        <InputField
+          v-model="form.contactPerson"
+          label="Contact Person"
+          placeholder="e.g. John Doe"
+          :error="errors.contactPerson"
+          autocomplete="name"
+        />
+
+        <InputField
           v-model="form.contactPhone"
-          label="Contact Phone"
+          label="Phone"
           placeholder="e.g. +250 788 000 000"
           :error="errors.contactPhone"
           autocomplete="tel"
@@ -67,6 +83,7 @@
           :error="errors.website"
           autocomplete="url"
         />
+
       </div>
 
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -109,9 +126,12 @@ export type CompanyFormData = {
   companyName: string
   companyEmail: string
   location: string
+  industry: string
+  contactPerson: string
   contactPhone: string
   website: string
 }
+
 
 type CompanyFormErrors = Partial<Record<keyof CompanyFormData, string>>
 
@@ -142,9 +162,12 @@ const initialForm: CompanyFormData = {
   companyName: '',
   companyEmail: '',
   location: '',
+  industry: '',
+  contactPerson: '',
   contactPhone: '',
   website: '',
 }
+
 
 const form = reactive<CompanyFormData>({ ...initialForm })
 const errors = reactive<CompanyFormErrors>({})
@@ -193,6 +216,7 @@ function validate(): boolean {
     ok = false
   }
 
+  // Industry / Contact Person are optional unless backend requires them.
   if (form.contactPhone.trim()) {
     // Loose validation: allow +, digits, spaces, hyphens.
     if (!/^[+]?([0-9][\s-]*){7,}$/.test(form.contactPhone.trim())) {
@@ -208,6 +232,7 @@ function validate(): boolean {
 
   return ok
 }
+
 
 function reset() {
   Object.assign(form, {

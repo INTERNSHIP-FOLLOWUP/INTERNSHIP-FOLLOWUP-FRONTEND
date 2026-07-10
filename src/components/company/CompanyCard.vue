@@ -14,8 +14,23 @@
         </div>
       </div>
 
-      <!-- Placeholder for future actions (edit/delete/view) -->
-      <div class="flex shrink-0 items-center gap-2" aria-hidden="true"></div>
+      <div class="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          class="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
+          @click="$emit('edit')"
+        >
+          Edit
+        </button>
+
+        <button
+          type="button"
+          class="rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
+          @click="$emit('delete')"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -27,6 +42,13 @@ type Props = {
   company: CompanySummary
 }
 
+type Emits = {
+  edit: []
+  delete: []
+}
+
 defineProps<Props>()
+defineEmits<Emits>()
 </script>
+
 

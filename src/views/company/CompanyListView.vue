@@ -25,6 +25,15 @@
           >
             {{ store.loading ? 'Loading…' : 'Refresh' }}
           </button>
+
+          <button
+            type="button"
+            class="rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
+            :disabled="store.loading"
+            @click="goCreate"
+          >
+            New Company
+          </button>
         </div>
       </div>
 
@@ -46,7 +55,13 @@
       </div>
 
       <div v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <CompanyCard v-for="c in filteredCompanies" :key="c.id" :company="c" />
+        <CompanyCard
+          v-for="c in filteredCompanies"
+          :key="c.id"
+          :company="c"
+          @edit="goEdit(c.id)"
+          @delete="onDelete(c.id)"
+        />
       </div>
     </div>
   </div>
@@ -54,10 +69,12 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import CompanyCard from '@/components/company/CompanyCard.vue'
 import { useCompanyStore } from '@/stores/company'
 
 const store = useCompanyStore()
+const router = useRouter()
 const query = ref('')
 
 onMounted(async () => {
@@ -65,6 +82,22 @@ onMounted(async () => {
 })
 
 async function refresh() {
+  await store.fetchCompanies()
+}
+
+function goCreate() {
+  router.push({ name: 'CompaniesCreate' }).catch(() => {})
+}
+
+function goEdit(id: number) {
+  router.push({ name: 'CompaniesEdit', params: { id } }).catch(() => {})
+}
+
+
+
+async function onDelete(id: number) {
+  if (!confirm('Delete this company?')) return
+  await store.deleteCompany(id)
   await store.fetchCompanies()
 }
 
@@ -80,4 +113,5 @@ const filteredCompanies = computed(() => {
   })
 })
 </script>
+
 

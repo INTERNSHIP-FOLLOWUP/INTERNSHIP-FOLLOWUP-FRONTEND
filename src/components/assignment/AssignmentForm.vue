@@ -55,7 +55,7 @@
           <option :value="null" disabled>Select company</option>
           <option v-if="companiesLoading" disabled>Loading...</option>
           <option v-for="c in companies" :key="c.id" :value="c.id">
-            {{ c.name }}
+            {{ c.company_name || c.name }}
           </option>
         </select>
         <p v-if="errors.company_id" class="text-sm text-error">{{ errors.company_id }}</p>
@@ -195,8 +195,13 @@ import { useAssignmentStore } from '@/stores/assignment'
 import { useTutorStore } from '@/stores/tutor'
 import { assignmentService } from '@/services/assignment'
 import api from '@/services/api'
-import type { User } from '@/types/auth'
 import type { AssignmentStatus, Assignment } from '@/types/assignment'
+
+interface OptionItem {
+  id: number
+  name?: string
+  company_name?: string
+}
 
 interface AssignmentFormData {
   student_id: number | null
@@ -209,17 +214,17 @@ interface AssignmentFormData {
 }
 
 const STATUS_LABELS: Record<AssignmentStatus, string> = {
-  assigned: 'Assigned',
-  in_progress: 'In Progress',
-  completed: 'Completed',
-  terminated: 'Terminated',
+  'Assigned': 'Assigned',
+  'In Progress': 'In Progress',
+  'Completed': 'Completed',
+  'Terminated': 'Terminated',
 }
 
 const VALID_TRANSITIONS: Record<AssignmentStatus, AssignmentStatus[]> = {
-  assigned: ['assigned', 'in_progress', 'terminated'],
-  in_progress: ['in_progress', 'completed', 'terminated'],
-  completed: ['completed'],
-  terminated: ['terminated'],
+  'Assigned': ['Assigned', 'In Progress', 'Terminated'],
+  'In Progress': ['In Progress', 'Completed', 'Terminated'],
+  'Completed': ['Completed'],
+  'Terminated': ['Terminated'],
 }
 
 const props = withDefaults(
@@ -237,8 +242,8 @@ const tutorStore = useTutorStore()
 
 const isEdit = computed(() => !!props.assignmentId)
 
-const students = ref<User[]>([])
-const companies = ref<User[]>([])
+const students = ref<OptionItem[]>([])
+const companies = ref<OptionItem[]>([])
 const studentsLoading = ref(false)
 const companiesLoading = ref(false)
 
@@ -368,7 +373,7 @@ onMounted(async () => {
   try {
     const [studentsRes, companiesRes] = await Promise.all([
       api.get('/admin/users', { params: { role: 'student', per_page: 200 } }),
-      api.get('/admin/users', { params: { role: 'company', per_page: 200 } }),
+      api.get('/admin/companies', { params: { per_page: 200 } }),
     ])
     students.value = studentsRes.data.data ?? studentsRes.data
     companies.value = companiesRes.data.data ?? companiesRes.data

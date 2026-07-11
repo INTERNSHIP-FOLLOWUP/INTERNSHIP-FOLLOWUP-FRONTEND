@@ -65,9 +65,10 @@
         class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
       >
         <option value="">All Statuses</option>
-        <option value="assigned">Active</option>
-        <option value="in_progress">In Progress</option>
-        <option value="completed">Completed</option>
+        <option value="Assigned">Assigned</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Terminated">Terminated</option>
       </select>
 
       <!-- Company Filter -->
@@ -360,9 +361,9 @@ const filteredAssignments = computed(() => {
   return list
 })
 
-const activeCount = computed(() => store.assignments.filter((a: Assignment) => a.status === 'assigned').length)
-const pendingCount = computed(() => store.assignments.filter((a: Assignment) => a.status === 'in_progress').length)
-const completedCount = computed(() => store.assignments.filter((a: Assignment) => a.status === 'completed').length)
+const activeCount = computed(() => store.assignments.filter((a: Assignment) => a.status === 'Assigned').length)
+const pendingCount = computed(() => store.assignments.filter((a: Assignment) => a.status === 'In Progress').length)
+const completedCount = computed(() => store.assignments.filter((a: Assignment) => a.status === 'Completed').length)
 
 const visiblePages = computed(() => {
   const pagination = store.pagination
@@ -391,13 +392,7 @@ const visiblePages = computed(() => {
 })
 
 function formatStatus(status: string): string {
-  const map: Record<string, string> = {
-    assigned: 'Assigned',
-    in_progress: 'In Progress',
-    completed: 'Completed',
-    terminated: 'Terminated',
-  }
-  return map[status] ?? status
+  return status
 }
 
 function getInitials(name: string): string {
@@ -411,11 +406,11 @@ function getInitials(name: string): string {
 
 function statusBadgeClass(status?: string): string {
   switch (status) {
-    case 'assigned':
+    case 'Assigned':
       return 'bg-emerald-50 text-emerald-700'
-    case 'in_progress':
+    case 'In Progress':
       return 'bg-amber-50 text-amber-700'
-    case 'completed':
+    case 'Completed':
       return 'bg-slate-100 text-slate-600'
     default:
       return 'bg-rose-50 text-rose-700'

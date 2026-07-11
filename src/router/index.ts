@@ -8,7 +8,9 @@ import {
   redirectAuthenticatedGuest,
   requireAuth,
   checkRoles,
+  getDashboardForRole,
 } from './guards'
+import { PUBLIC_ROUTES, ROLE_ROUTES } from '@/types/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -121,6 +123,31 @@ const router = createRouter({
         },
       ],
     },
+
+    // ── Company Management (explicit spec routes) ──
+    // Maps directly to existing pages:
+    // - /companies => CompanyListView
+    // - /companies/create => CompanyFormView (create mode)
+    // - /companies/:id/edit => CompanyFormView (edit mode)
+    {
+      path: '/companies',
+      name: 'Companies',
+      component: () => import('@/views/company/CompanyListView.vue'),
+      meta: { roles: ['admin'] as UserRole[], title: 'Companies' } as AppRouteMeta,
+    },
+    {
+      path: '/companies/create',
+      name: 'CompaniesCreate',
+      component: () => import('@/views/company/CompanyFormView.vue'),
+      meta: { roles: ['admin'] as UserRole[], title: 'Create Company' } as AppRouteMeta,
+    },
+    {
+      path: '/companies/:id/edit',
+      name: 'CompaniesEdit',
+      component: () => import('@/views/company/CompanyFormView.vue'),
+      meta: { roles: ['admin'] as UserRole[], title: 'Edit Company' } as AppRouteMeta,
+    },
+
 
     // ── Tutor ──
     {
@@ -237,46 +264,34 @@ const router = createRouter({
           redirect: { name: 'CompanyDashboard' },
         },
         {
-          path: 'internships',
-          name: 'CompanyInternships',
-          component: () => import('@/views/company/CompanyListView.vue'),
-          meta: { title: 'Internships' },
+          path: 'students',
+          name: 'CompanyStudents',
+          component: () => import('@/views/company/CompanyStudentListView.vue'),
+          meta: { title: 'Assigned Students' },
         },
         {
           path: 'evaluations',
           name: 'CompanyEvaluations',
-          component: () => import('@/views/company/CompanyListView.vue'),
+          component: () => import('@/views/company/CompanyEvaluationView.vue'),
           meta: { title: 'Evaluations' },
         },
         {
-          path: 'students',
-          name: 'CompanyStudents',
-          component: () => import('@/views/student/StudentDashboardView.vue'),
-          meta: { title: 'Students' },
+          path: 'feedback',
+          name: 'CompanyFeedback',
+          component: () => import('@/views/company/CompanyFeedbackView.vue'),
+          meta: { title: 'Feedback' },
         },
         {
-          path: 'worklogs',
-          name: 'CompanyWorklogs',
-          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
-          meta: { title: 'Worklogs' },
-        },
-        {
-          path: 'followups',
-          name: 'CompanyFollowups',
-          component: () => import('@/views/followup/FollowupListView.vue'),
-          meta: { title: 'Follow-ups' },
-        },
-        {
-          path: 'issues',
-          name: 'CompanyIssues',
-          component: () => import('@/views/issue/IssueTrackerView.vue'),
-          meta: { title: 'Issues' },
+          path: 'internships',
+          name: 'CompanyInternships',
+          component: () => import('@/views/company/CompanyInternshipInfoView.vue'),
+          meta: { title: 'Internship Information' },
         },
         {
           path: 'profile',
           name: 'CompanyProfile',
-          component: () => import('@/views/profile/ProfileView.vue'),
-          meta: { title: 'Profile' },
+          component: () => import('@/views/company/CompanyFormView.vue'),
+          meta: { title: 'Company Profile' },
         },
       ],
     },
@@ -300,16 +315,23 @@ router.beforeEach(async (to, _from, next) => {
   await ensureBooted()
 
   // 2. Guest-only routes — redirect authenticated users to their dashboard
-  if (isGuest) {
-    redirectAuthenticatedGuest(store, next)
-    return next()
+  if (isGuest && store.isLoggedIn && store.userRole) {
+    next(getDashboardForRole(store.userRole))
+    return
   }
 
   // 3. All other routes require authentication
-  if (requireAuth(store, to, next)) return
+  if (!PUBLIC_ROUTES.includes(to.fullPath) && !store.isLoggedIn) {
+    next({ name: 'Login', query: { redirect: to.fullPath } })
+    return
+  }
 
-  // 4. Role-based access control
-  if (checkRoles(store, meta, next)) return
+  // 4. Role-based access
+  if (to.meta?.roles && !store.hasAnyRole(...(to.meta.roles as UserRole[]))) {
+    const fallback = ROLE_ROUTES[store.userRole as UserRole] || '/login'
+    next(fallback)
+    return
+  }
 
   next()
 })

@@ -94,13 +94,11 @@ export function parseApiError(err: unknown): ParsedApiError {
     let hasFields = false
 
     if (data?.errors) {
-      for (const [field, messages] of Object.entries(data.errors)) {
-        if (messages.length > 0) {
-          // Try friendly mapping, fall back to raw
-          const friendly = findFriendlyMessage(field, messages[0])
-          fields[field] = friendly || messages[0]
-          hasFields = true
-        }
+      for (const [field, list] of Object.entries(data.errors)) {
+        if (!list.length) continue
+        const raw = list[0] as string
+        fields[field] = findFriendlyMessage(field, raw) ?? raw
+        hasFields = true
       }
     }
 

@@ -1,6 +1,6 @@
 <!-- src/views/assignment/AssignmentView.vue -->
 <template>
-  <AssignmentList v-if="isListMode" @view="handleView" @add="handleAdd" />
+  <AssignmentList v-if="isListMode" @edit="handleEdit" @add="handleAdd" />
   <AssignmentForm
     v-else
     :assignment-id="assignmentId"
@@ -24,7 +24,7 @@ const assignmentId = computed(() => {
   return id ? Number(id) : undefined
 })
 
-function handleView(id: number): void {
+function handleEdit(id: number): void {
   router.push(`/admin/assignments/${id}`)
 }
 

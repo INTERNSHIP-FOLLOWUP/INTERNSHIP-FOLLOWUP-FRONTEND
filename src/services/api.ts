@@ -90,6 +90,7 @@ api.interceptors.request.use(
     if (config.method?.toLowerCase() === 'get' && pendingRequests.has(requestKey)) {
       return Promise.reject({ cancelled: true, key: requestKey })
     }
+
     if (config.method?.toLowerCase() === 'get') {
       pendingRequests.set(requestKey, config)
       ;(config as any).cancelToken = new axios.CancelToken((cancel) => {
@@ -126,7 +127,8 @@ api.interceptors.response.use(
     const { config, response } = error
 
     // Gracefully handle cancelled requests
-    if ((error as any)?.cancelled) return Promise.reject(error)
+    const cancelled = (error as { cancelled?: boolean } | undefined)?.cancelled
+    if (cancelled) return Promise.reject(error)
 
     // No response = network error
     if (!response) {

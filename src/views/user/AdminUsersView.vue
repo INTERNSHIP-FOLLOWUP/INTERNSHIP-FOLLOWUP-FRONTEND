@@ -28,6 +28,7 @@ function handleAdd(): void {
 }
 
 function handleDelete(_id: number): void {
+  void _id
   // List is already updated by store
 }
 

@@ -1,3 +1,4 @@
+<!-- src/views/assignment/AssignmentView.vue -->
 <template>
   <div class="space-y-6">
     <AssignmentList

@@ -201,6 +201,7 @@
           </option>
         </select>
         <p v-if="errors.tutor_id" class="text-sm text-error">{{ errors.tutor_id }}</p>
+        <p v-if="tutorStore.error" class="text-sm text-error">{{ tutorStore.error }}</p>
       </div>
 
       <!-- Password (create only) -->
@@ -267,7 +268,7 @@
 import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStudentStore } from '@/stores/student'
 import { useBatchStore } from '@/stores/batchStore'
-import { useTutorStore } from '@/stores/tutor'
+import { useTutorStore } from '@/stores/tutorStore'
 import type { StudentFormData } from '@/types/student'
 
 const props = withDefaults(

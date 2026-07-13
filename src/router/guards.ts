@@ -1,11 +1,11 @@
 import { useAuthStore } from '@/stores/auth'
 import type { UserRole } from '@/types/auth'
-import { ROLE_ROUTES } from '@/types/auth'
 
 export interface AppRouteMeta extends Record<PropertyKey, unknown> {
   guest?: boolean
   requiresAuth?: boolean
   roles?: UserRole[]
+  adminOnly?: boolean
   title?: string
 }
 

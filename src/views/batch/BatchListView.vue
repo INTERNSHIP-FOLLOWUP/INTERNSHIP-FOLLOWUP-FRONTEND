@@ -47,7 +47,10 @@
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-slate-500">{{ batch.year }}</td>
                 <td class="whitespace-nowrap px-5 py-4">
-                  <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">0 students</span>
+                  <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold" :class="countClass(batch.students_count)">
+                    <span class="h-1.5 w-1.5 rounded-full" :class="countDotClass(batch.students_count)" />
+                    {{ batch.students_count ?? 0 }} student{{ batch.students_count === 1 ? '' : 's' }}
+                  </span>
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-right">
                   <button class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-all">Edit</button>
@@ -90,22 +93,52 @@
         </div>
       </div>
     </transition>
+
+    <ConfirmDialog
+      :show="dialog.show.value"
+      :title="dialog.title.value"
+      :message="dialog.message.value"
+      :confirm-text="dialog.confirmText.value"
+      :cancel-text="dialog.cancelText.value"
+      :loading="dialog.loading.value"
+      :error="dialog.error.value"
+      @confirm="handleConfirm"
+      @cancel="dialog.cancel()"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { batchService, type Batch } from '@/services/batch'
+import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import { useToastStore } from '@/stores/toast'
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
+const dialog = useConfirmDialog()
+const toast = useToastStore()
 const batches = ref<Batch[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const showCreateModal = ref(false)
 const submitting = ref(false)
 const form = reactive({ batch_name: '', year: '' })
+let deleteTargetId: number | null = null
 
 function getInitials(name: string): string {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
+}
+
+function countClass(count?: number): string {
+  if (!count || count === 0) return 'bg-slate-50 text-slate-600'
+  if (count <= 5) return 'bg-amber-50 text-amber-700'
+  return 'bg-emerald-50 text-emerald-700'
+}
+
+function countDotClass(count?: number): string {
+  if (!count || count === 0) return 'bg-slate-400'
+  if (count <= 5) return 'bg-amber-500'
+  return 'bg-emerald-500'
 }
 
 async function fetchBatches() {
@@ -126,6 +159,7 @@ async function createBatch() {
   submitting.value = true
   try {
     await batchService.create({ batch_name: form.batch_name, year: form.year })
+    toast.success('Batch created successfully.')
     showCreateModal.value = false
     form.batch_name = ''
     form.year = ''
@@ -138,13 +172,22 @@ async function createBatch() {
 }
 
 async function deleteBatch(id: number) {
-  if (!confirm('Are you sure you want to delete this batch?')) return
-  try {
-    await batchService.delete(id)
-    batches.value = batches.value.filter((b) => b.id !== id)
-  } catch (err: any) {
-    error.value = err?.response?.data?.message || 'Failed to delete batch.'
-  }
+  deleteTargetId = id
+  const confirmed = await dialog.open({
+    title: 'Delete Batch',
+    message: 'Are you sure you want to delete this batch? This action cannot be undone.',
+  })
+  if (!confirmed) return
+  await handleConfirm()
+}
+
+async function handleConfirm() {
+  if (deleteTargetId === null) return
+  await dialog.confirmAsync(async () => {
+    await batchService.delete(deleteTargetId!)
+    batches.value = batches.value.filter((b) => b.id !== deleteTargetId)
+    toast.success('Batch deleted successfully.')
+  })
 }
 
 onMounted(fetchBatches)

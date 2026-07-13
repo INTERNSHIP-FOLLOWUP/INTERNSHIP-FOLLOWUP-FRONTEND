@@ -90,7 +90,7 @@
     </div>
 
     <ConfirmDialog
-      :show="dialog.show"
+      :show="dialog.show.value"
       :title="dialog.title.value"
       :message="dialog.message.value"
       :confirm-text="dialog.confirmText.value"
@@ -106,6 +106,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useStudentStore } from '@/stores/student'
+import { useToastStore } from '@/stores/toast'
 import { usePagination } from '@/composables/usePagination'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import Pagination from '@/components/ui/Pagination.vue'
@@ -116,6 +117,7 @@ import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
 const store = useStudentStore()
 const dialog = useConfirmDialog()
+const toast = useToastStore()
 const searchQuery = ref('')
 const batchFilter = ref('')
 const statusFilter = ref('')
@@ -197,6 +199,9 @@ async function deleteStudent(id: number) {
 
 async function handleConfirm() {
   if (deleteTargetId === null) return
-  await dialog.confirmAsync(() => store.deleteStudent(deleteTargetId!))
+  await dialog.confirmAsync(async () => {
+    await store.deleteStudent(deleteTargetId!)
+    toast.success('Student deleted successfully.')
+  })
 }
 </script>

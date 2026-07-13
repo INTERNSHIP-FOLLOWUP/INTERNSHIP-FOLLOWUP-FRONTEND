@@ -132,7 +132,8 @@ api.interceptors.response.use(
 
     // No response = network error
     if (!response) {
-      console.warn('Network error:', error.message)
+      const { useToastStore } = await import('@/stores/toast')
+      useToastStore().error('Network error. Please check your connection.', 'Connection Lost')
       return Promise.reject(error)
     }
 
@@ -219,9 +220,17 @@ api.interceptors.response.use(
       return Promise.reject(error)
     }
 
+    // ── 422 Validation Error ──
+    if (status === 422) {
+      const { useToastStore } = await import('@/stores/toast')
+      const data = response.data as { message?: string }
+      useToastStore().warning(data?.message || 'Validation failed. Please check your input.', 'Validation Error')
+    }
+
     // ── 500+ Server Errors ──
     if (status >= 500) {
-      console.error('Server error:', error.message)
+      const { useToastStore } = await import('@/stores/toast')
+      useToastStore().error('An unexpected server error occurred. Please try again.', 'Server Error')
     }
 
     return Promise.reject(error)

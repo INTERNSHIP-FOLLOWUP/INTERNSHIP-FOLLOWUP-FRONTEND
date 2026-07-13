@@ -102,6 +102,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAssignmentStore } from '@/stores/assignment'
+import { useToastStore } from '@/stores/toast'
 import { usePagination } from '@/composables/usePagination'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import Pagination from '@/components/ui/Pagination.vue'
@@ -109,6 +110,7 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
 const store = useAssignmentStore()
 const dialog = useConfirmDialog()
+const toast = useToastStore()
 const statusFilter = ref('')
 let deleteTargetId: number | null = null
 
@@ -163,6 +165,9 @@ async function deleteAssignment(id: number) {
 
 async function handleConfirm() {
   if (deleteTargetId === null) return
-  await dialog.confirmAsync(() => store.deleteAssignment(deleteTargetId!))
+  await dialog.confirmAsync(async () => {
+    await store.deleteAssignment(deleteTargetId!)
+    toast.success('Assignment deleted successfully.')
+  })
 }
 </script>

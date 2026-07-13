@@ -112,9 +112,11 @@
 import { ref, reactive, onMounted } from 'vue'
 import { batchService, type Batch } from '@/services/batch'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import { useToastStore } from '@/stores/toast'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
 const dialog = useConfirmDialog()
+const toast = useToastStore()
 const batches = ref<Batch[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -157,6 +159,7 @@ async function createBatch() {
   submitting.value = true
   try {
     await batchService.create({ batch_name: form.batch_name, year: form.year })
+    toast.success('Batch created successfully.')
     showCreateModal.value = false
     form.batch_name = ''
     form.year = ''
@@ -183,6 +186,7 @@ async function handleConfirm() {
   await dialog.confirmAsync(async () => {
     await batchService.delete(deleteTargetId!)
     batches.value = batches.value.filter((b) => b.id !== deleteTargetId)
+    toast.success('Batch deleted successfully.')
   })
 }
 

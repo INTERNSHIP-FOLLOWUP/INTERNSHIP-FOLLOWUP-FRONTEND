@@ -19,6 +19,8 @@ export interface CompanySummary {
   contactPerson: string | null
   phone: string | null
   website: string | null
+  companyProfileImage: string | null
+  telegramLink: string | null
 }
 
 export type CompanyUpdatePayload = Partial<CreateCompanyPayload>
@@ -31,6 +33,8 @@ export interface CompanyFormData {
   contactPerson: string
   contactPhone: string
   website: string
+  companyProfileImage: string
+  telegramLink: string
 }
 
 function toSummary(c: Company): CompanySummary {
@@ -43,6 +47,8 @@ function toSummary(c: Company): CompanySummary {
     contactPerson: c.contactPerson,
     phone: c.phone,
     website: c.website,
+    companyProfileImage: c.companyProfileImage,
+    telegramLink: c.telegramLink,
   }
 }
 
@@ -55,6 +61,8 @@ function mapFromForm(form: CompanyFormData): CreateCompanyPayload {
     contactPerson: form.contactPerson || null,
     phone: form.contactPhone || null,
     website: form.website || null,
+    companyProfileImage: form.companyProfileImage || null,
+    telegramLink: form.telegramLink || null,
   }
 }
 
@@ -193,6 +201,8 @@ export const useCompanyStore = defineStore('company', () => {
           phone: raw.phone ?? null,
           email: raw.email ?? null,
           website: raw.website ?? null,
+          companyProfileImage: raw.company_profile_image ?? null,
+          telegramLink: raw.telegram_link ?? null,
           createdAt: raw.created_at ?? '',
           updatedAt: raw.updated_at ?? '',
         })
@@ -221,6 +231,8 @@ export const useCompanyStore = defineStore('company', () => {
         phone: payload.phone ?? null,
         email: payload.email ?? null,
         website: payload.website ?? null,
+        company_profile_image: payload.companyProfileImage ?? null,
+        telegram_link: payload.telegramLink ?? null,
       }
       const res = await api.put('/company/profile', body)
       const raw = res.data?.company ?? res.data?.data ?? res.data
@@ -234,6 +246,8 @@ export const useCompanyStore = defineStore('company', () => {
           phone: raw.phone ?? null,
           email: raw.email ?? null,
           website: raw.website ?? null,
+          companyProfileImage: raw.company_profile_image ?? null,
+          telegramLink: raw.telegram_link ?? null,
           createdAt: raw.created_at ?? '',
           updatedAt: raw.updated_at ?? '',
         })

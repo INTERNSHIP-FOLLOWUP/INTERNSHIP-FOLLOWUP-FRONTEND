@@ -43,6 +43,8 @@ A company has the following fields:
   "phone": "012345678",
   "email": "info@abctech.com",
   "website": "https://abctech.com",
+  "company_profile_image": null,
+  "telegram_link": null,
   "created_at": "2026-07-11T12:00:00.000000Z",
   "updated_at": "2026-07-11T12:00:00.000000Z"
 }
@@ -90,6 +92,8 @@ Example response:
       "phone": "012345678",
       "email": "info@abctech.com",
       "website": "https://abctech.com",
+      "company_profile_image": null,
+      "telegram_link": null,
       "created_at": "2026-07-11T12:00:00.000000Z",
       "updated_at": "2026-07-11T12:00:00.000000Z"
     }
@@ -122,7 +126,9 @@ Request body:
   "contact_person": "John Doe",
   "phone": "012345678",
   "email": "info@abctech.com",
-  "website": "https://abctech.com"
+  "website": "https://abctech.com",
+  "company_profile_image": "path/to/image.jpg",
+  "telegram_link": "https://t.me/abctech"
 }
 ```
 
@@ -138,6 +144,8 @@ Example response:
   "phone": "012345678",
   "email": "info@abctech.com",
   "website": "https://abctech.com",
+  "company_profile_image": "path/to/image.jpg",
+  "telegram_link": "https://t.me/abctech",
   "created_at": "2026-07-11T12:00:00.000000Z",
   "updated_at": "2026-07-11T12:00:00.000000Z"
 }
@@ -175,6 +183,8 @@ Example response:
   "phone": "012345678",
   "email": "info@abctech.com",
   "website": "https://abctech.com",
+  "company_profile_image": null,
+  "telegram_link": null,
   "created_at": "2026-07-11T12:00:00.000000Z",
   "updated_at": "2026-07-11T12:00:00.000000Z"
 }
@@ -205,7 +215,9 @@ Request body:
   "contact_person": "Jane Doe",
   "phone": "099999999",
   "email": "contact@abctech.com",
-  "website": "https://updated.abctech.com"
+  "website": "https://updated.abctech.com",
+  "company_profile_image": "path/to/new-image.jpg",
+  "telegram_link": "https://t.me/abctech"
 }
 ```
 
@@ -222,6 +234,8 @@ Example response:
     "phone": "099999999",
     "email": "contact@abctech.com",
     "website": "https://updated.abctech.com",
+    "company_profile_image": "path/to/new-image.jpg",
+    "telegram_link": "https://t.me/abctech",
     "created_at": "2026-07-11T12:00:00.000000Z",
     "updated_at": "2026-07-11T12:00:00.000000Z"
   },
@@ -270,6 +284,8 @@ When creating or updating a company:
 - phone is optional
 - email must be a valid email if provided
 - website must be a valid URL if provided
+- company_profile_image is optional
+- telegram_link is optional
 
 ## Common Error Responses
 

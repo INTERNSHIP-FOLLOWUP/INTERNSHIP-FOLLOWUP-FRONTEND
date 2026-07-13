@@ -266,7 +266,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStudentStore } from '@/stores/student'
-import { useBatchStore } from '@/stores/batch'
+import { useBatchStore } from '@/stores/batchStore'
 import { useTutorStore } from '@/stores/tutor'
 import type { StudentFormData } from '@/types/student'
 

@@ -133,6 +133,7 @@ function studentCount(batch: Record<string, unknown>) {
 
 function onSaved() {
   closeModal()
+  store.fetchBatches().catch(() => {})
 }
 
 function confirmDelete(batch: Record<string, unknown>) {
@@ -141,10 +142,10 @@ function confirmDelete(batch: Record<string, unknown>) {
 }
 
 async function handleDelete() {
-  if (deletingBatch.value) {
-    await store.deleteBatch(deletingBatch.value.id as number | string)
-  }
-  showDeleteConfirm.value = false
+  if (!deletingBatch.value) return
+  await store.deleteBatch(deletingBatch.value.id as number | string)
   deletingBatch.value = null
+  showDeleteConfirm.value = false
+  await store.fetchBatches().catch(() => {})
 }
 </script>

@@ -27,15 +27,33 @@ export const useBatchStore = defineStore('batch', {
       }
     },
     async createBatch(payload: Record<string, unknown>) {
-      const res = await api.post('/batches', payload)
-      this.batches.push(res.data)
-      return res.data
+      this.loading = true
+      this.error = null
+      try {
+        const res = await api.post('/batches', payload)
+        this.batches.push(res.data)
+        return res.data
+      } catch (err: unknown) {
+        this.error = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create batch'
+        throw err
+      } finally {
+        this.loading = false
+      }
     },
     async updateBatch(id: number | string, payload: Record<string, unknown>) {
-      const res = await api.put(`/batches/${id}`, payload)
-      const idx = this.batches.findIndex(b => b.id === id)
-      if (idx !== -1) this.batches[idx] = res.data
-      return res.data
+      this.loading = true
+      this.error = null
+      try {
+        const res = await api.put(`/batches/${id}`, payload)
+        const idx = this.batches.findIndex(b => b.id === id)
+        if (idx !== -1) this.batches[idx] = res.data
+        return res.data
+      } catch (err: unknown) {
+        this.error = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update batch'
+        throw err
+      } finally {
+        this.loading = false
+      }
     },
     async fetchBatch(id: number | string) {
       this.loading = true
@@ -55,8 +73,17 @@ export const useBatchStore = defineStore('batch', {
       this.currentBatch = batch
     },
     async deleteBatch(id: number | string) {
-      await api.delete(`/batches/${id}`)
-      this.batches = this.batches.filter(b => b.id !== id)
+      this.loading = true
+      this.error = null
+      try {
+        await api.delete(`/batches/${id}`)
+        this.batches = this.batches.filter(b => b.id !== id)
+      } catch (err: unknown) {
+        this.error = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete batch'
+        throw err
+      } finally {
+        this.loading = false
+      }
     },
     resetState() {
       this.batches = []

@@ -2,10 +2,11 @@
   <div class="animate-fade-in">
     <CompanyForm
       :mode="mode"
+      :company-id="companyId"
       :initialData="initialData"
       showCancel
       @cancel="goBack"
-      @submit="onSubmit"
+      @saved="onSaved"
     />
   </div>
 </template>
@@ -23,6 +24,11 @@ const router = useRouter()
 
 const mode = computed(() => (route.params.id ? 'edit' : 'create'))
 
+const companyId = computed(() => {
+  const idRaw = route.params.id
+  return typeof idRaw === 'string' ? Number(idRaw) : Array.isArray(idRaw) ? Number(idRaw[0]) : NaN
+})
+
 const initialData = ref<Partial<CompanyFormData>>({
   companyName: '',
   companyEmail: '',
@@ -33,9 +39,7 @@ const initialData = ref<Partial<CompanyFormData>>({
 
 async function loadIfNeeded() {
   if (mode.value !== 'edit') return
-
-  const idRaw = route.params.id
-  const id = typeof idRaw === 'string' ? Number(idRaw) : Array.isArray(idRaw) ? Number(idRaw[0]) : NaN
+  const id = companyId.value
   if (!Number.isFinite(id)) return
 
   await store.fetchCompanyById(id)
@@ -46,14 +50,11 @@ async function loadIfNeeded() {
     companyName: c.name,
     companyEmail: c.email ?? '',
     location: c.location ?? '',
-    // Store currently may not provide industry/contactPerson/phone/website, so default to empty strings.
-    // (If your API returns them, we can extend CompanySummary mapping in stores/company.ts.)
-    industry: (c as any).industry ?? '',
-    contactPerson: (c as any).contactPerson ?? '',
-    contactPhone: (c as any).phone ?? (c as any).contactPhone ?? '',
-    website: (c as any).website ?? '',
+    industry: '',
+    contactPerson: '',
+    contactPhone: '',
+    website: '',
   }
-
 }
 
 onMounted(async () => {
@@ -67,27 +68,9 @@ function goBack() {
   router.push({ name: target }).catch(() => {})
 }
 
-async function onSubmit(payload: CompanyFormData) {
-  const createPayload = store.mapFromForm(payload)
-
-  try {
-    if (mode.value === 'create') {
-      await store.createCompany(createPayload)
-      await store.fetchCompanies()
-      goBack()
-      return
-    }
-
-    const idRaw = route.params.id
-    const id = typeof idRaw === 'string' ? Number(idRaw) : Array.isArray(idRaw) ? Number(idRaw[0]) : NaN
-    if (!Number.isFinite(id)) return
-
-    await store.updateCompany(id, createPayload)
-    await store.fetchCompanies()
-    goBack()
-  } catch {
-    // store.error will be displayed by parent list view
-  }
+function onSaved() {
+  store.fetchCompanies().catch(() => {})
+  goBack()
 }
 </script>
 

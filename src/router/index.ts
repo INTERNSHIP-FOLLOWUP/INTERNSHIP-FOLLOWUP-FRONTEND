@@ -5,9 +5,6 @@ import type { AppRouteMeta } from './guards'
 import {
   ensureBooted,
   isGuestRoute,
-  redirectAuthenticatedGuest,
-  requireAuth,
-  checkRoles,
   getDashboardForRole,
 } from './guards'
 import { PUBLIC_ROUTES, ROLE_ROUTES } from '@/types/auth'
@@ -97,6 +94,7 @@ const router = createRouter({
           component: () => import('@/views/batch/BatchListView.vue'),
           meta: { title: 'Batches' },
         },
+        {
           path: 'companies',
           name: 'AdminCompanies',
           component: () => import('@/views/company/CompanyListView.vue'),

@@ -1,7 +1,6 @@
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import type { UserRole } from '@/types/auth'
-import { AUTH_CONFIG } from '@/constants/auth'
 
 /**
  * useAuth

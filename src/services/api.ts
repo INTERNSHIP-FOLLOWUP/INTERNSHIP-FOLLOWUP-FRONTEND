@@ -10,11 +10,6 @@ interface QueueItem {
   reject: (error: unknown) => void
 }
 
-interface FailedRequest {
-  config: InternalAxiosRequestConfig
-  reject: (error: unknown) => void
-}
-
 // ── Axios Instance ──────────────────────────────────────────────
 
 const api = axios.create({
@@ -32,7 +27,7 @@ const api = axios.create({
 
 let isRefreshing = false
 let failedQueue: QueueItem[] = []
-let pendingRequests: Map<string, InternalAxiosRequestConfig> = new Map()
+const pendingRequests: Map<string, InternalAxiosRequestConfig> = new Map()
 let isLoggingOut = false
 
 function processQueue(error: unknown, token: string | null = null) {
@@ -97,8 +92,8 @@ api.interceptors.request.use(
     }
     if (config.method?.toLowerCase() === 'get') {
       pendingRequests.set(requestKey, config)
-      config.cancelToken = new axios.CancelToken((cancel) => {
-        config.cancel = () => {
+      ;(config as any).cancelToken = new axios.CancelToken((cancel) => {
+        ;(config as any).cancel = () => {
           pendingRequests.delete(requestKey)
           cancel('Request cancelled due to duplicate')
         }

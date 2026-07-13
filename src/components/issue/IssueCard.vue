@@ -63,7 +63,7 @@ import IssueStatusBadge from '@/components/issue/IssueStatusBadge.vue'
 import PriorityBadge from '@/components/issue/PriorityBadge.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 
-const props = defineProps<{ issue: Issue }>()
+defineProps<{ issue: Issue }>()
 
 function formatDate(value?: string | null) {
   if (!value) return '—'

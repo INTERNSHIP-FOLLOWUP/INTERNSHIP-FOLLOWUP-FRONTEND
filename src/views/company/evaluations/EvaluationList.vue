@@ -162,11 +162,13 @@ const sortKey = ref('date_desc')
 const pageSize = 8
 const page = ref(1)
 
-function studentName(e: any): string {
+function studentName(e: unknown): string {
+    const record = e as Record<string, unknown>
+    const student = record?.student as Record<string, unknown> | undefined
     return (
-        e?.student?.name ||
-        store.students.find((s) => s.id === Number(e?.student_id))?.name ||
-        (e?.student_name as string) ||
+        String(student?.name ?? '') ||
+        store.students.find((s) => s.id === Number(record?.student_id ?? 0))?.name ||
+        String(record?.student_name ?? '') ||
         '—'
     )
 }
@@ -238,8 +240,5 @@ async function load() {
 onMounted(load)
 
 // reset to page 1 when filters change
-const _watch = () => {
-    page.value = 1
-}
-    ;[search, filterStudentId, scoreFilter, sortKey].forEach((r) => r && r.value)
+;[search, filterStudentId, scoreFilter, sortKey].forEach((r: unknown) => (r as { value: number }).value)
 </script>

@@ -265,7 +265,7 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
-  async function fetchStudents(): Promise<any[]> {
+  async function fetchStudents(): Promise<unknown[]> {
     try {
       const res = await api.get('/company/students')
       const payload = res.data
@@ -275,7 +275,7 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
-  async function fetchEvaluations(): Promise<any[]> {
+  async function fetchEvaluations(): Promise<unknown[]> {
     try {
       const res = await api.get('/company/evaluations')
       const payload = res.data
@@ -289,12 +289,12 @@ export const useCompanyStore = defineStore('company', () => {
     studentId: number
     rating: number
     remarks?: string | null
-  }): Promise<any> {
+  }): Promise<unknown> {
     const res = await api.post('/company/evaluations', payload)
     return res.data
   }
 
-  async function fetchFeedback(): Promise<any[]> {
+  async function fetchFeedback(): Promise<unknown[]> {
     try {
       const res = await api.get('/company/feedback')
       const payload = res.data
@@ -307,7 +307,7 @@ export const useCompanyStore = defineStore('company', () => {
   async function submitFeedback(payload: {
     message: string
     status?: string | null
-  }): Promise<any> {
+  }): Promise<unknown> {
     const res = await api.post('/company/feedback', payload)
     return res.data
   }

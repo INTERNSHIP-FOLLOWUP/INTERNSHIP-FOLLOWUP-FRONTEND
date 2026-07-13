@@ -110,7 +110,7 @@ export const useIssueStore = defineStore('issue', () => {
       const roleParams = buildRoleFilterParams()
       const res = await api.get('/issues', {
         params: {
-          ...(params ?? {}),
+          ...params,
           ...roleParams,
         },
       })
@@ -124,38 +124,39 @@ export const useIssueStore = defineStore('issue', () => {
           ? payload.data
           : []
 
-      issues.value = list.map((raw: any) => {
-        const studentRaw = raw?.student ?? raw?.assigned_student ?? null
-        const createdByRaw = raw?.created_by ?? raw?.createdBy ?? null
+      issues.value = list.map((raw: unknown) => {
+        const record = raw as Record<string, unknown>
+        const studentRaw = (record['student'] ?? record['assigned_student']) as Record<string, unknown> | null
+        const createdByRaw = (record['created_by'] ?? record['createdBy']) as Record<string, unknown> | null
         return {
-          ...(raw ?? {}),
-          id: Number(raw?.id ?? 0),
-          title: String(raw?.title ?? ''),
-          description: String(raw?.description ?? ''),
-          priority: (raw?.priority ?? 'Low') as IssuePriority,
-          status: (raw?.status ?? 'Open') as IssueStatus,
+          ...(record as Record<string, unknown>),
+          id: Number((record as Record<string, unknown>)['id'] ?? 0),
+          title: String((record as Record<string, unknown>)['title'] ?? ''),
+          description: String((record as Record<string, unknown>)['description'] ?? ''),
+          priority: ((record as Record<string, unknown>)['priority'] ?? 'Low') as IssuePriority,
+          status: ((record as Record<string, unknown>)['status'] ?? 'Open') as IssueStatus,
           student: studentRaw
             ? {
-                id: Number(studentRaw?.id ?? raw?.student_id ?? 0),
-                name: String(studentRaw?.name ?? studentRaw?.full_name ?? 'Student'),
+                id: Number(studentRaw['id'] ?? (record as Record<string, unknown>)['student_id'] ?? 0),
+                name: String(studentRaw['name'] ?? studentRaw['full_name'] ?? 'Student'),
               }
-            : raw?.student_id
-              ? { id: Number(raw.student_id), name: 'Student' }
+            : Number((record as Record<string, unknown>)['student_id'])
+              ? { id: Number((record as Record<string, unknown>)['student_id']), name: 'Student' }
               : null,
-          student_id: raw?.student_id ?? raw?.studentId ?? null,
+          student_id: Number((record as Record<string, unknown>)['student_id'] ?? (record as Record<string, unknown>)['studentId'] ?? null),
           created_by: createdByRaw
             ? {
-                id: Number(createdByRaw?.id ?? 0),
-                name: String(createdByRaw?.name ?? 'User'),
+                id: Number(createdByRaw['id'] ?? 0),
+                name: String(createdByRaw['name'] ?? 'User'),
               }
             : null,
-          createdAt: raw?.created_at,
-          created_at: raw?.created_at ?? raw?.createdAt,
-          updated_at: raw?.updated_at ?? raw?.updatedAt,
-          activities: Array.isArray(raw?.activities)
-            ? raw.activities
-            : Array.isArray(raw?.timeline)
-              ? raw.timeline
+          createdAt: (record as Record<string, unknown>)['created_at'],
+          created_at: (record as Record<string, unknown>)['created_at'] ?? (record as Record<string, unknown>)['createdAt'],
+          updated_at: (record as Record<string, unknown>)['updated_at'] ?? (record as Record<string, unknown>)['updatedAt'],
+          activities: Array.isArray((record as Record<string, unknown>)['activities'])
+            ? (record as Record<string, unknown>)['activities'] as unknown[]
+            : Array.isArray((record as Record<string, unknown>)['timeline'])
+              ? (record as Record<string, unknown>)['timeline'] as unknown[]
               : [],
         } as Issue
       })
@@ -185,7 +186,7 @@ export const useIssueStore = defineStore('issue', () => {
       const createdByRaw = raw?.created_by ?? raw?.createdBy ?? null
 
       issue.value = {
-        ...(raw ?? {}),
+        ...raw,
         id: Number(raw?.id ?? id),
         title: String(raw?.title ?? ''),
         description: String(raw?.description ?? ''),
@@ -238,7 +239,7 @@ export const useIssueStore = defineStore('issue', () => {
       const raw = res.data?.issue ?? res.data
 
       const created: Issue = {
-        ...(raw ?? {}),
+        ...raw,
         id: Number(raw?.id ?? 0),
         title: String(raw?.title ?? data.title),
         description: String(raw?.description ?? data.description),
@@ -273,7 +274,7 @@ export const useIssueStore = defineStore('issue', () => {
       const raw = res.data?.issue ?? res.data
 
       const updated: Issue = {
-        ...(raw ?? {}),
+        ...raw,
         id,
         title: String(raw?.title ?? data.title),
         description: String(raw?.description ?? data.description),
@@ -324,9 +325,9 @@ export const useIssueStore = defineStore('issue', () => {
           ? payload.data
           : []
 
-      students.value = list.map((s: any) => ({
-        id: Number(s?.id ?? 0),
-        name: String(s?.name ?? s?.full_name ?? s?.student_name ?? 'Student'),
+      students.value = list.map((s: unknown) => ({
+        id: Number((s as Record<string, unknown>).id ?? 0),
+        name: String((s as Record<string, unknown>).name ?? (s as Record<string, unknown>).full_name ?? (s as Record<string, unknown>).student_name ?? 'Student'),
       }))
     } catch (err: unknown) {
       const parsed = parseApiError(err)

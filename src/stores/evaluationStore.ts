@@ -3,6 +3,11 @@ import { computed, ref } from 'vue'
 import api from '@/services/api'
 import { parseApiError } from '@/utils/errorParser'
 
+function getProp<T>(obj: unknown, key: string): T {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (obj as any)[key] as T
+}
+
 export interface StudentSummary {
     id: number
     name: string
@@ -62,11 +67,13 @@ export const useEvaluationStore = defineStore('evaluation', () => {
                     ? payload.data
                     : []
 
-            students.value = list.map((s: any) => ({
-                id: Number(s?.id ?? 0),
-                name: String(s?.name ?? s?.student_name ?? s?.student?.name ?? 'Student'),
-                email: s?.email ?? s?.student?.email ?? null,
-            }))
+            students.value = list.map((s: unknown) => {
+                return {
+                    id: Number(getProp<unknown>(s, 'id') ?? 0),
+                    name: String(getProp<unknown>(s, 'name') ?? getProp<unknown>(s, 'student_name') ?? (getProp<unknown>(s, 'student') as { [key: string]: unknown } | null | undefined)?.['name'] ?? 'Student'),
+                    email: getProp<unknown>(s, 'email') ?? (getProp<unknown>(s, 'student') as { [key: string]: unknown } | null | undefined)?.['email'] ?? null,
+                }
+            })
         } catch (err: unknown) {
             const parsed = parseApiError(err)
             setErrors(parsed.fields)
@@ -90,15 +97,17 @@ export const useEvaluationStore = defineStore('evaluation', () => {
                     ? payload.data
                     : []
 
-            evaluations.value = list.map((e: any) => ({
-                ...e,
-                id: Number(e?.id ?? 0),
-                technical_skill: Number(e?.technical_skill ?? 0),
-                communication: Number(e?.communication ?? 0),
-                professionalism: Number(e?.professionalism ?? 0),
-                attendance: Number(e?.attendance ?? 0),
-                overall_score: Number(e?.overall_score ?? 0),
-            }))
+            evaluations.value = list.map((e: unknown) => {
+                return {
+                    ...(e as Record<string, unknown>),
+                    id: Number(getProp<unknown>(e, 'id') ?? 0),
+                    technical_skill: Number(getProp<unknown>(e, 'technical_skill') ?? 0),
+                    communication: Number(getProp<unknown>(e, 'communication') ?? 0),
+                    professionalism: Number(getProp<unknown>(e, 'professionalism') ?? 0),
+                    attendance: Number(getProp<unknown>(e, 'attendance') ?? 0),
+                    overall_score: Number(getProp<unknown>(e, 'overall_score') ?? 0),
+                }
+            })
         } catch (err: unknown) {
             const parsed = parseApiError(err)
             setErrors(parsed.fields)
@@ -154,7 +163,7 @@ export const useEvaluationStore = defineStore('evaluation', () => {
             const res = await api.post('/company/evaluations', data)
             const raw = res.data?.evaluation ?? res.data
             const created: Evaluation = {
-                ...(raw ?? {}),
+                ...raw,
                 id: Number(raw?.id ?? 0),
                 technical_skill: Number(raw?.technical_skill ?? data.technical_skill),
                 communication: Number(raw?.communication ?? data.communication),
@@ -196,7 +205,7 @@ export const useEvaluationStore = defineStore('evaluation', () => {
             const res = await api.put(`/company/evaluations/${id}`, data)
             const raw = res.data?.evaluation ?? res.data
             const updated: Evaluation = {
-                ...(raw ?? {}),
+                ...raw,
                 id,
                 technical_skill: Number(raw?.technical_skill ?? data.technical_skill),
                 communication: Number(raw?.communication ?? data.communication),

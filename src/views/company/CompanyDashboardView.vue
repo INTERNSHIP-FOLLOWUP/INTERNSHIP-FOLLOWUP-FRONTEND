@@ -105,7 +105,9 @@ async function load() {
   try {
     const [students, evaluations] = await Promise.all([store.fetchStudents(), store.fetchEvaluations()])
     stats.value = {
-      activeInternships: Array.isArray(students) ? students.filter((s: any) => s.status === 'assigned').length : 0,
+      activeInternships: Array.isArray(students)
+        ? students.filter((s) => String((s as Record<string, unknown>).status ?? '') === 'assigned').length
+        : 0,
       assignedStudents: Array.isArray(students) ? students.length : 0,
       pendingReviews: Array.isArray(evaluations) ? evaluations.length : 0,
     }

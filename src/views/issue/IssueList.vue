@@ -159,7 +159,6 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useIssueStore } from '@/stores/issueStore'
 import { useAuth } from '@/composables/useAuth'
-import IssueCard from '@/components/issue/IssueCard.vue'
 import IssueStatusBadge from '@/components/issue/IssueStatusBadge.vue'
 import PriorityBadge from '@/components/issue/PriorityBadge.vue'
 

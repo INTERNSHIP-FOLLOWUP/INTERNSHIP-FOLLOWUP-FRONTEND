@@ -71,7 +71,12 @@ import { useCompanyStore } from '@/stores/company'
 const store = useCompanyStore()
 
 const form = reactive<{ message: string; status?: string | null }>({ message: '' })
-const feedback = ref<any[]>([])
+interface FeedbackItem {
+  id: number | string
+  message: string
+  created_at: string
+}
+const feedback = ref<FeedbackItem[]>([])
 const submitting = ref(false)
 const loadingFeedback = ref(false)
 
@@ -90,7 +95,7 @@ async function loadFeedback() {
   loadingFeedback.value = true
   try {
     const items = await store.fetchFeedback()
-    feedback.value = Array.isArray(items) ? items : []
+    feedback.value = Array.isArray(items) ? (items as FeedbackItem[]) : []
   } finally {
     loadingFeedback.value = false
   }

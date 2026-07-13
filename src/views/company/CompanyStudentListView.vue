@@ -85,12 +85,6 @@ const statusMap: Record<string, { text: string; class: string }> = {
   active: { text: 'Active', class: 'rounded-full bg-emerald-500/10 text-emerald-700' },
   completed: { text: 'Completed', class: 'rounded-full bg-gray-500/10 text-gray-700' },
 }
-const colorForId: Record<string, string> = {
-  'bg-primary-500': 'bg-primary-500',
-  'bg-primary-600': 'bg-primary-600',
-  'bg-primary-700': 'bg-primary-700',
-}
-
 interface StudentRow {
   id: number
   name: string
@@ -123,8 +117,9 @@ function colorFor(id: number | undefined | null): string {
   return 'bg-primary-500'
 }
 
-function statusClassFor(rawItem: any): string {
-  const statusKey = String(rawItem?.status ?? 'assigned')
+function statusClassFor(rawItem: unknown): string {
+  const record = rawItem as Record<string, unknown>
+  const statusKey = String(record.status ?? 'assigned')
   const matched = statusMap[statusKey] || statusMap['assigned']
   const matchedClass = matched?.class
   return typeof matchedClass === 'string' ? matchedClass : 'rounded-full bg-primary-500/10 text-primary-700'
@@ -132,18 +127,21 @@ function statusClassFor(rawItem: any): string {
 
 onMounted(async () => {
   try {
-    const rawStudents: any[] = Array.isArray(await store.fetchStudents()) ? await store.fetchStudents() : []
-    students.value = rawStudents.map((item) => ({
-      id: Number(item?.id ?? 0),
-      name: String(item?.name ?? item?.student_name ?? 'Student'),
-      initials: initialsFrom(String(item?.name ?? item?.student_name ?? '')),
-      email: String(item?.email ?? item?.student_email ?? ''),
-      batch: String(item?.batch ?? item?.program ?? item?.batch ?? ''),
-      assignedDate: String(item?.assignedDate ?? item?.created_at ?? ''),
-      status: String(item?.status ?? 'assigned'),
-      avatarColor: colorFor(item?.id),
-      statusClass: statusClassFor(item),
-    }))
+    const rawStudents: unknown[] = Array.isArray(await store.fetchStudents()) ? await store.fetchStudents() : []
+    students.value = rawStudents.map((item) => {
+      const record = item as Record<string, unknown>
+      return {
+        id: Number((record as { id?: unknown }).id ?? 0),
+        name: String((record as { name?: unknown }).name ?? (record as { student_name?: unknown }).student_name ?? 'Student'),
+        initials: initialsFrom(String((record as { name?: unknown }).name ?? (record as { student_name?: unknown }).student_name ?? '')),
+        email: String((record as { email?: unknown }).email ?? (record as { student_email?: unknown }).student_email ?? ''),
+        batch: String((record as { batch?: unknown }).batch ?? (record as { program?: unknown }).program ?? (record as { batch?: unknown }).batch ?? ''),
+        assignedDate: String((record as { assignedDate?: unknown }).assignedDate ?? (record as { created_at?: unknown }).created_at ?? ''),
+        status: String((record as { status?: unknown }).status ?? 'assigned'),
+        avatarColor: colorFor((record as { id?: unknown }).id as number | undefined | null),
+        statusClass: statusClassFor(item),
+      }
+    })
   } catch {
     students.value = []
   }

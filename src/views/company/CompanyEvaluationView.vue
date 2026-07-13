@@ -91,10 +91,13 @@ async function loadStudents() {
   try {
     const items = await store.fetchStudents()
     const source = Array.isArray(items) ? items : []
-    students.value = source.map((item: any) => ({
-      id: Number(item?.id ?? 0),
-      name: String(item?.name ?? item?.student_name ?? 'Student'),
-    }))
+    students.value = source.map((item) => {
+      const record = item as Record<string, unknown>
+      return {
+        id: Number((record as { id?: unknown }).id ?? 0),
+        name: String((record as { name?: unknown }).name ?? (record as { student_name?: unknown }).student_name ?? 'Student'),
+      }
+    })
   } catch {}
 }
 

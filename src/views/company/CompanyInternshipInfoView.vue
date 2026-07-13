@@ -83,9 +83,6 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { useCompanyStore } from '@/stores/company'
-
-const store = useCompanyStore()
 
 const form = reactive({
   programName: '',

@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import api from '@/services/api'
 
 const router = useRouter()
-const route = useRoute()
-
 const email = ref('')
 const loading = ref(false)
 const message = ref('')

@@ -15,6 +15,8 @@ interface BackendCompany {
   phone: string | null
   email: string | null
   website: string | null
+  company_profile_image: string | null
+  telegram_link: string | null
   created_at: string
   updated_at: string
 }
@@ -41,6 +43,8 @@ function toFrontend(raw: BackendCompany): Company {
     phone: raw.phone,
     email: raw.email,
     website: raw.website,
+    companyProfileImage: raw.company_profile_image,
+    telegramLink: raw.telegram_link,
     createdAt: raw.created_at,
     updatedAt: raw.updated_at,
   }
@@ -55,6 +59,8 @@ function toBackend(payload: CreateCompanyPayload | UpdateCompanyPayload): Record
     phone: payload.phone ?? null,
     email: payload.email ?? null,
     website: payload.website ?? null,
+    company_profile_image: payload.companyProfileImage ?? null,
+    telegram_link: payload.telegramLink ?? null,
   }
 }
 

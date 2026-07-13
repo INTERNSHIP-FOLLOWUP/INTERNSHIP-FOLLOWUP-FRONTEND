@@ -29,6 +29,8 @@ const initialData = ref<Partial<CompanyFormData>>({
   location: '',
   contactPhone: '',
   website: '',
+  companyProfileImage: '',
+  telegramLink: '',
 })
 
 async function loadIfNeeded() {
@@ -42,17 +44,17 @@ async function loadIfNeeded() {
   const c = store.currentCompany
   if (!c) return
 
-  initialData.value = {
-    companyName: c.name,
-    companyEmail: c.email ?? '',
-    location: c.location ?? '',
-    // Store currently may not provide industry/contactPerson/phone/website, so default to empty strings.
-    // (If your API returns them, we can extend CompanySummary mapping in stores/company.ts.)
-    industry: (c as any).industry ?? '',
-    contactPerson: (c as any).contactPerson ?? '',
-    contactPhone: (c as any).phone ?? (c as any).contactPhone ?? '',
-    website: (c as any).website ?? '',
-  }
+    initialData.value = {
+      companyName: c.name,
+      companyEmail: c.email ?? '',
+      location: c.location ?? '',
+      industry: c.industry ?? '',
+      contactPerson: c.contactPerson ?? '',
+      contactPhone: c.phone ?? '',
+      website: c.website ?? '',
+      companyProfileImage: c.companyProfileImage ?? '',
+      telegramLink: c.telegramLink ?? '',
+    }
 
 }
 

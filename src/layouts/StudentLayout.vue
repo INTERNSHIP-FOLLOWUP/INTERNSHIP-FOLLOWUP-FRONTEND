@@ -29,9 +29,7 @@
 
       <!-- Navigation -->
       <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
-          Menu
-        </p>
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Menu</p>
         <router-link
           v-for="item in navItems"
           :key="item.name"
@@ -338,7 +336,6 @@ async function confirmLogout() {
   }
 }
 
-
 function createIcon(path: string) {
   return defineComponent({
     setup() {
@@ -416,9 +413,7 @@ const navItems: NavItem[] = [
     name: 'profile',
     label: 'Profile',
     to: '/student/profile',
-    icon: createIcon(
-      'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
-    ),
+    icon: createIcon('M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'),
   },
 ]
 </script>

@@ -1,7 +1,13 @@
 import api from '@/services/api'
 import { tokenService } from '@/services/token'
 import { AUTH_CONFIG } from '@/constants/auth'
-import type { AuthResponse, LoginCredentials, RegisterData, User, RefreshResponse } from '@/types/auth'
+import type {
+  AuthResponse,
+  LoginCredentials,
+  RegisterData,
+  User,
+  RefreshResponse,
+} from '@/types/auth'
 
 const { ENDPOINTS } = AUTH_CONFIG
 

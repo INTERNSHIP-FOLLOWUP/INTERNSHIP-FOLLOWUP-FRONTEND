@@ -1,9 +1,6 @@
 <template>
   <div class="space-y-1.5">
-    <label
-      :for="inputId"
-      class="block text-sm font-medium text-slate-700"
-    >
+    <label :for="inputId" class="block text-sm font-medium text-slate-700">
       {{ label }}
       <span v-if="required" class="text-error ml-0.5">*</span>
     </label>
@@ -38,11 +35,7 @@
       />
     </div>
 
-    <p
-      v-if="error"
-      class="text-sm text-error flex items-center gap-1 mt-1"
-      role="alert"
-    >
+    <p v-if="error" class="text-sm text-error flex items-center gap-1 mt-1" role="alert">
       <svg class="h-4 w-4 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
         <path
           fill-rule="evenodd"

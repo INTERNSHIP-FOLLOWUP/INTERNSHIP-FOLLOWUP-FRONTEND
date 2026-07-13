@@ -48,7 +48,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function roleLevel(role?: UserRole | null): number {
-    return role ? AUTH_CONFIG.ROLE_HIERARCHY[role] ?? 0 : 0
+    return role ? (AUTH_CONFIG.ROLE_HIERARCHY[role] ?? 0) : 0
   }
 
   function canAccess(minRoleLevel: number): boolean {
@@ -96,14 +96,14 @@ export const useAuthStore = defineStore('auth', () => {
   // ── CSRF (optional — for Sanctum SPA auth) ──
   async function getCsrfCookie(): Promise<void> {
     try {
-      // If your backend is Sanctum-based (cookie auth), the CSRF endpoint must be reachable.
-      // In this project the Axios baseURL already includes `/api`, so use a compatible path.
-      const apiBase = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '')
-      await api
-        .get(`${apiBase}/sanctum/csrf-cookie`, {
+      const { default: axios } = await import('axios')
+      await axios.get(
+        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/sanctum/csrf-cookie`,
+        {
           withCredentials: true,
           headers: { Accept: 'application/json' },
-        })
+        },
+      )
     } catch {
       // Bearer-token APIs don't need the CSRF cookie
     }
@@ -151,7 +151,8 @@ export const useAuthStore = defineStore('auth', () => {
       setSession(data)
       updateActivity()
 
-      const redirect = (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
+      const redirect =
+        (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
       await router.push(redirect)
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -173,7 +174,8 @@ export const useAuthStore = defineStore('auth', () => {
       setSession(data)
       updateActivity()
 
-      const redirect = (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
+      const redirect =
+        (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
       await router.push(redirect)
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -205,12 +207,28 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-    user, hasSession, loading, error, initialized, lastActivity, isSessionTimedOut,
-    isLoggedIn, userRole, userName, isAdmin,
-    hasRole, hasAnyRole, hasPermission, canAccess, roleLevel,
-    updateActivity, checkSessionTimeout,
-    boot, login, register, logout, forceLogout,
+    user,
+    hasSession,
+    loading,
+    error,
+    initialized,
+    lastActivity,
+    isSessionTimedOut,
+    isLoggedIn,
+    userRole,
+    userName,
+    isAdmin,
+    hasRole,
+    hasAnyRole,
+    hasPermission,
+    canAccess,
+    roleLevel,
+    updateActivity,
+    checkSessionTimeout,
+    boot,
+    login,
+    register,
+    logout,
+    forceLogout,
   }
 })
-
-

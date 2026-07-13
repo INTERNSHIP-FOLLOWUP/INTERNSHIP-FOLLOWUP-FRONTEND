@@ -1,9 +1,7 @@
 <template>
   <div>
     <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">
-        Welcome back, {{ firstName }}!
-      </h1>
+      <h1 class="text-2xl font-bold text-gray-900">Welcome back, {{ firstName }}!</h1>
       <p class="mt-1 text-sm text-gray-500">
         Here's an overview of your assigned students and activities.
       </p>
@@ -20,18 +18,13 @@
             <p class="text-sm font-medium text-gray-500">{{ stat.label }}</p>
             <p class="mt-1 text-2xl font-bold text-gray-900">{{ stat.value }}</p>
           </div>
-          <div
-            class="flex h-10 w-10 items-center justify-center rounded-lg"
-            :class="stat.color"
-          >
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg" :class="stat.color">
             <component :is="stat.icon" class="h-5 w-5 text-white" />
           </div>
         </div>
         <p
           class="mt-2 text-xs"
-          :class="
-            stat.trend.startsWith('+') ? 'text-green-600' : 'text-gray-400'
-          "
+          :class="stat.trend.startsWith('+') ? 'text-green-600' : 'text-gray-400'"
         >
           {{ stat.trend }}
         </p>

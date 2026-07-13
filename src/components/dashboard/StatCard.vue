@@ -69,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, type Component } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -78,7 +78,7 @@ const props = withDefaults(
     trend?: string
     description?: string
     colorClass?: string
-    icon?: any
+    icon?: Component
   }>(),
   {
     colorClass: 'bg-gradient-to-br from-primary-600 to-primary-500',

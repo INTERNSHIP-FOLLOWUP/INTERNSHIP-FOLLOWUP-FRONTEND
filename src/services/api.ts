@@ -10,18 +10,13 @@ interface QueueItem {
   reject: (error: unknown) => void
 }
 
-interface FailedRequest {
-  config: InternalAxiosRequestConfig
-  reject: (error: unknown) => void
-}
-
 // ── Axios Instance ──────────────────────────────────────────────
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
   headers: {
     'Content-Type': 'application/json',
-    Accept: 'application/json',
+    'Accept': 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
   },
   timeout: 15000,
@@ -32,7 +27,7 @@ const api = axios.create({
 
 let isRefreshing = false
 let failedQueue: QueueItem[] = []
-let pendingRequests: Map<string, InternalAxiosRequestConfig> = new Map()
+const pendingRequests: Map<string, InternalAxiosRequestConfig> = new Map()
 let isLoggingOut = false
 
 function processQueue(error: unknown, token: string | null = null) {
@@ -55,7 +50,7 @@ async function attemptTokenRefresh(): Promise<string> {
   const response = await axios.post(
     `${api.defaults.baseURL}${AUTH_CONFIG.ENDPOINTS.REFRESH}`,
     { refresh_token: refreshToken },
-    { headers: { 'Content-Type': 'application/json', Accept: 'application/json' } },
+    { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } },
   )
 
   const { access_token, refresh_token, expires_in } = response.data
@@ -95,11 +90,15 @@ api.interceptors.request.use(
     if (config.method?.toLowerCase() === 'get' && pendingRequests.has(requestKey)) {
       return Promise.reject({ cancelled: true, key: requestKey })
     }
+
     if (config.method?.toLowerCase() === 'get') {
       pendingRequests.set(requestKey, config)
-      ;(config as any).cancel = () => {
-        pendingRequests.delete(requestKey)
-      }
+      ;(config as any).cancelToken = new axios.CancelToken((cancel) => {
+        ;(config as any).cancel = () => {
+          pendingRequests.delete(requestKey)
+          cancel('Request cancelled due to duplicate')
+        }
+      })
     }
 
     return config
@@ -128,7 +127,8 @@ api.interceptors.response.use(
     const { config, response } = error
 
     // Gracefully handle cancelled requests
-    if ((error as any)?.cancelled) return Promise.reject(error)
+    const cancelled = (error as { cancelled?: boolean } | undefined)?.cancelled
+    if (cancelled) return Promise.reject(error)
 
     // No response = network error
     if (!response) {

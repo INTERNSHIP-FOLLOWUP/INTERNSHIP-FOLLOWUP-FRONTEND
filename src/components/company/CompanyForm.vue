@@ -119,6 +119,7 @@
 import { computed, reactive, ref, watch } from 'vue'
 import InputField from '@/components/ui/InputField.vue'
 import PrimaryButton from '@/components/ui/PrimaryButton.vue'
+import { useCompanyStore } from '@/stores/company'
 
 export type CompanyFormMode = 'create' | 'edit'
 
@@ -137,6 +138,7 @@ type CompanyFormErrors = Partial<Record<keyof CompanyFormData, string>>
 
 type Props = {
   mode: CompanyFormMode
+  companyId?: number
   /** Used in edit mode (and also allows prefill in create mode if desired). */
   initialData?: Partial<CompanyFormData>
   /** When used inside a modal/dialog, you may want an explicit cancel button. */
@@ -144,17 +146,19 @@ type Props = {
 }
 
 type Emits = {
-  submit: [payload: CompanyFormData]
+  saved: []
   cancel: []
 }
 
 const props = withDefaults(defineProps<Props>(), {
   initialData: () => ({}),
   showCancel: false,
+  companyId: undefined,
 })
 
 const emit = defineEmits<Emits>()
 
+const store = useCompanyStore()
 const submitting = ref(false)
 const formError = ref('')
 
@@ -187,7 +191,7 @@ function validateUrl(value: string): boolean {
         ? value
         : `https://${value}`
 
-    // eslint-disable-next-line no-new
+     
     new URL(normalized)
     return true
   } catch {
@@ -258,10 +262,17 @@ async function handleSubmit() {
   formError.value = ''
 
   try {
-    emit('submit', { ...form })
-  } catch (e: unknown) {
-    // Parent API wiring errors (or any thrown error) can be surfaced here.
-    formError.value = e instanceof Error ? e.message : 'Failed to submit.'
+    if (props.mode === 'create') {
+      await store.createCompany(store.mapFromForm(form))
+    } else {
+      if (!props.companyId) {
+        throw new Error('Company ID is required for updating.')
+      }
+      await store.updateCompany(props.companyId, store.mapFromForm(form))
+    }
+    emit('saved')
+  } catch (err: unknown) {
+    formError.value = err instanceof Error ? err.message : 'Failed to save company.'
   } finally {
     submitting.value = false
   }

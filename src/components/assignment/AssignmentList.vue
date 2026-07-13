@@ -77,6 +77,9 @@
         class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
       >
         <option value="">All Companies</option>
+        <option v-for="c in companies" :key="c.id" :value="String(c.id)">
+          {{ c.name }}
+        </option>
       </select>
 
       <!-- Clear Filters -->
@@ -190,10 +193,10 @@
               <td class="whitespace-nowrap px-6 py-4 text-right">
                 <div class="flex items-center justify-end gap-1">
                   <button
-                    @click="$emit('view', assignment.id)"
+                    @click="$emit('edit', assignment.id)"
                     class="rounded-lg px-3 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800"
                   >
-                    View
+                    Edit
                   </button>
                   <button
                     @click="confirmDelete(assignment)"
@@ -315,10 +318,12 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useAssignmentStore } from '@/stores/assignment'
+import api from '@/services/api'
 import type { Assignment } from '@/types/assignment'
+import type { User } from '@/types/auth'
 
-const emit = defineEmits<{
-  view: [id: number]
+defineEmits<{
+  edit: [id: number]
   add: []
 }>()
 
@@ -328,6 +333,7 @@ const deletingTarget = ref<Assignment | null>(null)
 const deleting = ref(false)
 const localError = ref('')
 const searchQuery = ref('')
+const companies = ref<User[]>([])
 const filters = ref({
   status: '',
   company_id: '',
@@ -457,6 +463,13 @@ watch(filters, () => {
 }, { deep: true })
 
 onMounted(() => {
+  companies.value = []
+  api.get('/admin/users', { params: { role: 'company', per_page: 200 } }).then((r) => {
+    companies.value = r.data.data ?? r.data
+  }).catch(() => {
+    companies.value = []
+  })
+
   fetchAssignments()
 })
 </script>

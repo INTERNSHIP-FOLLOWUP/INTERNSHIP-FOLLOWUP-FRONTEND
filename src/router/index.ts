@@ -101,6 +101,18 @@ const router = createRouter({
           meta: { title: 'Companies' },
         },
         {
+          path: 'companies/create',
+          name: 'AdminCompaniesCreate',
+          component: () => import('@/views/company/CompanyFormView.vue'),
+          meta: { title: 'Create Company' },
+        },
+        {
+          path: 'companies/:id/edit',
+          name: 'AdminCompaniesEdit',
+          component: () => import('@/views/company/CompanyFormView.vue'),
+          meta: { title: 'Edit Company' },
+        },
+        {
           path: 'assignments',
           name: 'AdminAssignments',
           component: () => import('@/views/assignment/AssignmentView.vue'),

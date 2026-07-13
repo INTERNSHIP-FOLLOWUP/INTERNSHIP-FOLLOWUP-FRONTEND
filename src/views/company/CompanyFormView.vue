@@ -51,17 +51,18 @@ async function loadIfNeeded() {
   const c = store.currentCompany
   if (!c) return
 
-  initialData.value = {
-    companyName: c.name,
-    companyEmail: c.email ?? '',
-    location: c.location ?? '',
-    industry: c.industry ?? '',
-    contactPerson: c.contactPerson ?? '',
-    contactPhone: c.phone ?? '',
-    website: c.website ?? '',
-    companyProfileImage: c.companyProfileImage ?? '',
-    telegramLink: c.telegramLink ?? '',
-  }
+    initialData.value = {
+      companyName: c.name,
+      companyEmail: c.email ?? '',
+      location: c.location ?? '',
+      industry: c.industry ?? '',
+      contactPerson: c.contactPerson ?? '',
+      contactPhone: c.phone ?? '',
+      website: c.website ?? '',
+      companyProfileImage: c.companyProfileImage ?? '',
+      telegramLink: c.telegramLink ?? '',
+    }
+
 }
 
 onMounted(async () => {

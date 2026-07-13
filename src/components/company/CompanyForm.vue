@@ -240,15 +240,19 @@ type CompanyFormErrors = Partial<Record<keyof CompanyFormData, string>>
 
 type Props = {
   mode: CompanyFormMode
+  companyId?: number
+  /** Used in edit mode (and also allows prefill in create mode if desired). */
   initialData?: Partial<CompanyFormData>
   showCancel?: boolean
   apiErrors?: Record<string, string>
 }
 
 type Emits = {
-  submit: [payload: CompanyFormData]
+  saved: [payload: CompanyFormData]
   cancel: []
 }
+
+
 
 const props = withDefaults(defineProps<Props>(), {
   initialData: () => ({}),
@@ -372,7 +376,7 @@ async function handleSubmit() {
   formError.value = ''
 
   try {
-    emit('submit', { ...form })
+    emit('saved', { ...form })
   } catch (e: unknown) {
     formError.value = e instanceof Error ? e.message : 'Failed to submit. Please try again.'
   } finally {

@@ -260,7 +260,7 @@ const tutorStore = useTutorStore()
 
 const isTutorDisabled = computed(() => {
   const current = form.status as AssignmentStatus
-  return current === 'completed' || current === 'terminated'
+  return current === 'Completed' || current === 'Terminated'
 })
 
 const isEdit = computed(() => !!props.assignmentId)

@@ -25,6 +25,8 @@
         <select
           id="student_id"
           v-model.number="form.student_id"
+          :aria-invalid="!!errors.student_id"
+          :aria-describedby="errors.student_id ? 'student_id-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
           :class="inputClass('student_id')"
           @change="clearFieldError('student_id')"
@@ -36,7 +38,7 @@
             {{ s.name }}
           </option>
         </select>
-        <p v-if="errors.student_id" class="text-sm text-error">{{ errors.student_id }}</p>
+        <p v-if="errors.student_id" id="student_id-error" class="text-sm text-error">{{ errors.student_id }}</p>
       </div>
 
       <!-- Company -->
@@ -47,6 +49,8 @@
         <select
           id="company_id"
           v-model.number="form.company_id"
+          :aria-invalid="!!errors.company_id"
+          :aria-describedby="errors.company_id ? 'company_id-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
           :class="inputClass('company_id')"
           @change="clearFieldError('company_id')"
@@ -58,7 +62,7 @@
             {{ c.company_name || c.name }}
           </option>
         </select>
-        <p v-if="errors.company_id" class="text-sm text-error">{{ errors.company_id }}</p>
+        <p v-if="errors.company_id" id="company_id-error" class="text-sm text-error">{{ errors.company_id }}</p>
       </div>
 
       <!-- Tutor -->
@@ -69,6 +73,8 @@
         <select
           id="tutor_id"
           v-model.number="form.tutor_id"
+          :aria-invalid="!!errors.tutor_id"
+          :aria-describedby="errors.tutor_id ? 'tutor_id-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
           :class="inputClass('tutor_id')"
           :disabled="isTutorDisabled"
@@ -81,7 +87,7 @@
             {{ t.label }}
           </option>
         </select>
-        <p v-if="errors.tutor_id" class="text-sm text-error">{{ errors.tutor_id }}</p>
+        <p v-if="errors.tutor_id" id="tutor_id-error" class="text-sm text-error">{{ errors.tutor_id }}</p>
         <p v-if="tutorStore.error" class="text-sm text-error">{{ tutorStore.error }}</p>
       </div>
 
@@ -95,12 +101,14 @@
           v-model="form.position"
           type="text"
           placeholder="e.g. Software Engineer Intern"
+          :aria-invalid="!!errors.position"
+          :aria-describedby="errors.position ? 'position-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('position')"
           @input="clearFieldError('position')"
           @blur="validateField('position')"
         />
-        <p v-if="errors.position" class="text-sm text-error">{{ errors.position }}</p>
+        <p v-if="errors.position" id="position-error" class="text-sm text-error">{{ errors.position }}</p>
       </div>
 
       <!-- Start Date -->
@@ -112,12 +120,14 @@
           id="start_date"
           v-model="form.start_date"
           type="date"
+          :aria-invalid="!!errors.start_date"
+          :aria-describedby="errors.start_date ? 'start_date-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
           :class="inputClass('start_date')"
           @change="clearFieldError('start_date')"
           @blur="validateField('start_date')"
         />
-        <p v-if="errors.start_date" class="text-sm text-error">{{ errors.start_date }}</p>
+        <p v-if="errors.start_date" id="start_date-error" class="text-sm text-error">{{ errors.start_date }}</p>
       </div>
 
       <!-- End Date -->
@@ -129,12 +139,14 @@
           id="end_date"
           v-model="form.end_date"
           type="date"
+          :aria-invalid="!!errors.end_date"
+          :aria-describedby="errors.end_date ? 'end_date-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
           :class="inputClass('end_date')"
           @change="clearFieldError('end_date')"
           @blur="validateField('end_date')"
         />
-        <p v-if="errors.end_date" class="text-sm text-error">{{ errors.end_date }}</p>
+        <p v-if="errors.end_date" id="end_date-error" class="text-sm text-error">{{ errors.end_date }}</p>
       </div>
 
       <!-- Status (edit only) -->
@@ -145,6 +157,8 @@
         <select
           id="status"
           v-model="form.status"
+          :aria-invalid="!!errors.status"
+          :aria-describedby="errors.status ? 'status-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
           :class="inputClass('status')"
           @change="clearFieldError('status')"
@@ -155,13 +169,15 @@
             {{ s.label }}
           </option>
         </select>
-        <p v-if="errors.status" class="text-sm text-error">{{ errors.status }}</p>
+        <p v-if="errors.status" id="status-error" class="text-sm text-error">{{ errors.status }}</p>
       </div>
     </div>
 
     <!-- Form error -->
     <div
       v-if="formError"
+      role="alert"
+      aria-live="polite"
       class="rounded-lg border border-error/20 bg-error/5 px-4 py-3 text-sm font-medium text-error"
     >
       {{ formError }}

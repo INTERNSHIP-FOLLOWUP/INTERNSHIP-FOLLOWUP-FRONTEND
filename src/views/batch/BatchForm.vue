@@ -8,32 +8,38 @@
 
       <form @submit.prevent="submit">
         <div class="mb-3">
-          <label class="block text-sm mb-1">Batch Name</label>
+          <label for="batch_name" class="block text-sm mb-1">Batch Name</label>
           <input
+            id="batch_name"
             v-model="form.batch_name"
             type="text"
+            :aria-invalid="!!errors.batch_name"
+            :aria-describedby="errors.batch_name ? 'batch_name-error' : undefined"
             class="border rounded px-3 py-2 w-full"
             :class="{ 'border-red-500': errors.batch_name }"
           />
-          <p v-if="errors.batch_name" class="text-red-600 text-sm mt-1">
+          <p v-if="errors.batch_name" id="batch_name-error" class="text-red-600 text-sm mt-1">
             {{ errors.batch_name }}
           </p>
         </div>
 
         <div class="mb-4">
-          <label class="block text-sm mb-1">Year</label>
+          <label for="year" class="block text-sm mb-1">Year</label>
           <input
+            id="year"
             v-model.number="form.year"
             type="number"
+            :aria-invalid="!!errors.year"
+            :aria-describedby="errors.year ? 'year-error' : undefined"
             class="border rounded px-3 py-2 w-full"
             :class="{ 'border-red-500': errors.year }"
           />
-          <p v-if="errors.year" class="text-red-600 text-sm mt-1">
+          <p v-if="errors.year" id="year-error" class="text-red-600 text-sm mt-1">
             {{ errors.year }}
           </p>
         </div>
 
-        <div v-if="submitError" class="text-red-600 text-sm mb-3">
+        <div v-if="submitError" role="alert" class="text-red-600 text-sm mb-3">
           {{ submitError }}
         </div>
 

@@ -85,7 +85,7 @@ export const NAV_ITEMS: NavItem[] = [
   },
   {
     name: 'assignments',
-    label: 'Assignments',
+    label: 'Internship Assignments',
     to: '/admin/assignments',
     trackShade: 500,
     icon: createIcon(

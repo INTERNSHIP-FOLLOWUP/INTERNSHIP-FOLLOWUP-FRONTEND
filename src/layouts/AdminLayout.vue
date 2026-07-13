@@ -490,13 +490,6 @@ function isSubMenuOpen(name: string): boolean {
   return !!expandedMenus.value[name]
 }
 
-// Auto-open submenu if a child is active
-NAV_ITEMS.filter((item) => item.children).forEach((parent) => {
-  if (parent.children!.some((child) => route.path.startsWith(child.to))) {
-    expandedMenus.value[parent.name] = true
-  }
-})
-
 const sidebarStyles = computed(() => ({
   backgroundColor: 'var(--sidebar-bg)',
 }))
@@ -542,6 +535,12 @@ function handleClickOutside(): void {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  // Auto-open submenu if a child is active
+  for (const parent of parentItems.value) {
+    if (parent.children!.some((child) => route.path.startsWith(child.to))) {
+      expandedMenus.value[parent.name] = true
+    }
+  }
 })
 
 onUnmounted(() => {

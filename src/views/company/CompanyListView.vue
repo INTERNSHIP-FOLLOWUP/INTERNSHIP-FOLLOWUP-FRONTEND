@@ -5,21 +5,22 @@
         <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Companies</h1>
         <p class="text-sm text-slate-500 dark:text-slate-400">Manage partner companies and their details.</p>
       </div>
-      <div class="flex items-center gap-3">
-        <div class="relative">
-          <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input v-model="searchQuery" type="text" placeholder="Search companies..." class="h-10 w-56 rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" @input="onSearch" />
-        </div>
-        <router-link to="/admin/companies/create" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          Add Company
-        </router-link>
-      </div>
+      <router-link to="/admin/companies/create" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Add Company
+      </router-link>
     </div>
+
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
+      <DebouncedInput v-model="searchQuery" placeholder="Search by name or industry..." class="flex-1 max-w-xs" @change="onSearch" />
+      <select v-model="industryFilter" @change="onFilterChange" class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+        <option value="">All Industries</option>
+        <option v-for="ind in industries" :key="ind" :value="ind">{{ ind }}</option>
+      </select>
+    </div>
+    <ActiveFilters :filters="activeFilterList" @remove="removeFilter" @clear-all="clearFilters" />
 
     <div class="rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div v-if="store.loading" class="flex items-center justify-center py-16">
@@ -55,7 +56,7 @@
                     <span class="font-semibold text-slate-900">{{ company.name }}</span>
                   </div>
                 </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500">{{ company.industry || '—' }}</td>
+                <td class="whitespace-nowrap px-5 py-4"><span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">{{ company.industry || '—' }}</span></td>
                 <td class="whitespace-nowrap px-5 py-4 text-slate-500">{{ company.contactPerson || '—' }}</td>
                 <td class="whitespace-nowrap px-5 py-4 text-slate-500">{{ company.email || '—' }}</td>
                 <td class="whitespace-nowrap px-5 py-4 text-slate-500">{{ company.phone || '—' }}</td>
@@ -71,7 +72,7 @@
           <svg class="h-10 w-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
           </svg>
-          <p class="mt-3 text-sm font-semibold text-slate-400">{{ searchQuery ? 'No companies match your search.' : 'No companies registered yet.' }}</p>
+          <p class="mt-3 text-sm font-semibold text-slate-400">{{ searchQuery || industryFilter ? 'No companies match your filters.' : 'No companies registered yet.' }}</p>
         </div>
         <Pagination :meta="store.pagination" @page-change="setPage" />
       </div>
@@ -92,34 +93,63 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useCompanyStore } from '@/stores/company'
 import { usePagination } from '@/composables/usePagination'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import Pagination from '@/components/ui/Pagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import DebouncedInput from '@/components/ui/DebouncedInput.vue'
+import ActiveFilters from '@/components/ui/ActiveFilters.vue'
+import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
 const store = useCompanyStore()
 const dialog = useConfirmDialog()
 const searchQuery = ref('')
+const industryFilter = ref('')
 let deleteTargetId: number | null = null
-let searchTimeout: ReturnType<typeof setTimeout>
+
+const industries = ['Technology', 'Finance', 'Healthcare', 'Education', 'Manufacturing', 'Retail', 'Consulting']
+
+const activeFilterList = computed<ActiveFilter[]>(() => {
+  const list: ActiveFilter[] = []
+  if (searchQuery.value) list.push({ key: 'search', label: 'Search', value: searchQuery.value })
+  if (industryFilter.value) list.push({ key: 'industry', label: 'Industry', value: industryFilter.value })
+  return list
+})
 
 function getInitials(name: string): string {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
 }
 
 function fetchPage({ page }: { page: number }) {
-  store.fetchCompanies({ page, search: searchQuery.value || undefined })
+  store.fetchCompanies({
+    page,
+    search: searchQuery.value || undefined,
+    industry: industryFilter.value || undefined,
+  })
 }
 
-const { setPage, resetPage } = usePagination(fetchPage)
+const { setPage, resetPage } = usePagination(fetchPage, { search: searchQuery, industry: industryFilter })
 
 function onSearch() {
-  clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    resetPage()
-  }, 300)
+  resetPage()
+}
+
+function onFilterChange() {
+  resetPage()
+}
+
+function removeFilter(key: string) {
+  if (key === 'search') searchQuery.value = ''
+  if (key === 'industry') industryFilter.value = ''
+  resetPage()
+}
+
+function clearFilters() {
+  searchQuery.value = ''
+  industryFilter.value = ''
+  resetPage()
 }
 
 async function deleteCompany(id: number) {

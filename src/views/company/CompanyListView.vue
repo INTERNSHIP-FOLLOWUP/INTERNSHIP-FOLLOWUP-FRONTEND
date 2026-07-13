@@ -85,12 +85,22 @@ async function refresh() {
   await store.fetchCompanies()
 }
 
+function getParentRoute() {
+  const route = router.currentRoute.value
+  const parent = route.matched?.[1]?.name as string | undefined
+  return parent
+}
+
 function goCreate() {
-  router.push({ name: 'CompaniesCreate' }).catch(() => {})
+  const parent = getParentRoute()
+  const name = parent === 'Admin' ? 'AdminCompaniesCreate' : 'CompaniesCreate'
+  router.push({ name }).catch(() => {})
 }
 
 function goEdit(id: number) {
-  router.push({ name: 'CompaniesEdit', params: { id } }).catch(() => {})
+  const parent = getParentRoute()
+  const name = parent === 'Admin' ? 'AdminCompaniesEdit' : 'CompaniesEdit'
+  router.push({ name, params: { id } }).catch(() => {})
 }
 
 

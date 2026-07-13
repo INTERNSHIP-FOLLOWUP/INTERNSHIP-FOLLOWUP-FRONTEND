@@ -6,29 +6,41 @@ import type {
   UpdateAssignmentPayload,
 } from '@/types/assignment'
 
+interface BackendListResponse {
+  data: Assignment[]
+  meta: AssignmentListResponse['meta']
+}
+
+interface BackendSingleResponse {
+  data: Assignment
+  message: string
+}
+
 export const assignmentService = {
   async list(params?: { page?: number; per_page?: number; status?: string; company_id?: number }): Promise<AssignmentListResponse> {
-    const response = await api.get<AssignmentListResponse>('/admin/assignments', { params })
-    return response.data
+    const response = await api.get<BackendListResponse>('/admin/assignments', { params })
+    return {
+      data: response.data.data,
+      meta: response.data.meta,
+    }
   },
 
   async get(id: number): Promise<Assignment> {
-    const response = await api.get<Assignment>(`/admin/assignments/${id}`)
-    return response.data
+    const response = await api.get<BackendSingleResponse>(`/admin/assignments/${id}`)
+    return response.data.data
   },
 
   async create(payload: CreateAssignmentPayload): Promise<Assignment> {
-    const response = await api.post<Assignment>('/admin/assignments', payload)
-    return response.data
+    const response = await api.post<BackendSingleResponse>('/admin/assignments', payload)
+    return response.data.data
   },
 
   async update(id: number, payload: UpdateAssignmentPayload): Promise<Assignment> {
-    const response = await api.put<Assignment>(`/admin/assignments/${id}`, payload)
-    return response.data
+    const response = await api.put<BackendSingleResponse>(`/admin/assignments/${id}`, payload)
+    return response.data.data
   },
 
-  async delete(id: number): Promise<{ message: string }> {
-    const response = await api.delete<{ message: string }>(`/admin/assignments/${id}`)
-    return response.data
+  async delete(id: number): Promise<void> {
+    await api.delete(`/admin/assignments/${id}`)
   },
 }

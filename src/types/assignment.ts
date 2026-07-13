@@ -1,4 +1,4 @@
-export type AssignmentStatus = 'assigned' | 'in_progress' | 'completed' | 'terminated'
+export type AssignmentStatus = 'Assigned' | 'In Progress' | 'Completed' | 'Terminated'
 
 export interface Assignment {
   id: number

@@ -1,42 +1,46 @@
 <!-- src/views/assignment/AssignmentView.vue -->
 <template>
-  <AssignmentList v-if="isListMode" @edit="handleEdit" @add="handleAdd" />
-  <AssignmentForm
-    v-else
-    :assignment-id="assignmentId"
-    @saved="handleSaved"
-    @cancel="handleCancel"
-  />
+  <div class="space-y-6">
+    <AssignmentList
+      @add="openCreate"
+      @view="openEdit"
+    />
+    <AssignmentForm
+      v-if="showForm"
+      :assignment-id="editingId ?? undefined"
+      @saved="onSaved"
+      @cancel="closeForm"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { useAssignmentStore } from '@/stores/assignment'
 import AssignmentList from '@/components/assignment/AssignmentList.vue'
 import AssignmentForm from '@/components/assignment/AssignmentForm.vue'
 
-const route = useRoute()
-const router = useRouter()
+const store = useAssignmentStore()
+const showForm = ref(false)
+const editingId = ref<number | null>(null)
 
-const isListMode = computed(() => route.name === 'AdminAssignments')
-const assignmentId = computed(() => {
-  const id = route.params.id
-  return id ? Number(id) : undefined
-})
-
-function handleEdit(id: number): void {
-  router.push(`/admin/assignments/${id}`)
+function openCreate() {
+  editingId.value = null
+  showForm.value = true
 }
 
-function handleAdd(): void {
-  router.push('/admin/assignments/create')
+function openEdit(id: number) {
+  editingId.value = id
+  showForm.value = true
 }
 
-function handleSaved(): void {
-  router.push('/admin/assignments')
+function closeForm() {
+  showForm.value = false
+  editingId.value = null
 }
 
-function handleCancel(): void {
-  router.push('/admin/assignments')
+function onSaved() {
+  closeForm()
+  store.fetchAssignments({ per_page: 15 }).catch(() => {})
 }
 </script>

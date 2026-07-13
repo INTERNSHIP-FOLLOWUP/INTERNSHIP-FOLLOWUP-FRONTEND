@@ -69,7 +69,6 @@ export function useAuth() {
 
     // Session
     isSessionTimedOut: computed(() => store.isSessionTimedOut),
-    loginAttempts: computed(() => 0),
     updateActivity: store.updateActivity,
 
     // Actions

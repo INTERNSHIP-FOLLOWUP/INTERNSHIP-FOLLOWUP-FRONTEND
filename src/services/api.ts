@@ -16,7 +16,7 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
   headers: {
     'Content-Type': 'application/json',
-    Accept: 'application/json',
+    'Accept': 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
   },
   timeout: 15000,
@@ -50,7 +50,7 @@ async function attemptTokenRefresh(): Promise<string> {
   const response = await axios.post(
     `${api.defaults.baseURL}${AUTH_CONFIG.ENDPOINTS.REFRESH}`,
     { refresh_token: refreshToken },
-    { headers: { 'Content-Type': 'application/json', Accept: 'application/json' } },
+    { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } },
   )
 
   const { access_token, refresh_token, expires_in } = response.data
@@ -93,9 +93,8 @@ api.interceptors.request.use(
 
     if (config.method?.toLowerCase() === 'get') {
       pendingRequests.set(requestKey, config)
-      const cancelConfig = config as InternalAxiosRequestConfig & { cancel?: () => void }
-      cancelConfig.cancelToken = new axios.CancelToken((cancel) => {
-        cancelConfig.cancel = () => {
+      ;(config as any).cancelToken = new axios.CancelToken((cancel) => {
+        ;(config as any).cancel = () => {
           pendingRequests.delete(requestKey)
           cancel('Request cancelled due to duplicate')
         }

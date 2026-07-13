@@ -80,21 +80,17 @@
           </svg>
           <p class="mt-3 text-sm font-semibold text-slate-400">{{ searchQuery ? 'No students match your search.' : 'No students enrolled yet.' }}</p>
         </div>
-        <div v-if="store.pagination && store.pagination.last_page > 1" class="flex items-center justify-between border-t border-slate-100 px-5 py-3">
-          <p class="text-xs text-slate-500">Page {{ store.pagination.current_page }} of {{ store.pagination.last_page }}</p>
-          <div class="flex gap-2">
-            <button :disabled="store.pagination.current_page <= 1" @click="changePage(store.pagination.current_page - 1)" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40">Previous</button>
-            <button :disabled="store.pagination.current_page >= store.pagination.last_page" @click="changePage(store.pagination.current_page + 1)" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40">Next</button>
-          </div>
-        </div>
+        <Pagination :meta="store.pagination" @page-change="setPage" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useStudentStore } from '@/stores/student'
+import { usePagination } from '@/composables/usePagination'
+import Pagination from '@/components/ui/Pagination.vue'
 
 const store = useStudentStore()
 const searchQuery = ref('')
@@ -120,15 +116,17 @@ function statusDotClass(status?: string): string {
   }
 }
 
+function fetchPage({ page }: { page: number }) {
+  store.fetchStudents({ page, per_page: 15 })
+}
+
+const { setPage, resetPage } = usePagination(fetchPage)
+
 function onSearch() {
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
-    store.fetchStudents({ per_page: 15 })
+    resetPage()
   }, 300)
-}
-
-function changePage(page: number) {
-  store.fetchStudents({ page, per_page: 15 })
 }
 
 async function deleteStudent(id: number) {
@@ -139,8 +137,4 @@ async function deleteStudent(id: number) {
     // error handled by store
   }
 }
-
-onMounted(() => {
-  store.fetchStudents()
-})
 </script>

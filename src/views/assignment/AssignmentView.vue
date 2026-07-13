@@ -2,11 +2,11 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Assignments</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Internship Assignments</h1>
         <p class="text-sm text-slate-500 dark:text-slate-400">Manage student internship assignments to companies.</p>
       </div>
       <div class="flex items-center gap-3">
-        <select v-model="statusFilter" @change="filterByStatus" class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+        <select v-model="statusFilter" @change="onFilterChange" class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
           <option value="">All Statuses</option>
           <option value="Assigned">Assigned</option>
           <option value="In Progress">In Progress</option>
@@ -81,21 +81,17 @@
           </svg>
           <p class="mt-3 text-sm font-semibold text-slate-400">No assignments created yet.</p>
         </div>
-        <div v-if="store.pagination && store.pagination.last_page > 1" class="flex items-center justify-between border-t border-slate-100 px-5 py-3">
-          <p class="text-xs text-slate-500">Page {{ store.pagination.current_page }} of {{ store.pagination.last_page }}</p>
-          <div class="flex gap-2">
-            <button :disabled="store.pagination.current_page <= 1" @click="changePage(store.pagination.current_page - 1)" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40">Previous</button>
-            <button :disabled="store.pagination.current_page >= store.pagination.last_page" @click="changePage(store.pagination.current_page + 1)" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40">Next</button>
-          </div>
-        </div>
+        <Pagination :meta="store.pagination" @page-change="setPage" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useAssignmentStore } from '@/stores/assignment'
+import { usePagination } from '@/composables/usePagination'
+import Pagination from '@/components/ui/Pagination.vue'
 
 const store = useAssignmentStore()
 const statusFilter = ref('')
@@ -129,12 +125,14 @@ function statusDotClass(status: string): string {
   }
 }
 
-function filterByStatus() {
-  store.fetchAssignments({ status: statusFilter.value || undefined })
+function fetchPage({ page }: { page: number }) {
+  store.fetchAssignments({ page, status: statusFilter.value || undefined })
 }
 
-function changePage(page: number) {
-  store.fetchAssignments({ page, status: statusFilter.value || undefined })
+const { setPage, resetPage } = usePagination(fetchPage)
+
+function onFilterChange() {
+  resetPage()
 }
 
 async function deleteAssignment(id: number) {
@@ -145,8 +143,4 @@ async function deleteAssignment(id: number) {
     // error handled by store
   }
 }
-
-onMounted(() => {
-  store.fetchAssignments()
-})
 </script>

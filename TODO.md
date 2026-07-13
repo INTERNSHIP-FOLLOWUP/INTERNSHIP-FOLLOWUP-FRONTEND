@@ -1,10 +1,16 @@
-# TODO
+# TODO - Company Evaluation Module
 
-## Company CRUD wiring (CompanyListView + CompanyFormView + companyStore)
-
-- [x] Confirmed companyStore implements create/read/update/delete via `/companies` endpoints.
-- [x] Fixed navigation from Companies list to correct routes: `CompaniesCreate` and `CompaniesEdit`.
-- [ ] Verify edit form loads and updates correctly against real API.
-- [ ] Ensure companyStore response mapping matches backend list/get payloads.
-- [ ] Run full end-to-end CRUD manual test (Create → Read → Update → Delete).
+- [ ] Create `src/stores/evaluationStore.ts`
+- [ ] Create reusable components:
+  - [ ] `src/components/evaluation/StarRating.vue`
+  - [ ] `src/components/evaluation/EvaluationCard.vue`
+  - [ ] `src/components/evaluation/ScoreBadge.vue`
+- [ ] Create pages:
+  - [ ] `src/views/company/evaluations/EvaluationForm.vue`
+  - [ ] `src/views/company/evaluations/EvaluationList.vue`
+  - [ ] `src/views/company/evaluations/EvaluationDetail.vue`
+- [ ] Update router routes in `src/router/index.ts`
+- [ ] Replace old `src/views/company/CompanyEvaluationView.vue` with redirect/wrapper (or removal)
+- [ ] Verify build/typecheck
+- [ ] Manual UI testing: create, validation, list table behaviors, detail stars
 

@@ -293,8 +293,20 @@ const router = createRouter({
         {
           path: 'evaluations',
           name: 'CompanyEvaluations',
-          component: () => import('@/views/company/CompanyEvaluationView.vue'),
+          component: () => import('@/views/company/evaluations/EvaluationList.vue'),
           meta: { title: 'Evaluations' },
+        },
+        {
+          path: 'evaluations/create',
+          name: 'CompanyEvaluationsCreate',
+          component: () => import('@/views/company/evaluations/EvaluationForm.vue'),
+          meta: { title: 'Create Evaluation' },
+        },
+        {
+          path: 'evaluations/:id',
+          name: 'CompanyEvaluationsDetail',
+          component: () => import('@/views/company/evaluations/EvaluationDetail.vue'),
+          meta: { title: 'Evaluation Details' },
         },
         {
           path: 'feedback',

@@ -2,11 +2,10 @@
   <div class="animate-fade-in">
     <CompanyForm
       :mode="mode"
-      :company-id="companyId"
       :initialData="initialData"
       showCancel
       @cancel="goBack"
-      @saved="onSaved"
+      @submit="onSubmit"
     />
   </div>
 </template>
@@ -16,6 +15,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import CompanyForm from '@/components/company/CompanyForm.vue'
 import type { CompanyFormData } from '@/components/company/CompanyForm.vue'
+import type { CompanyFormData as StoreCompanyFormData } from '@/stores/company'
 import { useCompanyStore } from '@/stores/company'
 
 const store = useCompanyStore()
@@ -24,10 +24,10 @@ const router = useRouter()
 
 const mode = computed(() => (route.params.id ? 'edit' : 'create'))
 
-const companyId = computed(() => {
+function getCompanyId(): number {
   const idRaw = route.params.id
   return typeof idRaw === 'string' ? Number(idRaw) : Array.isArray(idRaw) ? Number(idRaw[0]) : NaN
-})
+}
 
 const initialData = ref<Partial<CompanyFormData>>({
   companyName: '',
@@ -35,11 +35,13 @@ const initialData = ref<Partial<CompanyFormData>>({
   location: '',
   contactPhone: '',
   website: '',
+  companyProfileImage: '',
+  telegramLink: '',
 })
 
 async function loadIfNeeded() {
   if (mode.value !== 'edit') return
-  const id = companyId.value
+  const id = getCompanyId()
   if (!Number.isFinite(id)) return
 
   await store.fetchCompanyById(id)
@@ -50,10 +52,12 @@ async function loadIfNeeded() {
     companyName: c.name,
     companyEmail: c.email ?? '',
     location: c.location ?? '',
-    industry: '',
-    contactPerson: '',
-    contactPhone: '',
-    website: '',
+    industry: c.industry ?? '',
+    contactPerson: c.contactPerson ?? '',
+    contactPhone: c.phone ?? '',
+    website: c.website ?? '',
+    companyProfileImage: c.companyProfileImage ?? '',
+    telegramLink: c.telegramLink ?? '',
   }
 }
 
@@ -62,15 +66,27 @@ onMounted(async () => {
 })
 
 function goBack() {
-  // Prefer returning to the section the user is currently in.
   const parent = route.matched?.[1]?.name as string | undefined
   const target = parent && parent !== 'CompanyProfile' ? parent : 'AdminCompanies'
   router.push({ name: target }).catch(() => {})
 }
 
-function onSaved() {
-  store.fetchCompanies().catch(() => {})
-  goBack()
+async function onSubmit(formData: CompanyFormData) {
+  const payload = store.mapFromForm(formData as unknown as StoreCompanyFormData)
+
+  try {
+    if (mode.value === 'create') {
+      await store.createCompany(payload)
+    } else {
+      const id = getCompanyId()
+      if (!Number.isFinite(id)) return
+      await store.updateCompany(id, payload)
+    }
+    await store.fetchCompanies()
+    goBack()
+  } catch {
+    // error handled by store
+  }
 }
 </script>
 

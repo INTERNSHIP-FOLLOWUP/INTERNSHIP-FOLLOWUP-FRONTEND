@@ -7,6 +7,8 @@ export interface Company {
   phone: string | null
   email: string | null
   website: string | null
+  companyProfileImage: string | null
+  telegramLink: string | null
   createdAt: string
   updatedAt: string
 }
@@ -19,6 +21,8 @@ export interface CreateCompanyPayload {
   phone?: string | null
   email?: string | null
   website?: string | null
+  companyProfileImage?: string | null
+  telegramLink?: string | null
 }
 
 export type UpdateCompanyPayload = Partial<CreateCompanyPayload>

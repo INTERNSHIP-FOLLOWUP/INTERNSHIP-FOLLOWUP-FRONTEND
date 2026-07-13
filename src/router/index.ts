@@ -92,6 +92,11 @@ const router = createRouter({
           meta: { title: 'Edit Student' },
         },
         {
+          path: 'batches',
+          name: 'AdminBatches',
+          component: () => import('@/views/batch/BatchListView.vue'),
+          meta: { title: 'Batches' },
+        },
           path: 'companies',
           name: 'AdminCompanies',
           component: () => import('@/views/company/CompanyListView.vue'),

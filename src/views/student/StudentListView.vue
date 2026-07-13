@@ -90,7 +90,7 @@
     </div>
 
     <ConfirmDialog
-      :show="dialog.show"
+      :show="dialog.show.value"
       :title="dialog.title.value"
       :message="dialog.message.value"
       :confirm-text="dialog.confirmText.value"

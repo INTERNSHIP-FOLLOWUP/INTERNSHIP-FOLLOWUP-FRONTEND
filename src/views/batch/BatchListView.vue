@@ -1,151 +1,156 @@
 <template>
-  <div>
-    <div class="mb-6 flex items-center justify-between">
-      <h1 class="text-2xl font-bold text-gray-900">Batch Management</h1>
-      <button
-        @click="openCreateModal"
-        class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-      >
-        + New Batch
+  <div class="space-y-6">
+    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Batches</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Manage cohort batches and student enrollment.</p>
+      </div>
+      <button @click="showCreateModal = true" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Create Batch
       </button>
     </div>
 
-    <div v-if="store.loading" class="flex justify-center py-12">
-      <LoadingSpinner />
-    </div>
-
-    <div
-      v-else-if="store.error"
-      class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
-    >
-      {{ store.error }}
-    </div>
-
-    <div
-      v-else-if="store.batches.length === 0"
-      class="rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm"
-    >
-      <p class="text-sm text-gray-500">No batches found. Create your first batch to get started.</p>
-    </div>
-
-    <div v-else class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Batch Name</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Year</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Students</th>
-            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-          <tr v-for="batch in store.batches" :key="batch.id" class="hover:bg-gray-50">
-            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ batch.id }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{{ batch.batch_name || batch.name }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ batch.year }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ studentCount(batch) }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
-              <button @click="openEditModal(batch)" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
-              <button @click="confirmDelete(batch)" class="text-red-600 hover:text-red-900">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <BatchForm
-      v-if="showModal"
-      :batch="editingBatch"
-      @saved="onSaved"
-      @cancelled="closeModal"
-    />
-
-    <!-- Delete Confirmation -->
-    <div
-      v-if="showDeleteConfirm"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-      @click.self="showDeleteConfirm = false"
-    >
-      <div class="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
-        <h2 class="text-lg font-semibold text-gray-900">Confirm Delete</h2>
-        <p class="mt-2 text-sm text-gray-600">
-          Are you sure you want to delete <strong>{{ deletingBatch?.batch_name || deletingBatch?.name }}</strong>?
-        </p>
-        <div class="mt-4 flex justify-end gap-3">
-          <button
-            @click="showDeleteConfirm = false"
-            class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            @click="handleDelete"
-            class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-          >
-            Delete
-          </button>
+    <div class="rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div v-if="loading" class="flex items-center justify-center py-16">
+        <svg class="h-8 w-8 animate-spin text-indigo-500" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+      </div>
+      <div v-else-if="error" class="flex flex-col items-center justify-center py-16 text-center">
+        <svg class="h-10 w-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+        </svg>
+        <p class="mt-3 text-sm font-semibold text-red-500">{{ error }}</p>
+      </div>
+      <div v-else>
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-left text-sm">
+            <thead>
+              <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400">
+                <th class="px-5 py-3.5">Batch Name</th>
+                <th class="px-5 py-3.5">Year</th>
+                <th class="px-5 py-3.5">Students</th>
+                <th class="px-5 py-3.5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+              <tr v-for="batch in batches" :key="batch.id" class="hover:bg-slate-50/30 transition-colors">
+                <td class="whitespace-nowrap px-5 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-xs font-bold text-indigo-600">{{ getInitials(batch.batch_name) }}</div>
+                    <span class="font-semibold text-slate-900">{{ batch.batch_name }}</span>
+                  </div>
+                </td>
+                <td class="whitespace-nowrap px-5 py-4 text-slate-500">{{ batch.year }}</td>
+                <td class="whitespace-nowrap px-5 py-4">
+                  <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">0 students</span>
+                </td>
+                <td class="whitespace-nowrap px-5 py-4 text-right">
+                  <button class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-all">Edit</button>
+                  <button @click="deleteBatch(batch.id)" class="ml-1 rounded-lg px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-all">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div v-if="batches.length === 0" class="flex flex-col items-center justify-center py-16 text-center">
+          <svg class="h-10 w-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v12a2 2 0 002 2z" />
+          </svg>
+          <p class="mt-3 text-sm font-semibold text-slate-400">No batches created yet.</p>
         </div>
       </div>
     </div>
+
+    <!-- Create Batch Modal -->
+    <transition name="fade">
+      <div v-if="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" @click="showCreateModal = false">
+        <div class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl" @click.stop>
+          <h3 class="text-base font-semibold text-slate-900">Create New Batch</h3>
+          <div class="mt-4 space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">Batch Name</label>
+              <input v-model="form.batch_name" type="text" placeholder="e.g. Batch 2026-A" class="h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 placeholder-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">Year</label>
+              <input v-model="form.year" type="text" placeholder="e.g. 2026" class="h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 placeholder-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" />
+            </div>
+          </div>
+          <div class="mt-6 flex items-center justify-end gap-3">
+            <button @click="showCreateModal = false" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">Cancel</button>
+            <button @click="createBatch" :disabled="submitting" class="rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:from-indigo-700 hover:to-indigo-600 disabled:opacity-60">
+              {{ submitting ? 'Creating...' : 'Create Batch' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useBatchStore } from '@/stores/batchStore'
-import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
-import BatchForm from './BatchForm.vue'
+import { ref, reactive, onMounted } from 'vue'
+import { batchService, type Batch } from '@/services/batch'
 
-const store = useBatchStore()
+const batches = ref<Batch[]>([])
+const loading = ref(false)
+const error = ref<string | null>(null)
+const showCreateModal = ref(false)
+const submitting = ref(false)
+const form = reactive({ batch_name: '', year: '' })
 
-const showModal = ref(false)
-const showDeleteConfirm = ref(false)
-const editingBatch = ref<Record<string, unknown> | null>(null)
-const deletingBatch = ref<Record<string, unknown> | null>(null)
-
-onMounted(() => {
-  store.fetchBatches()
-})
-
-function openCreateModal() {
-  editingBatch.value = null
-  showModal.value = true
+function getInitials(name: string): string {
+  return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
 }
 
-function openEditModal(batch: Record<string, unknown>) {
-  editingBatch.value = batch
-  showModal.value = true
+async function fetchBatches() {
+  loading.value = true
+  error.value = null
+  try {
+    const response = await batchService.list()
+    batches.value = response.data
+  } catch (err: any) {
+    error.value = err?.response?.data?.message || 'Failed to load batches.'
+  } finally {
+    loading.value = false
+  }
 }
 
-function closeModal() {
-  showModal.value = false
-  editingBatch.value = null
+async function createBatch() {
+  if (!form.batch_name || !form.year) return
+  submitting.value = true
+  try {
+    await batchService.create({ batch_name: form.batch_name, year: form.year })
+    showCreateModal.value = false
+    form.batch_name = ''
+    form.year = ''
+    await fetchBatches()
+  } catch (err: any) {
+    error.value = err?.response?.data?.message || 'Failed to create batch.'
+  } finally {
+    submitting.value = false
+  }
 }
 
-function studentCount(batch: Record<string, unknown>) {
-  const count = batch.students_count
-  if (typeof count === 'number') return count
-  const students = batch.students
-  if (Array.isArray(students)) return students.length
-  return '-'
+async function deleteBatch(id: number) {
+  if (!confirm('Are you sure you want to delete this batch?')) return
+  try {
+    await batchService.delete(id)
+    batches.value = batches.value.filter((b) => b.id !== id)
+  } catch (err: any) {
+    error.value = err?.response?.data?.message || 'Failed to delete batch.'
+  }
 }
 
-function onSaved() {
-  closeModal()
-  store.fetchBatches().catch(() => {})
-}
-
-function confirmDelete(batch: Record<string, unknown>) {
-  deletingBatch.value = batch
-  showDeleteConfirm.value = true
-}
-
-async function handleDelete() {
-  if (!deletingBatch.value) return
-  await store.deleteBatch(deletingBatch.value.id as number | string)
-  deletingBatch.value = null
-  showDeleteConfirm.value = false
-  await store.fetchBatches().catch(() => {})
-}
+onMounted(fetchBatches)
 </script>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+</style>

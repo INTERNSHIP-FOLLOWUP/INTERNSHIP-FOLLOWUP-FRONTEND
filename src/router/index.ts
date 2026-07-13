@@ -77,6 +77,12 @@ const router = createRouter({
           meta: { title: 'Users' },
         },
         {
+          path: 'students',
+          name: 'AdminStudents',
+          component: () => import('@/views/student/StudentListView.vue'),
+          meta: { title: 'Students' },
+        },
+        {
           path: 'users/create',
           name: 'AdminUsersCreate',
           component: () => import('@/views/user/AdminUsersView.vue'),
@@ -129,6 +135,18 @@ const router = createRouter({
           name: 'AdminAssignmentsEdit',
           component: () => import('@/views/assignment/AssignmentView.vue'),
           meta: { title: 'Edit Assignment' },
+        },
+        {
+          path: 'reports',
+          name: 'AdminReports',
+          component: () => import('@/views/report/ReportGenerationView.vue'),
+          meta: { title: 'Reports' },
+        },
+        {
+          path: 'reports/generate',
+          name: 'AdminReportsGenerate',
+          component: () => import('@/views/report/ReportGenerationView.vue'),
+          meta: { title: 'Generate Report' },
         },
         {
           path: 'profile',

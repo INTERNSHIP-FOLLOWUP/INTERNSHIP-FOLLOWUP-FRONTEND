@@ -84,6 +84,18 @@
         <Pagination :meta="store.pagination" @page-change="setPage" />
       </div>
     </div>
+
+    <ConfirmDialog
+      :show="dialog.show"
+      :title="dialog.title.value"
+      :message="dialog.message.value"
+      :confirm-text="dialog.confirmText.value"
+      :cancel-text="dialog.cancelText.value"
+      :loading="dialog.loading.value"
+      :error="dialog.error.value"
+      @confirm="handleConfirm"
+      @cancel="dialog.cancel()"
+    />
   </div>
 </template>
 
@@ -91,10 +103,14 @@
 import { ref } from 'vue'
 import { useAssignmentStore } from '@/stores/assignment'
 import { usePagination } from '@/composables/usePagination'
+import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import Pagination from '@/components/ui/Pagination.vue'
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
 const store = useAssignmentStore()
+const dialog = useConfirmDialog()
 const statusFilter = ref('')
+let deleteTargetId: number | null = null
 
 function getInitials(name: string): string {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
@@ -136,11 +152,17 @@ function onFilterChange() {
 }
 
 async function deleteAssignment(id: number) {
-  if (!confirm('Are you sure you want to delete this assignment?')) return
-  try {
-    await store.deleteAssignment(id)
-  } catch {
-    // error handled by store
-  }
+  deleteTargetId = id
+  const confirmed = await dialog.open({
+    title: 'Delete Assignment',
+    message: 'Are you sure you want to delete this internship assignment? This action cannot be undone.',
+  })
+  if (!confirmed) return
+  await handleConfirm()
+}
+
+async function handleConfirm() {
+  if (deleteTargetId === null) return
+  await dialog.confirmAsync(() => store.deleteAssignment(deleteTargetId!))
 }
 </script>

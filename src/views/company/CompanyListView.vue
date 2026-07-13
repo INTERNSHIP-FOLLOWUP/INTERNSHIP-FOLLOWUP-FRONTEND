@@ -76,6 +76,18 @@
         <Pagination :meta="store.pagination" @page-change="setPage" />
       </div>
     </div>
+
+    <ConfirmDialog
+      :show="dialog.show"
+      :title="dialog.title.value"
+      :message="dialog.message.value"
+      :confirm-text="dialog.confirmText.value"
+      :cancel-text="dialog.cancelText.value"
+      :loading="dialog.loading.value"
+      :error="dialog.error.value"
+      @confirm="handleConfirm"
+      @cancel="dialog.cancel()"
+    />
   </div>
 </template>
 
@@ -83,10 +95,14 @@
 import { ref } from 'vue'
 import { useCompanyStore } from '@/stores/company'
 import { usePagination } from '@/composables/usePagination'
+import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import Pagination from '@/components/ui/Pagination.vue'
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
 const store = useCompanyStore()
+const dialog = useConfirmDialog()
 const searchQuery = ref('')
+let deleteTargetId: number | null = null
 let searchTimeout: ReturnType<typeof setTimeout>
 
 function getInitials(name: string): string {
@@ -107,11 +123,17 @@ function onSearch() {
 }
 
 async function deleteCompany(id: number) {
-  if (!confirm('Are you sure you want to delete this company?')) return
-  try {
-    await store.deleteCompany(id)
-  } catch {
-    // error handled by store
-  }
+  deleteTargetId = id
+  const confirmed = await dialog.open({
+    title: 'Delete Company',
+    message: 'Are you sure you want to delete this company? This action cannot be undone.',
+  })
+  if (!confirmed) return
+  await handleConfirm()
+}
+
+async function handleConfirm() {
+  if (deleteTargetId === null) return
+  await dialog.confirmAsync(() => store.deleteCompany(deleteTargetId!))
 }
 </script>

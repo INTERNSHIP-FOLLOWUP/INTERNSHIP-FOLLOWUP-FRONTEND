@@ -1,24 +1,27 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import api from '@/services/api'
+import { companyService } from '@/services/company'
+import { parseApiError } from '@/utils/errorParser'
+import type {
+  Company,
+  CreateCompanyPayload,
+  CompanyPaginationMeta,
+  CompanyListResponse,
+} from '@/types/company'
 
 export interface CompanySummary {
   id: number
   name: string
-  email?: string | null
-  location?: string | null
+  email: string | null
+  location: string | null
+  industry: string | null
+  contactPerson: string | null
+  phone: string | null
+  website: string | null
 }
 
-export interface CompanyCreatePayload {
-  name: string
-  email?: string | null
-  location?: string | null
-  industry?: string | null
-  contactPerson?: string | null
-  phone?: string | null
-  website?: string | null
-}
-
+export type CompanyUpdatePayload = Partial<CreateCompanyPayload>
 
 export interface CompanyFormData {
   companyName: string
@@ -30,203 +33,281 @@ export interface CompanyFormData {
   website: string
 }
 
-
-export type CompanyUpdatePayload = Partial<CompanyCreatePayload>
-
-const ENDPOINT = '/companies'
-
-function unwrapCompanyList(data: any): any[] {
-  if (!data) return []
-  if (Array.isArray(data)) return data
-  if (typeof data === 'object') {
-    if (Array.isArray(data.data)) return data.data
-    if (data.data && typeof data.data === 'object' && Array.isArray(data.data.data)) return data.data.data
-    if (Array.isArray(data.results)) return data.results
-  }
-  return []
-}
-
-function unwrapOne(data: any): any {
-  if (!data) return data
-  if (Array.isArray(data)) return data[0]
-  if (typeof data === 'object') {
-    if (data.company) return data.company
-    if (Array.isArray(data.data)) return data.data[0]
-    if (data.data && typeof data.data === 'object') {
-      if (Array.isArray(data.data.data)) return data.data.data[0]
-      return data.data
-    }
-    if (Array.isArray(data.results)) return data.results[0]
-  }
-  return data
-}
-
-function toSummary(raw: any): CompanySummary {
+function toSummary(c: Company): CompanySummary {
   return {
-    id: Number(raw?.id ?? raw?.companyId ?? raw?.pk),
-    name: String(raw?.name ?? raw?.companyName ?? raw?.company_name ?? ''),
-    email: raw?.email ?? raw?.companyEmail ?? raw?.company_email ?? null,
-    location: raw?.location ?? raw?.locationText ?? raw?.location_text ?? raw?.address ?? raw?.company_address ?? null,
+    id: c.id,
+    name: c.companyName,
+    email: c.email,
+    location: c.address,
+    industry: c.industry,
+    contactPerson: c.contactPerson,
+    phone: c.phone,
+    website: c.website,
   }
 }
 
-function mapToApi(payload: CompanyCreatePayload | CompanyUpdatePayload) {
-  // Backend mapping (match your DB spec)
+function mapFromForm(form: CompanyFormData): CreateCompanyPayload {
   return {
-    company_name: payload.name,
-    email: payload.email ?? null,
-    address: payload.location ?? null,
-    industry: (payload as any).industry ?? null,
-    contact_person: (payload as any).contactPerson ?? null,
-    phone: (payload as any).phone ?? null,
-    website: (payload as any).website ?? null,
-  }
-}
-
-
-
-function mapFromForm(form: CompanyFormData): CompanyCreatePayload {
-  return {
-    name: form.companyName,
+    companyName: form.companyName,
     email: form.companyEmail || null,
-    location: form.location || null,
-    industry: (form as any).industry ?? null,
-    contactPerson: (form as any).contactPerson ?? null,
+    address: form.location || null,
+    industry: form.industry || null,
+    contactPerson: form.contactPerson || null,
     phone: form.contactPhone || null,
     website: form.website || null,
   }
 }
-
 
 export const useCompanyStore = defineStore('company', () => {
   const companies = ref<CompanySummary[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
   const currentCompanyId = ref<number | null>(null)
+  const pagination = ref<CompanyPaginationMeta | null>(null)
 
   const currentCompany = computed(() => {
     if (currentCompanyId.value == null) return null
     return companies.value.find((c) => c.id === currentCompanyId.value) ?? null
   })
 
-  async function withLoading<T>(fn: () => Promise<T>): Promise<T> {
+  const companyCount = computed(() => pagination.value?.total ?? companies.value.length)
+
+  async function fetchCompanies(params?: {
+    search?: string
+    company_name?: string
+    industry?: string
+    per_page?: number
+    page?: number
+  }): Promise<void> {
     loading.value = true
     error.value = null
+
     try {
-      return await fn()
-    } catch (e) {
-      error.value = e instanceof Error ? e.message : 'Failed to perform company action'
-      throw e
+      const response: CompanyListResponse = await companyService.list(params)
+      companies.value = response.data.map(toSummary)
+      pagination.value = response.meta
+    } catch (err: unknown) {
+      const parsed = parseApiError(err)
+      error.value = parsed.message
+      throw err
     } finally {
       loading.value = false
     }
-  }
-
-  async function fetchCompanies(): Promise<void> {
-    const res = (await withLoading(() => api.get(ENDPOINT))) as { data: any }
-    const payload = res.data
-    const list = unwrapCompanyList(payload)
-    companies.value = list
-      .map(toSummary)
-      .filter((c) => Number.isFinite(c.id))
   }
 
   async function fetchCompanyById(id: number): Promise<void> {
     currentCompanyId.value = id
     if (companies.value.some((c) => c.id === id)) return
 
-    const res = (await withLoading(() => api.get(`${ENDPOINT}/${id}`))) as { data: any }
-    const raw = unwrapOne((res.data as any) ?? null)
-    const company = toSummary(raw)
+    loading.value = true
+    error.value = null
 
-    if (Number.isFinite(company.id)) {
-      companies.value = [...companies.value, company]
+    try {
+      const company: Company = await companyService.get(id)
+      const summary = toSummary(company)
+      companies.value = [...companies.value, summary]
+    } catch (err: unknown) {
+      const parsed = parseApiError(err)
+      error.value = parsed.message
+      throw err
+    } finally {
+      loading.value = false
     }
   }
 
-  async function createCompany(payload: CompanyCreatePayload): Promise<CompanySummary> {
-    const res = (await withLoading(() => api.post(ENDPOINT, mapToApi(payload)))) as { data: any }
-    const raw = unwrapOne((res.data as any) ?? null)
-    const created = toSummary(raw)
+  async function createCompany(payload: CreateCompanyPayload): Promise<CompanySummary> {
+    loading.value = true
+    error.value = null
 
-    companies.value = [created, ...companies.value]
-    currentCompanyId.value = created.id
-
-    return created
+    try {
+      const created: Company = await companyService.create(payload)
+      const summary = toSummary(created)
+      companies.value = [summary, ...companies.value]
+      currentCompanyId.value = summary.id
+      pagination.value = pagination.value
+        ? { ...pagination.value, total: pagination.value.total + 1 }
+        : null
+      return summary
+    } catch (err: unknown) {
+      const parsed = parseApiError(err)
+      error.value = parsed.message
+      throw err
+    } finally {
+      loading.value = false
+    }
   }
 
   async function updateCompany(id: number, payload: CompanyUpdatePayload): Promise<CompanySummary> {
-    const res = (await withLoading(() => api.put(`${ENDPOINT}/${id}`, mapToApi(payload)))) as { data: any }
-    const raw = unwrapOne((res.data as any) ?? null)
-    const updated = toSummary(raw)
+    loading.value = true
+    error.value = null
 
-    companies.value = companies.value.map((c) => (c.id === id ? { ...c, ...updated, id } : c))
-    currentCompanyId.value = updated.id
-
-    return updated
+    try {
+      const updated: Company = await companyService.update(id, payload)
+      const summary = toSummary(updated)
+      companies.value = companies.value.map((c) => (c.id === id ? { ...c, ...summary, id } : c))
+      currentCompanyId.value = summary.id
+      return summary
+    } catch (err: unknown) {
+      const parsed = parseApiError(err)
+      error.value = parsed.message
+      throw err
+    } finally {
+      loading.value = false
+    }
   }
 
   async function deleteCompany(id: number): Promise<void> {
-    await withLoading(() => api.delete(`${ENDPOINT}/${id}`))
-    companies.value = companies.value.filter((c) => c.id !== id)
-    if (currentCompanyId.value === id) currentCompanyId.value = null
+    loading.value = true
+    error.value = null
+
+    try {
+      await companyService.delete(id)
+      companies.value = companies.value.filter((c) => c.id !== id)
+      if (currentCompanyId.value === id) currentCompanyId.value = null
+      pagination.value = pagination.value
+        ? { ...pagination.value, total: pagination.value.total - 1 }
+        : null
+    } catch (err: unknown) {
+      const parsed = parseApiError(err)
+      error.value = parsed.message
+      throw err
+    } finally {
+      loading.value = false
+    }
   }
 
   async function fetchProfile(): Promise<void> {
-    const res = (await withLoading(() => api.get('/company/profile'))) as { data: any }
-    const raw = unwrapOne((res.data as any) ?? null)
-    const summary = toSummary(raw)
+    loading.value = true
+    error.value = null
 
-    if (summary?.id) {
-      companies.value = [summary, ...companies.value.filter((c) => c.id !== summary.id)]
-      currentCompanyId.value = summary.id
+    try {
+      const res = await api.get('/company/profile')
+      const raw = res.data?.company ?? res.data?.data ?? res.data
+      if (raw?.id) {
+        const summary = toSummary({
+          id: raw.id,
+          companyName: raw.company_name ?? raw.name ?? '',
+          address: raw.address ?? null,
+          industry: raw.industry ?? null,
+          contactPerson: raw.contact_person ?? raw.contactPerson ?? null,
+          phone: raw.phone ?? null,
+          email: raw.email ?? null,
+          website: raw.website ?? null,
+          createdAt: raw.created_at ?? '',
+          updatedAt: raw.updated_at ?? '',
+        })
+        companies.value = [summary, ...companies.value.filter((c) => c.id !== summary.id)]
+        currentCompanyId.value = summary.id
+      }
+    } catch (err: unknown) {
+      const parsed = parseApiError(err)
+      error.value = parsed.message
+      throw err
+    } finally {
+      loading.value = false
     }
   }
 
   async function updateProfile(payload: CompanyUpdatePayload): Promise<void> {
-    const res = (await withLoading(() => api.put('/company/profile', mapToApi(payload)))) as { data: any }
-    const raw = unwrapOne((res.data as any) ?? null)
-    const updated = toSummary(raw)
+    loading.value = true
+    error.value = null
 
-    if (updated?.id) {
-      companies.value = companies.value.map((c) => (c.id === updated.id ? { ...c, ...updated, id: updated.id } : c))
-      currentCompanyId.value = updated.id
+    try {
+      const body: Record<string, unknown> = {
+        company_name: payload.companyName,
+        address: payload.address ?? null,
+        industry: payload.industry ?? null,
+        contact_person: payload.contactPerson ?? null,
+        phone: payload.phone ?? null,
+        email: payload.email ?? null,
+        website: payload.website ?? null,
+      }
+      const res = await api.put('/company/profile', body)
+      const raw = res.data?.company ?? res.data?.data ?? res.data
+      if (raw?.id) {
+        const summary = toSummary({
+          id: raw.id,
+          companyName: raw.company_name ?? raw.name ?? '',
+          address: raw.address ?? null,
+          industry: raw.industry ?? null,
+          contactPerson: raw.contact_person ?? raw.contactPerson ?? null,
+          phone: raw.phone ?? null,
+          email: raw.email ?? null,
+          website: raw.website ?? null,
+          createdAt: raw.created_at ?? '',
+          updatedAt: raw.updated_at ?? '',
+        })
+        companies.value = companies.value.map((c) =>
+          c.id === summary.id ? { ...c, ...summary, id: summary.id } : c,
+        )
+        currentCompanyId.value = summary.id
+      }
+    } catch (err: unknown) {
+      const parsed = parseApiError(err)
+      error.value = parsed.message
+      throw err
+    } finally {
+      loading.value = false
     }
   }
 
   async function fetchStudents(): Promise<any[]> {
-    const res = (await withLoading(() => api.get('/company/students'))) as { data: any }
-    const payload = res.data
-    return Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []
+    try {
+      const res = await api.get('/company/students')
+      const payload = res.data
+      return Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []
+    } catch {
+      return []
+    }
   }
 
   async function fetchEvaluations(): Promise<any[]> {
-    const res = (await withLoading(() => api.get('/company/evaluations'))) as { data: any }
-    const payload = res.data
-    return Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []
+    try {
+      const res = await api.get('/company/evaluations')
+      const payload = res.data
+      return Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []
+    } catch {
+      return []
+    }
   }
 
-  async function submitEvaluation(payload: { studentId: number; rating: number; remarks?: string | null }): Promise<any> {
-    const res = (await withLoading(() => api.post('/company/evaluations', payload))) as { data: any }
-    return unwrapOne((res.data as any) ?? null)
+  async function submitEvaluation(payload: {
+    studentId: number
+    rating: number
+    remarks?: string | null
+  }): Promise<any> {
+    const res = await api.post('/company/evaluations', payload)
+    return res.data
   }
 
   async function fetchFeedback(): Promise<any[]> {
-    const res = (await withLoading(() => api.get('/company/feedback'))) as { data: any }
-    const payload = res.data
-    return Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []
+    try {
+      const res = await api.get('/company/feedback')
+      const payload = res.data
+      return Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []
+    } catch {
+      return []
+    }
   }
 
-  async function submitFeedback(payload: { message: string; status?: string | null }): Promise<any> {
-    const res = (await withLoading(() => api.post('/company/feedback', payload))) as { data: any }
-    return unwrapOne((res.data as any) ?? null)
+  async function submitFeedback(payload: {
+    message: string
+    status?: string | null
+  }): Promise<any> {
+    const res = await api.post('/company/feedback', payload)
+    return res.data
+  }
+
+  function clearError(): void {
+    error.value = null
   }
 
   function reset(): void {
     companies.value = []
     currentCompanyId.value = null
-    error.value = null
     loading.value = false
+    error.value = null
+    pagination.value = null
   }
 
   return {
@@ -235,11 +316,14 @@ export const useCompanyStore = defineStore('company', () => {
     error,
     currentCompanyId,
     currentCompany,
+    pagination,
+    companyCount,
     fetchCompanies,
     fetchCompanyById,
     createCompany,
     updateCompany,
     deleteCompany,
+    clearError,
     reset,
     mapFromForm,
     fetchProfile,

@@ -230,8 +230,8 @@ const VALID_TRANSITIONS: Record<AssignmentStatus, AssignmentStatus[]> = {
 }
 
 const props = withDefaults(
-  defineProps<{ assignmentId?: number }>(),
-  { assignmentId: undefined },
+  defineProps<{ assignmentId?: number; apiErrors?: Record<string, string> }>(),
+  { assignmentId: undefined, apiErrors: () => ({}) },
 )
 
 const emit = defineEmits<{
@@ -356,7 +356,19 @@ async function handleSubmit(): Promise<void> {
 
     emit('saved', result)
   } catch (err: unknown) {
-    formError.value = err instanceof Error ? err.message : 'Failed to save assignment.'
+    const axiosErr = err as { response?: { status?: number; data?: { errors?: Record<string, string[]> } } }
+    if (axiosErr.response?.status === 422) {
+      const apiErrs = axiosErr.response.data?.errors
+      if (apiErrs) {
+        const { mapValidationErrors } = await import('@/utils/mapValidationErrors')
+        const mapped = mapValidationErrors(apiErrs)
+        for (const [key, msg] of Object.entries(mapped)) {
+          if (key in errors) errors[key] = msg
+        }
+      }
+    } else {
+      formError.value = err instanceof Error ? err.message : 'Failed to save assignment.'
+    }
   } finally {
     submitting.value = false
   }
@@ -400,4 +412,17 @@ onMounted(async () => {
     }
   }
 })
+
+watch(
+  () => props.apiErrors,
+  (vals) => {
+    if (vals) {
+      formError.value = ''
+      for (const [key, msg] of Object.entries(vals)) {
+        if (key in errors) errors[key] = msg
+      }
+    }
+  },
+  { immediate: true },
+)
 </script>

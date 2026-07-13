@@ -3,6 +3,7 @@
     <CompanyForm
       :mode="mode"
       :initialData="initialData"
+      :apiErrors="apiErrors"
       showCancel
       @cancel="goBack"
       @submit="onSubmit"
@@ -17,12 +18,14 @@ import CompanyForm from '@/components/company/CompanyForm.vue'
 import type { CompanyFormData } from '@/components/company/CompanyForm.vue'
 import type { CompanyFormData as StoreCompanyFormData } from '@/stores/company'
 import { useCompanyStore } from '@/stores/company'
+import { mapValidationErrors } from '@/utils/mapValidationErrors'
 
 const store = useCompanyStore()
 const route = useRoute()
 const router = useRouter()
 
 const mode = computed(() => (route.params.id ? 'edit' : 'create'))
+const apiErrors = ref<Record<string, string>>({})
 
 function getCompanyId(): number {
   const idRaw = route.params.id
@@ -73,6 +76,7 @@ function goBack() {
 
 async function onSubmit(formData: CompanyFormData) {
   const payload = store.mapFromForm(formData as unknown as StoreCompanyFormData)
+  apiErrors.value = {}
 
   try {
     if (mode.value === 'create') {
@@ -84,8 +88,11 @@ async function onSubmit(formData: CompanyFormData) {
     }
     await store.fetchCompanies()
     goBack()
-  } catch {
-    // error handled by store
+  } catch (err: unknown) {
+    const axiosErr = err as { response?: { status?: number; data?: { errors?: Record<string, string[]> } } }
+    if (axiosErr.response?.status === 422) {
+      apiErrors.value = mapValidationErrors(axiosErr.response.data?.errors)
+    }
   }
 }
 </script>

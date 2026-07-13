@@ -242,6 +242,7 @@ type Props = {
   mode: CompanyFormMode
   initialData?: Partial<CompanyFormData>
   showCancel?: boolean
+  apiErrors?: Record<string, string>
 }
 
 type Emits = {
@@ -347,6 +348,21 @@ watch(
   () => props.initialData,
   () => reset(),
   { deep: true, immediate: true },
+)
+
+watch(
+  () => props.apiErrors,
+  (vals) => {
+    if (vals) {
+      formError.value = ''
+      for (const [key, msg] of Object.entries(vals)) {
+        if (key in errors) {
+          (errors as Record<string, string>)[key] = msg
+        }
+      }
+    }
+  },
+  { immediate: true },
 )
 
 async function handleSubmit() {

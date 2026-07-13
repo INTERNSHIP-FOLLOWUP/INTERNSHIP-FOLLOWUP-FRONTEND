@@ -274,8 +274,9 @@ import type { StudentFormData } from '@/types/student'
 const props = withDefaults(
   defineProps<{
     studentId?: number
+    apiErrors?: Record<string, string>
   }>(),
-  { studentId: undefined },
+  { studentId: undefined, apiErrors: () => ({}) },
 )
 
 const emit = defineEmits<{
@@ -420,7 +421,19 @@ async function handleSubmit(): Promise<void> {
 
     emit('saved', result)
   } catch (err: unknown) {
-    formError.value = err instanceof Error ? err.message : 'Failed to save student.'
+    const axiosErr = err as { response?: { status?: number; data?: { errors?: Record<string, string[]> } } }
+    if (axiosErr.response?.status === 422) {
+      const apiErrs = axiosErr.response.data?.errors
+      if (apiErrs) {
+        const { mapValidationErrors } = await import('@/utils/mapValidationErrors')
+        const mapped = mapValidationErrors(apiErrs)
+        for (const [key, msg] of Object.entries(mapped)) {
+          if (key in errors) (errors as Record<string, string>)[key] = msg
+        }
+      }
+    } else {
+      formError.value = err instanceof Error ? err.message : 'Failed to save student.'
+    }
   } finally {
     submitting.value = false
   }
@@ -461,6 +474,19 @@ watch(
       studentStore.fetchStudent(id).then(populateForm)
     }
   },
+)
+
+watch(
+  () => props.apiErrors,
+  (vals) => {
+    if (vals) {
+      formError.value = ''
+      for (const [key, msg] of Object.entries(vals)) {
+        if (key in errors) (errors as Record<string, string>)[key] = msg
+      }
+    }
+  },
+  { immediate: true },
 )
 
 onUnmounted(() => {

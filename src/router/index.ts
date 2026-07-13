@@ -201,7 +201,7 @@ const router = createRouter({
         {
           path: 'followups',
           name: 'TutorFollowups',
-          component: () => import('@/views/followup/FollowupListView.vue'),
+          component: () => import('@/views/followup/FollowupList.vue'),
           meta: { title: 'Follow-ups' },
         },
         {
@@ -250,7 +250,7 @@ const router = createRouter({
         {
           path: 'followups',
           name: 'StudentFollowups',
-          component: () => import('@/views/followup/FollowupListView.vue'),
+          component: () => import('@/views/followup/FollowupList.vue'),
           meta: { title: 'Follow-ups' },
         },
         {

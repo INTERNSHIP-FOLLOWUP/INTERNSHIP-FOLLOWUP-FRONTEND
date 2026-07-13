@@ -10,9 +10,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { IssueStatus } from '@/stores/issueStore'
 
-const props = defineProps<{ status: IssueStatus | string }>()
+const props = defineProps<{
+  status: 'Open' | 'In Progress' | 'Resolved' | 'Closed' | string
+}>()
 
 const badgeClass = computed(() => {
   const s = String(props.status)
@@ -30,4 +31,5 @@ const badgeClass = computed(() => {
   }
 })
 </script>
+
 

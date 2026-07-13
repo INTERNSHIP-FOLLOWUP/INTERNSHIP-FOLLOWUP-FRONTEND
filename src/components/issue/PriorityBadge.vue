@@ -10,9 +10,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { IssuePriority } from '@/stores/issueStore'
 
-const props = defineProps<{ priority: IssuePriority | string }>()
+const props = defineProps<{
+  priority: 'Low' | 'Medium' | 'High' | string
+}>()
 
 const badgeClass = computed(() => {
   const p = String(props.priority)
@@ -28,4 +29,5 @@ const badgeClass = computed(() => {
   }
 })
 </script>
+
 

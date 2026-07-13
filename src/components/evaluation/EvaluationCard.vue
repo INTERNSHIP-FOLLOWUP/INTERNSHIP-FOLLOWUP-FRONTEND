@@ -12,7 +12,7 @@
             <div class="text-xs">
                 <p class="font-medium text-gray-700">Technical</p>
                 <div class="mt-1">
-                    <StarRating :modelValue="technical" disabled class="pointer-events-none" />
+                    <StarRating :modelValue="technical" disabled readonly />
                 </div>
             </div>
             <div class="text-xs">

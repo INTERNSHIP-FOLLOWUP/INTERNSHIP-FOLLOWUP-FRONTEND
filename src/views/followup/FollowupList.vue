@@ -90,7 +90,7 @@ function openEditForm(followup: Followup) {
 
 function onSaved() {
   showForm.value = false
-  followupStore.fetchFollowups()
+  followupStore.fetchFollowups().catch(() => {})
 }
 
 onMounted(() => {

@@ -96,14 +96,18 @@ export const useAuthStore = defineStore('auth', () => {
   // ── CSRF (optional — for Sanctum SPA auth) ──
   async function getCsrfCookie(): Promise<void> {
     try {
-      const { default: axios } = await import('axios')
-      await axios.get(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/sanctum/csrf-cookie`, {
-        withCredentials: true,
-        headers: { Accept: 'application/json' },
-      })
+      // If your backend is Sanctum-based (cookie auth), the CSRF endpoint must be reachable.
+      // In this project the Axios baseURL already includes `/api`, so use a compatible path.
+      const apiBase = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '')
+      await api
+        .get(`${apiBase}/sanctum/csrf-cookie`, {
+          withCredentials: true,
+          headers: { Accept: 'application/json' },
+        })
     } catch {
       // Bearer-token APIs don't need the CSRF cookie
     }
+
   }
 
   // ── Boot: validate session on app start ──

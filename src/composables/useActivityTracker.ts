@@ -25,7 +25,7 @@ export function useActivityTracker() {
 
     // Check for session timeout every 30 seconds
     checkInterval = setInterval(() => {
-      if (store.isAuthenticated && store.checkSessionTimeout()) {
+      if (store.isLoggedIn && store.checkSessionTimeout()) {
         store.forceLogout()
       }
     }, 30_000)

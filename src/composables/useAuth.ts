@@ -22,7 +22,7 @@ export function useAuth() {
    * Usage: hasRole('admin') or hasRole('admin', 'tutor')
    */
   function hasRole(...roles: UserRole[]): boolean {
-    return store.hasRole(...roles)
+    return store.hasAnyRole(...roles)
   }
 
   /**
@@ -53,8 +53,8 @@ export function useAuth() {
     // User info
     user: computed(() => store.user),
     role: computed(() => store.userRole),
-    isAuthenticated: computed(() => store.isAuthenticated),
-    isLoading: computed(() => store.isLoading),
+    isAuthenticated: computed(() => store.isLoggedIn),
+    isLoading: computed(() => store.loading),
 
     // Role checks
     isAdmin,
@@ -70,7 +70,6 @@ export function useAuth() {
 
     // Session
     isSessionTimedOut: computed(() => store.isSessionTimedOut),
-    loginAttempts: computed(() => store.loginAttempts),
     updateActivity: store.updateActivity,
 
     // Actions

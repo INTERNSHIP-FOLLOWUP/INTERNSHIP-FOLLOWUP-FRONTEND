@@ -89,13 +89,12 @@ async function onSubmit(formData: CompanyFormData) {
     await store.fetchCompanies()
     goBack()
   } catch (err: unknown) {
-    const axiosErr = err as { response?: { status?: number; data?: { errors?: Record<string, string[]> } } }
+    const axiosErr = err as {
+      response?: { status?: number; data?: { errors?: Record<string, string[]> } }
+    }
     if (axiosErr.response?.status === 422) {
       apiErrors.value = mapValidationErrors(axiosErr.response.data?.errors)
     }
   }
 }
 </script>
-
-
-

@@ -1,8 +1,18 @@
 <template>
   <main class="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
-    <section class="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm">
-      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <section
+      class="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm"
+    >
+      <div
+        class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600"
+      >
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -12,9 +22,7 @@
         </svg>
       </div>
       <h1 class="mt-4 text-xl font-bold text-slate-900">Access denied</h1>
-      <p class="mt-2 text-sm leading-6 text-slate-600">
-        Your current role cannot open this page.
-      </p>
+      <p class="mt-2 text-sm leading-6 text-slate-600">Your current role cannot open this page.</p>
       <router-link
         :to="dashboardPath"
         class="mt-6 inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"

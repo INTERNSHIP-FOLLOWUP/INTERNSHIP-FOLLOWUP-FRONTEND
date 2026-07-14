@@ -4,7 +4,9 @@
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 class="text-xl font-semibold text-gray-900">Provide Company Feedback</h1>
-          <p class="mt-1 text-sm text-gray-500">Leave feedback for tutors about your internship experience.</p>
+          <p class="mt-1 text-sm text-gray-500">
+            Leave feedback for tutors about your internship experience.
+          </p>
         </div>
       </div>
 
@@ -13,13 +15,18 @@
           <div class="text-sm text-gray-600">Loading…</div>
         </div>
       </div>
-      <div v-else-if="store.error" class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3">
+      <div
+        v-else-if="store.error"
+        class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3"
+      >
         <p class="text-sm text-rose-600">{{ store.error }}</p>
       </div>
       <div v-else>
         <form class="max-w-xl space-y-5" @submit.prevent="submit">
           <label class="block space-y-1">
-            <span class="text-sm font-medium text-gray-700">Message <span class="text-rose-500">*</span></span>
+            <span class="text-sm font-medium text-gray-700"
+              >Message <span class="text-rose-500">*</span></span
+            >
             <textarea
               v-model="form.message"
               rows="6"
@@ -48,7 +55,9 @@
 
         <div class="mt-10">
           <h2 class="text-sm font-semibold text-gray-900">Recent Feedback</h2>
-          <div v-if="loadingFeedback" class="py-8 text-center text-sm text-gray-600">Loading feedback…</div>
+          <div v-if="loadingFeedback" class="py-8 text-center text-sm text-gray-600">
+            Loading feedback…
+          </div>
           <div v-else class="mt-4 divide-y divide-gray-100 rounded-xl border border-gray-100">
             <div v-for="item in feedback" :key="item.id" class="px-4 py-4">
               <p class="text-sm text-gray-800">{{ item.message }}</p>

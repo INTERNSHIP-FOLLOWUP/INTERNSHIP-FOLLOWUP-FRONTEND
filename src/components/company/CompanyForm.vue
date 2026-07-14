@@ -1,15 +1,31 @@
 <template>
-  <div class="mx-auto w-full max-w-5xl rounded-3xl border border-gray-200/70 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.03)] transition-all duration-300">
+  <div
+    class="mx-auto w-full max-w-5xl rounded-3xl border border-gray-200/70 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.03)] transition-all duration-300"
+  >
     <!-- Premium Banner Header -->
-    <div class="relative overflow-hidden border-b border-gray-100 bg-gradient-to-r from-gray-50/50 to-white px-8 py-8 sm:px-10">
+    <div
+      class="relative overflow-hidden border-b border-gray-100 bg-gradient-to-r from-gray-50/50 to-white px-8 py-8 sm:px-10"
+    >
       <div class="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-indigo-50/40 blur-3xl" />
       <div class="absolute -right-4 -top-24 h-48 w-48 rounded-full bg-sky-50/40 blur-3xl" />
-      
+
       <div class="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div class="flex items-center gap-4">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-500 to-sky-400 text-white shadow-sm shadow-indigo-200">
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+          <div
+            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-500 to-sky-400 text-white shadow-sm shadow-indigo-200"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"
+              />
             </svg>
           </div>
           <div>
@@ -17,7 +33,11 @@
               {{ modeLabel }} Company Profile
             </h1>
             <p class="mt-1 text-sm text-gray-500">
-              {{ mode === 'create' ? 'Register and configure a brand new company ecosystem.' : 'Modify configuration settings and data endpoints for this profile.' }}
+              {{
+                mode === 'create'
+                  ? 'Register and configure a brand new company ecosystem.'
+                  : 'Modify configuration settings and data endpoints for this profile.'
+              }}
             </p>
           </div>
         </div>
@@ -27,11 +47,25 @@
     <!-- Main Content Grid Form -->
     <form @submit.prevent="handleSubmit" novalidate>
       <div class="px-8 py-10 sm:px-10 space-y-10">
-        
         <!-- Error Banner -->
-        <div v-if="formError" role="alert" aria-live="polite" class="flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50/60 p-4 animate-in fade-in duration-200">
-          <svg class="h-5 w-5 shrink-0 text-red-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        <div
+          v-if="formError"
+          role="alert"
+          aria-live="polite"
+          class="flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50/60 p-4 animate-in fade-in duration-200"
+        >
+          <svg
+            class="h-5 w-5 shrink-0 text-red-500 mt-0.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
           </svg>
           <div class="text-sm font-medium text-red-800">{{ formError }}</div>
         </div>
@@ -47,7 +81,9 @@
               Provide identifying information used across internal system modules.
             </p>
           </div>
-          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 bg-gray-50/40 border border-gray-100/70 p-6 rounded-2xl">
+          <div
+            class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 bg-gray-50/40 border border-gray-100/70 p-6 rounded-2xl"
+          >
             <InputField
               v-model="form.companyName"
               label="Company Name"
@@ -95,7 +131,9 @@
               Main operational anchor point for standard administrative routing.
             </p>
           </div>
-          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 bg-gray-50/40 border border-gray-100/70 p-6 rounded-2xl">
+          <div
+            class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 bg-gray-50/40 border border-gray-100/70 p-6 rounded-2xl"
+          >
             <InputField
               v-model="form.contactPerson"
               label="Contact Person Name"
@@ -126,15 +164,21 @@
               Public external hyperlinks and media structures representing the entity brand.
             </p>
           </div>
-          
-          <div class="lg:col-span-2 bg-gray-50/40 border border-gray-100/70 p-6 rounded-2xl space-y-5">
+
+          <div
+            class="lg:col-span-2 bg-gray-50/40 border border-gray-100/70 p-6 rounded-2xl space-y-5"
+          >
             <!-- Dynamic Realtime Profile Image Preview Component -->
-            <div class="flex items-center gap-4 rounded-xl border border-dashed border-gray-200 bg-white p-4">
-              <div class="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 shadow-sm">
-                <img 
-                  v-if="form.companyProfileImage && !errors.companyProfileImage" 
-                  :src="form.companyProfileImage" 
-                  alt="Live Preview" 
+            <div
+              class="flex items-center gap-4 rounded-xl border border-dashed border-gray-200 bg-white p-4"
+            >
+              <div
+                class="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 shadow-sm"
+              >
+                <img
+                  v-if="form.companyProfileImage && !errors.companyProfileImage"
+                  :src="form.companyProfileImage"
+                  alt="Live Preview"
                   class="h-full w-full object-cover"
                 />
                 <span v-else class="text-lg font-bold text-gray-400 select-none">
@@ -143,7 +187,9 @@
               </div>
               <div>
                 <h4 class="text-sm font-semibold text-gray-800">Visual Identity Asset</h4>
-                <p class="text-xs text-gray-500 mt-0.5">Provide an image address URL below to generate the thumbnail.</p>
+                <p class="text-xs text-gray-500 mt-0.5">
+                  Provide an image address URL below to generate the thumbnail.
+                </p>
               </div>
             </div>
 
@@ -176,8 +222,12 @@
       </div>
 
       <!-- Action Panel Footer -->
-      <div class="flex flex-col border-t border-gray-100 bg-gray-50/60 px-8 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10 gap-4">
-        <div class="flex items-center gap-2 text-xs font-medium text-gray-400 justify-center sm:justify-start">
+      <div
+        class="flex flex-col border-t border-gray-100 bg-gray-50/60 px-8 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10 gap-4"
+      >
+        <div
+          class="flex items-center gap-2 text-xs font-medium text-gray-400 justify-center sm:justify-start"
+        >
           <span class="inline-block h-1.5 w-1.5 rounded-full bg-red-400"></span>
           Fields marked mandatory require accurate validation.
         </div>
@@ -208,7 +258,15 @@
             :disabled="submitting"
             class="min-w-[140px] shadow-sm shadow-indigo-100 !rounded-xl"
           >
-            {{ submitting ? (mode === 'create' ? 'Creating...' : 'Saving...') : (mode === 'create' ? 'Create Profile' : 'Save Changes') }}
+            {{
+              submitting
+                ? mode === 'create'
+                  ? 'Creating...'
+                  : 'Saving...'
+                : mode === 'create'
+                  ? 'Create Profile'
+                  : 'Save Changes'
+            }}
           </PrimaryButton>
         </div>
       </div>
@@ -287,9 +345,7 @@ function validateUrl(value: string): boolean {
   if (!value.trim()) return true
   try {
     const normalized =
-      value.startsWith('http://') || value.startsWith('https://')
-        ? value
-        : `https://${value}`
+      value.startsWith('http://') || value.startsWith('https://') ? value : `https://${value}`
     new URL(normalized)
     return true
   } catch {
@@ -357,7 +413,7 @@ watch(
       formError.value = ''
       for (const [key, msg] of Object.entries(vals)) {
         if (key in errors) {
-          (errors as Record<string, string>)[key] = msg
+          ;(errors as Record<string, string>)[key] = msg
         }
       }
     }

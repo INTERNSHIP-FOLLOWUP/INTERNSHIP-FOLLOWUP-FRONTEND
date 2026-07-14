@@ -16,7 +16,7 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
   },
   timeout: 15000,
@@ -50,7 +50,7 @@ async function attemptTokenRefresh(): Promise<string> {
   const response = await axios.post(
     `${api.defaults.baseURL}${AUTH_CONFIG.ENDPOINTS.REFRESH}`,
     { refresh_token: refreshToken },
-    { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } },
+    { headers: { 'Content-Type': 'application/json', Accept: 'application/json' } },
   )
 
   const { access_token, refresh_token, expires_in } = response.data
@@ -224,13 +224,19 @@ api.interceptors.response.use(
     if (status === 422) {
       const { useToastStore } = await import('@/stores/toast')
       const data = response.data as { message?: string }
-      useToastStore().warning(data?.message || 'Validation failed. Please check your input.', 'Validation Error')
+      useToastStore().warning(
+        data?.message || 'Validation failed. Please check your input.',
+        'Validation Error',
+      )
     }
 
     // ── 500+ Server Errors ──
     if (status >= 500) {
       const { useToastStore } = await import('@/stores/toast')
-      useToastStore().error('An unexpected server error occurred. Please try again.', 'Server Error')
+      useToastStore().error(
+        'An unexpected server error occurred. Please try again.',
+        'Server Error',
+      )
     }
 
     return Promise.reject(error)

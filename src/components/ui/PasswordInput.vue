@@ -63,7 +63,12 @@
       </button>
     </div>
 
-    <p v-if="error" :id="errorId" class="text-sm text-error flex items-center gap-1 mt-1" role="alert">
+    <p
+      v-if="error"
+      :id="errorId"
+      class="text-sm text-error flex items-center gap-1 mt-1"
+      role="alert"
+    >
       <svg class="h-4 w-4 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
         <path
           fill-rule="evenodd"

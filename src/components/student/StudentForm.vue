@@ -56,7 +56,9 @@
           class="mt-2 block w-full text-sm text-slate-500 file:mr-3 file:rounded-lg file:border-0 file:bg-primary-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-primary-700 hover:file:bg-primary-100"
           @change="onFileChange"
         />
-        <p v-if="errors.avatar" id="avatar-error" class="mt-1 text-xs text-error">{{ errors.avatar }}</p>
+        <p v-if="errors.avatar" id="avatar-error" class="mt-1 text-xs text-error">
+          {{ errors.avatar }}
+        </p>
         <button
           v-if="photoPreview && isEdit"
           type="button"
@@ -86,7 +88,9 @@
           @input="clearFieldError('student_code')"
           @blur="validateField('student_code')"
         />
-        <p v-if="errors.student_code" id="student_code-error" class="text-sm text-error">{{ errors.student_code }}</p>
+        <p v-if="errors.student_code" id="student_code-error" class="text-sm text-error">
+          {{ errors.student_code }}
+        </p>
       </div>
 
       <!-- Name -->
@@ -193,7 +197,9 @@
             {{ b.name }}
           </option>
         </select>
-        <p v-if="errors.batch_id" id="batch_id-error" class="text-sm text-error">{{ errors.batch_id }}</p>
+        <p v-if="errors.batch_id" id="batch_id-error" class="text-sm text-error">
+          {{ errors.batch_id }}
+        </p>
       </div>
 
       <!-- Tutor -->
@@ -217,7 +223,9 @@
             {{ t.name }}
           </option>
         </select>
-        <p v-if="errors.tutor_id" id="tutor_id-error" class="text-sm text-error">{{ errors.tutor_id }}</p>
+        <p v-if="errors.tutor_id" id="tutor_id-error" class="text-sm text-error">
+          {{ errors.tutor_id }}
+        </p>
         <p v-if="tutorStore.error" class="text-sm text-error">{{ tutorStore.error }}</p>
       </div>
 
@@ -236,7 +244,9 @@
           @input="clearFieldError('password')"
           @blur="validateField('password')"
         />
-        <p v-if="errors.password" id="password-error" class="text-sm text-error">{{ errors.password }}</p>
+        <p v-if="errors.password" id="password-error" class="text-sm text-error">
+          {{ errors.password }}
+        </p>
       </div>
     </div>
 
@@ -442,7 +452,9 @@ async function handleSubmit(): Promise<void> {
 
     emit('saved', result)
   } catch (err: unknown) {
-    const axiosErr = err as { response?: { status?: number; data?: { errors?: Record<string, string[]> } } }
+    const axiosErr = err as {
+      response?: { status?: number; data?: { errors?: Record<string, string[]> } }
+    }
     if (axiosErr.response?.status === 422) {
       const apiErrs = axiosErr.response.data?.errors
       if (apiErrs) {

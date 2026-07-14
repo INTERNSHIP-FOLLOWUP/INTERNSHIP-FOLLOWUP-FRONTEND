@@ -2,11 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import type { UserRole } from '@/types/auth'
 import type { AppRouteMeta } from './guards'
-import {
-  ensureBooted,
-  isGuestRoute,
-  getDashboardForRole,
-} from './guards'
+import { ensureBooted, isGuestRoute, getDashboardForRole } from './guards'
 import { PUBLIC_ROUTES, ROLE_ROUTES } from '@/types/auth'
 import { getRouteRoles, hasAnyRole, isAdminRole, routeRequiresAdmin } from '@/utils/permission'
 
@@ -163,7 +159,6 @@ const router = createRouter({
         },
       ],
     },
-
 
     // ── Tutor ──
     {

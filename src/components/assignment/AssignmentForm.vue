@@ -38,7 +38,9 @@
             {{ s.name }}
           </option>
         </select>
-        <p v-if="errors.student_id" id="student_id-error" class="text-sm text-error">{{ errors.student_id }}</p>
+        <p v-if="errors.student_id" id="student_id-error" class="text-sm text-error">
+          {{ errors.student_id }}
+        </p>
       </div>
 
       <!-- Company -->
@@ -62,7 +64,9 @@
             {{ c.company_name || c.name }}
           </option>
         </select>
-        <p v-if="errors.company_id" id="company_id-error" class="text-sm text-error">{{ errors.company_id }}</p>
+        <p v-if="errors.company_id" id="company_id-error" class="text-sm text-error">
+          {{ errors.company_id }}
+        </p>
       </div>
 
       <!-- Tutor -->
@@ -87,7 +91,9 @@
             {{ t.label }}
           </option>
         </select>
-        <p v-if="errors.tutor_id" id="tutor_id-error" class="text-sm text-error">{{ errors.tutor_id }}</p>
+        <p v-if="errors.tutor_id" id="tutor_id-error" class="text-sm text-error">
+          {{ errors.tutor_id }}
+        </p>
         <p v-if="tutorStore.error" class="text-sm text-error">{{ tutorStore.error }}</p>
       </div>
 
@@ -108,7 +114,9 @@
           @input="clearFieldError('position')"
           @blur="validateField('position')"
         />
-        <p v-if="errors.position" id="position-error" class="text-sm text-error">{{ errors.position }}</p>
+        <p v-if="errors.position" id="position-error" class="text-sm text-error">
+          {{ errors.position }}
+        </p>
       </div>
 
       <!-- Start Date -->
@@ -127,7 +135,9 @@
           @change="clearFieldError('start_date')"
           @blur="validateField('start_date')"
         />
-        <p v-if="errors.start_date" id="start_date-error" class="text-sm text-error">{{ errors.start_date }}</p>
+        <p v-if="errors.start_date" id="start_date-error" class="text-sm text-error">
+          {{ errors.start_date }}
+        </p>
       </div>
 
       <!-- End Date -->
@@ -146,7 +156,9 @@
           @change="clearFieldError('end_date')"
           @blur="validateField('end_date')"
         />
-        <p v-if="errors.end_date" id="end_date-error" class="text-sm text-error">{{ errors.end_date }}</p>
+        <p v-if="errors.end_date" id="end_date-error" class="text-sm text-error">
+          {{ errors.end_date }}
+        </p>
       </div>
 
       <!-- Status (edit only) -->
@@ -198,8 +210,19 @@
         class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary-500/20 transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <svg v-if="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          />
         </svg>
         {{ isEdit ? 'Update Assignment' : 'Create Assignment' }}
       </button>
@@ -232,17 +255,17 @@ interface AssignmentFormData {
 }
 
 const STATUS_LABELS: Record<AssignmentStatus, string> = {
-  'Assigned': 'Assigned',
+  Assigned: 'Assigned',
   'In Progress': 'In Progress',
-  'Completed': 'Completed',
-  'Terminated': 'Terminated',
+  Completed: 'Completed',
+  Terminated: 'Terminated',
 }
 
 const VALID_TRANSITIONS: Record<AssignmentStatus, AssignmentStatus[]> = {
-  'Assigned': ['Assigned', 'In Progress', 'Terminated'],
+  Assigned: ['Assigned', 'In Progress', 'Terminated'],
   'In Progress': ['In Progress', 'Completed', 'Terminated'],
-  'Completed': ['Completed'],
-  'Terminated': ['Terminated'],
+  Completed: ['Completed'],
+  Terminated: ['Terminated'],
 }
 
 const props = withDefaults(
@@ -372,7 +395,9 @@ async function handleSubmit(): Promise<void> {
 
     emit('saved', result)
   } catch (err: unknown) {
-    const axiosErr = err as { response?: { status?: number; data?: { errors?: Record<string, string[]> } } }
+    const axiosErr = err as {
+      response?: { status?: number; data?: { errors?: Record<string, string[]> } }
+    }
     if (axiosErr.response?.status === 422) {
       const apiErrs = axiosErr.response.data?.errors
       if (apiErrs) {

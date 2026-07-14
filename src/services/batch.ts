@@ -25,13 +25,22 @@ export const batchService = {
     return response.data
   },
 
-  async create(payload: { batch_name: string; year: string }): Promise<{ data: Batch; message: string }> {
+  async create(payload: {
+    batch_name: string
+    year: string
+  }): Promise<{ data: Batch; message: string }> {
     const response = await api.post<{ data: Batch; message: string }>('/admin/batches', payload)
     return response.data
   },
 
-  async update(id: number, payload: { batch_name: string; year: string }): Promise<{ data: Batch; message: string }> {
-    const response = await api.put<{ data: Batch; message: string }>(`/admin/batches/${id}`, payload)
+  async update(
+    id: number,
+    payload: { batch_name: string; year: string },
+  ): Promise<{ data: Batch; message: string }> {
+    const response = await api.put<{ data: Batch; message: string }>(
+      `/admin/batches/${id}`,
+      payload,
+    )
     return response.data
   },
 

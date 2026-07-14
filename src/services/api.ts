@@ -11,7 +11,7 @@ interface QueueItem {
 }
 
 interface CancellableRequestConfig extends InternalAxiosRequestConfig {
-  cancelToken: axios.CancelToken
+  cancelToken: ReturnType<typeof axios.CancelToken.source>['token']
   cancel: () => void
 }
 
@@ -98,12 +98,12 @@ api.interceptors.request.use(
     if (config.method?.toLowerCase() === 'get') {
       pendingRequests.set(requestKey, config)
       const cancellable = config as CancellableRequestConfig
-      cancellable.cancelToken = new axios.CancelToken((cancel) => {
-        cancellable.cancel = () => {
-          pendingRequests.delete(requestKey)
-          cancel('Request cancelled due to duplicate')
-        }
-      })
+      const source = axios.CancelToken.source()
+      cancellable.cancelToken = source.token
+      cancellable.cancel = () => {
+        pendingRequests.delete(requestKey)
+        source.cancel('Request cancelled due to duplicate')
+      }
     }
 
     return config

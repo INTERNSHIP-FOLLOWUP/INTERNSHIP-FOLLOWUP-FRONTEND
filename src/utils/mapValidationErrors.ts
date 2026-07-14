@@ -28,7 +28,8 @@ export function mapValidationErrors(apiErrors: ApiFieldErrors | undefined): Reco
   const result: Record<string, string> = {}
   for (const [snakeKey, messages] of Object.entries(apiErrors)) {
     if (messages.length > 0) {
-      result[snakeToCamel(snakeKey)] = messages[0]
+      const firstMsg = messages[0]
+      if (firstMsg) result[snakeToCamel(snakeKey)] = firstMsg
     }
   }
   return result

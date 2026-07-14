@@ -8,6 +8,11 @@ import type {
   CreateCompanyPayload,
   CompanyPaginationMeta,
   CompanyListResponse,
+  CompanyStudentItem,
+  CompanyEvaluationItem,
+  CompanyFeedbackItem,
+  CompanyEvaluationPayload,
+  CompanyFeedbackPayload,
 } from '@/types/company'
 
 export interface CompanySummary {
@@ -265,7 +270,7 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
-  async function fetchStudents(): Promise<any[]> {
+  async function fetchStudents(): Promise<CompanyStudentItem[]> {
     try {
       const res = await api.get('/company/students')
       const payload = res.data
@@ -275,7 +280,7 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
-  async function fetchEvaluations(): Promise<any[]> {
+  async function fetchEvaluations(): Promise<CompanyEvaluationItem[]> {
     try {
       const res = await api.get('/company/evaluations')
       const payload = res.data
@@ -285,16 +290,12 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
-  async function submitEvaluation(payload: {
-    studentId: number
-    rating: number
-    remarks?: string | null
-  }): Promise<any> {
-    const res = await api.post('/company/evaluations', payload)
+  async function submitEvaluation(payload: CompanyEvaluationPayload): Promise<CompanyEvaluationItem> {
+    const res = await api.post<CompanyEvaluationItem>('/company/evaluations', payload)
     return res.data
   }
 
-  async function fetchFeedback(): Promise<any[]> {
+  async function fetchFeedback(): Promise<CompanyFeedbackItem[]> {
     try {
       const res = await api.get('/company/feedback')
       const payload = res.data
@@ -304,11 +305,8 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
-  async function submitFeedback(payload: {
-    message: string
-    status?: string | null
-  }): Promise<any> {
-    const res = await api.post('/company/feedback', payload)
+  async function submitFeedback(payload: CompanyFeedbackPayload): Promise<CompanyFeedbackItem> {
+    const res = await api.post<CompanyFeedbackItem>('/company/feedback', payload)
     return res.data
   }
 

@@ -10,6 +10,11 @@ interface QueueItem {
   reject: (error: unknown) => void
 }
 
+interface CancellableRequestConfig extends InternalAxiosRequestConfig {
+  cancelToken: axios.CancelToken
+  cancel: () => void
+}
+
 // ── Axios Instance ──────────────────────────────────────────────
 
 const api = axios.create({
@@ -85,16 +90,16 @@ api.interceptors.request.use(
       config.headers['X-CSRF-TOKEN'] = csrfToken
     }
 
-    // Deduplicate identical requests
-    const requestKey = `${config.method}:${config.url}:${JSON.stringify(config.data || config.params)}`
+        const requestKey = `${config.method}:${config.url}:${JSON.stringify(config.data || config.params)}`
     if (config.method?.toLowerCase() === 'get' && pendingRequests.has(requestKey)) {
       return Promise.reject({ cancelled: true, key: requestKey })
     }
 
     if (config.method?.toLowerCase() === 'get') {
       pendingRequests.set(requestKey, config)
-      ;(config as any).cancelToken = new axios.CancelToken((cancel) => {
-        ;(config as any).cancel = () => {
+      const cancellable = config as CancellableRequestConfig
+      cancellable.cancelToken = new axios.CancelToken((cancel) => {
+        cancellable.cancel = () => {
           pendingRequests.delete(requestKey)
           cancel('Request cancelled due to duplicate')
         }

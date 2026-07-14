@@ -240,14 +240,19 @@ function countDotClass(count?: number): string {
   return 'bg-emerald-500'
 }
 
+function parseBatchError(err: unknown): string {
+  const axiosErr = err as { response?: { data?: { message?: string } } } | undefined
+  return axiosErr?.response?.data?.message || 'Failed to load batches.'
+}
+
 async function fetchBatches() {
   loading.value = true
   error.value = null
   try {
     const response = await batchService.list()
     batches.value = response.data
-  } catch (err: any) {
-    error.value = err?.response?.data?.message || 'Failed to load batches.'
+  } catch (err: unknown) {
+    error.value = parseBatchError(err)
   } finally {
     loading.value = false
   }
@@ -263,8 +268,8 @@ async function createBatch() {
     form.batch_name = ''
     form.year = ''
     await fetchBatches()
-  } catch (err: any) {
-    error.value = err?.response?.data?.message || 'Failed to create batch.'
+  } catch (err: unknown) {
+    error.value = parseBatchError(err)
   } finally {
     submitting.value = false
   }

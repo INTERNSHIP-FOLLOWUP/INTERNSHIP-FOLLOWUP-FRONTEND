@@ -106,7 +106,7 @@ async function loadStudents() {
   try {
     const items = await store.fetchStudents()
     const source = Array.isArray(items) ? items : []
-    students.value = source.map((item: any) => ({
+    students.value = source.map((item) => ({
       id: Number(item?.id ?? 0),
       name: String(item?.name ?? item?.student_name ?? 'Student'),
     }))

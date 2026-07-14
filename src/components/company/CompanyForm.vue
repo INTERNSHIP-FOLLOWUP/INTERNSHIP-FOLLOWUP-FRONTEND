@@ -278,7 +278,6 @@
 import { computed, reactive, ref, watch } from 'vue'
 import InputField from '@/components/ui/InputField.vue'
 import PrimaryButton from '@/components/ui/PrimaryButton.vue'
-import { useCompanyStore } from '@/stores/company'
 
 export type CompanyFormMode = 'create' | 'edit'
 
@@ -315,7 +314,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-const store = useCompanyStore()
 const submitting = ref(false)
 const formError = ref('')
 

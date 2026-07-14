@@ -163,7 +163,7 @@
             }}
           </p>
         </div>
-        <Pagination :meta="store.pagination" @page-change="setPage" />
+        <BasePagination :meta="store.pagination" @page-change="setPage" />
       </div>
     </div>
 
@@ -187,7 +187,7 @@ import { useCompanyStore } from '@/stores/company'
 import { useToastStore } from '@/stores/toast'
 import { usePagination } from '@/composables/usePagination'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
-import Pagination from '@/components/ui/Pagination.vue'
+import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import DebouncedInput from '@/components/ui/DebouncedInput.vue'
 import ActiveFilters from '@/components/ui/ActiveFilters.vue'

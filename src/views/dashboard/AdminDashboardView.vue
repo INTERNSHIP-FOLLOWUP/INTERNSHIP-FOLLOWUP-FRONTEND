@@ -644,7 +644,7 @@ const handleQuickAction = (action: string) => {
   router.push(action)
 }
 
-const handleTutorManage = (tutorId: number) => {
+const handleTutorManage = () => {
   router.push('/admin/tutors')
 }
 

@@ -157,7 +157,7 @@
           </svg>
           <p class="mt-3 text-sm font-semibold text-slate-400">No assignments created yet.</p>
         </div>
-        <Pagination :meta="store.pagination" @page-change="setPage" />
+        <BasePagination :meta="store.pagination" @page-change="setPage" />
       </div>
     </div>
 
@@ -181,7 +181,7 @@ import { useAssignmentStore } from '@/stores/assignment'
 import { useToastStore } from '@/stores/toast'
 import { usePagination } from '@/composables/usePagination'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
-import Pagination from '@/components/ui/Pagination.vue'
+import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
 const store = useAssignmentStore()

@@ -2,13 +2,13 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Companies</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Students</h1>
         <p class="text-sm text-slate-500 dark:text-slate-400">
-          Manage partner companies and their details.
+          View and manage all enrolled students across batches.
         </p>
       </div>
       <router-link
-        to="/admin/companies/create"
+        to="/admin/users/create"
         class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -16,27 +16,37 @@
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+            d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
           />
         </svg>
-        Add Company
+        Add Student
       </router-link>
     </div>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
       <DebouncedInput
         v-model="searchQuery"
-        placeholder="Search by name or industry..."
+        placeholder="Search by name or email..."
         class="flex-1 max-w-xs"
         @change="onSearch"
       />
       <select
-        v-model="industryFilter"
+        v-model="batchFilter"
         @change="onFilterChange"
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
       >
-        <option value="">All Industries</option>
-        <option v-for="ind in industries" :key="ind" :value="ind">{{ ind }}</option>
+        <option value="">All Batches</option>
+        <option v-for="b in batches" :key="b" :value="b">{{ b }}</option>
+      </select>
+      <select
+        v-model="statusFilter"
+        @change="onFilterChange"
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+      >
+        <option value="">All Statuses</option>
+        <option value="Active">Active</option>
+        <option value="Placed">Placed</option>
+        <option value="Pending">Pending</option>
       </select>
     </div>
     <ActiveFilters :filters="activeFilterList" @remove="removeFilter" @clear-all="clearFilters" />
@@ -83,43 +93,52 @@
                 class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
               >
                 <th class="px-5 py-3.5">Name</th>
-                <th class="px-5 py-3.5">Industry</th>
-                <th class="px-5 py-3.5">Contact</th>
                 <th class="px-5 py-3.5">Email</th>
-                <th class="px-5 py-3.5">Phone</th>
+                <th class="px-5 py-3.5">Batch</th>
+                <th class="px-5 py-3.5">Tutor</th>
+                <th class="px-5 py-3.5">Status</th>
                 <th class="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
               <tr
-                v-for="company in store.companies"
-                :key="company.id"
+                v-for="student in store.students"
+                :key="student.id"
                 class="hover:bg-slate-50/30 transition-colors"
               >
                 <td class="whitespace-nowrap px-5 py-4">
                   <div class="flex items-center gap-3">
                     <div
-                      class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-xs font-bold text-indigo-600"
+                      class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600"
                     >
-                      {{ getInitials(company.name) }}
+                      {{ getInitials(student.name) }}
                     </div>
-                    <span class="font-semibold text-slate-900">{{ company.name }}</span>
+                    <span class="font-semibold text-slate-900">{{ student.name }}</span>
                   </div>
+                </td>
+                <td class="whitespace-nowrap px-5 py-4 text-slate-500 font-medium">
+                  {{ student.email }}
                 </td>
                 <td class="whitespace-nowrap px-5 py-4">
                   <span
                     class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600"
-                    >{{ company.industry || '—' }}</span
+                    >{{ student.batch || '—' }}</span
                   >
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-slate-500">
-                  {{ company.contactPerson || '—' }}
+                  {{ student.tutor || '—' }}
                 </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500">
-                  {{ company.email || '—' }}
-                </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500">
-                  {{ company.phone || '—' }}
+                <td class="whitespace-nowrap px-5 py-4">
+                  <span
+                    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
+                    :class="statusClass(student.status)"
+                  >
+                    <span
+                      class="h-1.5 w-1.5 rounded-full"
+                      :class="statusDotClass(student.status)"
+                    />
+                    {{ student.status || 'Active' }}
+                  </span>
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-right">
                   <button
@@ -128,7 +147,7 @@
                     Edit
                   </button>
                   <button
-                    @click="deleteCompany(company.id)"
+                    @click="deleteStudent(student.id)"
                     class="ml-1 rounded-lg px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-all"
                   >
                     Delete
@@ -139,7 +158,7 @@
           </table>
         </div>
         <div
-          v-if="store.companies.length === 0"
+          v-if="store.students.length === 0"
           class="flex flex-col items-center justify-center py-16 text-center"
         >
           <svg
@@ -152,14 +171,14 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="1.5"
-              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
             />
           </svg>
           <p class="mt-3 text-sm font-semibold text-slate-400">
             {{
-              searchQuery || industryFilter
-                ? 'No companies match your filters.'
-                : 'No companies registered yet.'
+              searchQuery || batchFilter || statusFilter
+                ? 'No students match your filters.'
+                : 'No students enrolled yet.'
             }}
           </p>
         </div>
@@ -183,7 +202,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useCompanyStore } from '@/stores/company'
+import { useStudentStore } from '@/stores/student'
 import { useToastStore } from '@/stores/toast'
 import { usePagination } from '@/composables/usePagination'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
@@ -193,28 +212,21 @@ import DebouncedInput from '@/components/ui/DebouncedInput.vue'
 import ActiveFilters from '@/components/ui/ActiveFilters.vue'
 import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
-const store = useCompanyStore()
+const store = useStudentStore()
 const dialog = useConfirmDialog()
 const toast = useToastStore()
 const searchQuery = ref('')
-const industryFilter = ref('')
+const batchFilter = ref('')
+const statusFilter = ref('')
 let deleteTargetId: number | null = null
 
-const industries = [
-  'Technology',
-  'Finance',
-  'Healthcare',
-  'Education',
-  'Manufacturing',
-  'Retail',
-  'Consulting',
-]
+const batches = ['Batch 2026-A', 'Batch 2026-B', 'Batch 2025-A', 'Batch 2025-B']
 
 const activeFilterList = computed<ActiveFilter[]>(() => {
   const list: ActiveFilter[] = []
   if (searchQuery.value) list.push({ key: 'search', label: 'Search', value: searchQuery.value })
-  if (industryFilter.value)
-    list.push({ key: 'industry', label: 'Industry', value: industryFilter.value })
+  if (batchFilter.value) list.push({ key: 'batch', label: 'Batch', value: batchFilter.value })
+  if (statusFilter.value) list.push({ key: 'status', label: 'Status', value: statusFilter.value })
   return list
 })
 
@@ -227,17 +239,44 @@ function getInitials(name: string): string {
     .slice(0, 2)
 }
 
+function statusClass(status?: string): string {
+  switch (status) {
+    case 'Active':
+      return 'bg-emerald-50 text-emerald-700'
+    case 'Placed':
+      return 'bg-blue-50 text-blue-700'
+    case 'Pending':
+      return 'bg-amber-50 text-amber-700'
+    default:
+      return 'bg-slate-50 text-slate-600'
+  }
+}
+
+function statusDotClass(status?: string): string {
+  switch (status) {
+    case 'Active':
+      return 'bg-emerald-500'
+    case 'Placed':
+      return 'bg-blue-500'
+    case 'Pending':
+      return 'bg-amber-500'
+    default:
+      return 'bg-slate-400'
+  }
+}
+
 function fetchPage({ page }: { page: number }) {
-  store.fetchCompanies({
+  store.fetchStudents({
     page,
+    per_page: 15,
     search: searchQuery.value || undefined,
-    industry: industryFilter.value || undefined,
   })
 }
 
 const { setPage, resetPage } = usePagination(fetchPage, {
   search: searchQuery,
-  industry: industryFilter,
+  batch: batchFilter,
+  status: statusFilter,
 })
 
 function onSearch() {
@@ -250,21 +289,23 @@ function onFilterChange() {
 
 function removeFilter(key: string) {
   if (key === 'search') searchQuery.value = ''
-  if (key === 'industry') industryFilter.value = ''
+  if (key === 'batch') batchFilter.value = ''
+  if (key === 'status') statusFilter.value = ''
   resetPage()
 }
 
 function clearFilters() {
   searchQuery.value = ''
-  industryFilter.value = ''
+  batchFilter.value = ''
+  statusFilter.value = ''
   resetPage()
 }
 
-async function deleteCompany(id: number) {
+async function deleteStudent(id: number) {
   deleteTargetId = id
   const confirmed = await dialog.open({
-    title: 'Delete Company',
-    message: 'Are you sure you want to delete this company? This action cannot be undone.',
+    title: 'Delete Student',
+    message: 'Are you sure you want to delete this student? This action cannot be undone.',
   })
   if (!confirmed) return
   await handleConfirm()
@@ -273,8 +314,8 @@ async function deleteCompany(id: number) {
 async function handleConfirm() {
   if (deleteTargetId === null) return
   await dialog.confirmAsync(async () => {
-    await store.deleteCompany(deleteTargetId!)
-    toast.success('Company deleted successfully.')
+    await store.deleteStudent(deleteTargetId!)
+    toast.success('Student deleted successfully.')
   })
 }
 </script>

@@ -17,6 +17,7 @@ function toFormData(data: Record<string, unknown>): FormData {
 export const studentService = {
   async list(params?: {
     role?: string
+    search?: string
     per_page?: number
     page?: number
   }): Promise<StudentListResponse> {

@@ -14,6 +14,8 @@
         :required="required"
         :disabled="disabled"
         :autocomplete="autocomplete"
+        :aria-invalid="!!error"
+        :aria-describedby="error ? errorId : undefined"
         class="block w-full rounded-xl border bg-white px-4 py-3 pr-11 text-[15px] text-slate-900 placeholder-slate-400 transition-all duration-200 ease-in-out outline-none"
         :class="[
           error
@@ -61,7 +63,12 @@
       </button>
     </div>
 
-    <p v-if="error" class="text-sm text-error flex items-center gap-1 mt-1" role="alert">
+    <p
+      v-if="error"
+      :id="errorId"
+      class="text-sm text-error flex items-center gap-1 mt-1"
+      role="alert"
+    >
       <svg class="h-4 w-4 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
         <path
           fill-rule="evenodd"
@@ -103,6 +110,7 @@ const emit = defineEmits<{
 
 const showPassword = ref(false)
 const inputId = computed(() => `input-${props.label.toLowerCase().replace(/\s+/g, '-')}`)
+const errorId = computed(() => `${inputId.value}-error`)
 
 function togglePasswordVisibility() {
   showPassword.value = !showPassword.value

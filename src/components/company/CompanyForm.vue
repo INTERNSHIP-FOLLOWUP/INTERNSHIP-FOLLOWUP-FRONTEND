@@ -50,6 +50,8 @@
         <!-- Error Banner -->
         <div
           v-if="formError"
+          role="alert"
+          aria-live="polite"
           class="flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50/60 p-4 animate-in fade-in duration-200"
         >
           <svg
@@ -276,7 +278,6 @@
 import { computed, reactive, ref, watch } from 'vue'
 import InputField from '@/components/ui/InputField.vue'
 import PrimaryButton from '@/components/ui/PrimaryButton.vue'
-import { useCompanyStore } from '@/stores/company'
 
 export type CompanyFormMode = 'create' | 'edit'
 
@@ -298,6 +299,7 @@ type Props = {
   mode: CompanyFormMode
   initialData?: Partial<CompanyFormData>
   showCancel?: boolean
+  apiErrors?: Record<string, string>
 }
 
 type Emits = {
@@ -312,7 +314,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-const store = useCompanyStore()
 const submitting = ref(false)
 const formError = ref('')
 
@@ -401,6 +402,21 @@ watch(
   () => props.initialData,
   () => reset(),
   { deep: true, immediate: true },
+)
+
+watch(
+  () => props.apiErrors,
+  (vals) => {
+    if (vals) {
+      formError.value = ''
+      for (const [key, msg] of Object.entries(vals)) {
+        if (key in errors) {
+          ;(errors as Record<string, string>)[key] = msg
+        }
+      }
+    }
+  },
+  { immediate: true },
 )
 
 async function handleSubmit() {

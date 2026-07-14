@@ -76,11 +76,12 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useCompanyStore } from '@/stores/company'
+import type { CompanyFeedbackItem } from '@/types/company'
 
 const store = useCompanyStore()
 
 const form = reactive<{ message: string; status?: string | null }>({ message: '' })
-const feedback = ref<any[]>([])
+const feedback = ref<CompanyFeedbackItem[]>([])
 const submitting = ref(false)
 const loadingFeedback = ref(false)
 

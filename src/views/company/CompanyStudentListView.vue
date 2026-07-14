@@ -105,11 +105,6 @@ const statusMap: Record<string, { text: string; class: string }> = {
   active: { text: 'Active', class: 'rounded-full bg-emerald-500/10 text-emerald-700' },
   completed: { text: 'Completed', class: 'rounded-full bg-gray-500/10 text-gray-700' },
 }
-const colorForId: Record<string, string> = {
-  'bg-primary-500': 'bg-primary-500',
-  'bg-primary-600': 'bg-primary-600',
-  'bg-primary-700': 'bg-primary-700',
-}
 
 interface StudentRow {
   id: number
@@ -143,7 +138,7 @@ function colorFor(id: number | undefined | null): string {
   return 'bg-primary-500'
 }
 
-function statusClassFor(rawItem: any): string {
+function statusClassFor(rawItem: { status?: string }): string {
   const statusKey = String(rawItem?.status ?? 'assigned')
   const matched = statusMap[statusKey] || statusMap['assigned']
   const matchedClass = matched?.class
@@ -154,9 +149,7 @@ function statusClassFor(rawItem: any): string {
 
 onMounted(async () => {
   try {
-    const rawStudents: any[] = Array.isArray(await store.fetchStudents())
-      ? await store.fetchStudents()
-      : []
+    const rawStudents = await store.fetchStudents()
     students.value = rawStudents.map((item) => ({
       id: Number(item?.id ?? 0),
       name: String(item?.name ?? item?.student_name ?? 'Student'),

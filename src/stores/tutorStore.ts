@@ -43,9 +43,12 @@ export const useTutorStore = defineStore('tutor', {
       this.error = null
 
       try {
-        const res = await api.get<PaginatedResponse<TutorWorkload> | TutorWorkload[]>('/users', {
-          params: { role: 'Tutor' },
-        })
+        const res = await api.get<PaginatedResponse<TutorWorkload> | TutorWorkload[]>(
+          '/admin/users',
+          {
+            params: { role: 'tutor' },
+          },
+        )
 
         const payload = res.data
         this.tutors = Array.isArray(payload) ? payload : payload.data

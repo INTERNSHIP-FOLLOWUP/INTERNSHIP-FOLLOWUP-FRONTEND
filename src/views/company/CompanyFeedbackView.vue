@@ -17,6 +17,14 @@
         <p class="text-sm text-rose-600">{{ store.error }}</p>
       </div>
       <div v-else>
+        <div
+          v-if="formError"
+          role="alert"
+          aria-live="polite"
+          class="mb-4 rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 text-sm font-medium text-rose-700"
+        >
+          {{ formError }}
+        </div>
         <form class="max-w-xl space-y-5" @submit.prevent="submit">
           <label class="block space-y-1">
             <span class="text-sm font-medium text-gray-700">Message <span class="text-rose-500">*</span></span>
@@ -38,9 +46,13 @@
             </button>
             <button
               type="submit"
-              class="rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 disabled:opacity-60"
+              class="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 disabled:opacity-60"
               :disabled="submitting"
             >
+              <svg v-if="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
               {{ submitting ? 'Submitting...' : 'Send Feedback' }}
             </button>
           </div>
@@ -74,13 +86,17 @@ const form = reactive<{ message: string; status?: string | null }>({ message: ''
 const feedback = ref<any[]>([])
 const submitting = ref(false)
 const loadingFeedback = ref(false)
+const formError = ref('')
 
 async function submit() {
   submitting.value = true
+  formError.value = ''
   try {
     await store.submitFeedback({ message: form.message, status: null })
     form.message = ''
     await loadFeedback()
+  } catch (err: unknown) {
+    formError.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to send feedback.'
   } finally {
     submitting.value = false
   }

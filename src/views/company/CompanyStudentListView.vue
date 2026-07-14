@@ -16,6 +16,9 @@
       <div v-else-if="store.error" class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3">
         <p class="text-sm text-rose-600">{{ store.error }}</p>
       </div>
+      <div v-else-if="listError" class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3">
+        <p class="text-sm text-rose-600">{{ listError }}</p>
+      </div>
 
       <div v-else class="overflow-x-auto">
         <table class="w-full text-left text-sm" v-if="students.length">
@@ -104,6 +107,7 @@ interface StudentRow {
 }
 
 const students = ref<StudentRow[]>([])
+const listError = ref('')
 
 function initialsFrom(name: string | undefined | null): string {
   const text = name?.trim()
@@ -144,8 +148,9 @@ onMounted(async () => {
       avatarColor: colorFor(item?.id),
       statusClass: statusClassFor(item),
     }))
-  } catch {
+  } catch (err: any) {
     students.value = []
+    listError.value = err?.response?.data?.message || 'Failed to load assigned students.'
   }
 })
 </script>

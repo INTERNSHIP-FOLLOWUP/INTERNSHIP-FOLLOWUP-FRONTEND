@@ -1,6 +1,7 @@
 import api from '@/services/api'
 
 export const worklogService = {
+  // ── Student endpoints ───────────────────────────────
   async getWorklogs(params = {}) {
     const response = await api.get('/student/worklogs', { params })
     return response.data
@@ -28,5 +29,22 @@ export const worklogService = {
   async deleteWorklog(id) {
     await api.delete(`/student/worklogs/${id}`)
   },
+
+  // ── Tutor endpoints ────────────────────────────────
+  async getTutorWorklogs(params = {}) {
+    const response = await api.get('/tutor/worklogs', { params })
+    return response.data
+  },
+
+  async getTutorWorklog(id) {
+    const response = await api.get(`/tutor/worklogs/${id}`)
+    return response.data
+  },
+
+  async reviewWorklog(id, data) {
+    const response = await api.put(`/tutor/worklogs/${id}`, data)
+    return response.data
+  },
 }
+
 

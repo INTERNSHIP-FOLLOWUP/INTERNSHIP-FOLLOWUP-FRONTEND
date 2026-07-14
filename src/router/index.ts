@@ -190,15 +190,17 @@ const router = createRouter({
         {
           path: 'worklogs',
           name: 'TutorWorklogs',
-          component: () => import('@/views/worklog/TutorWorklogList.vue'),
+          component: () => import('@/views/tutor/worklog/TutorWorklogList.vue'),
           meta: { title: 'Worklogs' },
         },
         {
           path: 'worklogs/:id',
-          name: 'TutorWorklogDetail',
-          component: () => import('@/views/worklog/TutorWorklogDetail.vue'),
-          meta: { title: 'Worklog Detail' },
+          name: 'WorklogReview',
+          component: () => import('@/views/tutor/worklog/WorklogReview.vue'),
+          props: true,
+          meta: { title: 'Worklog Review' },
         },
+
         {
           path: 'followups',
           name: 'TutorFollowups',

@@ -45,7 +45,7 @@
           </div>
           <div>
             <p class="text-xs font-semibold text-slate-500">Position</p>
-            <p class="text-sm font-bold text-slate-900">{{ store.tutorWorklog.student?.position || '—' }}</p>
+            <p class="text-sm font-bold text-slate-900">{{ (store.tutorWorklog.student as any)?.position || '—' }}</p>
           </div>
         </div>
       </section>
@@ -109,8 +109,7 @@
               <p class="text-sm font-semibold text-slate-700">Status</p>
               <select
                 v-model="selectedStatus"
-                :disabled="selectedStatusLocked"
-                class="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60"
+                class="mt-2 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 <option value="Pending">Pending</option>
                 <option value="Reviewed">Reviewed</option>
@@ -120,7 +119,7 @@
             <div class="flex items-end justify-start">
               <button
                 type="button"
-                :disabled="submitting || selectedStatusLocked || (selectedStatus === 'Reviewed' && !feedback.trim())"
+                :disabled="submitting || (selectedStatus === 'Reviewed' && !feedback.trim())"
                 @click="saveReview"
                 class="w-full rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 active:scale-95 disabled:opacity-60"
               >
@@ -144,11 +143,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { useWorklogStore } from '@/stores/worklogStore'
 import AttachmentList from '@/components/worklog/AttachmentList.vue'
 import WorklogStatusBadge from '@/components/worklog/WorklogStatusBadge.vue'
-import type { WorklogStatus } from '@/types/worklog'
+import type { WorklogStatus, Worklog } from '@/types/worklog'
+import { useToastStore } from '@/stores/toast'
 
 const store = useWorklogStore()
 const route = useRoute()
 const router = useRouter()
+const toast = useToastStore()
 
 const worklogId = computed(() => Number(route.params.id))
 
@@ -159,56 +160,53 @@ const submitting = ref(false)
 
 const selectedStatus = ref<WorklogStatus>('Pending')
 
-const selectedStatusLocked = computed<boolean>(() => {
-  // Tutors can only move Pending → Reviewed
-  return store.worklog?.status === 'Reviewed'
+const existingFeedback = computed(() => {
+  const tl = store.tutorWorklog
+  if (!tl) return ''
+  // Backend may return feedback nested. Keep it robust.
+  return (tl.tutor_review as any)?.feedback ?? ''
 })
-
 
 onMounted(async () => {
   const id = worklogId.value
   if (!Number.isFinite(id)) return
   await store.fetchTutorWorklog(id)
 
-  if (store.tutorWorklog?.tutor_review?.feedback) {
-    feedback.value = store.tutorWorklog.tutor_review.feedback
+  feedback.value = existingFeedback.value
+  selectedStatus.value = (store.tutorWorklog?.status as Worklog['status']) || 'Pending'
+})
+
+const isReviewed = computed(() => selectedStatus.value === 'Reviewed')
+
+function validate(): boolean {
+  if (isReviewed.value && !feedback.value.trim()) {
+    validationError.value = 'Feedback is required when marking the worklog as Reviewed.'
+    return false
   }
-
-  selectedStatus.value = store.tutorWorklog?.status || 'Pending'
-})
-
-const canSubmitReviewed = computed(() => {
-  if (selectedStatus.value !== 'Reviewed') return true
-  return feedback.value.trim().length > 0
-})
+  validationError.value = ''
+  return true
+}
 
 async function saveReview() {
   if (!store.tutorWorklog) return
+
   serverError.value = ''
   validationError.value = ''
 
-  // Validate
-  if (selectedStatus.value === 'Reviewed' && !feedback.value.trim()) {
-    validationError.value = 'Feedback is required when marking the worklog as Reviewed.'
-    return
-  }
-
-  // Enforce transition
-  if (store.tutorWorklog.status !== 'Pending' && selectedStatus.value !== store.tutorWorklog.status) {
-    validationError.value = 'You can only change status from Pending to Reviewed.'
-    return
-  }
+  if (!validate()) return
 
   submitting.value = true
   try {
     await store.reviewWorklog(store.tutorWorklog.id, {
-      status: 'Reviewed',
+      status: selectedStatus.value,
       feedback: feedback.value.trim(),
     })
 
+    toast.success('Review saved successfully.')
     router.push('/tutor/worklogs')
-  } catch (e) {
+  } catch {
     serverError.value = 'Failed to submit review.'
+    toast.error('Failed to submit review.')
   } finally {
     submitting.value = false
   }
@@ -219,4 +217,5 @@ function formatDate(date?: string): string {
   return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 </script>
+
 

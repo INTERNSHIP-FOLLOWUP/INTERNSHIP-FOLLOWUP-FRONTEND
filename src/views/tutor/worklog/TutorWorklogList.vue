@@ -10,26 +10,46 @@
     </div>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
-      <select
-        v-model="studentFilter"
-        @change="onFilterChange"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-      >
-        <option value="">Student: All Students</option>
-        <option value="1">Student A</option>
-        <option value="2">Student B</option>
-      </select>
+      <div class="flex-1 min-w-[240px]">
+        <label class="sr-only" for="studentSearch">Search student</label>
+        <input
+          id="studentSearch"
+          v-model="studentSearch"
+          @input="onFilterChange"
+          type="text"
+          placeholder="Search student name..."
+          class="h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+        />
+      </div>
 
-      <select
-        v-model="statusFilter"
-        @change="onFilterChange"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-      >
-        <option value="">Status: All</option>
-        <option value="Pending">Pending</option>
-        <option value="Reviewed">Reviewed</option>
-      </select>
+      <div class="flex-1 min-w-[180px]">
+        <label class="sr-only" for="studentIdFilter">Student</label>
+        <input
+          id="studentIdFilter"
+          v-model="studentIdFilter"
+          @input="onFilterChange"
+          type="number"
+          min="1"
+          placeholder="Student ID (optional)"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+        />
+      </div>
+
+      <div class="flex-1 min-w-[180px]">
+        <label class="sr-only" for="statusFilter">Status</label>
+        <select
+          id="statusFilter"
+          v-model="statusFilter"
+          @change="onFilterChange"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+        >
+          <option value="">Status: All</option>
+          <option value="Pending">Pending</option>
+          <option value="Reviewed">Reviewed</option>
+        </select>
+      </div>
     </div>
+
 
     <div class="rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div v-if="store.loading" class="flex items-center justify-center py-16">
@@ -157,17 +177,19 @@ import type { WorklogStatus } from '@/types/worklog'
 
 const store = useWorklogStore()
 
-const studentFilter = ref<string>('')
-const statusFilter = ref<string>('')
+const studentSearch = ref('')
+const studentIdFilter = ref<number | undefined>(undefined)
+const statusFilter = ref<WorklogStatus | ''>('')
 
 function fetchPage({ page }: { page: number }) {
   store.fetchTutorWorklogs({
     page,
-    student_id: studentFilter.value ? Number(studentFilter.value) : undefined,
-    status: statusFilter.value ? (statusFilter.value as WorklogStatus) : undefined,
-  })
+    student_id: studentIdFilter.value,
+    status: statusFilter.value || undefined,
+    // backend should ignore unknown params; harmless.
+    search: studentSearch.value ? studentSearch.value : undefined,
+  } as any)
 }
-
 
 const { setPage } = usePagination(fetchPage)
 
@@ -180,5 +202,7 @@ function formatDate(date?: string): string {
   return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 </script>
+
+
 
 

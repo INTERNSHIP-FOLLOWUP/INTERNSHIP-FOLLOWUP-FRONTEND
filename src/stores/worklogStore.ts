@@ -156,7 +156,7 @@ export const useWorklogStore = defineStore('worklog', () => {
 
   async function reviewWorklog(
     id: number,
-    data: { status: 'Reviewed'; feedback: string },
+    data: { status: Worklog['status']; feedback: string },
   ): Promise<Worklog> {
     loading.value = true
     errors.value = {}
@@ -180,6 +180,7 @@ export const useWorklogStore = defineStore('worklog', () => {
       loading.value = false
     }
   }
+
 
   function clearErrors() {
     errors.value = {}

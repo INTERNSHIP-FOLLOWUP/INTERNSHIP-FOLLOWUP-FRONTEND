@@ -110,6 +110,12 @@ const router = createRouter({
           meta: { adminOnly: true, title: 'Edit Company' } as AppRouteMeta,
         },
         {
+          path: 'companies/:id',
+          name: 'AdminCompaniesDetail',
+          component: () => import('@/views/company/CompanyDetailView.vue'),
+          meta: { title: 'Company Details' } as AppRouteMeta,
+        },
+        {
           path: 'batches',
           name: 'AdminBatches',
           component: () => import('@/views/batch/BatchListView.vue'),

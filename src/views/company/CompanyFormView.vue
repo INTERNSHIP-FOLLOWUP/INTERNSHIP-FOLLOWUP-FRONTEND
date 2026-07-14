@@ -1,5 +1,20 @@
 <template>
-  <div class="animate-fade-in">
+  <div class="animate-fade-in space-y-6">
+    <!-- Back Button -->
+    <div class="flex items-center gap-3">
+      <button
+        @click="goBack"
+        class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+      >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Companies
+      </button>
+      <span class="text-sm text-slate-300">/</span>
+      <span class="text-sm font-medium text-slate-900">{{ mode === 'create' ? 'New Company' : 'Edit Company' }}</span>
+    </div>
+
     <CompanyForm
       :mode="mode"
       :initialData="initialData"

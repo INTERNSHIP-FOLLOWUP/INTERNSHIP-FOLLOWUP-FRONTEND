@@ -1,24 +1,41 @@
 <template>
-  <div class="mx-auto w-full max-w-5xl rounded-3xl border border-gray-200/70 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.03)] transition-all duration-300">
-    <!-- Premium Banner Header -->
-    <div class="relative overflow-hidden border-b border-gray-100 bg-gradient-to-r from-gray-50/50 to-white px-8 py-8 sm:px-10">
-      <div class="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-indigo-50/40 blur-3xl" />
-      <div class="absolute -right-4 -top-24 h-48 w-48 rounded-full bg-sky-50/40 blur-3xl" />
-      
-      <div class="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-4">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-indigo-500 to-sky-400 text-white shadow-sm shadow-indigo-200">
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-            </svg>
-          </div>
-          <div>
-            <h1 class="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">
-              {{ modeLabel }} Company Profile
-            </h1>
-            <p class="mt-1 text-sm text-gray-500">
-              {{ mode === 'create' ? 'Register and configure a brand new company ecosystem.' : 'Modify configuration settings and data endpoints for this profile.' }}
-            </p>
+  <div class="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300">
+    <!-- Hero Header matching Detail View -->
+    <div class="relative overflow-hidden bg-gradient-to-r from-indigo-500 to-sky-400 px-8 py-10 sm:px-10">
+      <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+      <div class="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-white/5 blur-2xl" />
+
+      <div class="relative flex flex-col items-center gap-5 sm:flex-row sm:items-end">
+        <!-- Live Preview Avatar -->
+        <div class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white/50 bg-white shadow-xl">
+          <img
+            v-if="form.companyProfileImage && !errors.companyProfileImage"
+            :src="form.companyProfileImage"
+            alt="Company logo preview"
+            class="h-full w-full object-cover"
+          />
+          <span v-else class="text-3xl font-bold text-indigo-600 select-none">
+            {{ form.companyName ? form.companyName.charAt(0).toUpperCase() : 'C' }}
+          </span>
+        </div>
+
+        <div class="text-center sm:text-left">
+          <h1 class="text-2xl font-bold text-white drop-shadow-sm">
+            {{ form.companyName || (mode === 'create' ? 'New Company' : 'Edit Company') }}
+          </h1>
+          <div class="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+            <span v-if="form.industry" class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+              {{ form.industry }}
+            </span>
+            <span v-if="form.companyEmail" class="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
+              <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              {{ form.companyEmail }}
+            </span>
+            <span v-if="!form.companyName && !form.industry && !form.companyEmail" class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
+              {{ mode === 'create' ? 'Fill in the details below' : 'Update the fields below' }}
+            </span>
           </div>
         </div>
       </div>
@@ -27,27 +44,27 @@
     <!-- Main Content Grid Form -->
     <form @submit.prevent="handleSubmit" novalidate>
       <div class="px-8 py-10 sm:px-10 space-y-10">
-        
+
         <!-- Error Banner -->
-        <div v-if="formError" class="flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50/60 p-4 animate-in fade-in duration-200">
+        <div v-if="formError" class="flex items-start gap-3 rounded-xl border border-red-100 bg-red-50/60 p-4">
           <svg class="h-5 w-5 shrink-0 text-red-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
           <div class="text-sm font-medium text-red-800">{{ formError }}</div>
         </div>
 
-        <!-- Section 1: General Info Layout Split -->
+        <!-- Section 1: General Info -->
         <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
           <div class="lg:pt-1">
-            <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
-              <span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+            <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400">
+              <span class="h-1 w-1 rounded-full bg-indigo-500"></span>
               Core Information
-            </h2>
-            <p class="mt-1.5 text-sm text-gray-500 leading-relaxed">
+            </h3>
+            <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">
               Provide identifying information used across internal system modules.
             </p>
           </div>
-          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 bg-gray-50/40 border border-gray-100/70 p-6 rounded-2xl">
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6">
             <InputField
               v-model="form.companyName"
               label="Company Name"
@@ -82,20 +99,20 @@
           </div>
         </div>
 
-        <div class="border-t border-gray-100" />
+        <div class="border-t border-slate-100" />
 
-        <!-- Section 2: Primary Contact Split -->
+        <!-- Section 2: Primary Contact -->
         <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
           <div class="lg:pt-1">
-            <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
-              <span class="h-1.5 w-1.5 rounded-full bg-sky-400"></span>
+            <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400">
+              <span class="h-1 w-1 rounded-full bg-sky-400"></span>
               Primary Liaison
-            </h2>
-            <p class="mt-1.5 text-sm text-gray-500 leading-relaxed">
+            </h3>
+            <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">
               Main operational anchor point for standard administrative routing.
             </p>
           </div>
-          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 bg-gray-50/40 border border-gray-100/70 p-6 rounded-2xl">
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6">
             <InputField
               v-model="form.contactPerson"
               label="Contact Person Name"
@@ -113,40 +130,22 @@
           </div>
         </div>
 
-        <div class="border-t border-gray-100" />
+        <div class="border-t border-slate-100" />
 
-        <!-- Section 3: Identity & Assets Split -->
+        <!-- Section 3: Digital Presence -->
         <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
           <div class="lg:pt-1">
-            <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
-              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+            <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400">
+              <span class="h-1 w-1 rounded-full bg-violet-400"></span>
               Digital Presence
-            </h2>
-            <p class="mt-1.5 text-sm text-gray-500 leading-relaxed">
+            </h3>
+            <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">
               Public external hyperlinks and media structures representing the entity brand.
             </p>
           </div>
-          
-          <div class="lg:col-span-2 bg-gray-50/40 border border-gray-100/70 p-6 rounded-2xl space-y-5">
-            <!-- Dynamic Realtime Profile Image Preview Component -->
-            <div class="flex items-center gap-4 rounded-xl border border-dashed border-gray-200 bg-white p-4">
-              <div class="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 shadow-sm">
-                <img 
-                  v-if="form.companyProfileImage && !errors.companyProfileImage" 
-                  :src="form.companyProfileImage" 
-                  alt="Live Preview" 
-                  class="h-full w-full object-cover"
-                />
-                <span v-else class="text-lg font-bold text-gray-400 select-none">
-                  {{ form.companyName ? form.companyName.charAt(0).toUpperCase() : 'C' }}
-                </span>
-              </div>
-              <div>
-                <h4 class="text-sm font-semibold text-gray-800">Visual Identity Asset</h4>
-                <p class="text-xs text-gray-500 mt-0.5">Provide an image address URL below to generate the thumbnail.</p>
-              </div>
-            </div>
 
+          <div class="lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6 space-y-5">
+            <!-- Profile Image URL -->
             <InputField
               v-model="form.companyProfileImage"
               label="Profile Image URL"
@@ -175,18 +174,18 @@
         </div>
       </div>
 
-      <!-- Action Panel Footer -->
-      <div class="flex flex-col border-t border-gray-100 bg-gray-50/60 px-8 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10 gap-4">
-        <div class="flex items-center gap-2 text-xs font-medium text-gray-400 justify-center sm:justify-start">
-          <span class="inline-block h-1.5 w-1.5 rounded-full bg-red-400"></span>
-          Fields marked mandatory require accurate validation.
+      <!-- Action Panel Footer matching Detail View -->
+      <div class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-8 py-5 sm:flex-row">
+        <div class="flex items-center gap-2">
+          <span class="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
+          <span class="text-xs font-medium text-slate-400">Complete all required fields</span>
         </div>
 
-        <div class="flex items-center justify-center gap-3">
+        <div class="flex items-center gap-2">
           <button
             v-if="showCancel"
             type="button"
-            class="rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-200/40 hover:text-gray-900 focus:outline-none"
+            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
             :disabled="submitting"
             @click="emit('cancel')"
           >
@@ -195,7 +194,7 @@
 
           <button
             type="button"
-            class="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900 focus:outline-none"
+            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
             :disabled="submitting"
             @click="reset"
           >
@@ -206,7 +205,7 @@
             type="submit"
             :loading="submitting"
             :disabled="submitting"
-            class="min-w-[140px] shadow-sm shadow-indigo-100 !rounded-xl"
+            class="min-w-[140px] !rounded-xl shadow-sm shadow-indigo-100"
           >
             {{ submitting ? (mode === 'create' ? 'Creating...' : 'Saving...') : (mode === 'create' ? 'Create Profile' : 'Save Changes') }}
           </PrimaryButton>
@@ -287,7 +286,6 @@ const initialForm: CompanyFormData = {
 const form = reactive<CompanyFormData>({ ...initialForm })
 const errors = reactive<CompanyFormErrors>({})
 
-const modeLabel = computed(() => (props.mode === 'create' ? 'Create' : 'Edit'))
 const showCancel = computed(() => props.showCancel)
 
 function validateEmail(value: string): boolean {
@@ -373,7 +371,6 @@ watch(
 watch(
   () => props.apiErrors,
   (serverErrors) => {
-    // Clear previous field errors
     ;(Object.keys(initialForm) as Array<keyof CompanyFormData>).forEach((k) => {
       errors[k] = ''
     })

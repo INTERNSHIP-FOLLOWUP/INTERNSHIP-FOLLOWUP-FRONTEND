@@ -82,6 +82,7 @@
           v-for="company in store.companies"
           :key="company.id"
           :company="company"
+          @view="router.push(`/admin/companies/${company.id}`)"
           @edit="router.push(`/admin/companies/${company.id}/edit`)"
           @delete="deleteCompany(company.id)"
         />

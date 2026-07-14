@@ -2,11 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import type { UserRole } from '@/types/auth'
 import type { AppRouteMeta } from './guards'
-import {
-  ensureBooted,
-  isGuestRoute,
-  getDashboardForRole,
-} from './guards'
+import { ensureBooted, isGuestRoute, getDashboardForRole } from './guards'
 import { PUBLIC_ROUTES, ROLE_ROUTES } from '@/types/auth'
 
 const router = createRouter({
@@ -140,7 +136,11 @@ const router = createRouter({
           path: 'tutors',
           name: 'AdminTutors',
           component: () => import('@/views/tutor/TutorList.vue'),
-          meta: { requiresAuth: true, roles: ['admin'] as UserRole[], title: 'Tutors' } as AppRouteMeta,
+          meta: {
+            requiresAuth: true,
+            roles: ['admin'] as UserRole[],
+            title: 'Tutors',
+          } as AppRouteMeta,
         },
       ],
     },
@@ -168,7 +168,6 @@ const router = createRouter({
       component: () => import('@/views/company/CompanyFormView.vue'),
       meta: { roles: ['admin'] as UserRole[], title: 'Edit Company' } as AppRouteMeta,
     },
-
 
     // ── Tutor ──
     {

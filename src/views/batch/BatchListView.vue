@@ -32,34 +32,60 @@
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Batch Name</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Year</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Students</th>
-            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              ID
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              Batch Name
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              Year
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              Students
+            </th>
+            <th
+              class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
+            >
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
           <tr v-for="batch in store.batches" :key="batch.id" class="hover:bg-gray-50">
             <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ batch.id }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{{ batch.batch_name || batch.name }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+              {{ batch.batch_name || batch.name }}
+            </td>
             <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ batch.year }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ studentCount(batch) }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+              {{ studentCount(batch) }}
+            </td>
             <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
-              <button @click="openEditModal(batch)" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
-              <button @click="confirmDelete(batch)" class="text-red-600 hover:text-red-900">Delete</button>
+              <button
+                @click="openEditModal(batch)"
+                class="text-indigo-600 hover:text-indigo-900 mr-3"
+              >
+                Edit
+              </button>
+              <button @click="confirmDelete(batch)" class="text-red-600 hover:text-red-900">
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <BatchForm
-      v-if="showModal"
-      :batch="editingBatch"
-      @saved="onSaved"
-      @cancelled="closeModal"
-    />
+    <BatchForm v-if="showModal" :batch="editingBatch" @saved="onSaved" @cancelled="closeModal" />
 
     <!-- Delete Confirmation -->
     <div
@@ -70,7 +96,9 @@
       <div class="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
         <h2 class="text-lg font-semibold text-gray-900">Confirm Delete</h2>
         <p class="mt-2 text-sm text-gray-600">
-          Are you sure you want to delete <strong>{{ deletingBatch?.batch_name || deletingBatch?.name }}</strong>?
+          Are you sure you want to delete
+          <strong>{{ deletingBatch?.batch_name || deletingBatch?.name }}</strong
+          >?
         </p>
         <div class="mt-4 flex justify-end gap-3">
           <button

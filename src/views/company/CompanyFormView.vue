@@ -89,6 +89,3 @@ async function onSubmit(formData: CompanyFormData) {
   }
 }
 </script>
-
-
-

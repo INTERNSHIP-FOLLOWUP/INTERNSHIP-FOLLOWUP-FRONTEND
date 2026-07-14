@@ -1,10 +1,7 @@
 <!-- src/views/assignment/AssignmentView.vue -->
 <template>
   <div class="space-y-6">
-    <AssignmentList
-      @add="openCreate"
-      @view="openEdit"
-    />
+    <AssignmentList @add="openCreate" @view="openEdit" />
     <AssignmentForm
       v-if="showForm"
       :assignment-id="editingId ?? undefined"

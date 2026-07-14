@@ -182,8 +182,19 @@
         class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary-500/20 transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <svg v-if="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          />
         </svg>
         {{ isEdit ? 'Update Assignment' : 'Create Assignment' }}
       </button>
@@ -216,23 +227,20 @@ interface AssignmentFormData {
 }
 
 const STATUS_LABELS: Record<AssignmentStatus, string> = {
-  'Assigned': 'Assigned',
+  Assigned: 'Assigned',
   'In Progress': 'In Progress',
-  'Completed': 'Completed',
-  'Terminated': 'Terminated',
+  Completed: 'Completed',
+  Terminated: 'Terminated',
 }
 
 const VALID_TRANSITIONS: Record<AssignmentStatus, AssignmentStatus[]> = {
-  'Assigned': ['Assigned', 'In Progress', 'Terminated'],
+  Assigned: ['Assigned', 'In Progress', 'Terminated'],
   'In Progress': ['In Progress', 'Completed', 'Terminated'],
-  'Completed': ['Completed'],
-  'Terminated': ['Terminated'],
+  Completed: ['Completed'],
+  Terminated: ['Terminated'],
 }
 
-const props = withDefaults(
-  defineProps<{ assignmentId?: number }>(),
-  { assignmentId: undefined },
-)
+const props = withDefaults(defineProps<{ assignmentId?: number }>(), { assignmentId: undefined })
 
 const emit = defineEmits<{
   saved: [assignment: Assignment]

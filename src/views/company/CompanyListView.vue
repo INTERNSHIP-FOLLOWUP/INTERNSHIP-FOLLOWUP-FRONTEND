@@ -7,7 +7,9 @@
           <p class="mt-1 text-sm text-gray-500">Manage company profiles and overview.</p>
         </div>
 
-        <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+        <div
+          class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end"
+        >
           <div class="w-full sm:w-[320px]">
             <input
               v-model="query"
@@ -103,8 +105,6 @@ function goEdit(id: number) {
   router.push({ name, params: { id } }).catch(() => {})
 }
 
-
-
 async function onDelete(id: number) {
   if (!confirm('Delete this company?')) return
   await store.deleteCompany(id)
@@ -123,5 +123,3 @@ const filteredCompanies = computed(() => {
   })
 })
 </script>
-
-

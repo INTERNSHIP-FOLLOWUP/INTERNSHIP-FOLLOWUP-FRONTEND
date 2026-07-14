@@ -38,11 +38,7 @@
         </div>
 
         <div class="flex justify-end gap-2">
-          <button
-            type="button"
-            @click="$emit('cancelled')"
-            class="px-4 py-2 border rounded"
-          >
+          <button type="button" @click="$emit('cancelled')" class="px-4 py-2 border rounded">
             Cancel
           </button>
           <button
@@ -115,7 +111,9 @@ async function submit() {
     }
     emit('saved')
   } catch (err: unknown) {
-    submitError.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save batch.'
+    submitError.value =
+      (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+      'Failed to save batch.'
   } finally {
     submitting.value = false
   }

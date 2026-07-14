@@ -43,9 +43,7 @@ function submit() {
   <div class="min-h-screen bg-gray-100 flex items-center justify-center">
     <div class="bg-white rounded-2xl shadow-lg p-8 max-w-sm w-full">
       <h1 class="text-2xl font-bold text-gray-800 mb-2 text-center">Reset password</h1>
-      <p class="text-sm text-gray-500 mb-6 text-center">
-        Choose a new password for {{ email }}.
-      </p>
+      <p class="text-sm text-gray-500 mb-6 text-center">Choose a new password for {{ email }}.</p>
 
       <form @submit.prevent="submit" class="space-y-4">
         <div>

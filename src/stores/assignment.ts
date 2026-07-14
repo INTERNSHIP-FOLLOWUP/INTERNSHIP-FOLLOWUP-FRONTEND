@@ -18,7 +18,12 @@ export const useAssignmentStore = defineStore('assignment', () => {
 
   const assignmentCount = computed(() => pagination.value?.total ?? assignments.value.length)
 
-  async function fetchAssignments(params?: { page?: number; per_page?: number; status?: string; company_id?: number }): Promise<void> {
+  async function fetchAssignments(params?: {
+    page?: number
+    per_page?: number
+    status?: string
+    company_id?: number
+  }): Promise<void> {
     loading.value = true
     error.value = null
 
@@ -52,7 +57,10 @@ export const useAssignmentStore = defineStore('assignment', () => {
     }
   }
 
-  async function updateAssignment(id: number, payload: UpdateAssignmentPayload): Promise<Assignment> {
+  async function updateAssignment(
+    id: number,
+    payload: UpdateAssignmentPayload,
+  ): Promise<Assignment> {
     loading.value = true
     error.value = null
 

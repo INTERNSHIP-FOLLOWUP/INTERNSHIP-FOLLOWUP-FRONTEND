@@ -66,9 +66,7 @@ function submit() {
       <p v-if="error" class="mt-4 text-sm text-red-600 text-center">{{ error }}</p>
 
       <p class="mt-6 text-center text-sm text-gray-600">
-        <button @click="router.push('/login')" class="hover:text-amber-600">
-          Back to login
-        </button>
+        <button @click="router.push('/login')" class="hover:text-amber-600">Back to login</button>
       </p>
     </div>
   </div>

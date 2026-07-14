@@ -378,7 +378,7 @@
               </td>
               <td class="whitespace-nowrap px-4 py-3 text-right">
                 <button
-                  @click="handleTutorManage(tutor.id)"
+                  @click="handleTutorManage()"
                   class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800"
                 >
                   Manage Assignments

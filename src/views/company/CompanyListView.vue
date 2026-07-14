@@ -42,7 +42,7 @@
     <ActiveFilters :filters="activeFilterList" @remove="removeFilter" @clear-all="clearFilters" />
 
     <div
-      class="rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900"
+      class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
     >
       <div v-if="store.loading" class="flex items-center justify-center py-16">
         <svg class="h-8 w-8 animate-spin text-indigo-500" fill="none" viewBox="0 0 24 24">
@@ -75,96 +75,46 @@
         </svg>
         <p class="mt-3 text-sm font-semibold text-red-500">{{ store.error }}</p>
       </div>
-      <div v-else>
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse text-left text-sm">
-            <thead>
-              <tr
-                class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
-              >
-                <th class="px-5 py-3.5">Name</th>
-                <th class="px-5 py-3.5">Industry</th>
-                <th class="px-5 py-3.5">Contact</th>
-                <th class="px-5 py-3.5">Email</th>
-                <th class="px-5 py-3.5">Phone</th>
-                <th class="px-5 py-3.5 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-50">
-              <tr
-                v-for="company in store.companies"
-                :key="company.id"
-                class="hover:bg-slate-50/30 transition-colors"
-              >
-                <td class="whitespace-nowrap px-5 py-4">
-                  <div class="flex items-center gap-3">
-                    <div
-                      class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-xs font-bold text-indigo-600"
-                    >
-                      {{ getInitials(company.name) }}
-                    </div>
-                    <span class="font-semibold text-slate-900">{{ company.name }}</span>
-                  </div>
-                </td>
-                <td class="whitespace-nowrap px-5 py-4">
-                  <span
-                    class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600"
-                    >{{ company.industry || '—' }}</span
-                  >
-                </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500">
-                  {{ company.contactPerson || '—' }}
-                </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500">
-                  {{ company.email || '—' }}
-                </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500">
-                  {{ company.phone || '—' }}
-                </td>
-                <td class="whitespace-nowrap px-5 py-4 text-right">
-                  <button
-                    class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-all"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    @click="deleteCompany(company.id)"
-                    class="ml-1 rounded-lg px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-all"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div
-          v-if="store.companies.length === 0"
-          class="flex flex-col items-center justify-center py-16 text-center"
-        >
-          <svg
-            class="h-10 w-10 text-slate-300"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-            />
-          </svg>
-          <p class="mt-3 text-sm font-semibold text-slate-400">
-            {{
-              searchQuery || industryFilter
-                ? 'No companies match your filters.'
-                : 'No companies registered yet.'
-            }}
-          </p>
-        </div>
-        <BasePagination :meta="store.pagination" @page-change="setPage" />
+
+      <!-- Company Cards Grid -->
+      <div v-else-if="store.companies.length > 0" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <CompanyCard
+          v-for="company in store.companies"
+          :key="company.id"
+          :company="company"
+          @edit="router.push(`/admin/companies/${company.id}/edit`)"
+          @delete="deleteCompany(company.id)"
+        />
       </div>
+
+      <!-- Empty State -->
+      <div
+        v-else
+        class="flex flex-col items-center justify-center py-16 text-center"
+      >
+        <svg
+          class="h-10 w-10 text-slate-300"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+          />
+        </svg>
+        <p class="mt-3 text-sm font-semibold text-slate-400">
+          {{
+            searchQuery || industryFilter
+              ? 'No companies match your filters.'
+              : 'No companies registered yet.'
+          }}
+        </p>
+      </div>
+
+      <BasePagination :meta="store.pagination" @page-change="setPage" />
     </div>
 
     <ConfirmDialog
@@ -183,10 +133,12 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useCompanyStore } from '@/stores/company'
 import { useToastStore } from '@/stores/toast'
 import { usePagination } from '@/composables/usePagination'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import CompanyCard from '@/components/company/CompanyCard.vue'
 import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import DebouncedInput from '@/components/ui/DebouncedInput.vue'
@@ -194,6 +146,7 @@ import ActiveFilters from '@/components/ui/ActiveFilters.vue'
 import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
 const store = useCompanyStore()
+const router = useRouter()
 const dialog = useConfirmDialog()
 const toast = useToastStore()
 const searchQuery = ref('')
@@ -217,15 +170,6 @@ const activeFilterList = computed<ActiveFilter[]>(() => {
     list.push({ key: 'industry', label: 'Industry', value: industryFilter.value })
   return list
 })
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
 
 function fetchPage({ page }: { page: number }) {
   store.fetchCompanies({

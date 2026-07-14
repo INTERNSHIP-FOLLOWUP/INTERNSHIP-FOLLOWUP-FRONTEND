@@ -241,19 +241,33 @@ type Props = {
   mode: CompanyFormMode
   initialData?: Partial<CompanyFormData>
   showCancel?: boolean
+  apiErrors?: Record<string, string>
+  onSubmit?: (data: CompanyFormData) => Promise<void>
 }
 
 type Emits = {
-  submit: [payload: CompanyFormData]
   cancel: []
 }
 
 const props = withDefaults(defineProps<Props>(), {
   initialData: () => ({}),
   showCancel: false,
+  apiErrors: () => ({}),
 })
 
 const emit = defineEmits<Emits>()
+
+const BACKEND_FIELD_MAP: Record<string, keyof CompanyFormData> = {
+  company_name: 'companyName',
+  email: 'companyEmail',
+  location: 'location',
+  industry: 'industry',
+  contact_person: 'contactPerson',
+  phone: 'contactPhone',
+  website: 'website',
+  company_profile_image: 'companyProfileImage',
+  telegram_link: 'telegramLink',
+}
 
 const submitting = ref(false)
 const formError = ref('')
@@ -341,10 +355,33 @@ function reset() {
   formError.value = ''
 }
 
+function applyServerErrors(serverErrors: Record<string, string>) {
+  for (const [key, msg] of Object.entries(serverErrors)) {
+    const field = BACKEND_FIELD_MAP[key] ?? (key as keyof CompanyFormData)
+    if (field in form) {
+      (errors as CompanyFormErrors)[field] = msg
+    }
+  }
+}
+
 watch(
   () => props.initialData,
   () => reset(),
   { deep: true, immediate: true },
+)
+
+watch(
+  () => props.apiErrors,
+  (serverErrors) => {
+    // Clear previous field errors
+    ;(Object.keys(initialForm) as Array<keyof CompanyFormData>).forEach((k) => {
+      errors[k] = ''
+    })
+    if (serverErrors) {
+      applyServerErrors(serverErrors)
+    }
+  },
+  { deep: true },
 )
 
 async function handleSubmit() {
@@ -354,7 +391,7 @@ async function handleSubmit() {
   formError.value = ''
 
   try {
-    emit('submit', { ...form })
+    await props.onSubmit?.({ ...form })
   } catch (e: unknown) {
     formError.value = e instanceof Error ? e.message : 'Failed to submit. Please try again.'
   } finally {

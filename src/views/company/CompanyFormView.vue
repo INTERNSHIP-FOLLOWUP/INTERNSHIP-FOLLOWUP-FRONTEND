@@ -4,9 +4,9 @@
       :mode="mode"
       :initialData="initialData"
       :apiErrors="apiErrors"
+      :onSubmit="onSubmit"
       showCancel
       @cancel="goBack"
-      @submit="onSubmit"
     />
   </div>
 </template>
@@ -69,9 +69,7 @@ onMounted(async () => {
 })
 
 function goBack() {
-  const parent = route.matched?.[1]?.name as string | undefined
-  const target = parent && parent !== 'CompanyProfile' ? parent : 'AdminCompanies'
-  router.push({ name: target }).catch(() => {})
+  router.push({ name: 'AdminCompanies' }).catch(() => {})
 }
 
 async function onSubmit(formData: CompanyFormData) {
@@ -94,6 +92,8 @@ async function onSubmit(formData: CompanyFormData) {
     }
     if (axiosErr.response?.status === 422) {
       apiErrors.value = mapValidationErrors(axiosErr.response.data?.errors)
+    } else {
+      throw err
     }
   }
 }

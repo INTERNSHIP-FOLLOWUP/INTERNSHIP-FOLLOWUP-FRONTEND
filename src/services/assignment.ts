@@ -17,7 +17,12 @@ interface BackendSingleResponse {
 }
 
 export const assignmentService = {
-  async list(params?: { page?: number; per_page?: number; status?: string; company_id?: number }): Promise<AssignmentListResponse> {
+  async list(params?: {
+    page?: number
+    per_page?: number
+    status?: string
+    company_id?: number
+  }): Promise<AssignmentListResponse> {
     const response = await api.get<BackendListResponse>('/admin/assignments', { params })
     return {
       data: response.data.data,

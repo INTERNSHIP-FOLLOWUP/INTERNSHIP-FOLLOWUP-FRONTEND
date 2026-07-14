@@ -107,7 +107,6 @@ export const useAuthStore = defineStore('auth', () => {
     } catch {
       // Bearer-token APIs don't need the CSRF cookie
     }
-
   }
 
   // ── Boot: validate session on app start ──

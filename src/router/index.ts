@@ -2,12 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import type { UserRole } from '@/types/auth'
 import type { AppRouteMeta } from './guards'
-import {
-  ensureBooted,
-  isGuestRoute,
-  getDashboardForRole,
-} from './guards'
+import { ensureBooted, isGuestRoute, getDashboardForRole } from './guards'
 import { PUBLIC_ROUTES, ROLE_ROUTES } from '@/types/auth'
+import { getRouteRoles, hasAnyRole, isAdminRole, routeRequiresAdmin } from '@/utils/permission'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,8 +41,8 @@ const router = createRouter({
     {
       path: '/403',
       name: 'Forbidden',
-      component: () => import('@/views/auth/SignIn.vue'),
-      meta: { guest: true, title: 'Forbidden' } as AppRouteMeta,
+      component: () => import('@/views/error/UnauthorizedView.vue'),
+      meta: { requiresAuth: false, title: 'Forbidden' } as AppRouteMeta,
     },
     {
       path: '/404',
@@ -64,7 +61,7 @@ const router = createRouter({
           path: '',
           name: 'AdminDashboard',
           component: () => import('@/views/dashboard/AdminDashboardView.vue'),
-          meta: { title: 'Dashboard' },
+          meta: { title: 'Dashboard' } as AppRouteMeta,
         },
         {
           path: 'dashboard',
@@ -74,89 +71,100 @@ const router = createRouter({
           path: 'users',
           name: 'AdminUsers',
           component: () => import('@/views/user/AdminUsersView.vue'),
-          meta: { title: 'Users' },
+          meta: { title: 'Users' } as AppRouteMeta,
         },
         {
           path: 'users/create',
           name: 'AdminUsersCreate',
           component: () => import('@/views/user/AdminUsersView.vue'),
-          meta: { title: 'Add Student' },
+          meta: { adminOnly: true, title: 'Add Student' } as AppRouteMeta,
         },
         {
           path: 'users/:id',
           name: 'AdminUsersEdit',
           component: () => import('@/views/user/AdminUsersView.vue'),
-          meta: { title: 'Edit Student' },
+          meta: { adminOnly: true, title: 'Edit Student' } as AppRouteMeta,
         },
         {
-          path: 'batches',
-          name: 'AdminBatches',
-          component: () => import('@/views/batch/BatchListView.vue'),
-          meta: { title: 'Batches' },
+          path: 'students',
+          name: 'AdminStudents',
+          component: () => import('@/views/student/StudentListView.vue'),
+          meta: { title: 'Students' } as AppRouteMeta,
         },
         {
           path: 'companies',
           name: 'AdminCompanies',
           component: () => import('@/views/company/CompanyListView.vue'),
-          meta: { title: 'Companies' },
+          meta: { title: 'Companies' } as AppRouteMeta,
+        },
+        {
+          path: 'companies/create',
+          name: 'AdminCompaniesCreate',
+          component: () => import('@/views/company/CompanyFormView.vue'),
+          meta: { adminOnly: true, title: 'Create Company' } as AppRouteMeta,
+        },
+        {
+          path: 'companies/:id/edit',
+          name: 'AdminCompaniesEdit',
+          component: () => import('@/views/company/CompanyFormView.vue'),
+          meta: { adminOnly: true, title: 'Edit Company' } as AppRouteMeta,
+        },
+        {
+          path: 'companies/:id',
+          name: 'AdminCompaniesDetail',
+          component: () => import('@/views/company/CompanyDetailView.vue'),
+          meta: { title: 'Company Details' } as AppRouteMeta,
+        },
+        {
+          path: 'batches',
+          name: 'AdminBatches',
+          component: () => import('@/views/batch/BatchListView.vue'),
+          meta: { adminOnly: true, title: 'Batches' } as AppRouteMeta,
         },
         {
           path: 'assignments',
           name: 'AdminAssignments',
           component: () => import('@/views/assignment/AssignmentView.vue'),
-          meta: { title: 'Assignments' },
+          meta: { title: 'Internship Assignments' } as AppRouteMeta,
         },
         {
           path: 'assignments/create',
           name: 'AdminAssignmentsCreate',
           component: () => import('@/views/assignment/AssignmentView.vue'),
-          meta: { title: 'New Assignment' },
+          meta: { adminOnly: true, title: 'New Assignment' } as AppRouteMeta,
         },
         {
           path: 'assignments/:id',
           name: 'AdminAssignmentsEdit',
           component: () => import('@/views/assignment/AssignmentView.vue'),
-          meta: { title: 'Edit Assignment' },
+          meta: { adminOnly: true, title: 'Edit Assignment' } as AppRouteMeta,
+        },
+        {
+          path: 'reports',
+          name: 'AdminReports',
+          component: () => import('@/views/report/ReportGenerationView.vue'),
+          meta: { title: 'Reports' } as AppRouteMeta,
+        },
+        {
+          path: 'reports/generate',
+          name: 'AdminReportsGenerate',
+          component: () => import('@/views/report/ReportGenerationView.vue'),
+          meta: { title: 'Generate Report' } as AppRouteMeta,
         },
         {
           path: 'profile',
           name: 'AdminProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
-          meta: { title: 'Profile' },
+          meta: { title: 'Profile' } as AppRouteMeta,
         },
         {
           path: 'tutors',
           name: 'AdminTutors',
           component: () => import('@/views/tutor/TutorList.vue'),
-          meta: { requiresAuth: true, roles: ['admin'] as UserRole[], title: 'Tutors' } as AppRouteMeta,
+          meta: { title: 'Tutors' } as AppRouteMeta,
         },
       ],
     },
-
-    // ── Company Management (explicit spec routes) ──
-    // Maps directly to existing pages:
-    // - /companies => CompanyListView
-    // - /companies/create => CompanyFormView (create mode)
-    // - /companies/:id/edit => CompanyFormView (edit mode)
-    {
-      path: '/companies',
-      name: 'Companies',
-      component: () => import('@/views/company/CompanyListView.vue'),
-      meta: { roles: ['admin'] as UserRole[], title: 'Companies' } as AppRouteMeta,
-    },
-    {
-      path: '/companies/create',
-      name: 'CompaniesCreate',
-      component: () => import('@/views/company/CompanyFormView.vue'),
-      meta: { roles: ['admin'] as UserRole[], title: 'Create Company' } as AppRouteMeta,
-    },
-    {
-      path: '/companies/:id/edit',
-      name: 'CompaniesEdit',
-      component: () => import('@/views/company/CompanyFormView.vue'),
-      meta: { roles: ['admin'] as UserRole[], title: 'Edit Company' } as AppRouteMeta,
-    },
-
 
     // ── Tutor ──
     {
@@ -320,26 +328,37 @@ router.beforeEach(async (to, _from, next) => {
   const meta = to.meta as AppRouteMeta
   const isGuest = isGuestRoute(meta, to.path)
 
-  // 1. Boot the auth store if needed
   await ensureBooted()
 
-  // 2. Guest-only routes — redirect authenticated users to their dashboard
+  // Guest-only routes — redirect authenticated users to their dashboard
   if (isGuest && store.isLoggedIn && store.userRole) {
     next(getDashboardForRole(store.userRole))
     return
   }
 
-  // 3. All other routes require authentication
+  // Protected routes require authentication
   if (!PUBLIC_ROUTES.includes(to.fullPath) && !store.isLoggedIn) {
     next({ name: 'Login', query: { redirect: to.fullPath } })
     return
   }
 
-  // 4. Role-based access
-  if (to.meta?.roles && !store.hasAnyRole(...(to.meta.roles as UserRole[]))) {
-    const fallback = ROLE_ROUTES[store.userRole as UserRole] || '/login'
-    next(fallback)
+  // Role-based access control — inherit parent route roles
+  if (routeRequiresAdmin(to) && !isAdminRole(store.userRole)) {
+    next({ name: 'Forbidden', query: { redirect: to.fullPath } })
     return
+  }
+
+  const requiredRoles = getRouteRoles(to)
+  if (requiredRoles.length > 0) {
+    if (!store.userRole) {
+      next({ name: 'Login', query: { redirect: to.fullPath } })
+      return
+    }
+    if (!hasAnyRole(store.userRole, requiredRoles)) {
+      const fallback = ROLE_ROUTES[store.userRole] || '/login'
+      next(fallback)
+      return
+    }
   }
 
   next()

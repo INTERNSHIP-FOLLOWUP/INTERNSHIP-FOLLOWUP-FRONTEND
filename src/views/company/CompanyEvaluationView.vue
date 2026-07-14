@@ -13,14 +13,22 @@
           <div class="text-sm text-gray-600">Loading…</div>
         </div>
       </div>
-      <div v-else-if="store.error" class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3">
+      <div
+        v-else-if="store.error"
+        class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3"
+      >
         <p class="text-sm text-rose-600">{{ store.error }}</p>
       </div>
       <div v-else>
         <form class="max-w-xl space-y-5" @submit.prevent="submit">
           <label class="block space-y-1">
-            <span class="text-sm font-medium text-gray-700">Student <span class="text-rose-500">*</span></span>
-            <select v-model="form.studentId" class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20">
+            <span class="text-sm font-medium text-gray-700"
+              >Student <span class="text-rose-500">*</span></span
+            >
+            <select
+              v-model="form.studentId"
+              class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            >
               <option value="" disabled>Select student</option>
               <option v-for="student in students" :key="student.id" :value="student.id">
                 {{ student.name }}
@@ -29,8 +37,13 @@
           </label>
 
           <label class="block space-y-1">
-            <span class="text-sm font-medium text-gray-700">Rating <span class="text-rose-500">*</span></span>
-            <select v-model="form.rating" class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20">
+            <span class="text-sm font-medium text-gray-700"
+              >Rating <span class="text-rose-500">*</span></span
+            >
+            <select
+              v-model="form.rating"
+              class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            >
               <option value="" disabled>Select rating</option>
               <option value="5">Excellent</option>
               <option value="4">Good</option>
@@ -41,7 +54,9 @@
           </label>
 
           <label class="block space-y-1">
-            <span class="text-sm font-medium text-gray-700">Remarks <span class="text-rose-500">*</span></span>
+            <span class="text-sm font-medium text-gray-700"
+              >Remarks <span class="text-rose-500">*</span></span
+            >
             <textarea
               v-model="form.remarks"
               rows="5"
@@ -91,7 +106,7 @@ async function loadStudents() {
   try {
     const items = await store.fetchStudents()
     const source = Array.isArray(items) ? items : []
-    students.value = source.map((item: any) => ({
+    students.value = source.map((item) => ({
       id: Number(item?.id ?? 0),
       name: String(item?.name ?? item?.student_name ?? 'Student'),
     }))

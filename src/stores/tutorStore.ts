@@ -29,7 +29,7 @@ export const useTutorStore = defineStore('tutor', {
 
   getters: {
     tutorOptions: (state): TutorOption[] =>
-      state.tutors.map(t => ({ value: t.id, label: t.name })),
+      state.tutors.map((t) => ({ value: t.id, label: t.name })),
     workload: (state): TutorWorkload[] => state.tutors,
     workloadLoading: (state): boolean => state.loading,
     workloadError: (state): string | null => state.error,
@@ -43,9 +43,12 @@ export const useTutorStore = defineStore('tutor', {
       this.error = null
 
       try {
-        const res = await api.get<PaginatedResponse<TutorWorkload> | TutorWorkload[]>('/users', {
-          params: { role: 'Tutor' },
-        })
+        const res = await api.get<PaginatedResponse<TutorWorkload> | TutorWorkload[]>(
+          '/admin/users',
+          {
+            params: { role: 'tutor' },
+          },
+        )
 
         const payload = res.data
         this.tutors = Array.isArray(payload) ? payload : payload.data

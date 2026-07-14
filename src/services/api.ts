@@ -10,13 +10,18 @@ interface QueueItem {
   reject: (error: unknown) => void
 }
 
+interface CancellableRequestConfig extends InternalAxiosRequestConfig {
+  cancelToken: ReturnType<typeof axios.CancelToken.source>['token']
+  cancel: () => void
+}
+
 // ── Axios Instance ──────────────────────────────────────────────
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
   },
   timeout: 15000,
@@ -50,7 +55,7 @@ async function attemptTokenRefresh(): Promise<string> {
   const response = await axios.post(
     `${api.defaults.baseURL}${AUTH_CONFIG.ENDPOINTS.REFRESH}`,
     { refresh_token: refreshToken },
-    { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } },
+    { headers: { 'Content-Type': 'application/json', Accept: 'application/json' } },
   )
 
   const { access_token, refresh_token, expires_in } = response.data
@@ -85,20 +90,20 @@ api.interceptors.request.use(
       config.headers['X-CSRF-TOKEN'] = csrfToken
     }
 
-    // Deduplicate identical requests
-    const requestKey = `${config.method}:${config.url}:${JSON.stringify(config.data || config.params)}`
+        const requestKey = `${config.method}:${config.url}:${JSON.stringify(config.data || config.params)}`
     if (config.method?.toLowerCase() === 'get' && pendingRequests.has(requestKey)) {
       return Promise.reject({ cancelled: true, key: requestKey })
     }
 
     if (config.method?.toLowerCase() === 'get') {
       pendingRequests.set(requestKey, config)
-      ;(config as any).cancelToken = new axios.CancelToken((cancel) => {
-        ;(config as any).cancel = () => {
-          pendingRequests.delete(requestKey)
-          cancel('Request cancelled due to duplicate')
-        }
-      })
+      const cancellable = config as CancellableRequestConfig
+      const source = axios.CancelToken.source()
+      cancellable.cancelToken = source.token
+      cancellable.cancel = () => {
+        pendingRequests.delete(requestKey)
+        source.cancel('Request cancelled due to duplicate')
+      }
     }
 
     return config
@@ -132,7 +137,8 @@ api.interceptors.response.use(
 
     // No response = network error
     if (!response) {
-      console.warn('Network error:', error.message)
+      const { useToastStore } = await import('@/stores/toast')
+      useToastStore().error('Network error. Please check your connection.', 'Connection Lost')
       return Promise.reject(error)
     }
 
@@ -219,9 +225,23 @@ api.interceptors.response.use(
       return Promise.reject(error)
     }
 
+    // ── 422 Validation Error ──
+    if (status === 422) {
+      const { useToastStore } = await import('@/stores/toast')
+      const data = response.data as { message?: string }
+      useToastStore().warning(
+        data?.message || 'Validation failed. Please check your input.',
+        'Validation Error',
+      )
+    }
+
     // ── 500+ Server Errors ──
     if (status >= 500) {
-      console.error('Server error:', error.message)
+      const { useToastStore } = await import('@/stores/toast')
+      useToastStore().error(
+        'An unexpected server error occurred. Please try again.',
+        'Server Error',
+      )
     }
 
     return Promise.reject(error)

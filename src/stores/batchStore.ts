@@ -21,7 +21,9 @@ export const useBatchStore = defineStore('batch', {
         const res = await api.get('/batches', { params })
         this.batches = res.data.data ?? res.data
       } catch (err: unknown) {
-        this.error = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load batches'
+        this.error =
+          (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Failed to load batches'
       } finally {
         this.loading = false
       }
@@ -34,7 +36,9 @@ export const useBatchStore = defineStore('batch', {
         this.batches.push(res.data)
         return res.data
       } catch (err: unknown) {
-        this.error = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create batch'
+        this.error =
+          (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Failed to create batch'
         throw err
       } finally {
         this.loading = false
@@ -45,11 +49,13 @@ export const useBatchStore = defineStore('batch', {
       this.error = null
       try {
         const res = await api.put(`/batches/${id}`, payload)
-        const idx = this.batches.findIndex(b => b.id === id)
+        const idx = this.batches.findIndex((b) => b.id === id)
         if (idx !== -1) this.batches[idx] = res.data
         return res.data
       } catch (err: unknown) {
-        this.error = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update batch'
+        this.error =
+          (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Failed to update batch'
         throw err
       } finally {
         this.loading = false
@@ -63,7 +69,9 @@ export const useBatchStore = defineStore('batch', {
         this.currentBatch = res.data.data ?? res.data
         return this.currentBatch
       } catch (err: unknown) {
-        this.error = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load batch'
+        this.error =
+          (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Failed to load batch'
         return null
       } finally {
         this.loading = false
@@ -77,9 +85,11 @@ export const useBatchStore = defineStore('batch', {
       this.error = null
       try {
         await api.delete(`/batches/${id}`)
-        this.batches = this.batches.filter(b => b.id !== id)
+        this.batches = this.batches.filter((b) => b.id !== id)
       } catch (err: unknown) {
-        this.error = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete batch'
+        this.error =
+          (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Failed to delete batch'
         throw err
       } finally {
         this.loading = false

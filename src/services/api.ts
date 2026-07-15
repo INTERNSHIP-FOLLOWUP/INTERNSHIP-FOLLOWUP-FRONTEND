@@ -15,6 +15,8 @@ interface FailedRequest {
   reject: (error: unknown) => void
 }
 
+type RequestConfig = InternalAxiosRequestConfig & { cancel?: () => void }
+
 // ── Axios Instance ──────────────────────────────────────────────
 
 const api = axios.create({
@@ -32,7 +34,7 @@ const api = axios.create({
 
 let isRefreshing = false
 let failedQueue: QueueItem[] = []
-let pendingRequests: Map<string, InternalAxiosRequestConfig> = new Map()
+let pendingRequests: Map<string, RequestConfig> = new Map()
 let isLoggingOut = false
 
 function processQueue(error: unknown, token: string | null = null) {
@@ -73,34 +75,36 @@ async function attemptTokenRefresh(): Promise<string> {
 
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    const requestConfig = config as RequestConfig
+
     // Attach access token
     const token = tokenService.getAccessToken()
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`
+    if (token && requestConfig.headers) {
+      requestConfig.headers.Authorization = `Bearer ${token}`
     }
 
     // Add CSRF token if available (for non-get requests)
     const csrfToken = getCsrfToken()
-    if (csrfToken && config.method && !['get', 'head', 'options'].includes(config.method) && config.headers) {
-      config.headers['X-CSRF-TOKEN'] = csrfToken
+    if (csrfToken && requestConfig.method && !['get', 'head', 'options'].includes(requestConfig.method) && requestConfig.headers) {
+      requestConfig.headers['X-CSRF-TOKEN'] = csrfToken
     }
 
     // Deduplicate identical requests
-    const requestKey = `${config.method}:${config.url}:${JSON.stringify(config.data || config.params)}`
-    if (config.method?.toLowerCase() === 'get' && pendingRequests.has(requestKey)) {
+    const requestKey = `${requestConfig.method}:${requestConfig.url}:${JSON.stringify(requestConfig.data || requestConfig.params)}`
+    if (requestConfig.method?.toLowerCase() === 'get' && pendingRequests.has(requestKey)) {
       return Promise.reject({ cancelled: true, key: requestKey })
     }
-    if (config.method?.toLowerCase() === 'get') {
-      pendingRequests.set(requestKey, config)
-      config.cancelToken = new axios.CancelToken((cancel) => {
-        config.cancel = () => {
+    if (requestConfig.method?.toLowerCase() === 'get') {
+      pendingRequests.set(requestKey, requestConfig)
+      requestConfig.cancelToken = new axios.CancelToken((cancel) => {
+        requestConfig.cancel = () => {
           pendingRequests.delete(requestKey)
           cancel('Request cancelled due to duplicate')
         }
       })
     }
 
-    return config
+    return requestConfig
   },
   (error) => Promise.reject(error)
 )
@@ -108,7 +112,7 @@ api.interceptors.request.use(
 // Cleanup completed request keys
 api.interceptors.response.use(
   (response: AxiosResponse) => {
-    const config = response.config as InternalAxiosRequestConfig & { cancel?: () => void }
+    const config = response.config as RequestConfig
     if (config.cancel) config.cancel()
     return response
   },

@@ -77,7 +77,7 @@ export function checkRoles(
   }
 
   if (!store.hasAnyRole(...allowedRoles)) {
-    const fallback = ROLE_ROUTES[userRole] || '/login'
+    const fallback = (store.userRole ? ROLE_ROUTES[store.userRole] : null) || '/login'
     next(fallback)
     return true
   }

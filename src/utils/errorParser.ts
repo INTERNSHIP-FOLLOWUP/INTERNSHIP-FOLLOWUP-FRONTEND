@@ -38,9 +38,9 @@ const FIELD_ERROR_MAP: Record<string, Record<string, string>> = {
   },
 }
 
-function findFriendlyMessage(field: string, rawMessage: string): string | null {
+function findFriendlyMessage(field: string, rawMessage?: string): string | null {
   const fieldMap = FIELD_ERROR_MAP[field]
-  if (!fieldMap) return null
+  if (!fieldMap || !rawMessage) return null
 
   // Exact match first
   if (fieldMap[rawMessage]) return fieldMap[rawMessage]
@@ -93,9 +93,10 @@ export function parseApiError(err: unknown): ParsedApiError {
     if (data?.errors) {
       for (const [field, messages] of Object.entries(data.errors)) {
         if (messages.length > 0) {
+          const firstMessage = messages[0] ?? ''
           // Try friendly mapping, fall back to raw
-          const friendly = findFriendlyMessage(field, messages[0])
-          fields[field] = friendly || messages[0]
+          const friendly = findFriendlyMessage(field, firstMessage)
+          fields[field] = friendly || firstMessage || 'Please review the highlighted fields and try again.'
           hasFields = true
         }
       }

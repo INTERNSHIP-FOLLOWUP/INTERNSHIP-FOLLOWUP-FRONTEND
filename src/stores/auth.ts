@@ -25,6 +25,7 @@ export const useAuthStore = defineStore('auth', () => {
   const initialized = ref(false)
   const lastActivity = ref(Date.now())
   const isSessionTimedOut = ref(false)
+  const loginAttempts = ref(0)
   let bootPromise: Promise<void> | null = null
 
   // ── Getters ──
@@ -32,10 +33,12 @@ export const useAuthStore = defineStore('auth', () => {
   const userRole = computed<UserRole | null>(() => user.value?.role ?? null)
   const userName = computed(() => user.value?.name ?? '')
   const isAdmin = computed(() => user.value?.role === 'admin')
+  const isAuthenticated = computed(() => !!user.value)
+  const isLoading = computed(() => loading.value)
 
   // ── RBAC ──
-  function hasRole(role: UserRole): boolean {
-    return userRole.value === role
+  function hasRole(...roles: UserRole[]): boolean {
+    return !!userRole.value && roles.includes(userRole.value)
   }
 
   function hasAnyRole(...roles: UserRole[]): boolean {
@@ -140,6 +143,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(credentials: LoginCredentials): Promise<void> {
     loading.value = true
     error.value = null
+    loginAttempts.value += 1
 
     try {
       await getCsrfCookie()
@@ -162,6 +166,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function register(payload: RegisterData): Promise<void> {
     loading.value = true
     error.value = null
+    loginAttempts.value += 1
 
     try {
       await getCsrfCookie()
@@ -201,8 +206,8 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-    user, hasSession, loading, error, initialized, lastActivity, isSessionTimedOut,
-    isLoggedIn, userRole, userName, isAdmin,
+    user, hasSession, loading, error, initialized, lastActivity, isSessionTimedOut, loginAttempts,
+    isLoggedIn, userRole, userName, isAdmin, isAuthenticated, isLoading,
     hasRole, hasAnyRole, hasPermission, canAccess, roleLevel,
     updateActivity, checkSessionTimeout,
     boot, login, register, logout, forceLogout,

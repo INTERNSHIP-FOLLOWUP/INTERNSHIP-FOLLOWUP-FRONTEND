@@ -290,7 +290,7 @@ export const useCompanyStore = defineStore('company', () => {
 
   async function fetchEvaluations(): Promise<CompanyEvaluationItem[]> {
     try {
-      const res = await api.get('/company/evaluations')
+      const res = await api.get('/evaluations')
       const payload = res.data
       return Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []
     } catch {
@@ -299,7 +299,7 @@ export const useCompanyStore = defineStore('company', () => {
   }
 
   async function submitEvaluation(payload: CompanyEvaluationPayload): Promise<CompanyEvaluationItem> {
-    const res = await api.post<CompanyEvaluationItem>('/company/evaluations', payload)
+    const res = await api.post<CompanyEvaluationItem>('/evaluations', payload)
     return res.data
   }
 

@@ -16,7 +16,9 @@
     </div>
 
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <div class="lg:col-span-2 rounded-2xl border border-gray-100 bg-white shadow-sm p-6 space-y-5">
+      <div
+        class="lg:col-span-2 rounded-2xl border border-gray-100 bg-white shadow-sm p-6 space-y-5"
+      >
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label class="block space-y-1">
             <span class="text-sm font-medium text-gray-700">Company Name</span>
@@ -52,19 +54,29 @@
 
       <div class="space-y-4">
         <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm space-y-2">
-          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Active Internships</p>
-          <p class="text-3xl font-bold tracking-tight text-gray-900">{{ stats.activeInternships }}</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Active Internships
+          </p>
+          <p class="text-3xl font-bold tracking-tight text-gray-900">
+            {{ stats.activeInternships }}
+          </p>
           <p class="text-xs text-gray-500">Currently running program slots</p>
         </div>
 
         <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm space-y-2">
-          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Assigned Students</p>
-          <p class="text-3xl font-bold tracking-tight text-gray-900">{{ stats.assignedStudents }}</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Assigned Students
+          </p>
+          <p class="text-3xl font-bold tracking-tight text-gray-900">
+            {{ stats.assignedStudents }}
+          </p>
           <p class="text-xs text-gray-500">Across all active batches</p>
         </div>
 
         <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm space-y-2">
-          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Pending Reviews</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Pending Reviews
+          </p>
           <p class="text-3xl font-bold tracking-tight text-gray-900">{{ stats.pendingReviews }}</p>
           <p class="text-xs text-gray-500">Awaiting evaluation action</p>
         </div>
@@ -103,12 +115,17 @@ async function load() {
   }
 
   try {
-    const [students, evaluations] = await Promise.all([store.fetchStudents(), store.fetchEvaluations()])
-    stats.value = {
-      activeInternships: Array.isArray(students) ? students.filter((s: any) => s.status === 'assigned').length : 0,
-      assignedStudents: Array.isArray(students) ? students.length : 0,
-      pendingReviews: Array.isArray(evaluations) ? evaluations.length : 0,
-    }
+    const [students, evaluations] = await Promise.all([
+      store.fetchStudents(),
+      store.fetchEvaluations(),
+    ])
+      stats.value = {
+        activeInternships: Array.isArray(students)
+          ? students.filter((s) => s.status === 'assigned').length
+          : 0,
+        assignedStudents: Array.isArray(students) ? students.length : 0,
+        pendingReviews: Array.isArray(evaluations) ? evaluations.length : 0,
+      }
   } catch {
     // keep dashboard visible as read-only if secondary APIs fail
   }

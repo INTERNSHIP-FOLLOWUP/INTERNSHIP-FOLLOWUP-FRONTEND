@@ -40,3 +40,42 @@ export interface CompanyListResponse {
   data: Company[]
   meta: CompanyPaginationMeta
 }
+
+export interface CompanyStudentItem {
+  id: number
+  name: string
+  email?: string
+  student_name?: string
+  student_email?: string
+  batch?: string
+  program?: string
+  status?: string
+  assignedDate?: string
+  created_at?: string
+}
+
+export interface CompanyEvaluationItem {
+  id: number
+  student_id: number
+  rating: number
+  remarks?: string
+  created_at?: string
+}
+
+export interface CompanyFeedbackItem {
+  id: number
+  message: string
+  status?: string | null
+  created_at?: string
+}
+
+export interface CompanyEvaluationPayload {
+  studentId: number
+  rating: number
+  remarks?: string | null
+}
+
+export interface CompanyFeedbackPayload {
+  message: string
+  status?: string | null
+}

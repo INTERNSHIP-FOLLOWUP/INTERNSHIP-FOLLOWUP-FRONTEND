@@ -11,7 +11,10 @@ export function usePagination(
   const currentPage = ref(1)
 
   function buildQuery(): Record<string, string | undefined> {
-    const query: Record<string, string | undefined> = { ...route.query }
+    const query: Record<string, string | undefined> = {}
+    for (const [key, val] of Object.entries(route.query)) {
+      if (typeof val === 'string') query[key] = val
+    }
     query.page = currentPage.value > 1 ? String(currentPage.value) : undefined
     if (extraParams) {
       for (const [key, ref] of Object.entries(extraParams)) {

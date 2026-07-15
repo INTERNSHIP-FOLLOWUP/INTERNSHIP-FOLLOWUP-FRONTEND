@@ -44,16 +44,21 @@
         </div>
       </div>
       <div class="flex-1">
-        <label class="block text-sm font-medium text-slate-700">Photo</label>
+        <label for="avatar" class="block text-sm font-medium text-slate-700">Photo</label>
         <p class="mt-0.5 text-xs text-slate-400">JPG or PNG. Max 5MB.</p>
         <input
+          id="avatar"
           ref="fileInput"
           type="file"
           accept="image/jpeg,image/png"
+          :aria-invalid="!!errors.avatar"
+          :aria-describedby="errors.avatar ? 'avatar-error' : undefined"
           class="mt-2 block w-full text-sm text-slate-500 file:mr-3 file:rounded-lg file:border-0 file:bg-primary-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-primary-700 hover:file:bg-primary-100"
           @change="onFileChange"
         />
-        <p v-if="errors.avatar" class="mt-1 text-xs text-error">{{ errors.avatar }}</p>
+        <p v-if="errors.avatar" id="avatar-error" class="mt-1 text-xs text-error">
+          {{ errors.avatar }}
+        </p>
         <button
           v-if="photoPreview && isEdit"
           type="button"
@@ -76,12 +81,16 @@
           v-model="form.student_code"
           type="text"
           placeholder="e.g. STU-001"
+          :aria-invalid="!!errors.student_code"
+          :aria-describedby="errors.student_code ? 'student_code-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('student_code')"
           @input="clearFieldError('student_code')"
           @blur="validateField('student_code')"
         />
-        <p v-if="errors.student_code" class="text-sm text-error">{{ errors.student_code }}</p>
+        <p v-if="errors.student_code" id="student_code-error" class="text-sm text-error">
+          {{ errors.student_code }}
+        </p>
       </div>
 
       <!-- Name -->
@@ -94,12 +103,14 @@
           v-model="form.name"
           type="text"
           placeholder="e.g. John Doe"
+          :aria-invalid="!!errors.name"
+          :aria-describedby="errors.name ? 'name-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('name')"
           @input="clearFieldError('name')"
           @blur="validateField('name')"
         />
-        <p v-if="errors.name" class="text-sm text-error">{{ errors.name }}</p>
+        <p v-if="errors.name" id="name-error" class="text-sm text-error">{{ errors.name }}</p>
       </div>
 
       <!-- Email -->
@@ -112,12 +123,14 @@
           v-model="form.email"
           type="email"
           placeholder="e.g. john@example.com"
+          :aria-invalid="!!errors.email"
+          :aria-describedby="errors.email ? 'email-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('email')"
           @input="clearFieldError('email')"
           @blur="validateField('email')"
         />
-        <p v-if="errors.email" class="text-sm text-error">{{ errors.email }}</p>
+        <p v-if="errors.email" id="email-error" class="text-sm text-error">{{ errors.email }}</p>
       </div>
 
       <!-- Phone -->
@@ -130,12 +143,14 @@
           v-model="form.phone"
           type="tel"
           placeholder="e.g. 012 345 678"
+          :aria-invalid="!!errors.phone"
+          :aria-describedby="errors.phone ? 'phone-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('phone')"
           @input="clearFieldError('phone')"
           @blur="validateField('phone')"
         />
-        <p v-if="errors.phone" class="text-sm text-error">{{ errors.phone }}</p>
+        <p v-if="errors.phone" id="phone-error" class="text-sm text-error">{{ errors.phone }}</p>
       </div>
 
       <!-- Gender -->
@@ -146,6 +161,8 @@
         <select
           id="gender"
           v-model="form.gender"
+          :aria-invalid="!!errors.gender"
+          :aria-describedby="errors.gender ? 'gender-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
           :class="inputClass('gender')"
           @change="clearFieldError('gender')"
@@ -156,7 +173,7 @@
           <option value="female">Female</option>
           <option value="other">Other</option>
         </select>
-        <p v-if="errors.gender" class="text-sm text-error">{{ errors.gender }}</p>
+        <p v-if="errors.gender" id="gender-error" class="text-sm text-error">{{ errors.gender }}</p>
       </div>
 
       <!-- Batch -->
@@ -167,6 +184,8 @@
         <select
           id="batch_id"
           v-model.number="form.batch_id"
+          :aria-invalid="!!errors.batch_id"
+          :aria-describedby="errors.batch_id ? 'batch_id-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
           :class="inputClass('batch_id')"
           @change="clearFieldError('batch_id')"
@@ -178,7 +197,9 @@
             {{ b.name }}
           </option>
         </select>
-        <p v-if="errors.batch_id" class="text-sm text-error">{{ errors.batch_id }}</p>
+        <p v-if="errors.batch_id" id="batch_id-error" class="text-sm text-error">
+          {{ errors.batch_id }}
+        </p>
       </div>
 
       <!-- Tutor -->
@@ -189,6 +210,8 @@
         <select
           id="tutor_id"
           v-model.number="form.tutor_id"
+          :aria-invalid="!!errors.tutor_id"
+          :aria-describedby="errors.tutor_id ? 'tutor_id-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
           :class="inputClass('tutor_id')"
           @change="clearFieldError('tutor_id')"
@@ -200,7 +223,9 @@
             {{ t.name }}
           </option>
         </select>
-        <p v-if="errors.tutor_id" class="text-sm text-error">{{ errors.tutor_id }}</p>
+        <p v-if="errors.tutor_id" id="tutor_id-error" class="text-sm text-error">
+          {{ errors.tutor_id }}
+        </p>
         <p v-if="tutorStore.error" class="text-sm text-error">{{ tutorStore.error }}</p>
       </div>
 
@@ -212,18 +237,24 @@
           v-model="form.password"
           type="password"
           placeholder="Min. 8 characters"
+          :aria-invalid="!!errors.password"
+          :aria-describedby="errors.password ? 'password-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('password')"
           @input="clearFieldError('password')"
           @blur="validateField('password')"
         />
-        <p v-if="errors.password" class="text-sm text-error">{{ errors.password }}</p>
+        <p v-if="errors.password" id="password-error" class="text-sm text-error">
+          {{ errors.password }}
+        </p>
       </div>
     </div>
 
     <!-- Form error -->
     <div
       v-if="formError"
+      role="alert"
+      aria-live="polite"
       class="rounded-lg border border-error/20 bg-error/5 px-4 py-3 text-sm font-medium text-error"
     >
       {{ formError }}
@@ -274,8 +305,9 @@ import type { StudentFormData } from '@/types/student'
 const props = withDefaults(
   defineProps<{
     studentId?: number
+    apiErrors?: Record<string, string>
   }>(),
-  { studentId: undefined },
+  { studentId: undefined, apiErrors: () => ({}) },
 )
 
 const emit = defineEmits<{
@@ -420,7 +452,21 @@ async function handleSubmit(): Promise<void> {
 
     emit('saved', result)
   } catch (err: unknown) {
-    formError.value = err instanceof Error ? err.message : 'Failed to save student.'
+    const axiosErr = err as {
+      response?: { status?: number; data?: { errors?: Record<string, string[]> } }
+    }
+    if (axiosErr.response?.status === 422) {
+      const apiErrs = axiosErr.response.data?.errors
+      if (apiErrs) {
+        const { mapValidationErrors } = await import('@/utils/mapValidationErrors')
+        const mapped = mapValidationErrors(apiErrs)
+        for (const [key, msg] of Object.entries(mapped)) {
+          if (key in errors) (errors as Record<string, string>)[key] = msg
+        }
+      }
+    } else {
+      formError.value = err instanceof Error ? err.message : 'Failed to save student.'
+    }
   } finally {
     submitting.value = false
   }
@@ -461,6 +507,19 @@ watch(
       studentStore.fetchStudent(id).then(populateForm)
     }
   },
+)
+
+watch(
+  () => props.apiErrors,
+  (vals) => {
+    if (vals) {
+      formError.value = ''
+      for (const [key, msg] of Object.entries(vals)) {
+        if (key in errors) (errors as Record<string, string>)[key] = msg
+      }
+    }
+  },
+  { immediate: true },
 )
 
 onUnmounted(() => {

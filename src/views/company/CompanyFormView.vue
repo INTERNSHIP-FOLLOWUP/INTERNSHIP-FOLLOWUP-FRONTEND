@@ -1,11 +1,27 @@
 <template>
-  <div class="animate-fade-in">
+  <div class="animate-fade-in space-y-6">
+    <!-- Back Button -->
+    <div class="flex items-center gap-3">
+      <button
+        @click="goBack"
+        class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+      >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Companies
+      </button>
+      <span class="text-sm text-slate-300">/</span>
+      <span class="text-sm font-medium text-slate-900">{{ mode === 'create' ? 'New Company' : 'Edit Company' }}</span>
+    </div>
+
     <CompanyForm
       :mode="mode"
       :initialData="initialData"
+      :apiErrors="apiErrors"
+      :onSubmit="onSubmit"
       showCancel
       @cancel="goBack"
-      @submit="onSubmit"
     />
   </div>
 </template>
@@ -17,12 +33,14 @@ import CompanyForm from '@/components/company/CompanyForm.vue'
 import type { CompanyFormData } from '@/components/company/CompanyForm.vue'
 import type { CompanyFormData as StoreCompanyFormData } from '@/stores/company'
 import { useCompanyStore } from '@/stores/company'
+import { mapValidationErrors } from '@/utils/mapValidationErrors'
 
 const store = useCompanyStore()
 const route = useRoute()
 const router = useRouter()
 
 const mode = computed(() => (route.params.id ? 'edit' : 'create'))
+const apiErrors = ref<Record<string, string>>({})
 
 function getCompanyId(): number {
   const idRaw = route.params.id
@@ -66,13 +84,12 @@ onMounted(async () => {
 })
 
 function goBack() {
-  const parent = route.matched?.[1]?.name as string | undefined
-  const target = parent && parent !== 'CompanyProfile' ? parent : 'AdminCompanies'
-  router.push({ name: target }).catch(() => {})
+  router.push({ name: 'AdminCompanies' }).catch(() => {})
 }
 
 async function onSubmit(formData: CompanyFormData) {
   const payload = store.mapFromForm(formData as unknown as StoreCompanyFormData)
+  apiErrors.value = {}
 
   try {
     if (mode.value === 'create') {
@@ -84,11 +101,15 @@ async function onSubmit(formData: CompanyFormData) {
     }
     await store.fetchCompanies()
     goBack()
-  } catch {
-    // error handled by store
+  } catch (err: unknown) {
+    const axiosErr = err as {
+      response?: { status?: number; data?: { errors?: Record<string, string[]> } }
+    }
+    if (axiosErr.response?.status === 422) {
+      apiErrors.value = mapValidationErrors(axiosErr.response.data?.errors)
+    } else {
+      throw err
+    }
   }
 }
 </script>
-
-
-

@@ -2,12 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import type { UserRole } from '@/types/auth'
 import type { AppRouteMeta } from './guards'
-import {
-  ensureBooted,
-  isGuestRoute,
-  getDashboardForRole,
-} from './guards'
+import { ensureBooted, isGuestRoute, getDashboardForRole } from './guards'
 import { PUBLIC_ROUTES, ROLE_ROUTES } from '@/types/auth'
+import { getRouteRoles, hasAnyRole, isAdminRole, routeRequiresAdmin } from '@/utils/permission'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,8 +41,8 @@ const router = createRouter({
     {
       path: '/403',
       name: 'Forbidden',
-      component: () => import('@/views/auth/SignIn.vue'),
-      meta: { guest: true, title: 'Forbidden' } as AppRouteMeta,
+      component: () => import('@/views/error/UnauthorizedView.vue'),
+      meta: { requiresAuth: false, title: 'Forbidden' } as AppRouteMeta,
     },
     {
       path: '/404',
@@ -80,13 +77,13 @@ const router = createRouter({
           path: 'users/create',
           name: 'AdminUsersCreate',
           component: () => import('@/views/user/AdminUsersView.vue'),
-          meta: { title: 'Add Student' } as AppRouteMeta,
+          meta: { adminOnly: true, title: 'Add Student' } as AppRouteMeta,
         },
         {
           path: 'users/:id',
           name: 'AdminUsersEdit',
           component: () => import('@/views/user/AdminUsersView.vue'),
-          meta: { title: 'Edit Student' } as AppRouteMeta,
+          meta: { adminOnly: true, title: 'Edit Student' } as AppRouteMeta,
         },
         {
           path: 'students',
@@ -104,19 +101,25 @@ const router = createRouter({
           path: 'companies/create',
           name: 'AdminCompaniesCreate',
           component: () => import('@/views/company/CompanyFormView.vue'),
-          meta: { title: 'Create Company' } as AppRouteMeta,
+          meta: { adminOnly: true, title: 'Create Company' } as AppRouteMeta,
         },
         {
           path: 'companies/:id/edit',
           name: 'AdminCompaniesEdit',
           component: () => import('@/views/company/CompanyFormView.vue'),
-          meta: { title: 'Edit Company' } as AppRouteMeta,
+          meta: { adminOnly: true, title: 'Edit Company' } as AppRouteMeta,
+        },
+        {
+          path: 'companies/:id',
+          name: 'AdminCompaniesDetail',
+          component: () => import('@/views/company/CompanyDetailView.vue'),
+          meta: { title: 'Company Details' } as AppRouteMeta,
         },
         {
           path: 'batches',
           name: 'AdminBatches',
           component: () => import('@/views/batch/BatchListView.vue'),
-          meta: { title: 'Batches' } as AppRouteMeta,
+          meta: { adminOnly: true, title: 'Batches' } as AppRouteMeta,
         },
         {
           path: 'assignments',
@@ -128,13 +131,13 @@ const router = createRouter({
           path: 'assignments/create',
           name: 'AdminAssignmentsCreate',
           component: () => import('@/views/assignment/AssignmentView.vue'),
-          meta: { title: 'New Assignment' } as AppRouteMeta,
+          meta: { adminOnly: true, title: 'New Assignment' } as AppRouteMeta,
         },
         {
           path: 'assignments/:id',
           name: 'AdminAssignmentsEdit',
           component: () => import('@/views/assignment/AssignmentView.vue'),
-          meta: { title: 'Edit Assignment' } as AppRouteMeta,
+          meta: { adminOnly: true, title: 'Edit Assignment' } as AppRouteMeta,
         },
         {
           path: 'reports',
@@ -162,7 +165,6 @@ const router = createRouter({
         },
       ],
     },
-
 
     // ── Tutor ──
     {
@@ -201,7 +203,7 @@ const router = createRouter({
         {
           path: 'followups',
           name: 'TutorFollowups',
-          component: () => import('@/views/followup/FollowupListView.vue'),
+          component: () => import('@/views/followup/FollowupList.vue'),
           meta: { title: 'Follow-ups' },
         },
         {
@@ -268,7 +270,7 @@ const router = createRouter({
         {
           path: 'followups',
           name: 'StudentFollowups',
-          component: () => import('@/views/followup/FollowupListView.vue'),
+          component: () => import('@/views/followup/FollowupList.vue'),
           meta: { title: 'Follow-ups' },
         },
         {
@@ -365,13 +367,18 @@ router.beforeEach(async (to, _from, next) => {
   }
 
   // Role-based access control — inherit parent route roles
-  const requiredRoles = meta.roles as UserRole[] | undefined
-  if (requiredRoles && requiredRoles.length > 0) {
+  if (routeRequiresAdmin(to) && !isAdminRole(store.userRole)) {
+    next({ name: 'Forbidden', query: { redirect: to.fullPath } })
+    return
+  }
+
+  const requiredRoles = getRouteRoles(to)
+  if (requiredRoles.length > 0) {
     if (!store.userRole) {
       next({ name: 'Login', query: { redirect: to.fullPath } })
       return
     }
-    if (!requiredRoles.includes(store.userRole)) {
+    if (!hasAnyRole(store.userRole, requiredRoles)) {
       const fallback = ROLE_ROUTES[store.userRole] || '/login'
       next(fallback)
       return

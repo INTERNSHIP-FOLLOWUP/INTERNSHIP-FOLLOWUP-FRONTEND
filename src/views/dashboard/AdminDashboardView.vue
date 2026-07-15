@@ -338,6 +338,7 @@
       <div class="overflow-x-auto" v-if="dashboardData.tutors.length > 0">
         <table class="w-full border-collapse text-left text-sm">
           <thead>
+            
             <tr
               class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
             >
@@ -378,7 +379,7 @@
               </td>
               <td class="whitespace-nowrap px-4 py-3 text-right">
                 <button
-                  @click="handleTutorManage(tutor.id)"
+                  @click="handleTutorManage()"
                   class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800"
                 >
                   Manage Assignments
@@ -644,7 +645,7 @@ const handleQuickAction = (action: string) => {
   router.push(action)
 }
 
-const handleTutorManage = (tutorId: number) => {
+const handleTutorManage = () => {
   router.push('/admin/tutors')
 }
 

@@ -1,5 +1,8 @@
 <template>
-  <div v-if="meta && meta.last_page > 1" class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 px-5 py-3">
+  <div
+    v-if="meta && meta.last_page > 1"
+    class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 px-5 py-3"
+  >
     <p class="text-xs text-slate-500">
       Showing
       <span class="font-semibold text-slate-700">{{ meta.from }}</span>
@@ -15,26 +18,39 @@
         :disabled="meta.current_page <= 1"
         :aria-label="`Go to page ${meta.current_page - 1}`"
         class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-all duration-200"
-        :class="meta.current_page <= 1
-          ? 'cursor-not-allowed text-slate-300'
-          : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95'"
+        :class="
+          meta.current_page <= 1
+            ? 'cursor-not-allowed text-slate-300'
+            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95'
+        "
         @click="goTo(meta.current_page - 1)"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"
+          />
         </svg>
       </button>
 
       <template v-for="(page, index) in visiblePages" :key="index">
-        <span v-if="page === '...'" class="inline-flex h-8 w-8 items-center justify-center text-xs text-slate-400 select-none">…</span>
+        <span
+          v-if="page === '...'"
+          class="inline-flex h-8 w-8 items-center justify-center text-xs text-slate-400 select-none"
+          >…</span
+        >
         <button
           v-else
           :aria-label="`Go to page ${page}`"
           :aria-current="page === meta.current_page ? 'page' : undefined"
           class="inline-flex h-8 min-w-[2rem] items-center justify-center rounded-lg px-2 text-sm font-medium transition-all duration-200"
-          :class="page === meta.current_page
-            ? 'bg-indigo-50 text-indigo-700 shadow-sm scale-105'
-            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95'"
+          :class="
+            page === meta.current_page
+              ? 'bg-indigo-50 text-indigo-700 shadow-sm scale-105'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95'
+          "
           @click="goTo(page as number)"
         >
           {{ page }}
@@ -45,9 +61,11 @@
         :disabled="meta.current_page >= meta.last_page"
         :aria-label="`Go to page ${meta.current_page + 1}`"
         class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-all duration-200"
-        :class="meta.current_page >= meta.last_page
-          ? 'cursor-not-allowed text-slate-300'
-          : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95'"
+        :class="
+          meta.current_page >= meta.last_page
+            ? 'cursor-not-allowed text-slate-300'
+            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95'
+        "
         @click="goTo(meta.current_page + 1)"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

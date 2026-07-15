@@ -36,10 +36,7 @@ export const useFollowupStore = defineStore('followup', () => {
     }
   }
 
-  async function updateFollowup(
-    id: number,
-    payload: FollowupPayload,
-  ): Promise<Followup> {
+  async function updateFollowup(id: number, payload: FollowupPayload): Promise<Followup> {
     error.value = null
     try {
       const updated = await followupService.update(id, payload)

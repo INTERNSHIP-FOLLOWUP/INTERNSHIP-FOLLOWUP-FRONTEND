@@ -119,13 +119,13 @@ async function load() {
       store.fetchStudents(),
       store.fetchEvaluations(),
     ])
-      stats.value = {
-        activeInternships: Array.isArray(students)
-          ? students.filter((s) => s.status === 'assigned').length
-          : 0,
-        assignedStudents: Array.isArray(students) ? students.length : 0,
-        pendingReviews: Array.isArray(evaluations) ? evaluations.length : 0,
-      }
+    stats.value = {
+      activeInternships: Array.isArray(students)
+        ? students.filter((s) => s.status === 'assigned').length
+        : 0,
+      assignedStudents: Array.isArray(students) ? students.length : 0,
+      pendingReviews: Array.isArray(evaluations) ? evaluations.length : 0,
+    }
   } catch {
     // keep dashboard visible as read-only if secondary APIs fail
   }

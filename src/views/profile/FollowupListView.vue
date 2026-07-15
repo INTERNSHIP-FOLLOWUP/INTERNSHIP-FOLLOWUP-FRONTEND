@@ -20,7 +20,10 @@
       {{ store.error }}
     </div>
 
-    <div v-else-if="store.followups.length === 0" class="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+    <div
+      v-else-if="store.followups.length === 0"
+      class="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm"
+    >
       <p class="text-sm text-slate-500">No follow-up records found.</p>
     </div>
 
@@ -35,11 +38,21 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-50">
-          <tr v-for="f in store.followups" :key="f.id" class="hover:bg-slate-50/30 transition-colors">
-            <td class="whitespace-nowrap px-5 py-4 text-slate-700">{{ studentName(f.student_id) }}</td>
+          <tr
+            v-for="f in store.followups"
+            :key="f.id"
+            class="hover:bg-slate-50/30 transition-colors"
+          >
+            <td class="whitespace-nowrap px-5 py-4 text-slate-700">
+              {{ studentName(f.student_id) }}
+            </td>
             <td class="whitespace-nowrap px-5 py-4 text-slate-600">{{ f.meeting_type }}</td>
-            <td class="whitespace-nowrap px-5 py-4 text-slate-600">{{ formatDate(f.meeting_date) }}</td>
-            <td class="whitespace-nowrap px-5 py-4 text-slate-600">{{ f.next_followup ? formatDate(f.next_followup) : '—' }}</td>
+            <td class="whitespace-nowrap px-5 py-4 text-slate-600">
+              {{ formatDate(f.meeting_date) }}
+            </td>
+            <td class="whitespace-nowrap px-5 py-4 text-slate-600">
+              {{ f.next_followup ? formatDate(f.next_followup) : '—' }}
+            </td>
           </tr>
         </tbody>
       </table>

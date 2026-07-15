@@ -1,13 +1,19 @@
 <template>
-  <div class="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300">
+  <div
+    class="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300"
+  >
     <!-- Hero Header matching Detail View -->
-    <div class="relative overflow-hidden bg-gradient-to-r from-indigo-500 to-sky-400 px-8 py-10 sm:px-10">
+    <div
+      class="relative overflow-hidden bg-gradient-to-r from-indigo-500 to-sky-400 px-8 py-10 sm:px-10"
+    >
       <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
       <div class="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-white/5 blur-2xl" />
 
       <div class="relative flex flex-col items-center gap-5 sm:flex-row sm:items-end">
         <!-- Live Preview Avatar -->
-        <div class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white/50 bg-white shadow-xl">
+        <div
+          class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white/50 bg-white shadow-xl"
+        >
           <img
             v-if="form.companyProfileImage && !errors.companyProfileImage"
             :src="form.companyProfileImage"
@@ -24,16 +30,30 @@
             {{ form.companyName || (mode === 'create' ? 'New Company' : 'Edit Company') }}
           </h1>
           <div class="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-            <span v-if="form.industry" class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+            <span
+              v-if="form.industry"
+              class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm"
+            >
               {{ form.industry }}
             </span>
-            <span v-if="form.companyEmail" class="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
+            <span
+              v-if="form.companyEmail"
+              class="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm"
+            >
               <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
               </svg>
               {{ form.companyEmail }}
             </span>
-            <span v-if="!form.companyName && !form.industry && !form.companyEmail" class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
+            <span
+              v-if="!form.companyName && !form.industry && !form.companyEmail"
+              class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm"
+            >
               {{ mode === 'create' ? 'Fill in the details below' : 'Update the fields below' }}
             </span>
           </div>
@@ -44,11 +64,23 @@
     <!-- Main Content Grid Form -->
     <form @submit.prevent="handleSubmit" novalidate>
       <div class="px-8 py-10 sm:px-10 space-y-10">
-
         <!-- Error Banner -->
-        <div v-if="formError" class="flex items-start gap-3 rounded-xl border border-red-100 bg-red-50/60 p-4">
-          <svg class="h-5 w-5 shrink-0 text-red-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        <div
+          v-if="formError"
+          class="flex items-start gap-3 rounded-xl border border-red-100 bg-red-50/60 p-4"
+        >
+          <svg
+            class="h-5 w-5 shrink-0 text-red-500 mt-0.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
           </svg>
           <div class="text-sm font-medium text-red-800">{{ formError }}</div>
         </div>
@@ -56,7 +88,9 @@
         <!-- Section 1: General Info -->
         <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
           <div class="lg:pt-1">
-            <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400">
+            <h3
+              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
+            >
               <span class="h-1 w-1 rounded-full bg-indigo-500"></span>
               Core Information
             </h3>
@@ -64,7 +98,9 @@
               Provide identifying information used across internal system modules.
             </p>
           </div>
-          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6">
+          <div
+            class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6"
+          >
             <InputField
               v-model="form.companyName"
               label="Company Name"
@@ -104,7 +140,9 @@
         <!-- Section 2: Primary Contact -->
         <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
           <div class="lg:pt-1">
-            <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400">
+            <h3
+              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
+            >
               <span class="h-1 w-1 rounded-full bg-sky-400"></span>
               Primary Liaison
             </h3>
@@ -112,7 +150,9 @@
               Main operational anchor point for standard administrative routing.
             </p>
           </div>
-          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6">
+          <div
+            class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6"
+          >
             <InputField
               v-model="form.contactPerson"
               label="Contact Person Name"
@@ -135,7 +175,9 @@
         <!-- Section 3: Digital Presence -->
         <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
           <div class="lg:pt-1">
-            <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400">
+            <h3
+              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
+            >
               <span class="h-1 w-1 rounded-full bg-violet-400"></span>
               Digital Presence
             </h3>
@@ -144,7 +186,9 @@
             </p>
           </div>
 
-          <div class="lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6 space-y-5">
+          <div
+            class="lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6 space-y-5"
+          >
             <!-- Profile Image URL -->
             <InputField
               v-model="form.companyProfileImage"
@@ -175,7 +219,9 @@
       </div>
 
       <!-- Action Panel Footer matching Detail View -->
-      <div class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-8 py-5 sm:flex-row">
+      <div
+        class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-8 py-5 sm:flex-row"
+      >
         <div class="flex items-center gap-2">
           <span class="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
           <span class="text-xs font-medium text-slate-400">Complete all required fields</span>
@@ -207,7 +253,15 @@
             :disabled="submitting"
             class="min-w-[140px] !rounded-xl shadow-sm shadow-indigo-100"
           >
-            {{ submitting ? (mode === 'create' ? 'Creating...' : 'Saving...') : (mode === 'create' ? 'Create Profile' : 'Save Changes') }}
+            {{
+              submitting
+                ? mode === 'create'
+                  ? 'Creating...'
+                  : 'Saving...'
+                : mode === 'create'
+                  ? 'Create Profile'
+                  : 'Save Changes'
+            }}
           </PrimaryButton>
         </div>
       </div>
@@ -296,9 +350,7 @@ function validateUrl(value: string): boolean {
   if (!value.trim()) return true
   try {
     const normalized =
-      value.startsWith('http://') || value.startsWith('https://')
-        ? value
-        : `https://${value}`
+      value.startsWith('http://') || value.startsWith('https://') ? value : `https://${value}`
     new URL(normalized)
     return true
   } catch {
@@ -357,7 +409,7 @@ function applyServerErrors(serverErrors: Record<string, string>) {
   for (const [key, msg] of Object.entries(serverErrors)) {
     const field = BACKEND_FIELD_MAP[key] ?? (key as keyof CompanyFormData)
     if (field in form) {
-      (errors as CompanyFormErrors)[field] = msg
+      ;(errors as CompanyFormErrors)[field] = msg
     }
   }
 }

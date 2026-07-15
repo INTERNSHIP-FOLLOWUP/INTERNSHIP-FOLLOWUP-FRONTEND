@@ -127,6 +127,10 @@ export function parseApiError(err: unknown): ParsedApiError {
 
   // ── 401 Unauthorized ──
   if (status === 401) {
+    // Use the backend message if available (e.g. "Invalid credentials" during login)
+    if (data?.message) {
+      return { message: friendlyGlobalMessage(data.message) }
+    }
     return { message: 'Your session has expired. Please sign in again.' }
   }
 
@@ -171,6 +175,7 @@ function friendlyGlobalMessage(raw: string): string {
 
   if (
     lower.includes('credentials are incorrect') ||
+    lower.includes('invalid credential') ||
     lower.includes('invalid email') ||
     lower.includes('invalid password')
   ) {

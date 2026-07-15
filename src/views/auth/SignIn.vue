@@ -30,6 +30,17 @@
         </div>
 
         <form @submit.prevent="handleSubmit" novalidate>
+          <!-- Error Banner -->
+          <div
+            v-if="authStore.error || generalError"
+            class="mb-4 flex items-start gap-3 rounded-xl border border-red-100 bg-red-50/60 p-4"
+          >
+            <svg class="h-5 w-5 shrink-0 text-red-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <p class="text-sm font-medium text-red-800">{{ authStore.error || generalError }}</p>
+          </div>
+
           <div class="space-y-4">
             <InputField
               v-model="form.email"
@@ -103,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, nextTick } from 'vue'
+import { reactive, ref, nextTick, onMounted } from 'vue'
 import AuthLayout from '@/components/auth/AuthLayout.vue'
 import InputField from '@/components/ui/InputField.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
@@ -123,6 +134,7 @@ const errors = reactive({
   password: '',
 })
 
+const generalError = ref('')
 const rememberMe = ref(false)
 
 function validateField(field: 'email' | 'password'): boolean {
@@ -175,6 +187,12 @@ function validateAll(): boolean {
   return emailValid && passwordValid
 }
 
+// Clear any stale error when the component mounts
+onMounted(() => {
+  authStore.error = null
+  generalError.value = ''
+})
+
 async function handleSubmit() {
   if (!validateAll()) return
 
@@ -182,6 +200,8 @@ async function handleSubmit() {
   authStore.error = null
 
   try {
+    generalError.value = ''
+    authStore.error = null
     await authStore.login({
       email: form.email.trim(),
       password: form.password,
@@ -189,10 +209,14 @@ async function handleSubmit() {
   } catch (err: unknown) {
     const parsed = parseApiError(err)
 
-    // Map field-level friendly messages
+    // Show general error when no field-level errors
     if (parsed.fields) {
       if (parsed.fields.email) errors.email = parsed.fields.email
       if (parsed.fields.password) errors.password = parsed.fields.password
+    }
+
+    if (!Object.values(errors).some(Boolean)) {
+      generalError.value = parsed.message
     }
   }
 }

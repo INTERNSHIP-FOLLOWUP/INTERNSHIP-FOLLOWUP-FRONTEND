@@ -16,18 +16,8 @@
             v-model="form.student_id"
             class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             :class="{ 'border-red-400': errors.student_id }"
-            :disabled="isEdit || studentsLoading"
           >
-            <option :value="null" disabled>
-              {{ studentsLoading ? 'Loading students...' : 'Select a student' }}
-            </option>
-            <option
-              v-for="s in studentOptions"
-              :key="s.id"
-              :value="s.id"
-            >
-              {{ s.name || s.student_code || `Student #${s.id}` }}
-            </option>
+            <option :value="null" disabled>Student list is unavailable right now</option>
           </select>
           <p v-if="errors.student_id" class="text-red-600 text-xs mt-1">{{ errors.student_id }}</p>
         </div>
@@ -118,9 +108,8 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, onMounted } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { useFollowupStore } from '@/stores/followupStore'
-import { useStudentStore } from '@/stores/student'
 import type { Followup, FollowupPayload, MeetingType } from '@/types/followup'
 import type { AxiosError } from 'axios'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
@@ -129,7 +118,6 @@ const props = defineProps<{ followup: Followup | null }>()
 const emit = defineEmits<{ saved: []; cancelled: [] }>()
 
 const followupStore = useFollowupStore()
-const studentStore = useStudentStore()
 
 const isEdit = computed(() => !!props.followup)
 
@@ -151,9 +139,6 @@ const errors = reactive({
 
 const submitting = ref(false)
 const submitError = ref<string | null>(null)
-
-const studentsLoading = computed(() => studentStore.loading)
-const studentOptions = computed(() => studentStore.students)
 
 function validate(): boolean {
   errors.student_id = ''
@@ -205,10 +190,4 @@ async function submit(): Promise<void> {
     submitting.value = false
   }
 }
-
-onMounted(async () => {
-  if (studentStore.students.length === 0) {
-    studentStore.fetchStudents({ per_page: 200 }).catch(() => {})
-  }
-})
 </script>

@@ -14,7 +14,7 @@
     <ErrorAlert :message="followupStore.error" />
 
     <div v-if="followupStore.loading" class="flex items-center gap-2 text-gray-500 py-4">
-      <Spinner /> Loading follow-ups...
+      <LoadingSpinner size="sm" color="primary" /> Loading follow-ups...
     </div>
 
     <table v-else class="w-full border-collapse">
@@ -29,7 +29,7 @@
       </thead>
       <tbody>
         <tr v-for="f in followupStore.followups" :key="f.id" class="border-b align-top">
-          <td class="py-2">{{ studentName(f.student_id) }}</td>
+          <td class="py-2">#{{ f.student_id }}</td>
           <td class="py-2">{{ f.meeting_type }}</td>
           <td class="py-2">{{ formatDate(f.meeting_date) }}</td>
           <td class="py-2">{{ f.next_followup ? formatDate(f.next_followup) : '-' }}</td>
@@ -57,22 +57,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useFollowupStore } from '@/stores/followupStore'
-import { useStudentStore } from '@/stores/student'
 import type { Followup } from '@/types/followup'
-import Spinner from '@/components/ui/LoadingSpinner.vue'
-import ErrorAlert from '@/components/common/ErrorAlert.vue'
+import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import FollowupForm from './FollowupForm.vue'
 
 const followupStore = useFollowupStore()
-const studentStore = useStudentStore() // assumes this exists from your teammate's Sprint 2 work
 
 const showForm = ref(false)
 const editingFollowup = ref<Followup | null>(null)
-
-function studentName(id: number): string {
-  const student = studentStore.students.find((s) => s.id === id)
-  return student?.name ?? `#${id}`
-}
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString()
@@ -94,7 +86,6 @@ function onSaved() {
 }
 
 onMounted(() => {
-  followupStore.fetchFollowups()
-  if (studentStore.students.length === 0) studentStore.fetchStudents?.()
+  followupStore.fetchFollowups().catch(() => {})
 })
 </script>

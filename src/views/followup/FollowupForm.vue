@@ -19,13 +19,7 @@
             :disabled="isEdit"
           >
             <option :value="null" disabled>Select a student</option>
-            <option
-              v-for="student in studentStore.students"
-              :key="student.id"
-              :value="student.id"
-            >
-              {{ student.name }}
-            </option>
+            <option disabled>Student list is unavailable right now</option>
           </select>
           <p v-if="errors.student_id" class="text-red-600 text-sm mt-1">{{ errors.student_id }}</p>
         </div>
@@ -109,9 +103,8 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, onMounted } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { useFollowupStore } from '@/stores/followupStore'
-import { useStudentStore } from '@/stores/student'
 import type { Followup, FollowupPayload, MeetingType } from '@/types/followup'
 import type { AxiosError } from 'axios'
 import Spinner from '@/components/ui/LoadingSpinner.vue'
@@ -121,7 +114,6 @@ const props = defineProps<{ followup: Followup | null }>()
 const emit = defineEmits<{ saved: []; cancelled: [] }>()
 
 const followupStore = useFollowupStore()
-const studentStore = useStudentStore()
 
 const isEdit = computed(() => !!props.followup)
 
@@ -176,7 +168,7 @@ function validate(): boolean {
   return valid
 }
 
-async function submit() {
+async function submit(): Promise<void> {
   if (!validate()) return
   submitting.value = true
   submitError.value = null
@@ -194,8 +186,4 @@ async function submit() {
     submitting.value = false
   }
 }
-
-onMounted(() => {
-  if (studentStore.students.length === 0) studentStore.fetchStudents?.()
-})
 </script>

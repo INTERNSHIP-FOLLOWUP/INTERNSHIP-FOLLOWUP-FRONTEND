@@ -107,7 +107,7 @@
         <button
           class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-primary-600"
           :aria-label="`Download ${attachment.name ?? attachment.original_name ?? attachment.originalName ?? 'file'}`"
-          @click="$emit('download', attachment.id)"
+          @click="$emit('download', attachment.id ?? 0)"
         >
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path
@@ -123,7 +123,7 @@
           v-if="removable && !readonly"
           class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-error"
           :aria-label="`Remove ${attachment.name ?? attachment.original_name ?? attachment.originalName ?? 'file'}`"
-          @click="$emit('remove', attachment.id)"
+          @click="$emit('remove', attachment.id ?? 0)"
         >
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -136,7 +136,7 @@
 
 <script setup lang="ts">
 export interface Attachment {
-  id: number
+  id?: number
   name?: string
   original_name?: string
   originalName?: string

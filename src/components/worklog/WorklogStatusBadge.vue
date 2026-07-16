@@ -18,20 +18,22 @@ const props = defineProps<{
 
 const badgeClass = computed(() => {
   switch (props.status) {
-    case 'Pending': return 'bg-yellow-50 text-yellow-700'
-    case 'Reviewed': return 'bg-blue-50 text-blue-700'
-    case 'Approved': return 'bg-green-50 text-green-700'
-    case 'Rejected': return 'bg-red-50 text-red-700'
+    case 'Pending': return 'bg-amber-50 text-amber-700'
+    case 'Reviewed': return 'bg-emerald-50 text-emerald-700'
+    case 'Approved': return 'bg-emerald-50 text-emerald-700'
+    case 'Rejected': return 'bg-rose-50 text-rose-700'
+    case 'Needs Revision': return 'bg-orange-50 text-orange-700'
     default: return 'bg-slate-50 text-slate-600'
   }
 })
 
 const dotClass = computed(() => {
   switch (props.status) {
-    case 'Pending': return 'bg-yellow-500'
-    case 'Reviewed': return 'bg-blue-500'
-    case 'Approved': return 'bg-green-500'
-    case 'Rejected': return 'bg-red-500'
+    case 'Pending': return 'bg-amber-500'
+    case 'Reviewed': return 'bg-emerald-500'
+    case 'Approved': return 'bg-emerald-500'
+    case 'Rejected': return 'bg-rose-500'
+    case 'Needs Revision': return 'bg-orange-500'
     default: return 'bg-slate-400'
   }
 })

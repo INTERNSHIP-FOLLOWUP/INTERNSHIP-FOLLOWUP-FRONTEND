@@ -1,13 +1,22 @@
 import type { Student } from '@/types/student'
 
-export type WorklogStatus = 'Pending' | 'Reviewed' | 'Approved' | 'Rejected'
+export type WorklogStatus = 'Pending' | 'Reviewed' | 'Approved' | 'Rejected' | 'Needs Revision'
 
 export interface Attachment {
-  id: number
-  filename: string
+  id?: number
+  filename?: string
+  name?: string
+  original_name?: string
+  originalName?: string
   mime_type?: string
+  mimeType?: string
   size_bytes?: number
+  size?: number
+  file_size?: number
+  fileSize?: number
   url?: string
+  created_at?: string | null
+  createdAt?: string | null
 }
 
 export interface TutorReview {
@@ -29,6 +38,7 @@ export interface WorklogFilters {
   week?: number
   status?: WorklogStatus
   student_id?: number
+  search?: string
 }
 
 export interface Worklog {
@@ -38,15 +48,19 @@ export interface Worklog {
   challenges?: string
   status: WorklogStatus
   submitted_at: string
+  updated_at?: string
   attachments: Attachment[]
-  student?: {
-    name: string
+  student?: (Student & {
     company_name?: string
     position?: string
-  } | Student
+    email?: string
+    student_code?: string
+    batch?: string
+  })
   tutor_review?: TutorReview
 
-  // optional backend flag
+  // optional backend flags
   can_edit?: boolean
+  can_delete?: boolean
 }
 

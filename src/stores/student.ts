@@ -17,7 +17,7 @@ export const useStudentStore = defineStore('student', () => {
     return students.value.find((s) => s.id === id) ?? null
   }
 
-  async function fetchStudents(params?: { per_page?: number; page?: number }): Promise<void> {
+  async function fetchStudents(params?: { per_page?: number; page?: number; search?: string }): Promise<void> {
     loading.value = true
     error.value = null
 

@@ -208,7 +208,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useAssignmentStore } from '@/stores/assignment'
 import { useTutorStore } from '@/stores/tutorStore'
 import { assignmentService } from '@/services/assignment'
@@ -431,11 +431,11 @@ onMounted(async () => {
 
 watch(
   () => props.apiErrors,
-  (vals) => {
+  (vals: Record<string, string>) => {
     if (vals) {
       formError.value = ''
       for (const [key, msg] of Object.entries(vals)) {
-        if (key in errors) errors[key] = msg
+        errors[key] = msg
       }
     }
   },

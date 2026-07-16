@@ -179,10 +179,10 @@ async function setStatus(status: WorklogStatus) {
     submitting.value = true
     serverError.value = ''
     try {
-        await store.updateWorklog(store.worklog.id, undefined as any, {
-            tutor_feedback: feedback.value,
-            tutor_status: status,
-        } as any)
+        await store.reviewWorklog(store.worklog.id, {
+            status,
+            feedback: feedback.value,
+        })
         router.push('/tutor/worklogs')
     } catch (e) {
         serverError.value = 'Failed to submit review.'

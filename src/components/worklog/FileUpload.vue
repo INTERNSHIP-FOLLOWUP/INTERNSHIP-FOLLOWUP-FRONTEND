@@ -1,8 +1,7 @@
 <template>
-  <div class="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-4">
+  <div class="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-4 transition-all duration-200" :class="isDragging ? 'border-indigo-400 bg-indigo-50/70' : ''">
     <div
       class="flex flex-col items-center justify-center gap-2 rounded-xl p-6 text-center"
-      :class="isDragging ? 'bg-indigo-50 border-indigo-200' : 'bg-white'"
       @dragover.prevent="onDragOver"
       @dragleave.prevent="onDragLeave"
       @drop.prevent="onDrop"
@@ -13,9 +12,9 @@
         </svg>
       </div>
       <p class="text-sm font-semibold text-slate-700">
-        Drag files here or <button type="button" class="text-indigo-600 hover:underline">browse</button>
+        Drag files here or <button type="button" class="text-indigo-600 hover:underline" @click="openPicker">browse</button>
       </p>
-      <p class="text-xs text-slate-500">Allowed: PDF, DOC/DOCX, PNG/JPG, ZIP</p>
+      <p class="text-xs text-slate-500">Allowed: PDF, DOC/DOCX, PNG/JPG, ZIP • Max size: {{ maxSizeMB }}MB per file</p>
     </div>
 
     <input
@@ -29,12 +28,8 @@
 
     <div v-if="internalFiles.length" class="mt-4 space-y-2">
       <div class="flex items-center justify-between gap-3">
-        <p class="text-xs font-semibold text-slate-500">Selected files</p>
-        <button
-          type="button"
-          class="text-xs font-semibold text-red-600 hover:text-red-800"
-          @click="clear"
-        >
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Selected files</p>
+        <button type="button" class="text-xs font-semibold text-red-600 hover:text-red-800" @click="clear">
           Remove all
         </button>
       </div>
@@ -64,14 +59,6 @@
     <div v-if="validationError" class="mt-3 text-xs font-semibold text-red-600">
       {{ validationError }}
     </div>
-
-    <div v-if="submitting" class="mt-4 text-xs font-semibold text-slate-500 flex items-center gap-2">
-      <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-      </svg>
-      Uploading...
-    </div>
   </div>
 </template>
 
@@ -80,25 +67,34 @@ import { computed, ref, watch } from 'vue'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: File[]): void
+  (e: 'validation', value: string | null): void
 }>()
 
-const props = defineProps<{
-  modelValue: File[]
-}>()
+const props = withDefaults(
+  defineProps<{
+    modelValue: File[]
+    maxSizeMB?: number
+    acceptTypes?: string[]
+  }>(),
+  {
+    maxSizeMB: 10,
+    acceptTypes: () => ['.pdf', '.doc', '.docx', '.png', '.jpg', '.jpeg', '.zip'],
+  },
+)
 
 const internalFiles = computed<File[]>(() => props.modelValue ?? [])
 
 const inputRef = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 const validationError = ref('')
-const submitting = ref(false)
 
-const accept = '.pdf,.doc,.docx,.png,.jpg,.jpeg,.zip'
+const accept = computed(() => props.acceptTypes.join(','))
 
 watch(
   () => props.modelValue,
   () => {
     validationError.value = ''
+    emit('validation', null)
   },
 )
 
@@ -116,26 +112,49 @@ function formatBytes(bytes: number): string {
 
 function isAllowed(file: File): boolean {
   const name = file.name.toLowerCase()
-  return (
-    name.endsWith('.pdf') ||
-    name.endsWith('.doc') ||
-    name.endsWith('.docx') ||
-    name.endsWith('.png') ||
-    name.endsWith('.jpg') ||
-    name.endsWith('.jpeg') ||
-    name.endsWith('.zip')
-  )
+  const acceptList = props.acceptTypes.map((value) => value.toLowerCase())
+  const matches = acceptList.some((value) => name.endsWith(value))
+  return matches
+}
+
+function validateFiles(files: File[]): { allowed: File[]; message: string | null } {
+  const allowed = files.filter((file) => {
+    if (!isAllowed(file)) return false
+    const maxBytes = props.maxSizeMB * 1024 * 1024
+    return file.size <= maxBytes
+  })
+
+  const invalidTypeCount = files.filter((file) => !isAllowed(file)).length
+  const tooLargeCount = files.filter((file) => isAllowed(file) && file.size > props.maxSizeMB * 1024 * 1024).length
+
+  let message: string | null = null
+  if (invalidTypeCount > 0 && tooLargeCount > 0) {
+    message = `Some files were rejected. Use supported types and keep uploads under ${props.maxSizeMB}MB.`
+  } else if (invalidTypeCount > 0) {
+    message = 'Some files were rejected because their type is not supported.'
+  } else if (tooLargeCount > 0) {
+    message = `Some files exceed the ${props.maxSizeMB}MB size limit.`
+  }
+
+  return { allowed, message }
 }
 
 function addFiles(files: File[]) {
   validationError.value = ''
-  const allowed = files.filter((f) => isAllowed(f))
-  const rejected = files.length - allowed.length
-  if (rejected > 0) {
-    validationError.value = `Some files were rejected. Allowed types: PDF, DOC/DOCX, PNG/JPG, ZIP.`
+  emit('validation', null)
+
+  const { allowed, message } = validateFiles(files)
+  if (message) {
+    validationError.value = message
+    emit('validation', message)
   }
+
   const next = [...internalFiles.value, ...allowed]
   emit('update:modelValue', next)
+}
+
+function openPicker() {
+  inputRef.value?.click()
 }
 
 function onDragOver() {

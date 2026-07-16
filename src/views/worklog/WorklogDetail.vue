@@ -1,132 +1,112 @@
 <template>
-  <div class="p-6 space-y-6">
-    <div class="flex items-start justify-between gap-4">
+  <div class="space-y-6 p-4 sm:p-6">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Worklog Detail</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">View full student submission.</p>
+        <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Worklog Detail</h1>
+        <p class="mt-1 text-sm text-slate-500">Review the full submission and its latest feedback.</p>
       </div>
-      <div class="flex items-center gap-2">
-        <router-link
-          :to="`/student/worklogs/${worklog?.id}/edit`"
-          v-if="worklog && isEditable(worklog)"
-          class="rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700 hover:bg-amber-100"
-        >
+      <div class="flex flex-wrap gap-2">
+        <router-link v-if="worklog && isEditable(worklog)" :to="`/student/worklogs/${worklog.id}/edit`" class="rounded-2xl bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700 transition hover:bg-amber-100">
           Edit
         </router-link>
-        <router-link
-          to="/student/worklogs"
-          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-        >
+        <router-link to="/student/worklogs" class="rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
           Back
         </router-link>
       </div>
     </div>
 
-    <div v-if="store.loading" class="flex items-center justify-center py-16">
-      <svg class="h-8 w-8 animate-spin text-indigo-500" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-      </svg>
+    <div v-if="store.loading" class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="h-4 w-24 animate-pulse rounded bg-slate-200"></div>
+      <div class="mt-4 h-8 w-40 animate-pulse rounded bg-slate-100"></div>
+      <div class="mt-6 grid gap-4 md:grid-cols-2">
+        <div class="h-32 animate-pulse rounded-2xl bg-slate-100"></div>
+        <div class="h-32 animate-pulse rounded-2xl bg-slate-100"></div>
+      </div>
     </div>
 
-    <div v-else-if="store.error" class="flex flex-col items-center justify-center py-16 text-center">
-      <svg class="h-10 w-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-      </svg>
-      <p class="mt-3 text-sm font-semibold text-red-500">{{ store.error }}</p>
+    <div v-else-if="store.error" class="flex flex-col items-center justify-center rounded-3xl border border-red-100 bg-red-50 px-6 py-16 text-center">
+      <p class="text-sm font-semibold text-red-700">{{ store.error }}</p>
     </div>
 
-    <div v-else-if="!store.worklog" class="flex flex-col items-center justify-center py-16 text-center">
+    <div v-else-if="!worklog" class="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
       <p class="text-sm font-semibold text-slate-500">Worklog not found.</p>
     </div>
 
     <div v-else class="space-y-6">
-      <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 class="text-sm font-bold text-slate-900">Student Information</h2>
-        <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
+      <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
-            <p class="text-xs font-semibold text-slate-500">Student</p>
-            <p class="text-sm font-bold text-slate-900">{{ worklog?.student?.name || '—' }}</p>
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Week {{ worklog.week_number }}</p>
+            <h2 class="mt-2 text-xl font-semibold text-slate-900">{{ worklog.description }}</h2>
           </div>
-          <div>
-            <p class="text-xs font-semibold text-slate-500">Company</p>
-            <p class="text-sm font-bold text-slate-900">{{ (worklog?.student as any)?.company_name || '—' }}</p>
+          <WorklogStatusBadge :status="worklog.status" />
+        </div>
 
+        <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div class="rounded-2xl bg-slate-50 p-3">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Submission Date</p>
+            <p class="mt-1 text-sm font-semibold text-slate-900">{{ formatDate(worklog.submitted_at) }}</p>
           </div>
-          <div>
-            <p class="text-xs font-semibold text-slate-500">Position</p>
-            <p class="text-sm font-bold text-slate-900">{{ (worklog?.student as any)?.position || (worklog?.student as any)?.internship_position || '—' }}</p>
-
+          <div class="rounded-2xl bg-slate-50 p-3">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Last Updated</p>
+            <p class="mt-1 text-sm font-semibold text-slate-900">{{ formatDate(worklog.updated_at || worklog.submitted_at) }}</p>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-3">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Created By</p>
+            <p class="mt-1 text-sm font-semibold text-slate-900">{{ studentName }}</p>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-3">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Attachments</p>
+            <p class="mt-1 text-sm font-semibold text-slate-900">{{ (worklog.attachments || []).length }}</p>
           </div>
         </div>
       </section>
 
-      <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 class="text-sm font-bold text-slate-900">Worklog Information</h2>
+      <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h3 class="text-lg font-semibold text-slate-900">Description</h3>
+        <p class="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-700">{{ worklog.description || 'No description provided.' }}</p>
+      </section>
 
-        <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-4">
-          <div>
-            <p class="text-xs font-semibold text-slate-500">Week</p>
-            <p class="text-sm font-bold text-slate-900">{{ worklog?.week_number }}</p>
-          </div>
-          <div>
-            <p class="text-xs font-semibold text-slate-500">Status</p>
-            <div class="mt-1">
-              <WorklogStatusBadge :status="worklog!.status" />
-            </div>
-          </div>
-          <div class="md:col-span-2">
-            <p class="text-xs font-semibold text-slate-500">Submitted Date</p>
-            <p class="text-sm font-bold text-slate-900">{{ formatDate(worklog?.submitted_at) }}</p>
-          </div>
+      <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h3 class="text-lg font-semibold text-slate-900">Challenges</h3>
+        <p class="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-700">{{ worklog.challenges || 'No challenges recorded.' }}</p>
+      </section>
+
+      <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-3">
+          <h3 class="text-lg font-semibold text-slate-900">Attachments</h3>
+          <button v-if="(worklog.attachments || []).length" type="button" class="text-sm font-semibold text-indigo-600 transition hover:text-indigo-700" @click="downloadAttachments">
+            Download Attachments
+          </button>
         </div>
-
         <div class="mt-4">
-          <p class="text-xs font-semibold text-slate-500">Description</p>
-          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ worklog?.description }}</p>
-        </div>
-
-        <div class="mt-4" v-if="worklog?.challenges">
-          <p class="text-xs font-semibold text-slate-500">Challenges</p>
-          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ worklog?.challenges }}</p>
+          <AttachmentList v-if="(worklog.attachments || []).length" :attachments="worklog.attachments || []" />
+          <div v-else class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 px-6 py-10 text-center">
+            <p class="text-sm font-semibold text-slate-500">No attachments uploaded.</p>
+          </div>
         </div>
       </section>
 
-      <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 class="text-sm font-bold text-slate-900">Attachments</h2>
-        <div class="mt-3">
-          <AttachmentList :attachments="worklog?.attachments || []" />
-        </div>
-      </section>
-
-      <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 class="text-sm font-bold text-slate-900">Tutor Review</h2>
-        <div v-if="worklog?.tutor_review" class="mt-3 space-y-3">
-          <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
-            <div>
-              <p class="text-xs font-semibold text-slate-500">Tutor</p>
-              <p class="text-sm font-bold text-slate-900">{{ worklog.tutor_review.tutor_name }}</p>
-            </div>
-            <div>
-              <p class="text-xs font-semibold text-slate-500">Review Date</p>
-              <p class="text-sm font-bold text-slate-900">{{ formatDate(worklog.tutor_review.reviewed_at) }}</p>
-            </div>
-            <div>
-              <p class="text-xs font-semibold text-slate-500">Review Status</p>
-              <div class="mt-1">
-                <WorklogStatusBadge :status="worklog.tutor_review.status" />
-              </div>
-            </div>
+      <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h3 class="text-lg font-semibold text-slate-900">Review Activity</h3>
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+          <div class="rounded-2xl bg-slate-50 p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Reviewer</p>
+            <p class="mt-2 text-sm font-semibold text-slate-900">{{ reviewName }}</p>
           </div>
-
-          <div>
-            <p class="text-xs font-semibold text-slate-500">Feedback</p>
-            <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ worklog.tutor_review.feedback }}</p>
+          <div class="rounded-2xl bg-slate-50 p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Review Date</p>
+            <p class="mt-2 text-sm font-semibold text-slate-900">{{ reviewDate }}</p>
           </div>
         </div>
-
-        <div v-else class="mt-3 flex flex-col items-center justify-center text-center py-10">
-          <p class="text-sm font-semibold text-slate-500">No tutor feedback yet.</p>
+        <div class="mt-4 rounded-2xl bg-slate-50 p-4">
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Review Status</p>
+          <div class="mt-2">
+            <WorklogStatusBadge v-if="worklog.tutor_review?.status" :status="worklog.tutor_review.status" />
+            <p v-else class="text-sm font-semibold text-slate-500">No review yet.</p>
+          </div>
+          <p v-if="worklog.tutor_review?.feedback" class="mt-3 text-sm leading-6 text-slate-700">{{ worklog.tutor_review.feedback }}</p>
+          <p v-else class="mt-3 text-sm text-slate-500">Feedback will appear here after your tutor reviews the submission.</p>
         </div>
       </section>
     </div>
@@ -135,7 +115,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useWorklogStore } from '@/stores/worklogStore'
 import WorklogStatusBadge from '@/components/worklog/WorklogStatusBadge.vue'
 import AttachmentList from '@/components/worklog/AttachmentList.vue'
@@ -145,8 +125,15 @@ const route = useRoute()
 const store = useWorklogStore()
 
 const worklogId = computed(() => Number(route.params.id))
-
 const worklog = computed(() => store.worklog)
+
+const studentName = computed(() => {
+  const student = worklog.value?.student as Record<string, unknown> | undefined
+  return (student?.name as string | undefined) || '—'
+})
+
+const reviewName = computed(() => worklog.value?.tutor_review?.tutor_name || 'Awaiting review')
+const reviewDate = computed(() => formatDate(worklog.value?.tutor_review?.reviewed_at))
 
 onMounted(async () => {
   const id = worklogId.value
@@ -161,9 +148,15 @@ function formatDate(date?: string): string {
 }
 
 function isEditable(w: Worklog): boolean {
-  // If backend provides a flag, use it (optional)
-  if (typeof (w as any).can_edit === 'boolean') return (w as any).can_edit
+  if (typeof (w as Worklog & { can_edit?: boolean }).can_edit === 'boolean') return (w as Worklog & { can_edit?: boolean }).can_edit!
   return w.status === 'Pending' || w.status === 'Reviewed'
+}
+
+function downloadAttachments() {
+  const attachments = worklog.value?.attachments || []
+  attachments.forEach((attachment) => {
+    if (attachment.url) window.open(attachment.url, '_blank', 'noopener,noreferrer')
+  })
 }
 </script>
 

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { worklogService } from '@/services/worklogService'
 
-import type { TutorReview, Worklog, WorklogFilters } from '@/types/worklog'
+import type { Worklog, WorklogFilters } from '@/types/worklog'
 import { parseApiError } from '@/utils/errorParser'
 
 export const useWorklogStore = defineStore('worklog', () => {
@@ -28,6 +28,7 @@ export const useWorklogStore = defineStore('worklog', () => {
         page: filters.page,
         status: filters.status,
         week: filters.week,
+        search: filters.search,
       })
 
       const data = res.data?.data ?? res.data ?? []
@@ -116,7 +117,6 @@ export const useWorklogStore = defineStore('worklog', () => {
     status?: WorklogFilters['status']
     page?: number
   } = {}) {
-
     loading.value = true
     errors.value = {}
     try {
@@ -180,7 +180,6 @@ export const useWorklogStore = defineStore('worklog', () => {
       loading.value = false
     }
   }
-
 
   function clearErrors() {
     errors.value = {}

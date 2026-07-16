@@ -9,10 +9,12 @@
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        Back to Companies
+        {{ isProfileMode ? 'Back to Dashboard' : 'Back to Companies' }}
       </button>
       <span class="text-sm text-slate-300">/</span>
-      <span class="text-sm font-medium text-slate-900">{{ mode === 'create' ? 'New Company' : 'Edit Company' }}</span>
+      <span class="text-sm font-medium text-slate-900">
+        {{ isProfileMode ? 'Company Profile' : mode === 'create' ? 'New Company' : 'Edit Company' }}
+      </span>
     </div>
 
     <CompanyForm
@@ -39,7 +41,14 @@ const store = useCompanyStore()
 const route = useRoute()
 const router = useRouter()
 
-const mode = computed(() => (route.params.id ? 'edit' : 'create'))
+/** Whether this view is used for the company's own profile (not admin CRUD) */
+const isProfileMode = computed(() => route.name === 'CompanyProfile')
+
+const mode = computed(() => {
+  if (isProfileMode.value) return 'edit'
+  return route.params.id ? 'edit' : 'create'
+})
+
 const apiErrors = ref<Record<string, string>>({})
 
 function getCompanyId(): number {
@@ -55,9 +64,33 @@ const initialData = ref<Partial<CompanyFormData>>({
   website: '',
   companyProfileImage: '',
   telegramLink: '',
+  role: '',
+  password: '',
 })
 
 async function loadIfNeeded() {
+  if (isProfileMode.value) {
+    // Company profile — load from the /company/profile endpoint
+    await store.fetchProfile()
+    const c = store.currentCompany
+    if (!c) return
+
+    initialData.value = {
+      companyName: c.name,
+      companyEmail: c.email ?? '',
+      location: c.location ?? '',
+      industry: c.industry ?? '',
+      contactPerson: c.contactPerson ?? '',
+      contactPhone: c.phone ?? '',
+      website: c.website ?? '',
+      companyProfileImage: c.companyProfileImage ?? '',
+      telegramLink: c.telegramLink ?? '',
+      role: c.role ?? '',
+      password: '',
+    }
+    return
+  }
+
   if (mode.value !== 'edit') return
   const id = getCompanyId()
   if (!Number.isFinite(id)) return
@@ -76,6 +109,8 @@ async function loadIfNeeded() {
     website: c.website ?? '',
     companyProfileImage: c.companyProfileImage ?? '',
     telegramLink: c.telegramLink ?? '',
+    role: c.role ?? '',
+    password: '',
   }
 }
 
@@ -84,7 +119,11 @@ onMounted(async () => {
 })
 
 function goBack() {
-  router.push({ name: 'AdminCompanies' }).catch(() => {})
+  if (isProfileMode.value) {
+    router.push('/company/dashboard').catch(() => {})
+  } else {
+    router.push({ name: 'AdminCompanies' }).catch(() => {})
+  }
 }
 
 async function onSubmit(formData: CompanyFormData) {
@@ -92,14 +131,18 @@ async function onSubmit(formData: CompanyFormData) {
   apiErrors.value = {}
 
   try {
-    if (mode.value === 'create') {
+    if (isProfileMode.value) {
+      await store.updateProfile(payload)
+      await store.fetchProfile()
+    } else if (mode.value === 'create') {
       await store.createCompany(payload)
+      await store.fetchCompanies()
     } else {
       const id = getCompanyId()
       if (!Number.isFinite(id)) return
       await store.updateCompany(id, payload)
+      await store.fetchCompanies()
     }
-    await store.fetchCompanies()
     goBack()
   } catch (err: unknown) {
     const axiosErr = err as {

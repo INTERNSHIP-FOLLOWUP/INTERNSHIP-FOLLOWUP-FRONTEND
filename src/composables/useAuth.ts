@@ -14,7 +14,7 @@ export function useAuth() {
   const isAdmin = computed(() => store.userRole === 'admin')
   const isTutor = computed(() => store.userRole === 'tutor')
   const isStudent = computed(() => store.userRole === 'student')
-  const isCompany = computed(() => store.userRole === 'company representative')
+  const isCompany = computed(() => store.userRole === 'company')
 
   /**
    * Check if the current user has any of the given roles.

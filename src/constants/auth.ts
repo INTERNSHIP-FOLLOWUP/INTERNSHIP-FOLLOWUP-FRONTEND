@@ -26,6 +26,6 @@ export const AUTH_CONFIG = {
     admin: 100,
     tutor: 50,
     student: 10,
-    'company representative': 30,
+    company: 30,
   } as const,
 } as const

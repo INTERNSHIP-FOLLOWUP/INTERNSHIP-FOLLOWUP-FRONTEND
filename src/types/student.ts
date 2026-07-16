@@ -41,8 +41,8 @@ export interface StudentFormData {
   batch_id: number | null
   tutor_id: number | null
   status: string
-  password?: string
-  password_confirmation?: string
+  password: string
+  password_confirmation: string
   photo?: File | string | null
 }
 

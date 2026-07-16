@@ -102,9 +102,8 @@
           @blur="validateField('gender')"
         >
           <option value="" disabled>Select gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
         </select>
       </FormField>
 
@@ -159,29 +158,25 @@
 
       <!-- Password (create only) -->
       <template v-if="!isEdit">
-        <FormField label="Password" :error="errors.password" required>
-          <input
-            v-model="form.password"
-            type="password"
-            placeholder="Min. 8 characters"
-            class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
-            :class="inputClass('password')"
-            @input="clearFieldError('password')"
-            @blur="validateField('password')"
-          />
-        </FormField>
+        <PasswordInput
+          v-model="form.password"
+          label="Password"
+          placeholder="Min. 8 characters"
+          required
+          :error="errors.password ?? ''"
+          autocomplete="new-password"
+          @blur="validateField('password')"
+        />
 
-        <FormField label="Confirm Password" :error="errors.password_confirmation" required>
-          <input
-            v-model="form.password_confirmation"
-            type="password"
-            placeholder="Re-enter password"
-            class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
-            :class="inputClass('password_confirmation')"
-            @input="clearFieldError('password_confirmation')"
-            @blur="validateField('password_confirmation')"
-          />
-        </FormField>
+        <PasswordInput
+          v-model="form.password_confirmation"
+          label="Confirm Password"
+          placeholder="Re-enter password"
+          required
+          :error="errors.password_confirmation ?? ''"
+          autocomplete="new-password"
+          @blur="validateField('password_confirmation')"
+        />
       </template>
     </div>
 
@@ -216,6 +211,7 @@ import { useStudentStore } from '@/stores/student'
 import { useBatchStore } from '@/stores/batchStore'
 import { useTutorStore } from '@/stores/tutorStore'
 import FormField from '@/components/ui/FormField.vue'
+import PasswordInput from '@/components/ui/PasswordInput.vue'
 import type { StudentFormData } from '@/types/student'
 
 const props = withDefaults(
@@ -251,7 +247,7 @@ const form = reactive<StudentFormData>({
   photo: null,
 })
 
-const errors = reactive<Record<string, string>>({})
+const errors = reactive<Record<string, string | undefined>>({})
 const formError = ref('')
 const submitting = ref(false)
 const photoPreview = ref<string | null>(null)
@@ -365,21 +361,19 @@ async function handleSubmit(): Promise<void> {
   formError.value = ''
 
   try {
-    const payload: StudentFormData = { ...form }
+    const basePayload: StudentFormData = { ...form }
 
-    if (payload.photo === null && isEdit.value) {
-      payload.photo = originalPhoto.value || null
-    }
-    if (isEdit.value) {
-      delete payload.password
-      delete payload.password_confirmation
-    } else {
-      payload.password_confirmation = form.password_confirmation
+    if (basePayload.photo === null && isEdit.value) {
+      basePayload.photo = originalPhoto.value || null
     }
 
     const result = isEdit.value
-      ? await studentStore.updateStudent(props.studentId!, payload)
-      : await studentStore.createStudent(payload)
+      ? await studentStore.updateStudent(props.studentId!, {
+          ...basePayload,
+          password: undefined,
+          password_confirmation: undefined,
+        })
+      : await studentStore.createStudent(basePayload)
 
     emit('saved', result)
   } catch (err: unknown) {

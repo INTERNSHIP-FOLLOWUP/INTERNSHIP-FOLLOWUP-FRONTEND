@@ -7,7 +7,7 @@ export interface Followup {
   tutor_id: number
   company_id: number
   meeting_type: MeetingType
-  meeting_date: string       // ISO date string
+  meeting_date: string // ISO date string
   notes: string
   action_items: string
   next_followup: string | null

@@ -30,7 +30,9 @@ export const useFollowupStore = defineStore('followup', {
       this.loading = true
       this.error = null
       try {
-        const res = await api.get<PaginatedResponse<Followup> | Followup[]>('/followups', { params })
+        const res = await api.get<PaginatedResponse<Followup> | Followup[]>('/followups', {
+          params,
+        })
         const payload = res.data
         this.followups = Array.isArray(payload) ? payload : payload.data
       } catch (err) {

@@ -35,7 +35,9 @@
             <option value="Quarterly">Quarterly</option>
             <option value="Annual">Annual</option>
           </select>
-          <p v-if="errors.meeting_type" class="text-red-600 text-xs mt-1">{{ errors.meeting_type }}</p>
+          <p v-if="errors.meeting_type" class="text-red-600 text-xs mt-1">
+            {{ errors.meeting_type }}
+          </p>
         </div>
 
         <!-- Meeting date -->
@@ -47,7 +49,9 @@
             class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             :class="{ 'border-red-400': errors.meeting_date }"
           />
-          <p v-if="errors.meeting_date" class="text-red-600 text-xs mt-1">{{ errors.meeting_date }}</p>
+          <p v-if="errors.meeting_date" class="text-red-600 text-xs mt-1">
+            {{ errors.meeting_date }}
+          </p>
         </div>
 
         <!-- Notes -->
@@ -96,8 +100,19 @@
             class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95 disabled:opacity-50"
           >
             <svg v-if="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
             </svg>
             {{ submitting ? 'Saving...' : 'Save' }}
           </button>

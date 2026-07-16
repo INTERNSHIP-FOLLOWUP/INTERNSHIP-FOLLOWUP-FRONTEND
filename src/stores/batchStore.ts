@@ -18,7 +18,7 @@ export const useBatchStore = defineStore('batch', {
       this.loading = true
       this.error = null
       try {
-        const res = await api.get('/batches', { params })
+        const res = await api.get('/admin/batches', { params })
         this.batches = res.data.data ?? res.data
       } catch (err: unknown) {
         this.error =
@@ -32,7 +32,7 @@ export const useBatchStore = defineStore('batch', {
       this.loading = true
       this.error = null
       try {
-        const res = await api.post('/batches', payload)
+        const res = await api.post('/admin/batches', payload)
         this.batches.push(res.data)
         return res.data
       } catch (err: unknown) {
@@ -48,7 +48,7 @@ export const useBatchStore = defineStore('batch', {
       this.loading = true
       this.error = null
       try {
-        const res = await api.put(`/batches/${id}`, payload)
+        const res = await api.put(`/admin/batches/${id}`, payload)
         const idx = this.batches.findIndex((b) => b.id === id)
         if (idx !== -1) this.batches[idx] = res.data
         return res.data
@@ -65,7 +65,7 @@ export const useBatchStore = defineStore('batch', {
       this.loading = true
       this.error = null
       try {
-        const res = await api.get(`/batches/${id}`)
+        const res = await api.get(`/admin/batches/${id}`)
         this.currentBatch = res.data.data ?? res.data
         return this.currentBatch
       } catch (err: unknown) {
@@ -84,7 +84,7 @@ export const useBatchStore = defineStore('batch', {
       this.loading = true
       this.error = null
       try {
-        await api.delete(`/batches/${id}`)
+        await api.delete(`/admin/batches/${id}`)
         this.batches = this.batches.filter((b) => b.id !== id)
       } catch (err: unknown) {
         this.error =

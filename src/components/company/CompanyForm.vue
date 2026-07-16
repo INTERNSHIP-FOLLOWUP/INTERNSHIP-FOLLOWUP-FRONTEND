@@ -17,27 +17,33 @@
           <span v-else class="text-3xl font-bold text-indigo-600 select-none">
             {{ form.companyName ? form.companyName.charAt(0).toUpperCase() : 'C' }}
           </span>
-        </div>
-
-        <div class="text-center sm:text-left">
-          <h1 class="text-2xl font-bold text-white drop-shadow-sm">
-            {{ form.companyName || (mode === 'create' ? 'New Company' : 'Edit Company') }}
-          </h1>
-          <div class="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-            <span v-if="form.industry" class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-              {{ form.industry }}
-            </span>
-            <span v-if="form.companyEmail" class="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
-              <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              {{ form.companyEmail }}
-            </span>
-            <span v-if="!form.companyName && !form.industry && !form.companyEmail" class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
-              {{ mode === 'create' ? 'Fill in the details below' : 'Update the fields below' }}
-            </span>
+        </div>          <div class="text-center sm:text-left">
+            <h1 class="text-2xl font-bold text-white drop-shadow-sm">
+              {{ form.companyName || (mode === 'create' ? 'New Company' : 'Edit Company') }}
+            </h1>
+            <div class="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+              <span
+                v-if="form.role"
+                class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide backdrop-blur-sm"
+                :class="roleBadgeClass"
+              >
+                <span class="h-1.5 w-1.5 rounded-full" :class="roleDotClass"></span>
+                {{ form.role }}
+              </span>
+              <span v-if="form.industry" class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                {{ form.industry }}
+              </span>
+              <span v-if="form.companyEmail" class="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
+                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                {{ form.companyEmail }}
+              </span>
+              <span v-if="!form.companyName && !form.industry && !form.companyEmail" class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
+                {{ mode === 'create' ? 'Fill in the details below' : 'Update the fields below' }}
+              </span>
+            </div>
           </div>
-        </div>
       </div>
     </div>
 
@@ -96,6 +102,38 @@
               :error="errors.location"
               autocomplete="address-level2"
             />
+
+            <!-- Role Status Dropdown -->
+            <div class="space-y-1.5">
+              <label class="flex items-center gap-1 text-sm font-medium text-slate-700">
+                Status
+                <span class="text-xs font-normal text-slate-400">(optional)</span>
+              </label>
+              <div class="relative">
+                <select
+                  v-model="form.role"
+                  class="h-10 w-full rounded-xl border bg-white px-3.5 pr-8 text-sm text-slate-700 shadow-sm transition-colors focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  :class="errors.role ? 'border-red-300 bg-red-50' : 'border-slate-200'"
+                >
+                  <option value="">Not set</option>
+                  <option value="active">Active</option>
+                </select>
+                <svg class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <p v-if="errors.role" class="text-xs font-medium text-red-500">{{ errors.role }}</p>
+            </div>
+
+            <InputField
+              v-model="form.password"
+              :label="mode === 'create' ? 'Password' : 'New Password (optional)'"
+              type="password"
+              :placeholder="mode === 'create' ? 'Min. 8 characters' : 'Leave blank to keep current'"
+              :required="mode === 'create'"
+              :error="errors.password"
+              autocomplete="new-password"
+            />
           </div>
         </div>
 
@@ -117,6 +155,7 @@
               v-model="form.contactPerson"
               label="Contact Person Name"
               placeholder="e.g. John Doe"
+              required
               :error="errors.contactPerson"
               autocomplete="name"
             />
@@ -232,6 +271,8 @@ export type CompanyFormData = {
   website: string
   companyProfileImage: string
   telegramLink: string
+  role: string
+  password: string
 }
 
 type CompanyFormErrors = Partial<Record<keyof CompanyFormData, string>>
@@ -259,13 +300,15 @@ const emit = defineEmits<Emits>()
 const BACKEND_FIELD_MAP: Record<string, keyof CompanyFormData> = {
   company_name: 'companyName',
   email: 'companyEmail',
-  location: 'location',
+  address: 'location',
+  role: 'role',
   industry: 'industry',
   contact_person: 'contactPerson',
   phone: 'contactPhone',
   website: 'website',
   company_profile_image: 'companyProfileImage',
   telegram_link: 'telegramLink',
+  password: 'password',
 }
 
 const submitting = ref(false)
@@ -281,10 +324,22 @@ const initialForm: CompanyFormData = {
   website: '',
   companyProfileImage: '',
   telegramLink: '',
+  role: '',
+  password: '',
 }
 
 const form = reactive<CompanyFormData>({ ...initialForm })
 const errors = reactive<CompanyFormErrors>({})
+
+const roleBadgeClass = computed(() => {
+  if (form.role === 'active') return 'bg-emerald-400/20 text-emerald-100'
+  return 'bg-slate-400/20 text-slate-200'
+})
+
+const roleDotClass = computed(() => {
+  if (form.role === 'active') return 'bg-emerald-300'
+  return 'bg-slate-300'
+})
 
 const showCancel = computed(() => props.showCancel)
 
@@ -327,11 +382,29 @@ function validate(): boolean {
     ok = false
   }
 
+  if (!form.contactPerson.trim()) {
+    errors.contactPerson = 'Contact person is required.'
+    ok = false
+  }
+
   if (form.contactPhone.trim()) {
     if (!/^[+]?([0-9][\s-]*){7,}$/.test(form.contactPhone.trim())) {
       errors.contactPhone = 'Please enter a valid phone number.'
       ok = false
     }
+  }
+
+  if (props.mode === 'create') {
+    if (!form.password.trim()) {
+      errors.password = 'Password is required.'
+      ok = false
+    } else if (form.password.trim().length < 8) {
+      errors.password = 'Password must be at least 8 characters.'
+      ok = false
+    }
+  } else if (form.password.trim() && form.password.trim().length < 8) {
+    errors.password = 'Password must be at least 8 characters.'
+    ok = false
   }
 
   if (form.website.trim() && !validateUrl(form.website)) {

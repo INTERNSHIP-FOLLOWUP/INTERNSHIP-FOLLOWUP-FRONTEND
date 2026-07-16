@@ -1,5 +1,5 @@
 import api from '@/services/api'
-import type { Student, StudentFormData, StudentListResponse } from '@/types/student'
+import type { Student, StudentFormData, StudentListResponse, StudentSingleResponse } from '@/types/student'
 
 function toFormData(data: Record<string, unknown>): FormData {
   const fd = new FormData()
@@ -16,51 +16,48 @@ function toFormData(data: Record<string, unknown>): FormData {
 
 export const studentService = {
   async list(params?: {
-    role?: string
     search?: string
     per_page?: number
     page?: number
+    batch_id?: string
+    tutor_id?: string
+    status?: string
   }): Promise<StudentListResponse> {
-    const response = await api.get<StudentListResponse>('/admin/users', {
-      params: { role: 'student', ...params },
-    })
+    const response = await api.get<StudentListResponse>('/admin/students', { params })
     return response.data
   },
 
   async get(id: number): Promise<Student> {
-    const response = await api.get<Student>(`/admin/users/${id}`)
-    return response.data
+    const response = await api.get<StudentSingleResponse>(`/admin/students/${id}`)
+    return response.data.data
   },
 
   async create(data: StudentFormData): Promise<Student> {
-    const payload =
-      data.avatar instanceof File
-        ? toFormData({ ...data, role: 'student' })
-        : { ...data, role: 'student' }
-    const response = await api.post<Student>('/admin/users', payload, {
-      headers: payload instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {},
+    const hasFile = data.photo instanceof File
+    const payload = hasFile ? toFormData(data as unknown as Record<string, unknown>) : data
+    const response = await api.post<StudentSingleResponse>('/admin/students', payload, {
+      headers: hasFile ? { 'Content-Type': 'multipart/form-data' } : {},
     })
-    return response.data
+    return response.data.data
   },
 
   async update(id: number, data: Partial<StudentFormData>): Promise<Student> {
-    const hasFile = data.avatar instanceof File
-    const url = `/admin/users/${id}`
+    const hasFile = data.photo instanceof File
 
     if (hasFile) {
-      const fd = toFormData({ ...data, _method: 'PUT' })
-      const response = await api.post<{ user: Student }>(url, fd, {
+      const fd = toFormData({ ...data, _method: 'PUT' } as unknown as Record<string, unknown>)
+      const response = await api.post<StudentSingleResponse>(`/admin/students/${id}`, fd, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      return response.data.user
+      return response.data.data
     }
 
-    const response = await api.put<{ user: Student }>(url, data)
-    return response.data.user
+    const response = await api.put<StudentSingleResponse>(`/admin/students/${id}`, data)
+    return response.data.data
   },
 
   async delete(id: number): Promise<{ message: string }> {
-    const response = await api.delete<{ message: string }>(`/admin/users/${id}`)
+    const response = await api.delete<{ message: string }>(`/admin/students/${id}`)
     return response.data
   },
 }

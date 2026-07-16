@@ -150,7 +150,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useWorklogStore } from '@/stores/worklogStore'
-import Pagination from '@/components/ui/Pagination.vue'
+import Pagination from '@/components/ui/BasePagination.vue'
 import WorklogStatusBadge from '@/components/worklog/WorklogStatusBadge.vue'
 import { usePagination } from '@/composables/usePagination'
 import type { WorklogStatus } from '@/types/worklog'

@@ -149,10 +149,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useWorklogStore } from '@/stores/worklogStore'
 import { usePagination } from '@/composables/usePagination'
-import Pagination from '@/components/ui/Pagination.vue'
+import Pagination from '@/components/ui/BasePagination.vue'
 import WorklogStatusBadge from '@/components/worklog/WorklogStatusBadge.vue'
 import type { WorklogStatus } from '@/types/worklog'
 

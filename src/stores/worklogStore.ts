@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { worklogService } from '@/services/worklogService'
 
-import type { TutorReview, Worklog, WorklogFilters } from '@/types/worklog'
+import type { Worklog, WorklogFilters } from '@/types/worklog'
 import { parseApiError } from '@/utils/errorParser'
 
 export const useWorklogStore = defineStore('worklog', () => {

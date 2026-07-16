@@ -25,6 +25,9 @@ export interface Student {
   batch: StudentBatch | null
   tutor: StudentTutor | null
   status: string
+  company_name?: string | null
+  position?: string | null
+  internship_position?: string | null
   created_at: string
   updated_at: string
 }

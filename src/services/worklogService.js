@@ -18,9 +18,10 @@ export const worklogService = {
     return response.data
   },
 
-  async updateWorklog(id, formData) {
-    const response = await api.post(`/student/worklogs/${id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+  async updateWorklog(id, payload) {
+    const isFormData = payload instanceof FormData
+    const response = await api.post(`/student/worklogs/${id}`, payload, {
+      headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
     })
     return response.data
   },

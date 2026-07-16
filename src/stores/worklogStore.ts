@@ -75,11 +75,16 @@ export const useWorklogStore = defineStore('worklog', () => {
     }
   }
 
-  async function updateWorklog(id: number, data?: FormData): Promise<Worklog> {
+  async function updateWorklog(
+    id: number,
+    data?: FormData | Record<string, unknown>,
+    extra?: Record<string, unknown>,
+  ): Promise<Worklog> {
     loading.value = true
     errors.value = {}
     try {
-      const res = await worklogService.updateWorklog(id, data!)
+      const payload = extra ? (data instanceof FormData ? data : { ...(data ?? {}), ...extra }) : data
+      const res = await worklogService.updateWorklog(id, payload)
       const updated: Worklog = res.data ?? res
       if (worklog.value?.id === id) worklog.value = updated
       worklogs.value = worklogs.value.map((w) => (w.id === id ? updated : w))

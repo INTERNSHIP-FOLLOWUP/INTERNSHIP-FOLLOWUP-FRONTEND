@@ -423,8 +423,8 @@ function populateForm(): void {
 }
 
 onMounted(async () => {
-  batchStore.fetchBatches()
-  tutorStore.fetchTutors()
+  await batchStore.fetchBatches()
+  await tutorStore.fetchTutors()
 
   if (props.studentId) {
     await studentStore.fetchStudent(props.studentId)

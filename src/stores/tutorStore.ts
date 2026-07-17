@@ -65,5 +65,57 @@ export const useTutorStore = defineStore('tutor', {
     async fetchWorkload(force: boolean = false): Promise<void> {
       await this.fetchTutors(force)
     },
+
+    async deleteTutor(id: number): Promise<void> {
+      this.loading = true
+      this.error = null
+
+      try {
+        await api.delete(`/admin/users/${id}`)
+        this.tutors = this.tutors.filter((t) => t.id !== id)
+      } catch (err) {
+        const parsed = parseApiError(err)
+        this.error = parsed.message
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async createTutor(payload: { name: string; email: string; password: string }): Promise<void> {
+      this.loading = true
+      this.error = null
+
+      try {
+        await api.post('/admin/users', { ...payload, role: 'tutor' })
+        await this.fetchTutors(true)
+      } catch (err) {
+        const parsed = parseApiError(err)
+        this.error = parsed.message
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async updateTutor(id: number, payload: { name: string; email: string; password?: string }): Promise<void> {
+      this.loading = true
+      this.error = null
+
+      try {
+        await api.put(`/admin/users/${id}`, { ...payload, role: 'tutor' })
+        await this.fetchTutors(true)
+      } catch (err) {
+        const parsed = parseApiError(err)
+        this.error = parsed.message
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    clearError(): void {
+      this.error = null
+    },
   },
 })

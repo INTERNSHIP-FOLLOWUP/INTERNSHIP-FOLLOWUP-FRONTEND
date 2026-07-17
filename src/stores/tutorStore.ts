@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
 import { tutorService } from '@/services/tutor'
 import { parseApiError } from '@/utils/errorParser'
 import type { TutorWorkload, TutorOption } from '@/types/user'

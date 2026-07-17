@@ -236,18 +236,6 @@ const searchQuery = ref('')
 const deletingTarget = ref<Student | null>(null)
 const deleting = ref(false)
 
-const filteredTutors = computed(() => {
-  let list = tutors.value
-  if (searchQuery.value) {
-    const q = searchQuery.value.toLowerCase()
-    list = list.filter(
-      (t: Student) =>
-        t.name.toLowerCase().includes(q) || t.email.toLowerCase().includes(q),
-    )
-  }
-  return list
-})
-
 function getInitials(name: string): string {
   return name
     .split(' ')

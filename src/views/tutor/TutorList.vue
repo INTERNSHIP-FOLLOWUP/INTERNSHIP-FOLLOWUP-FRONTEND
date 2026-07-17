@@ -92,7 +92,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useTutorStore } from '@/stores/tutorStore'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
@@ -102,7 +102,6 @@ import DebouncedInput from '@/components/ui/DebouncedInput.vue'
 import ActiveFilters from '@/components/ui/ActiveFilters.vue'
 import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
-const route = useRoute()
 const router = useRouter()
 const store = useTutorStore()
 const dialog = useConfirmDialog()

@@ -28,11 +28,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useTutorStore } from '@/stores/tutorStore'
 import TutorForm from '@/components/tutor/TutorForm.vue'
 
 const route = useRoute()
+const router = useRouter()
 const tutorStore = useTutorStore()
 
 const tutorId = computed(() =>

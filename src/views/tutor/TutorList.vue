@@ -183,7 +183,7 @@ const tutors = computed(() => store.tutors)
 const studentCounts = computed(() => {
   const counts: Record<number, number> = {}
   for (const student of studentStore.students) {
-    const tutorId = student.tutor_id
+    const tutorId = (student as Record<string, unknown>).tutor_id ?? (student as Record<string, { id: number }>).tutor?.id
     if (tutorId !== null && tutorId !== undefined) {
       counts[tutorId] = (counts[tutorId] || 0) + 1
     }

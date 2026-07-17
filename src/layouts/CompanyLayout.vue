@@ -21,14 +21,20 @@
           class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white shadow-lg"
           :style="{ background: 'var(--sidebar-logo-bg)', boxShadow: 'var(--sidebar-logo-shadow)' }"
         >
-          C
+          <img
+            v-if="company?.companyProfileImage"
+            :src="company.companyProfileImage"
+            :alt="companyName"
+            class="h-8 w-8 rounded-lg object-cover"
+          />
+          <span v-else>{{ companyInitial }}</span>
         </div>
         <div>
           <h1
             class="text-base font-semibold tracking-tight"
             :style="{ color: 'var(--sidebar-heading)' }"
           >
-            Company Panel
+            {{ companyName }}
           </h1>
           <p class="text-xs" :style="{ color: 'var(--sidebar-subheading)' }">Internship System</p>
         </div>
@@ -114,6 +120,26 @@
         </div>
 
         <div class="flex items-center gap-2">
+          <!-- Theme Settings Button -->
+          <button
+            @click.stop="themeSettingsOpen = !themeSettingsOpen"
+            class="relative flex h-9 w-9 items-center justify-center rounded-xl text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            title="Theme Settings"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+              />
+            </svg>
+            <span
+              class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white shadow-sm"
+              :style="{ backgroundColor: themeStore.currentTheme().shades[500] }"
+            />
+          </button>
+
           <button
             class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
           >
@@ -278,6 +304,9 @@
         </div>
       </div>
     </transition>
+
+    <!-- Theme Settings Panel -->
+    <ThemeSettingsPanel :is-open="themeSettingsOpen" @close="themeSettingsOpen = false" />
   </div>
 </template>
 
@@ -285,10 +314,16 @@
 import { ref, computed, onMounted, onUnmounted, h, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useCompanyStore } from '@/stores/company'
+import { useThemeStore } from '@/stores/theme'
+import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
 
 const route = useRoute()
 const auth = useAuthStore()
+const companyStore = useCompanyStore()
+const themeStore = useThemeStore()
 
+const themeSettingsOpen = ref(false)
 const sidebarOpen = ref(false)
 const dropdownOpen = ref(false)
 
@@ -305,6 +340,12 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
+
+const company = computed(() => companyStore.currentCompany)
+
+const companyName = computed(() => company.value?.name ?? 'Company Panel')
+
+const companyInitial = computed(() => companyName.value.charAt(0).toUpperCase())
 
 const user = computed(() => auth.user)
 

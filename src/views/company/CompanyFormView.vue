@@ -36,6 +36,7 @@ import type { CompanyFormData } from '@/components/company/CompanyForm.vue'
 import type { CompanyFormData as StoreCompanyFormData } from '@/stores/company'
 import { useCompanyStore } from '@/stores/company'
 import { mapValidationErrors } from '@/utils/mapValidationErrors'
+import { parseApiError } from '@/utils/errorParser'
 
 const store = useCompanyStore()
 const route = useRoute()
@@ -150,6 +151,10 @@ async function onSubmit(formData: CompanyFormData) {
     }
     if (axiosErr.response?.status === 422) {
       apiErrors.value = mapValidationErrors(axiosErr.response.data?.errors)
+    } else if (axiosErr.response?.status && axiosErr.response.status >= 500) {
+      // Use the friendly 500 message from the error parser
+      const parsed = parseApiError(err)
+      throw new Error(parsed.message)
     } else {
       throw err
     }

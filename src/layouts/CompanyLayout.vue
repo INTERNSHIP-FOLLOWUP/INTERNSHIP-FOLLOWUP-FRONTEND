@@ -21,14 +21,20 @@
           class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white shadow-lg"
           :style="{ background: 'var(--sidebar-logo-bg)', boxShadow: 'var(--sidebar-logo-shadow)' }"
         >
-          C
+          <img
+            v-if="company?.companyProfileImage"
+            :src="company.companyProfileImage"
+            :alt="companyName"
+            class="h-8 w-8 rounded-lg object-cover"
+          />
+          <span v-else>{{ companyInitial }}</span>
         </div>
         <div>
           <h1
             class="text-base font-semibold tracking-tight"
             :style="{ color: 'var(--sidebar-heading)' }"
           >
-            Company Panel
+            {{ companyName }}
           </h1>
           <p class="text-xs" :style="{ color: 'var(--sidebar-subheading)' }">Internship System</p>
         </div>
@@ -285,9 +291,11 @@
 import { ref, computed, onMounted, onUnmounted, h, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useCompanyStore } from '@/stores/company'
 
 const route = useRoute()
 const auth = useAuthStore()
+const companyStore = useCompanyStore()
 
 const sidebarOpen = ref(false)
 const dropdownOpen = ref(false)
@@ -305,6 +313,12 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
+
+const company = computed(() => companyStore.currentCompany)
+
+const companyName = computed(() => company.value?.name ?? 'Company Panel')
+
+const companyInitial = computed(() => companyName.value.charAt(0).toUpperCase())
 
 const user = computed(() => auth.user)
 

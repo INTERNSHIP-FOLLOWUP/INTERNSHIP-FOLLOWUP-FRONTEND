@@ -290,7 +290,9 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
-  async function submitEvaluation(payload: CompanyEvaluationPayload): Promise<CompanyEvaluationItem> {
+  async function submitEvaluation(
+    payload: CompanyEvaluationPayload,
+  ): Promise<CompanyEvaluationItem> {
     const res = await api.post<CompanyEvaluationItem>('/company/evaluations', payload)
     return res.data
   }

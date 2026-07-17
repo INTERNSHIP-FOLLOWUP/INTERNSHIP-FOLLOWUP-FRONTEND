@@ -90,7 +90,7 @@ api.interceptors.request.use(
       config.headers['X-CSRF-TOKEN'] = csrfToken
     }
 
-        const requestKey = `${config.method}:${config.url}:${JSON.stringify(config.data || config.params)}`
+    const requestKey = `${config.method}:${config.url}:${JSON.stringify(config.data || config.params)}`
     if (config.method?.toLowerCase() === 'get' && pendingRequests.has(requestKey)) {
       return Promise.reject({ cancelled: true, key: requestKey })
     }

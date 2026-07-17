@@ -1,94 +1,73 @@
+// src/stores/followupStore.ts
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import { followupService } from '@/services/followup'
-import { parseApiError } from '@/utils/errorParser'
+import api from '@/services/api'
 import type { Followup, FollowupPayload } from '@/types/followup'
+import type { AxiosError } from 'axios'
 
-export const useFollowupStore = defineStore('followup', () => {
-  const followups = ref<Followup[]>([])
-  const loading = ref(false)
-  const error = ref<string | null>(null)
+interface FollowupState {
+  followups: Followup[]
+  loading: boolean
+  error: string | null
+}
 
-  async function fetchFollowups(): Promise<void> {
-    loading.value = true
-    error.value = null
-    try {
-      followups.value = await followupService.list()
-    } catch (err: unknown) {
-      const parsed = parseApiError(err)
-      error.value = parsed.message
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
+interface ApiErrorResponse {
+  message?: string
+}
 
-  async function createFollowup(payload: FollowupPayload): Promise<Followup> {
-    error.value = null
-    try {
-      const created = await followupService.create({ ...payload })
-      followups.value.unshift(created)
-      return created
-    } catch (err: unknown) {
-      const parsed = parseApiError(err)
-      error.value = parsed.message
-      throw err
-    }
-  }
+interface PaginatedResponse<T> {
+  data: T[]
+}
 
-  async function updateFollowup(
-    id: number,
-    payload: FollowupPayload,
-  ): Promise<Followup> {
-    error.value = null
-    try {
-      const updated = await followupService.update(id, payload)
-      const index = followups.value.findIndex((f) => f.id === id)
-      if (index !== -1) {
-        followups.value[index] = updated
+export const useFollowupStore = defineStore('followup', {
+  state: (): FollowupState => ({
+    followups: [],
+    loading: false,
+    error: null,
+  }),
+
+  actions: {
+    async fetchFollowups(params: Record<string, unknown> = {}): Promise<void> {
+      this.loading = true
+      this.error = null
+      try {
+        const res = await api.get<PaginatedResponse<Followup> | Followup[]>('/followups', {
+          params,
+        })
+        const payload = res.data
+        this.followups = Array.isArray(payload) ? payload : payload.data
+      } catch (err) {
+        const axiosErr = err as AxiosError<ApiErrorResponse>
+        this.error = axiosErr.response?.data?.message ?? 'Failed to load follow-ups'
+      } finally {
+        this.loading = false
       }
-      return updated
-    } catch (err: unknown) {
-      const parsed = parseApiError(err)
-      error.value = parsed.message
-      throw err
-    }
-  }
+    },
 
-  async function removeFollowup(id: number): Promise<void> {
-    loading.value = true
-    error.value = null
-    try {
-      await followupService.delete(id)
-      followups.value = followups.value.filter((f) => f.id !== id)
-    } catch (err: unknown) {
-      const parsed = parseApiError(err)
-      error.value = parsed.message
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
+    async createFollowup(payload: FollowupPayload): Promise<Followup> {
+      this.error = null
+      try {
+        const res = await api.post<Followup>('/followups', payload)
+        this.followups.unshift(res.data)
+        return res.data
+      } catch (err) {
+        const axiosErr = err as AxiosError<ApiErrorResponse>
+        this.error = axiosErr.response?.data?.message ?? 'Failed to create follow-up'
+        throw err
+      }
+    },
 
-  function clearError(): void {
-    error.value = null
-  }
-
-  function reset(): void {
-    followups.value = []
-    loading.value = false
-    error.value = null
-  }
-
-  return {
-    followups,
-    loading,
-    error,
-    fetchFollowups,
-    createFollowup,
-    updateFollowup,
-    removeFollowup,
-    clearError,
-    reset,
-  }
+    async updateFollowup(id: number, payload: FollowupPayload): Promise<Followup> {
+      this.error = null
+      try {
+        const res = await api.put<Followup>(`/followups/${id}`, payload)
+        const idx = this.followups.findIndex((f) => f.id === id)
+        if (idx !== -1) this.followups[idx] = res.data
+        return res.data
+      } catch (err) {
+        const axiosErr = err as AxiosError<ApiErrorResponse>
+        this.error = axiosErr.response?.data?.message ?? 'Failed to update follow-up'
+        throw err
+      }
+    },
+  },
 })

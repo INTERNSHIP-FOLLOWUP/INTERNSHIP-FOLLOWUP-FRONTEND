@@ -77,7 +77,10 @@
       </div>
 
       <!-- Company Cards Grid -->
-      <div v-else-if="store.companies.length > 0" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div
+        v-else-if="store.companies.length > 0"
+        class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+      >
         <CompanyCard
           v-for="company in store.companies"
           :key="company.id"
@@ -89,16 +92,8 @@
       </div>
 
       <!-- Empty State -->
-      <div
-        v-else
-        class="flex flex-col items-center justify-center py-16 text-center"
-      >
-        <svg
-          class="h-10 w-10 text-slate-300"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+      <div v-else class="flex flex-col items-center justify-center py-16 text-center">
+        <svg class="h-10 w-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"

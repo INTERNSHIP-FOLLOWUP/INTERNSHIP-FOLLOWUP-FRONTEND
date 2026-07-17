@@ -70,8 +70,8 @@ const router = createRouter({
         {
           path: 'users',
           name: 'AdminUsers',
-          component: () => import('@/views/user/AllUsersView.vue'),
-          meta: { title: 'All Users' } as AppRouteMeta,
+          component: () => import('@/views/user/AdminUsersView.vue'),
+          meta: { title: 'Users' } as AppRouteMeta,
         },
         {
           path: 'users/create',
@@ -163,6 +163,18 @@ const router = createRouter({
           component: () => import('@/views/tutor/TutorList.vue'),
           meta: { title: 'Tutors' } as AppRouteMeta,
         },
+        {
+          path: 'tutors/create',
+          name: 'AdminTutorsCreate',
+          component: () => import('@/views/tutor/TutorFormView.vue'),
+          meta: { adminOnly: true, title: 'Add Tutor' } as AppRouteMeta,
+        },
+        {
+          path: 'tutors/:id/edit',
+          name: 'AdminTutorsEdit',
+          component: () => import('@/views/tutor/TutorFormView.vue'),
+          meta: { adminOnly: true, title: 'Edit Tutor' } as AppRouteMeta,
+        },
       ],
     },
 
@@ -191,19 +203,13 @@ const router = createRouter({
         {
           path: 'worklogs',
           name: 'TutorWorklogs',
-          component: () => import('@/views/worklog/TutorWorklogList.vue'),
+          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
           meta: { title: 'Worklogs' },
-        },
-        {
-          path: 'worklogs/:id',
-          name: 'TutorWorklogDetail',
-          component: () => import('@/views/worklog/TutorWorklogDetail.vue'),
-          meta: { title: 'Worklog Detail' },
         },
         {
           path: 'followups',
           name: 'TutorFollowups',
-          component: () => import('@/views/followup/FollowupList.vue'),
+          component: () => import('@/views/followup/FollowupListView.vue'),
           meta: { title: 'Follow-ups' },
         },
         {
@@ -246,31 +252,13 @@ const router = createRouter({
         {
           path: 'worklogs',
           name: 'StudentWorklogs',
-          component: () => import('@/views/worklog/WorklogList.vue'),
+          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
           meta: { title: 'Worklogs' },
-        },
-        {
-          path: 'worklogs/create',
-          name: 'StudentWorklogsCreate',
-          component: () => import('@/views/worklog/WorklogForm.vue'),
-          meta: { title: 'Create Worklog' },
-        },
-        {
-          path: 'worklogs/:id',
-          name: 'StudentWorklogsDetail',
-          component: () => import('@/views/worklog/WorklogDetail.vue'),
-          meta: { title: 'Worklog Detail' },
-        },
-        {
-          path: 'worklogs/:id/edit',
-          name: 'StudentWorklogsEdit',
-          component: () => import('@/views/worklog/WorklogForm.vue'),
-          meta: { title: 'Edit Worklog' },
         },
         {
           path: 'followups',
           name: 'StudentFollowups',
-          component: () => import('@/views/followup/FollowupList.vue'),
+          component: () => import('@/views/followup/FollowupListView.vue'),
           meta: { title: 'Follow-ups' },
         },
         {

@@ -378,6 +378,14 @@ async function load() {
       store.fetchStudents(),
       store.fetchEvaluations(),
     ])
+<<<<<<< HEAD
+    stats.value = {
+      activeInternships: Array.isArray(students)
+        ? students.filter((s) => s.status === 'assigned').length
+        : 0,
+      assignedStudents: Array.isArray(students) ? students.length : 0,
+      pendingReviews: Array.isArray(evaluations) ? evaluations.length : 0,
+=======
 
     try {
       await store.fetchProfile()
@@ -411,6 +419,7 @@ async function load() {
       assignedStudents: Array.isArray(studentsData) ? studentsData.length : 0,
       evaluationsSubmitted: Array.isArray(evaluationsData) ? evaluationsData.length : 0,
       pendingReviews: Array.isArray(evaluationsData) ? 0 : 0,
+>>>>>>> a8630a8f5a1455b50aa7311bd9fc7e630492c5a1
     }
   } catch {
     // keep dashboard visible if secondary APIs fail

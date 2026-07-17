@@ -41,5 +41,6 @@ const tutorId = computed(() =>
 
 async function onSaved(): Promise<void> {
   await tutorStore.fetchTutors()
+  router.push('/admin/tutors')
 }
 </script>

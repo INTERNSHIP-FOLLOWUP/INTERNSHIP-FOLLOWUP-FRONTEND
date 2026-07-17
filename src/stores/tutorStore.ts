@@ -6,6 +6,7 @@ import type { Student } from '@/types/student'
 
 export interface TutorState {
   tutors: Student[]
+  students: Student[]
   loading: boolean
   error: string | null
   loaded: boolean
@@ -14,6 +15,7 @@ export interface TutorState {
 export const useTutorStore = defineStore('tutor', {
   state: (): TutorState => ({
     tutors: [],
+    students: [],
     loading: false,
     error: null,
     loaded: false,
@@ -27,7 +29,7 @@ export const useTutorStore = defineStore('tutor', {
         id: t.id,
         name: t.name,
         email: t.email,
-        students_count: 0,
+        students_count: state.students.filter((s) => s.tutor_id === t.id).length,
       })),
     workloadLoading: (state): boolean => state.loading,
     workloadError: (state): string | null => state.error,
@@ -106,6 +108,7 @@ export const useTutorStore = defineStore('tutor', {
       try {
         await tutorService.delete(id)
         this.tutors = this.tutors.filter((t) => t.id !== id)
+        this.students = this.students.filter((s) => s.tutor_id !== id)
       } catch (err) {
         const parsed = parseApiError(err)
         this.error = parsed.message
@@ -121,6 +124,7 @@ export const useTutorStore = defineStore('tutor', {
 
     reset(): void {
       this.tutors = []
+      this.students = []
       this.loading = false
       this.error = null
       this.loaded = false

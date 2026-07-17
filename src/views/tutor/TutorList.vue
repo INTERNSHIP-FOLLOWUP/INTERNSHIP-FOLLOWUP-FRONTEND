@@ -84,7 +84,7 @@
                   {{ tutor.email }}
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                  {{ tutor.students_count ?? 0 }}
+                  {{ getTutorStudentCount(tutor.id) }}
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 text-right">
                   <div class="flex items-center justify-end gap-1">
@@ -117,7 +117,7 @@
             </div>
           </div>
           <div class="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-500">
-            <div><span class="font-medium text-slate-700">Students:</span> {{ tutor.students_count ?? 0 }}</div>
+            <div><span class="font-medium text-slate-700">Students:</span> {{ getTutorStudentCount(tutor.id) }}</div>
           </div>
           <div class="mt-3 flex items-center gap-2">
             <router-link :to="`/admin/tutors/${tutor.id}/edit`" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-center text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50">
@@ -162,6 +162,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useTutorStore } from '@/stores/tutorStore'
+import { useStudentStore } from '@/stores/student'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
@@ -170,6 +171,7 @@ import ActiveFilters from '@/components/ui/ActiveFilters.vue'
 import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
 const store = useTutorStore()
+const studentStore = useStudentStore()
 const dialog = useConfirmDialog()
 const toast = useToastStore()
 
@@ -177,6 +179,21 @@ const searchQuery = ref('')
 let deleteTargetId: number | null = null
 
 const tutors = computed(() => store.tutors)
+
+const studentCounts = computed(() => {
+  const counts: Record<number, number> = {}
+  for (const student of studentStore.students) {
+    const tutorId = student.tutor_id
+    if (tutorId !== null && tutorId !== undefined) {
+      counts[tutorId] = (counts[tutorId] || 0) + 1
+    }
+  }
+  return counts
+})
+
+function getTutorStudentCount(tutorId: number): number {
+  return studentCounts.value[tutorId] || 0
+}
 
 const hasActiveFilters = computed(() => !!searchQuery.value)
 
@@ -197,6 +214,9 @@ function getInitials(name: string): string {
 
 onMounted(() => {
   store.fetchTutors()
+  studentStore.fetchStudents({ per_page: 100 })
+  // Refresh counts after students load
+  studentStore.fetchStudents({ per_page: 100 }).then(() => {})
 })
 
 function onSearch(): void {

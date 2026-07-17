@@ -1,22 +1,15 @@
 import { defineStore } from 'pinia'
-import api from '@/services/api'
-import type { TutorWorkload } from '@/types/user'
+import { ref, computed } from 'vue'
+import { tutorService } from '@/services/tutor'
 import { parseApiError } from '@/utils/errorParser'
-
-export interface TutorOption {
-  value: number
-  label: string
-}
+import type { TutorWorkload, TutorOption } from '@/types/user'
+import type { Student } from '@/types/student'
 
 export interface TutorState {
-  tutors: TutorWorkload[]
+  tutors: Student[]
   loading: boolean
   error: string | null
   loaded: boolean
-}
-
-interface PaginatedResponse<T> {
-  data: T[]
 }
 
 export const useTutorStore = defineStore('tutor', {
@@ -30,29 +23,30 @@ export const useTutorStore = defineStore('tutor', {
   getters: {
     tutorOptions: (state): TutorOption[] =>
       state.tutors.map((t) => ({ value: t.id, label: t.name })),
-    workload: (state): TutorWorkload[] => state.tutors,
+    workload: (state): TutorWorkload[] =>
+      state.tutors.map((t) => ({
+        id: t.id,
+        name: t.name,
+        email: t.email,
+        students_count: 0,
+      })),
     workloadLoading: (state): boolean => state.loading,
     workloadError: (state): string | null => state.error,
   },
 
   actions: {
-    async fetchTutors(force: boolean = false): Promise<void> {
-      if (this.loaded && !force) return
+    async fetchTutors(params?: { search?: string }, force: boolean = false): Promise<void> {
+      if (this.loaded && !force && !params?.search) return
 
       this.loading = true
       this.error = null
 
       try {
-        const res = await api.get<PaginatedResponse<TutorWorkload> | TutorWorkload[]>(
-          '/admin/users',
-          {
-            params: { role: 'tutor' },
-          },
-        )
-
-        const payload = res.data
-        this.tutors = Array.isArray(payload) ? payload : payload.data
-
+        const res = await tutorService.list({
+          search: params?.search,
+          per_page: 100,
+        })
+        this.tutors = res.data
         this.loaded = true
       } catch (err) {
         const parsed = parseApiError(err)
@@ -63,7 +57,74 @@ export const useTutorStore = defineStore('tutor', {
     },
 
     async fetchWorkload(force: boolean = false): Promise<void> {
-      await this.fetchTutors(force)
+      await this.fetchTutors({}, force)
+    },
+
+    async createTutor(data: { name: string; email: string; password?: string }): Promise<Student> {
+      this.loading = true
+      this.error = null
+
+      try {
+        const tutor = await tutorService.create(data)
+        this.tutors.unshift(tutor)
+        return tutor
+      } catch (err) {
+        const parsed = parseApiError(err)
+        this.error = parsed.message
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async updateTutor(
+      id: number,
+      data: Partial<{ name: string; email: string }>,
+    ): Promise<Student> {
+      this.loading = true
+      this.error = null
+
+      try {
+        const updated = await tutorService.update(id, data)
+        const index = this.tutors.findIndex((t) => t.id === id)
+        if (index !== -1) {
+          this.tutors[index] = updated
+        }
+        return updated
+      } catch (err) {
+        const parsed = parseApiError(err)
+        this.error = parsed.message
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async deleteTutor(id: number): Promise<void> {
+      this.loading = true
+      this.error = null
+
+      try {
+        await tutorService.delete(id)
+        this.tutors = this.tutors.filter((t) => t.id !== id)
+      } catch (err) {
+        const parsed = parseApiError(err)
+        this.error = parsed.message
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    clearError(): void {
+      this.error = null
+    },
+
+    reset(): void {
+      this.tutors = []
+      this.loading = false
+      this.error = null
+      this.loaded = false
     },
   },
 })

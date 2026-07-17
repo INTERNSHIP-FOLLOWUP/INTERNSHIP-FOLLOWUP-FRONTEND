@@ -163,6 +163,18 @@ const router = createRouter({
           component: () => import('@/views/tutor/TutorList.vue'),
           meta: { title: 'Tutors' } as AppRouteMeta,
         },
+        {
+          path: 'tutors/create',
+          name: 'AdminTutorsCreate',
+          component: () => import('@/views/tutor/TutorFormView.vue'),
+          meta: { adminOnly: true, title: 'Add Tutor' } as AppRouteMeta,
+        },
+        {
+          path: 'tutors/:id/edit',
+          name: 'AdminTutorsEdit',
+          component: () => import('@/views/tutor/TutorFormView.vue'),
+          meta: { adminOnly: true, title: 'Edit Tutor' } as AppRouteMeta,
+        },
       ],
     },
 

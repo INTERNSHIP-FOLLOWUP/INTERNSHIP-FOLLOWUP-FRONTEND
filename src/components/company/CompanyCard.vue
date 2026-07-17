@@ -20,11 +20,27 @@
 
       <!-- Main Text Details -->
       <div class="min-w-0 flex-1">
+<<<<<<< HEAD
         <h3
           class="truncate text-base font-semibold tracking-tight text-gray-900 group-hover:text-sky-950"
         >
           {{ company.name }}
         </h3>
+=======
+        <div class="flex items-center gap-2">
+          <h3 class="truncate text-base font-semibold tracking-tight text-gray-900 group-hover:text-sky-950">
+            {{ company.name }}
+          </h3>
+          <span
+            v-if="company.role"
+            class="inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase leading-none tracking-wide"
+            :class="roleBadgeClass"
+          >
+            <span class="h-1.5 w-1.5 rounded-full" :class="roleDotClass"></span>
+            {{ company.role }}
+          </span>
+        </div>
+>>>>>>> sprint-2
 
         <!-- Contact & Location Metadata -->
         <div class="mt-2.5 space-y-2 text-sm text-gray-500">
@@ -197,4 +213,18 @@ function normalizeUrl(url: string | null): string | null {
 }
 
 const normalizedTelegram = computed(() => normalizeUrl(props.company.telegramLink))
+<<<<<<< HEAD
 </script>
+=======
+
+const roleBadgeClass = computed(() => {
+  if (props.company.role === 'active') return 'bg-emerald-50 text-emerald-700'
+  return 'bg-slate-100 text-slate-500'
+})
+
+const roleDotClass = computed(() => {
+  if (props.company.role === 'active') return 'bg-emerald-500'
+  return 'bg-slate-400'
+})
+</script>
+>>>>>>> sprint-2

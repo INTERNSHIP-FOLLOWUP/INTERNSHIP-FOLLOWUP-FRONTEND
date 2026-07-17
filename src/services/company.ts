@@ -9,6 +9,7 @@ import type {
 interface BackendCompany {
   id: number
   company_name: string
+  role: string | null
   address: string | null
   industry: string | null
   contact_person: string | null
@@ -37,6 +38,7 @@ function toFrontend(raw: BackendCompany): Company {
   return {
     id: raw.id,
     companyName: raw.company_name,
+    role: raw.role,
     address: raw.address,
     industry: raw.industry,
     contactPerson: raw.contact_person,
@@ -53,6 +55,7 @@ function toFrontend(raw: BackendCompany): Company {
 function toBackend(payload: CreateCompanyPayload | UpdateCompanyPayload): Record<string, unknown> {
   return {
     company_name: payload.companyName,
+    role: payload.role ?? null,
     address: payload.address ?? null,
     industry: payload.industry ?? null,
     contact_person: payload.contactPerson ?? null,
@@ -61,6 +64,7 @@ function toBackend(payload: CreateCompanyPayload | UpdateCompanyPayload): Record
     website: payload.website ?? null,
     company_profile_image: payload.companyProfileImage ?? null,
     telegram_link: payload.telegramLink ?? null,
+    ...(payload.password ? { password: payload.password } : {}),
   }
 }
 
@@ -97,14 +101,23 @@ export const companyService = {
   },
 
   async create(payload: CreateCompanyPayload): Promise<Company> {
-    const response = await api.post<BackendCompany>('/admin/companies', toBackend(payload))
-    return toFrontend(response.data)
+    const response = await api.post<{ company: BackendCompany }>(
+      '/admin/companies',
+      toBackend(payload),
+    )
+    return toFrontend(response.data.company)
   },
 
   async update(id: number, payload: UpdateCompanyPayload): Promise<Company> {
+    const body = toBackend(payload)
+    // Per API docs: omit email on update unless actually changing it.
+    // Sending the existing email causes a unique constraint violation on the
+    // `users` table because the company's email also exists on the User record.
+    // Password handling is already managed by toBackend (only included if truthy).
+    delete body.email
     const response = await api.put<BackendUpdateResponse>(
       `/admin/companies/${id}`,
-      toBackend(payload),
+      body,
     )
     return toFrontend(response.data.company)
   },

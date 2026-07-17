@@ -97,13 +97,13 @@ export const useAuthStore = defineStore('auth', () => {
   async function getCsrfCookie(): Promise<void> {
     try {
       const { default: axios } = await import('axios')
-      await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/sanctum/csrf-cookie`,
-        {
-          withCredentials: true,
-          headers: { Accept: 'application/json' },
-        },
-      )
+      // Strip "/api" suffix from the API URL to get the base Sanctum URL
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'
+      const baseUrl = apiUrl.replace(/\/api\/?$/, '')
+      await axios.get(`${baseUrl}/sanctum/csrf-cookie`, {
+        withCredentials: true,
+        headers: { Accept: 'application/json' },
+      })
     } catch {
       // Bearer-token APIs don't need the CSRF cookie
     }

@@ -27,7 +27,7 @@ export function getDashboardForRole(role: string | null): string {
     admin: '/admin/dashboard',
     tutor: '/tutor/dashboard',
     student: '/student/dashboard',
-    company: '/company/dashboard',
+    'company representative': '/company/dashboard',
   }
   return map[role || ''] || '/login'
 }

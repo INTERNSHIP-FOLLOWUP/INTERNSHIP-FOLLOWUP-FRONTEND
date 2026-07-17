@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
   <div class="space-y-6">
     <button
       type="button"
@@ -25,41 +24,22 @@
       />
     </div>
   </div>
-=======
-  <TutorForm :tutor-id="tutorId" @saved="onSaved" @cancel="onCancel" />
->>>>>>> sprint-2
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-<<<<<<< HEAD
 import { useRoute } from 'vue-router'
 import { useTutorStore } from '@/stores/tutorStore'
 import TutorForm from '@/components/tutor/TutorForm.vue'
 
 const route = useRoute()
 const tutorStore = useTutorStore()
-=======
-import { useRoute, useRouter } from 'vue-router'
-import TutorForm from '@/components/tutor/TutorForm.vue'
-
-const route = useRoute()
-const router = useRouter()
->>>>>>> sprint-2
 
 const tutorId = computed(() =>
   route.name === 'AdminTutorsEdit' ? Number(route.params.id) : undefined,
 )
 
 async function onSaved(): Promise<void> {
-<<<<<<< HEAD
   await tutorStore.fetchTutors()
-=======
-  await router.replace({ name: 'AdminTutors' })
-}
-
-function onCancel(): void {
-  router.back()
->>>>>>> sprint-2
 }
 </script>

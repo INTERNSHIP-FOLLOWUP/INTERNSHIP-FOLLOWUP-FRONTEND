@@ -81,20 +81,9 @@
             <h1 class="text-2xl font-bold text-white drop-shadow-sm">{{ company.companyName }}</h1>
             <div class="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
               <span
-<<<<<<< HEAD
                 v-if="company.industry"
                 class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm"
               >
-=======
-                v-if="company.role"
-                class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide backdrop-blur-sm"
-                :class="roleBadgeClass"
-              >
-                <span class="h-1.5 w-1.5 rounded-full" :class="roleDotClass"></span>
-                {{ company.role }}
-              </span>
-              <span v-if="company.industry" class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
->>>>>>> sprint-2
                 {{ company.industry }}
               </span>
               <span
@@ -331,8 +320,8 @@
         class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-8 py-5 sm:flex-row"
       >
         <div class="flex items-center gap-2">
-          <span class="inline-block h-2 w-2 rounded-full" :class="statusDotClass"></span>
-          <span class="text-xs font-medium text-slate-400">{{ statusLabel }}</span>
+          <span class="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
+          <span class="text-xs font-medium text-slate-400">Active company record</span>
         </div>
         <div class="flex items-center gap-2">
           <router-link
@@ -383,7 +372,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { companyService } from '@/services/company'
 import { useCompanyStore } from '@/stores/company'
@@ -427,30 +416,6 @@ function formatDate(dateStr: string): string {
     return dateStr
   }
 }
-
-// ── Role badge computed helpers ──
-
-const roleBadgeClass = computed(() => {
-  if (company.value?.role === 'active') return 'bg-emerald-400/20 text-emerald-100'
-  return 'bg-slate-400/20 text-slate-200'
-})
-
-const roleDotClass = computed(() => {
-  if (company.value?.role === 'active') return 'bg-emerald-300'
-  return 'bg-slate-300'
-})
-
-const statusLabel = computed(() => {
-  if (company.value?.role === 'active') return 'Active company record'
-  return 'Inactive company record'
-})
-
-const statusDotClass = computed(() => {
-  if (company.value?.role === 'active') return 'bg-emerald-400'
-  return 'bg-slate-300'
-})
-
-
 
 async function fetchData() {
   const id = getCompanyId()

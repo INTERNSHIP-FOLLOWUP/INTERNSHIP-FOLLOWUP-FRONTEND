@@ -19,7 +19,6 @@ import type {
 export interface CompanySummary {
   id: number
   name: string
-  role: string | null
   email: string | null
   location: string | null
   industry: string | null
@@ -46,15 +45,12 @@ export interface CompanyFormData {
   companyImage: File | string | null
   avatar: File | string | null
   telegramLink: string
-  role: string
-  password: string
 }
 
 function toSummary(c: Company): CompanySummary {
   return {
     id: c.id,
     name: c.companyName,
-    role: c.role,
     email: c.email,
     location: c.address,
     industry: c.industry,
@@ -74,7 +70,6 @@ function mapFromForm(form: CompanyFormData): CreateCompanyPayload {
     companyName: form.companyName,
     email: form.companyEmail || null,
     address: form.location || null,
-    role: form.role || null,
     industry: form.industry || null,
     contactPerson: form.contactPerson || null,
     phone: form.contactPhone || null,
@@ -82,7 +77,6 @@ function mapFromForm(form: CompanyFormData): CreateCompanyPayload {
     companyImage: form.companyImage || null,
     avatar: form.avatar || null,
     telegramLink: form.telegramLink || null,
-    ...(form.password ? { password: form.password } : {}),
   }
 }
 
@@ -215,7 +209,6 @@ export const useCompanyStore = defineStore('company', () => {
         const summary = toSummary({
           id: raw.id,
           companyName: raw.company_name ?? raw.name ?? '',
-          role: raw.role ?? null,
           address: raw.address ?? null,
           industry: raw.industry ?? null,
           contactPerson: raw.contact_person ?? raw.contactPerson ?? null,
@@ -327,7 +320,6 @@ export const useCompanyStore = defineStore('company', () => {
         const summary = toSummary({
           id: raw.id,
           companyName: raw.company_name ?? raw.name ?? '',
-          role: raw.role ?? null,
           address: raw.address ?? null,
           industry: raw.industry ?? null,
           contactPerson: raw.contact_person ?? raw.contactPerson ?? null,
@@ -379,7 +371,7 @@ export const useCompanyStore = defineStore('company', () => {
 
   async function fetchEvaluations(): Promise<CompanyEvaluationItem[]> {
     try {
-      const res = await api.get('/evaluations')
+      const res = await api.get('/company/evaluations')
       const payload = res.data
       return Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []
     } catch {
@@ -387,8 +379,10 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
-  async function submitEvaluation(payload: CompanyEvaluationPayload): Promise<CompanyEvaluationItem> {
-    const res = await api.post<CompanyEvaluationItem>('/evaluations', payload)
+  async function submitEvaluation(
+    payload: CompanyEvaluationPayload,
+  ): Promise<CompanyEvaluationItem> {
+    const res = await api.post<CompanyEvaluationItem>('/company/evaluations', payload)
     return res.data
   }
 

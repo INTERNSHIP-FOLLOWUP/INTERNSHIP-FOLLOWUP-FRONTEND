@@ -7,14 +7,19 @@
         class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
         </svg>
-        {{ isProfileMode ? 'Back to Dashboard' : 'Back to Companies' }}
+        Back to Companies
       </button>
       <span class="text-sm text-slate-300">/</span>
-      <span class="text-sm font-medium text-slate-900">
-        {{ isProfileMode ? 'Company Profile' : mode === 'create' ? 'New Company' : 'Edit Company' }}
-      </span>
+      <span class="text-sm font-medium text-slate-900">{{
+        mode === 'create' ? 'New Company' : 'Edit Company'
+      }}</span>
     </div>
 
     <CompanyForm
@@ -46,14 +51,7 @@ const toast = useToastStore()
 const route = useRoute()
 const router = useRouter()
 
-/** Whether this view is used for the company's own profile (not admin CRUD) */
-const isProfileMode = computed(() => route.name === 'CompanyProfile')
-
-const mode = computed(() => {
-  if (isProfileMode.value) return 'edit'
-  return route.params.id ? 'edit' : 'create'
-})
-
+const mode = computed(() => (route.params.id ? 'edit' : 'create'))
 const apiErrors = ref<Record<string, string>>({})
 
 function getCompanyId(): number {
@@ -70,8 +68,6 @@ const initialData = ref<Partial<CompanyFormData>>({
   companyImage: null,
   avatar: null,
   telegramLink: '',
-  role: '',
-  password: '',
 })
 
 async function loadIfNeeded() {
@@ -117,8 +113,6 @@ async function loadIfNeeded() {
     companyImage: c.companyImageUrl ?? c.companyImage ?? null,
     avatar: authStore.userAvatar,
     telegramLink: c.telegramLink ?? '',
-    role: c.role ?? '',
-    password: '',
   }
 }
 
@@ -127,11 +121,7 @@ onMounted(async () => {
 })
 
 function goBack() {
-  if (isProfileMode.value) {
-    router.push('/company/dashboard').catch(() => {})
-  } else {
-    router.push({ name: 'AdminCompanies' }).catch(() => {})
-  }
+  router.push({ name: 'AdminCompanies' }).catch(() => {})
 }
 
 async function onSubmit(formData: CompanyFormData) {
@@ -154,6 +144,7 @@ async function onSubmit(formData: CompanyFormData) {
       await store.fetchCompanies()
       toast.success('Company updated successfully.')
     }
+    await store.fetchCompanies()
     goBack()
   } catch (err: unknown) {
     const axiosErr = err as {

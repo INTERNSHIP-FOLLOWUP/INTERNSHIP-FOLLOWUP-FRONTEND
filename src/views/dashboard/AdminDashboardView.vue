@@ -338,7 +338,6 @@
       <div class="overflow-x-auto" v-if="dashboardData.tutors.length > 0">
         <table class="w-full border-collapse text-left text-sm">
           <thead>
-            
             <tr
               class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
             >
@@ -532,7 +531,7 @@ const quickActions = [
   },
   {
     label: 'Manage Students',
-    route: '/admin/users',
+    route: '/admin/students',
     bgColor: 'bg-indigo-50/50',
     icon: createActionIcon(
       'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',

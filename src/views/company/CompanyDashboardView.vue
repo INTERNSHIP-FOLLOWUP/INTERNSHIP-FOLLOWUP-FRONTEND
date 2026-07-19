@@ -394,40 +394,12 @@ async function load() {
       store.fetchStudents(),
       store.fetchEvaluations(),
     ])
-
-    try {
-      await store.fetchProfile()
-    } catch {
-      // profile fetch might throw — use empty state
-    }
-
-    const raw = store.currentCompany
-    if (raw) {
-      displayName.value = raw.name || 'Company'
-      companyProfile.value = {
-        name: raw.name || '',
-        industry: raw.industry || '',
-        contactPerson: raw.contactPerson || '',
-        phone: raw.phone || '',
-        logoUrl: raw.companyImageUrl || raw.companyProfileImageUrl || raw.companyProfileImage || '',
-      }
-    }
-
-    assignedStudents.value = Array.isArray(studentsData) ? studentsData : []
-    recentEvaluations.value = (Array.isArray(evaluationsData) ? evaluationsData : []).slice(-5).reverse()
-
-    const activeInternships = Array.isArray(studentsData)
-      ? studentsData.filter((s: any) => {
-          const st = (s.status || '').toLowerCase()
-          return st === 'assigned' || st === 'active' || st === 'in_progress'
-        }).length
-      : 0
-
     stats.value = {
-      activeInternships,
-      assignedStudents: Array.isArray(studentsData) ? studentsData.length : 0,
-      evaluationsSubmitted: Array.isArray(evaluationsData) ? evaluationsData.length : 0,
-      pendingReviews: Array.isArray(evaluationsData) ? 0 : 0,
+      activeInternships: Array.isArray(students)
+        ? students.filter((s) => s.status === 'assigned').length
+        : 0,
+      assignedStudents: Array.isArray(students) ? students.length : 0,
+      pendingReviews: Array.isArray(evaluations) ? evaluations.length : 0,
     }
   } catch {
     // keep dashboard visible if secondary APIs fail

@@ -5,3 +5,8 @@ export interface TutorWorkload {
   email: string
   students_count: number
 }
+
+export interface TutorOption {
+  value: number
+  label: string
+}

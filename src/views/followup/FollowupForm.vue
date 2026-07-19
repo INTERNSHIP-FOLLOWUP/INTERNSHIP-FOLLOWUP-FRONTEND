@@ -12,13 +12,26 @@
         <!-- Student selector -->
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-1">Student</label>
-          <select
-            v-model="form.student_id"
+
+          <!-- Student: auto-filled readonly field -->
+          <input
+            v-if="isStudent"
+            :value="studentDisplayName"
+            type="text"
+            readonly
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 cursor-not-allowed"
+          />
+
+          <!-- Tutor/Admin: number input for student ID -->
+          <input
+            v-else
+            v-model.number="form.student_id"
+            type="number"
+            min="1"
+            placeholder="Enter student ID"
             class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             :class="{ 'border-red-400': errors.student_id }"
-          >
-            <option :value="null" disabled>Student list is unavailable right now</option>
-          </select>
+          />
           <p v-if="errors.student_id" class="text-red-600 text-xs mt-1">{{ errors.student_id }}</p>
         </div>
 
@@ -125,6 +138,7 @@
 <script setup lang="ts">
 import { reactive, ref, computed } from 'vue'
 import { useFollowupStore } from '@/stores/followupStore'
+import { useAuthStore } from '@/stores/auth'
 import type { Followup, FollowupPayload, MeetingType } from '@/types/followup'
 import type { AxiosError } from 'axios'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
@@ -133,11 +147,18 @@ const props = defineProps<{ followup: Followup | null }>()
 const emit = defineEmits<{ saved: []; cancelled: [] }>()
 
 const followupStore = useFollowupStore()
+const auth = useAuthStore()
 
+const isStudent = computed(() => auth.userRole === 'student')
 const isEdit = computed(() => !!props.followup)
 
+const studentDisplayName = computed(() => {
+  if (auth.user?.name) return `${auth.user.name} (ID: ${auth.user.id})`
+  return `Student #${auth.user?.id ?? '—'}`
+})
+
 const form = reactive<FollowupPayload>({
-  student_id: props.followup?.student_id ?? (null as unknown as number),
+  student_id: props.followup?.student_id ?? (isEdit.value ? (null as unknown as number) : (auth.user?.id ?? (null as unknown as number))),
   meeting_type: props.followup?.meeting_type ?? ('' as MeetingType),
   meeting_date: props.followup?.meeting_date ?? '',
   notes: props.followup?.notes ?? '',
@@ -164,7 +185,7 @@ function validate(): boolean {
   let valid = true
 
   if (!form.student_id) {
-    errors.student_id = 'Please select a student.'
+    errors.student_id = isStudent.value ? 'Please select a student.' : 'Please enter a student ID.'
     valid = false
   }
   if (!form.meeting_type) {

@@ -1,4 +1,3 @@
-<!-- src/views/followup/FollowupList.vue -->
 <template>
   <div class="p-6 space-y-6">
     <!-- Header -->
@@ -6,7 +5,7 @@
       <div>
         <h1 class="text-2xl font-bold tracking-tight text-slate-900">Follow-up Records</h1>
         <p class="text-sm text-slate-500">
-          Tutor follow-up meetings, notes, and next actions for your students.
+          {{ isStudent ? 'Your follow-up meetings, notes, and next actions.' : 'Tutor follow-up meetings, notes, and next actions for your students.' }}
         </p>
       </div>
       <button
@@ -115,16 +114,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useFollowupStore } from '@/stores/followupStore'
+import { useAuthStore } from '@/stores/auth'
 import type { Followup } from '@/types/followup'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
 import FollowupForm from './FollowupForm.vue'
 
 const followupStore = useFollowupStore()
+const auth = useAuthStore()
 
 const showForm = ref(false)
 const editingFollowup = ref<Followup | null>(null)
+
+const isStudent = computed(() => auth.userRole === 'student')
+
+const fetchParams = computed(() => {
+  if (auth.userRole === 'student' && auth.user?.id) {
+    return { student_id: auth.user.id }
+  }
+  if (auth.userRole === 'tutor' && auth.user?.id) {
+    return { tutor_id: auth.user.id }
+  }
+  return {}
+})
 
 function formatDate(dateStr: string): string {
   try {
@@ -140,7 +153,8 @@ function formatDate(dateStr: string): string {
 
 function studentLabel(f: Followup): string {
   if (!f.student_id) return '—'
-  return `#${f.student_id}`
+  if (isStudent.value && auth.user?.id === f.student_id) return 'Me'
+  return `Student #${f.student_id}`
 }
 
 function openCreateForm() {
@@ -155,10 +169,10 @@ function openEditForm(followup: Followup) {
 
 function onSaved() {
   showForm.value = false
-  followupStore.fetchFollowups().catch(() => {})
+  followupStore.fetchFollowups(fetchParams.value).catch(() => {})
 }
 
 onMounted(() => {
-  followupStore.fetchFollowups().catch(() => {})
+  followupStore.fetchFollowups(fetchParams.value).catch(() => {})
 })
 </script>

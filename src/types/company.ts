@@ -60,6 +60,10 @@ export interface CompanyStudentItem {
   status?: string
   assignedDate?: string
   created_at?: string
+  position?: string
+  start_date?: string
+  end_date?: string
+  tutor_name?: string
 }
 
 export interface CompanyEvaluationItem {

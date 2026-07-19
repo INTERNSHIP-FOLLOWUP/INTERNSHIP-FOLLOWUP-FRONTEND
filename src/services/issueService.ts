@@ -56,4 +56,8 @@ export const issueService = {
     const { data } = await api.get<IssueStats>('/issues/stats')
     return data
   },
+
+  async deleteIssue(id: string): Promise<void> {
+    await api.delete(`/issues/${encodeURIComponent(id)}`)
+  },
 }

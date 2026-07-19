@@ -163,6 +163,24 @@ export const useIssueStore = defineStore('issue', () => {
     }
   }
 
+  async function deleteIssue(id: string): Promise<boolean> {
+    loading.value = true
+    error.value = null
+    try {
+      await issueService.deleteIssue(id)
+      issues.value = issues.value.filter((x) => x.id !== id)
+      await fetchIssueStats()
+      return true
+    } catch (err: unknown) {
+      const parsed = err as { message?: string }
+      error.value = parsed?.message || 'Failed to delete issue.'
+      useToastStore().error(error.value, 'Delete Issue Failed')
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
   function setFilters(next: Partial<IssueFilters>): void {
     filters.value = { ...filters.value, ...next }
     pagination.value.page = 1
@@ -200,5 +218,6 @@ export const useIssueStore = defineStore('issue', () => {
     setFilters,
     resetFilters,
     setPage,
+    deleteIssue,
   }
 })

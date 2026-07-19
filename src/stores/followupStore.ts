@@ -1,5 +1,6 @@
 // src/stores/followupStore.ts
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 import api from '@/services/api'
 import type { Followup, FollowupPayload } from '@/types/followup'
 import type { AxiosError } from 'axios'
@@ -8,6 +9,7 @@ interface FollowupState {
   followups: Followup[]
   loading: boolean
   error: string | null
+  search: string
 }
 
 interface ApiErrorResponse {
@@ -23,6 +25,7 @@ export const useFollowupStore = defineStore('followup', {
     followups: [],
     loading: false,
     error: null,
+    search: '',
   }),
 
   actions: {
@@ -31,7 +34,7 @@ export const useFollowupStore = defineStore('followup', {
       this.error = null
       try {
         const res = await api.get<PaginatedResponse<Followup> | Followup[]>('/followups', {
-          params,
+          params: { search: this.search, ...params },
         })
         const payload = res.data
         this.followups = Array.isArray(payload) ? payload : payload.data
@@ -66,6 +69,18 @@ export const useFollowupStore = defineStore('followup', {
       } catch (err) {
         const axiosErr = err as AxiosError<ApiErrorResponse>
         this.error = axiosErr.response?.data?.message ?? 'Failed to update follow-up'
+        throw err
+      }
+    },
+
+    async deleteFollowup(id: number): Promise<void> {
+      this.error = null
+      try {
+        await api.delete(`/followups/${id}`)
+        this.followups = this.followups.filter((f) => f.id !== id)
+      } catch (err) {
+        const axiosErr = err as AxiosError<ApiErrorResponse>
+        this.error = axiosErr.response?.data?.message ?? 'Failed to delete follow-up'
         throw err
       }
     },

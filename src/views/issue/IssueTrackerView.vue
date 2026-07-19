@@ -188,33 +188,40 @@
           {{ issue.attachments }} attachment{{ issue.attachments === 1 ? '' : 's' }}
         </div>
 
-        <div class="mt-5 grid grid-cols-4 gap-2">
+        <div class="mt-5 grid grid-cols-5 gap-2">
           <button
-            class="rounded-xl border border-gray-200 px-2.5 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-gray-50"
+            class="rounded-xl border border-gray-200 px-2 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-gray-50"
             @click="openDetail(issue)"
           >
             View
           </button>
           <button
-            class="rounded-xl bg-[#2563EB] px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
+            class="rounded-xl bg-[#2563EB] px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
             :disabled="closedOnlyView(issue)"
             @click="openUpdateModal(issue)"
           >
             Update
           </button>
           <button
-            class="rounded-xl bg-[#7C3AED] px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#6a2fd9] disabled:opacity-70"
+            class="rounded-xl bg-[#7C3AED] px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#6a2fd9] disabled:opacity-70"
             :disabled="closedOnlyView(issue)"
             @click="openAssignModal(issue)"
           >
             Assign
           </button>
           <button
-            class="rounded-xl bg-[#22C55E] px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#16a34a] disabled:opacity-70"
+            class="rounded-xl bg-[#22C55E] px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#16a34a] disabled:opacity-70"
             :disabled="closedOnlyView(issue)"
             @click="resolveIssue(issue)"
           >
             Resolve
+          </button>
+          <button
+            class="rounded-xl bg-red-600 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-70"
+            :disabled="closedOnlyView(issue)"
+            @click="deleteIssue(issue)"
+          >
+            Delete
           </button>
         </div>
       </div>
@@ -330,7 +337,6 @@
                 class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
                 :disabled="!allowedEditableStatuses.includes('Select status') || !canReopenIssues || (formModal.mode === 'update' && closedOnlyView(formModal.item!))"
               >
-                <option value="">Select status</option>
                 <option v-for="status in allowedEditableStatuses" :key="status" :value="status">
                   {{ status }}
                 </option>
@@ -480,6 +486,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import { useIssueStore } from '@/stores/issueStore'
 import type { Issue, FormModalState } from '@/types/issue'
@@ -501,11 +508,7 @@ const canReopenIssues = computed(() => {
 })
 const allowedEditableStatuses = ['Open', 'In Progress', 'Resolved', 'Closed'] as Issue['status'][]
 
-const formUsers = [
-  { id: 1, name: 'Tutor User', role: 'Tutor' },
-  { id: 2, name: 'Student User', role: 'Student' },
-  { id: 3, name: 'Company Rep', role: 'Company Representative' },
-]
+const formUsers = ref<Array<{ id: number; name: string; role: string }>>([])
 
 const localSearch = ref('')
 const localStatus = ref('')
@@ -517,11 +520,21 @@ watch([localSearch, localStatus, localPriority], ([search, status, priority]) =>
 onMounted(async () => {
   await issueStore.fetchIssues()
   await issueStore.fetchIssueStats()
+  await loadStudents()
 })
 
 async function retry() {
   await issueStore.fetchIssues()
   await issueStore.fetchIssueStats()
+}
+
+async function loadStudents() {
+  try {
+    const res = await api.get('/tutor/students')
+    formUsers.value = (res.data.data || []).map((s: any) => ({ id: s.id, name: s.name, role: 'Student' }))
+  } catch {
+    // silently fail; form will show empty assignee list
+  }
 }
 
 const totalItems = computed(() => issueStore.pagination.totalItems)
@@ -582,12 +595,17 @@ const fileInputRef = ref<HTMLInputElement | null>(null)
 
 const submitDisabled = computed(() => {
   const form = formModal.form
-  const allowed = allowedEditableStatuses.includes((form.status as Issue['status']) || 'Open')
-  return !form.title || !form.description || !form.priority || !allowed
+  const status = (form.status as Issue['status']) || 'Open'
+  const allowed = allowedEditableStatuses.includes(status)
+  return !form.title || !form.description || !form.priority || !form.assignedUserId || !allowed
 })
 
 function applyFilters() {
-  issueStore.setFilters({})
+  issueStore.setFilters({
+    search: localSearch.value,
+    status: localStatus.value,
+    priority: localPriority.value,
+  })
 }
 
 function resetFilters() {
@@ -613,7 +631,7 @@ function openCreateModal() {
 }
 
 function openUpdateModal(issue: Issue) {
-  const assignee = formUsers.find((user) => issue.assignedTo.includes(user.name))
+  const assignee = formUsers.value.find((user) => issue.assignedTo.includes(user.name))
   formModal.mode = 'update'
   formModal.item = issue
   formModal.form = {
@@ -652,7 +670,15 @@ async function submitForm() {
 async function resolveIssue(issue: Issue) {
   const updated = await issueStore.resolveIssue(issue.id)
   if (updated) {
-    toast.success('Issue updated successfully.', 'Resolved')
+    toast.success('Issue resolved successfully.', 'Resolved')
+  }
+}
+
+async function deleteIssue(issue: Issue) {
+  if (!confirm(`Delete issue #${issue.id}? This action cannot be undone.`)) return
+  const deleted = await issueStore.deleteIssue(issue.id)
+  if (deleted) {
+    toast.success('Issue deleted successfully.', 'Deleted')
   }
 }
 
@@ -677,7 +703,6 @@ function handleFiles(event: Event) {
 
 function closedOnlyView(issue: Issue | undefined) {
   if (!issue) return false
-  if (!canReopenIssues.value) return issue.status === 'Closed'
   return issue.status === 'Closed'
 }
 

@@ -71,5 +71,17 @@ export const useFollowupStore = defineStore('followup', {
         throw err
       }
     },
+
+    async deleteFollowup(id: number): Promise<void> {
+      this.error = null
+      try {
+        await api.delete(`/followups/${id}`)
+        this.followups = this.followups.filter((f) => f.id !== id)
+      } catch (err) {
+        const axiosErr = err as AxiosError<ApiErrorResponse>
+        this.error = axiosErr.response?.data?.message ?? 'Failed to delete follow-up'
+        throw err
+      }
+    },
   },
 })

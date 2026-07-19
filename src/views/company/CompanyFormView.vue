@@ -17,9 +17,9 @@
         Back to Companies
       </button>
       <span class="text-sm text-slate-300">/</span>
-      <span class="text-sm font-medium text-slate-900">{{
-        mode === 'create' ? 'New Company' : 'Edit Company'
-      }}</span>
+      <span class="text-sm font-medium text-slate-900">
+        {{ isProfileMode ? 'Company Profile' : mode === 'create' ? 'New Company' : 'Edit Company' }}
+      </span>
     </div>
 
     <CompanyForm
@@ -52,6 +52,7 @@ const route = useRoute()
 const router = useRouter()
 
 const mode = computed(() => (route.params.id ? 'edit' : 'create'))
+const isProfileMode = computed(() => route.name === 'CompanyProfile')
 const apiErrors = ref<Record<string, string>>({})
 
 function getCompanyId(): number {
@@ -121,7 +122,11 @@ onMounted(async () => {
 })
 
 function goBack() {
-  router.push({ name: 'AdminCompanies' }).catch(() => {})
+  if (isProfileMode.value) {
+    router.push({ name: 'CompanyDashboard' }).catch(() => {})
+  } else {
+    router.push({ name: 'AdminCompanies' }).catch(() => {})
+  }
 }
 
 async function onSubmit(formData: CompanyFormData) {

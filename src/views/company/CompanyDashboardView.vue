@@ -251,12 +251,25 @@
           <p class="text-sm font-semibold text-slate-900">{{ companyProfile.phone || 'N/A' }}</p>
         </div>
       </div>
+
+      <!-- Company Logo Section -->
+      <div v-if="companyLogoUrl" class="mt-4 flex items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+        <img
+          :src="companyLogoUrl"
+          alt="Company Logo"
+          class="h-16 w-16 rounded-xl object-cover shadow-sm ring-2 ring-white"
+        />
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Company Logo</p>
+          <p class="text-sm font-medium text-slate-700">Uploaded brand logo</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, h, defineComponent } from 'vue'
+import { ref, computed, onMounted, h, defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCompanyStore } from '@/stores/company'
 import StatCard from '@/components/dashboard/StatCard.vue'
@@ -275,7 +288,10 @@ const companyProfile = ref({
   industry: '',
   contactPerson: '',
   phone: '',
+  logoUrl: '',
 })
+
+const companyLogoUrl = computed(() => companyProfile.value.logoUrl || null)
 
 const stats = ref({
   activeInternships: 0,
@@ -393,6 +409,7 @@ async function load() {
         industry: raw.industry || '',
         contactPerson: raw.contactPerson || '',
         phone: raw.phone || '',
+        logoUrl: raw.companyImageUrl || raw.companyProfileImageUrl || raw.companyProfileImage || '',
       }
     }
 

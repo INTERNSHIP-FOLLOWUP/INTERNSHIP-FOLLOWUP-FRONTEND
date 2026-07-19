@@ -9,6 +9,9 @@ export interface Company {
   email: string | null
   website: string | null
   companyProfileImage: string | null
+  companyProfileImageUrl: string | null
+  companyImage: string | null
+  companyImageUrl: string | null
   telegramLink: string | null
   createdAt: string
   updatedAt: string
@@ -24,7 +27,9 @@ export interface CreateCompanyPayload {
   password?: string | null
   role?: string | null
   website?: string | null
-  companyProfileImage?: string | null
+  companyProfileImage?: File | string | null
+  companyImage?: File | string | null
+  avatar?: File | string | null
   telegramLink?: string | null
 }
 

@@ -18,14 +18,14 @@
         :style="{ borderBottom: '1px solid var(--sidebar-border)' }"
       >
         <div
-          class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white shadow-lg"
-          :style="{ background: 'var(--sidebar-logo-bg)', boxShadow: 'var(--sidebar-logo-shadow)' }"
+          class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg text-sm font-bold text-white shadow-lg"
+          :style="{ background: companyLogoUrl ? 'transparent' : 'var(--sidebar-logo-bg)', boxShadow: 'var(--sidebar-logo-shadow)' }"
         >
           <img
-            v-if="company?.companyProfileImage"
-            :src="company.companyProfileImage"
+            v-if="companyLogoUrl"
+            :src="companyLogoUrl"
             :alt="companyName"
-            class="h-8 w-8 rounded-lg object-cover"
+            class="h-9 w-9 rounded-lg object-cover"
           />
           <span v-else>{{ companyInitial }}</span>
         </div>
@@ -72,10 +72,16 @@
           :style="{ backgroundColor: 'var(--sidebar-user-bg)' }"
         >
           <div
-            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white shadow-lg"
-            :style="{ background: 'var(--sidebar-avatar-bg)' }"
+            class="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-bold text-white shadow-lg"
+            :style="{ background: userAvatar ? 'transparent' : 'var(--sidebar-avatar-bg)' }"
           >
-            {{ userInitials }}
+            <img
+              v-if="userAvatar"
+              :src="userAvatar"
+              :alt="user?.name ?? 'Avatar'"
+              class="h-full w-full rounded-full object-cover"
+            />
+            <span v-else>{{ userInitials }}</span>
           </div>
           <div class="min-w-0 flex-1">
             <p class="truncate text-sm font-medium" :style="{ color: 'var(--sidebar-user-name)' }">
@@ -171,10 +177,16 @@
               @click.stop="dropdownOpen = !dropdownOpen"
             >
               <div
-                class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm"
-                :style="{ background: 'var(--sidebar-avatar-bg)' }"
+                class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-white shadow-sm"
+                :style="{ background: userAvatar ? 'transparent' : 'var(--sidebar-avatar-bg)' }"
               >
-                {{ userInitials }}
+                <img
+                  v-if="userAvatar"
+                  :src="userAvatar"
+                  :alt="user?.name ?? 'Avatar'"
+                  class="h-full w-full rounded-full object-cover"
+                />
+                <span v-else>{{ userInitials }}</span>
               </div>
               <div class="hidden text-left md:block">
                 <p class="text-sm font-medium leading-tight text-gray-700">
@@ -335,6 +347,7 @@ function handleClickOutside() {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  companyStore.fetchProfile().catch(() => {})
 })
 
 onUnmounted(() => {
@@ -347,7 +360,14 @@ const companyName = computed(() => company.value?.name ?? 'Company Panel')
 
 const companyInitial = computed(() => companyName.value.charAt(0).toUpperCase())
 
+const companyLogoUrl = computed(() => {
+  if (!company.value) return null
+  return company.value.companyImageUrl || company.value.companyImage || company.value.companyProfileImageUrl || company.value.companyProfileImage || null
+})
+
 const user = computed(() => auth.user)
+
+const userAvatar = computed(() => auth.userAvatar)
 
 const userInitials = computed(() => {
   if (!user.value?.name) return '?'

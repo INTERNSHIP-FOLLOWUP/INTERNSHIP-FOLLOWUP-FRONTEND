@@ -4,8 +4,8 @@
     <div class="flex items-start gap-4">
       <!-- Company Avatar / Fallback Placeholder -->
       <img
-        v-if="company.companyProfileImage"
-        :src="company.companyProfileImage"
+        v-if="companyLogoUrl"
+        :src="companyLogoUrl"
         alt=""
         class="h-12 w-12 shrink-0 rounded-xl object-cover ring-4 ring-gray-50 transition-transform group-hover:scale-[1.02]"
       />
@@ -143,6 +143,10 @@ function normalizeUrl(url: string | null): string | null {
 }
 
 const normalizedTelegram = computed(() => normalizeUrl(props.company.telegramLink))
+
+const companyLogoUrl = computed(() => {
+  return props.company.companyImageUrl || props.company.companyProfileImageUrl || props.company.companyProfileImage || null
+})
 
 const roleBadgeClass = computed(() => {
   if (props.company.role === 'active') return 'bg-emerald-50 text-emerald-700'

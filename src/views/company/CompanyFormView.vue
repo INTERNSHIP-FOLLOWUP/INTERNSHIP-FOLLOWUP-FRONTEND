@@ -35,10 +35,14 @@ import CompanyForm from '@/components/company/CompanyForm.vue'
 import type { CompanyFormData } from '@/components/company/CompanyForm.vue'
 import type { CompanyFormData as StoreCompanyFormData } from '@/stores/company'
 import { useCompanyStore } from '@/stores/company'
+import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
 import { mapValidationErrors } from '@/utils/mapValidationErrors'
 import { parseApiError } from '@/utils/errorParser'
 
 const store = useCompanyStore()
+const authStore = useAuthStore()
+const toast = useToastStore()
 const route = useRoute()
 const router = useRouter()
 
@@ -63,7 +67,8 @@ const initialData = ref<Partial<CompanyFormData>>({
   location: '',
   contactPhone: '',
   website: '',
-  companyProfileImage: '',
+  companyImage: null,
+  avatar: null,
   telegramLink: '',
   role: '',
   password: '',
@@ -84,7 +89,8 @@ async function loadIfNeeded() {
       contactPerson: c.contactPerson ?? '',
       contactPhone: c.phone ?? '',
       website: c.website ?? '',
-      companyProfileImage: c.companyProfileImage ?? '',
+      companyImage: c.companyImageUrl ?? c.companyImage ?? null,
+      avatar: authStore.userAvatar,
       telegramLink: c.telegramLink ?? '',
       role: c.role ?? '',
       password: '',
@@ -108,7 +114,8 @@ async function loadIfNeeded() {
     contactPerson: c.contactPerson ?? '',
     contactPhone: c.phone ?? '',
     website: c.website ?? '',
-    companyProfileImage: c.companyProfileImage ?? '',
+    companyImage: c.companyImageUrl ?? c.companyImage ?? null,
+    avatar: authStore.userAvatar,
     telegramLink: c.telegramLink ?? '',
     role: c.role ?? '',
     password: '',
@@ -135,14 +142,17 @@ async function onSubmit(formData: CompanyFormData) {
     if (isProfileMode.value) {
       await store.updateProfile(payload)
       await store.fetchProfile()
+      toast.success('Profile updated successfully.')
     } else if (mode.value === 'create') {
       await store.createCompany(payload)
       await store.fetchCompanies()
+      toast.success('Company created successfully.')
     } else {
       const id = getCompanyId()
       if (!Number.isFinite(id)) return
       await store.updateCompany(id, payload)
       await store.fetchCompanies()
+      toast.success('Company updated successfully.')
     }
     goBack()
   } catch (err: unknown) {
@@ -151,11 +161,13 @@ async function onSubmit(formData: CompanyFormData) {
     }
     if (axiosErr.response?.status === 422) {
       apiErrors.value = mapValidationErrors(axiosErr.response.data?.errors)
+      toast.error('Please fix the highlighted errors.', 'Validation Error')
     } else if (axiosErr.response?.status && axiosErr.response.status >= 500) {
-      // Use the friendly 500 message from the error parser
       const parsed = parseApiError(err)
+      toast.error(parsed.message, 'Server Error')
       throw new Error(parsed.message)
     } else {
+      toast.error('Failed to save. Please try again.', 'Error')
       throw err
     }
   }

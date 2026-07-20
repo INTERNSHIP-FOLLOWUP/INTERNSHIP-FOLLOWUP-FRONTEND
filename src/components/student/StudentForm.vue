@@ -9,6 +9,11 @@
           {{ isEdit ? 'Update the student record below.' : 'Fill in the details to register a new student.' }}
         </p>
       </div>
+      <button type="button" @click="$router.back()"
+        class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50">
+        Cancel
+      </button>
+    </div>
     </div>
 
     <!-- Photo Upload -->
@@ -16,11 +21,25 @@
       <div class="relative">
         <div
           class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 border-dashed text-sm font-bold transition-colors"
-          :class="errors.photo ? 'border-error bg-error/5 text-error' : 'border-slate-300 bg-slate-50 text-slate-400'"
+          :class="
+            errors.photo
+              ? 'border-error bg-error/5 text-error'
+              : 'border-slate-300 bg-slate-50 text-slate-400'
+          "
         >
-          <img v-if="photoPreview" :src="photoPreview" alt="Preview" class="h-full w-full rounded-full object-cover" />
+          <img
+            v-if="photoPreview"
+            :src="photoPreview"
+            alt="Preview"
+            class="h-full w-full rounded-full object-cover"
+          />
           <svg v-else class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
           </svg>
         </div>
       </div>
@@ -37,8 +56,15 @@
           class="mt-2 block w-full text-sm text-slate-500 file:mr-3 file:rounded-lg file:border-0 file:bg-primary-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-primary-700 hover:file:bg-primary-100"
           @change="onFileChange"
         />
-        <p v-if="errors.photo" id="photo-error" class="mt-1 text-xs text-error">{{ errors.photo }}</p>
-        <button v-if="photoPreview && isEdit" type="button" @click="removePhoto" class="mt-1 text-xs font-medium text-error hover:text-error/80">
+        <p v-if="errors.photo" id="photo-error" class="mt-1 text-xs text-error">
+          {{ errors.photo }}
+        </p>
+        <button
+          v-if="photoPreview && isEdit"
+          type="button"
+          @click="removePhoto"
+          class="mt-1 text-xs font-medium text-error hover:text-error/80"
+        >
           Remove photo
         </button>
       </div>
@@ -57,15 +83,27 @@
         />
       </FormField>
 
-      <FormField label="Full Name" :error="errors.name" required>
+      <FormField label="First Name" :error="errors.first_name" required>
         <input
-          v-model="form.name"
+          v-model="form.first_name"
           type="text"
-          placeholder="Enter full name"
+          placeholder="Enter first name"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
-          :class="inputClass('name')"
-          @input="clearFieldError('name')"
-          @blur="validateField('name')"
+          :class="inputClass('first_name')"
+          @input="clearFieldError('first_name')"
+          @blur="validateField('first_name')"
+        />
+      </FormField>
+
+      <FormField label="Last Name" :error="errors.last_name" required>
+        <input
+          v-model="form.last_name"
+          type="text"
+          placeholder="Enter last name"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          :class="inputClass('last_name')"
+          @input="clearFieldError('last_name')"
+          @blur="validateField('last_name')"
         />
       </FormField>
 
@@ -155,49 +193,39 @@
           <option value="suspended">Suspended</option>
         </select>
       </FormField>
-
-      <!-- Password (create only) -->
-      <template v-if="!isEdit">
-        <PasswordInput
-          v-model="form.password"
-          label="Password"
-          placeholder="Min. 8 characters"
-          required
-          :error="errors.password ?? ''"
-          autocomplete="new-password"
-          @blur="validateField('password')"
-        />
-
-        <PasswordInput
-          v-model="form.password_confirmation"
-          label="Confirm Password"
-          placeholder="Re-enter password"
-          required
-          :error="errors.password_confirmation ?? ''"
-          autocomplete="new-password"
-          @blur="validateField('password_confirmation')"
-        />
-      </template>
     </div>
 
     <!-- Form error -->
-    <div v-if="formError" role="alert" aria-live="polite" class="rounded-lg border border-error/20 bg-error/5 px-4 py-3 text-sm font-medium text-error">
+    <div
+      v-if="formError"
+      role="alert"
+      aria-live="polite"
+      class="rounded-lg border border-error/20 bg-error/5 px-4 py-3 text-sm font-medium text-error"
+    >
       {{ formError }}
     </div>
 
     <!-- Actions -->
     <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-5">
-      <button type="button" @click="$emit('cancel')" class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
-        Cancel
-      </button>
       <button
         type="submit"
         :disabled="submitting"
         class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary-500/20 transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <svg v-if="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          />
         </svg>
         {{ isEdit ? 'Update Student' : 'Add Student' }}
       </button>
@@ -211,7 +239,6 @@ import { useStudentStore } from '@/stores/student'
 import { useBatchStore } from '@/stores/batchStore'
 import { useTutorStore } from '@/stores/tutorStore'
 import FormField from '@/components/ui/FormField.vue'
-import PasswordInput from '@/components/ui/PasswordInput.vue'
 import type { StudentFormData } from '@/types/student'
 
 const props = withDefaults(
@@ -235,15 +262,16 @@ const isEdit = computed(() => !!props.studentId)
 
 const form = reactive<StudentFormData>({
   student_code: '',
-  name: '',
+  first_name: '',
+  last_name: '',
   email: '',
   gender: '',
   phone: '',
   batch_id: null,
   tutor_id: null,
   status: '',
-  password: '',
-  password_confirmation: '',
+  password: '12345678',
+  password_confirmation: '12345678',
   photo: null,
 })
 
@@ -318,8 +346,16 @@ function validateField(field: string): boolean {
 }
 
 function validateAll(): boolean {
-  const fieldsToValidate = ['student_code', 'name', 'email', 'gender', 'batch_id', 'tutor_id', 'status']
-  if (!isEdit.value) fieldsToValidate.push('password')
+  const fieldsToValidate = [
+    'student_code',
+    'first_name',
+    'last_name',
+    'email',
+    'gender',
+    'batch_id',
+    'tutor_id',
+    'status',
+  ]
   return fieldsToValidate.every((field) => validateField(field))
 }
 
@@ -361,7 +397,12 @@ async function handleSubmit(): Promise<void> {
   formError.value = ''
 
   try {
-    const basePayload: StudentFormData = { ...form }
+    const basePayload: StudentFormData = {
+      ...form,
+      name: `${form.first_name} ${form.last_name}`.trim(),
+    }
+    delete (basePayload as Record<string, unknown>).first_name
+    delete (basePayload as Record<string, unknown>).last_name
 
     if (basePayload.photo === null && isEdit.value) {
       basePayload.photo = originalPhoto.value || null
@@ -386,11 +427,13 @@ async function handleSubmit(): Promise<void> {
         const { mapValidationErrors } = await import('@/utils/mapValidationErrors')
         const mapped = mapValidationErrors(apiErrs)
         for (const [key, msg] of Object.entries(mapped)) {
-          (errors as Record<string, string>)[key] = msg
+          ;(errors as Record<string, string>)[key] = msg
         }
       }
     } else {
-      formError.value = axiosErr.response?.data?.message || (err instanceof Error ? err.message : 'Failed to save student.')
+      formError.value =
+        axiosErr.response?.data?.message ||
+        (err instanceof Error ? err.message : 'Failed to save student.')
     }
   } finally {
     submitting.value = false
@@ -402,7 +445,9 @@ function populateForm(): void {
   if (!s) return
 
   form.student_code = s.student_code || ''
-  form.name = s.name || ''
+  const nameParts = (s.name || '').split(' ')
+  form.first_name = nameParts[0] || ''
+  form.last_name = nameParts.slice(1).join(' ') || ''
   form.email = s.email || ''
   form.gender = s.gender || ''
   form.phone = s.phone || ''
@@ -441,7 +486,7 @@ watch(
     if (vals) {
       formError.value = ''
       for (const [key, msg] of Object.entries(vals)) {
-        (errors as Record<string, string>)[key] = msg
+        ;(errors as Record<string, string>)[key] = msg
       }
     }
   },

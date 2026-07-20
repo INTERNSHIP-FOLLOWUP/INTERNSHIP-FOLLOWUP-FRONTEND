@@ -26,11 +26,11 @@
 
     <!-- Filters -->
     <div class="flex flex-wrap items-center gap-3">
-      <DebouncedInput
+      <input
         v-model="searchQuery"
+        type="text"
         placeholder="Search by name, code or email..."
-        class="min-w-0 flex-1 basis-[200px]"
-        @change="onSearch"
+        class="h-10 w-full min-w-0 flex-1 basis-[200px] rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-700 placeholder-slate-400 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
       />
 
       <select
@@ -327,7 +327,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+
+
+
 import { useStudentStore } from '@/stores/student'
 import { useBatchStore } from '@/stores/batchStore'
 import { useTutorStore } from '@/stores/tutorStore'
@@ -336,7 +339,7 @@ import { usePagination } from '@/composables/usePagination'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
-import DebouncedInput from '@/components/ui/DebouncedInput.vue'
+
 import ActiveFilters from '@/components/ui/ActiveFilters.vue'
 import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
@@ -353,8 +356,14 @@ const statusFilter = ref('')
 let deleteTargetId: number | null = null
 
 const hasActiveFilters = computed(
-  () => !!searchQuery.value || !!batchFilter.value || !!tutorFilter.value || !!statusFilter.value,
+  () => {
+    // Requirements: don’t count very short search terms as an “active search”.
+    const hasSearch = searchQuery.value.trim().length >= 2
+    return hasSearch || !!batchFilter.value || !!tutorFilter.value || !!statusFilter.value
+  },
 )
+
+
 
 const activeFilterList = computed<ActiveFilter[]>(() => {
   const list: ActiveFilter[] = []
@@ -429,19 +438,55 @@ function fetchPage({ page }: { page: number }): void {
   store.fetchStudents(params as { per_page?: number; page?: number; search?: string })
 }
 
+// Pagination should react to page + filters, but *not* directly on every search keystroke.
+// We’ll handle search updates manually to meet the UX requirements.
 const { setPage, resetPage } = usePagination(fetchPage, {
-  search: searchQuery,
   batch: batchFilter,
   tutor: tutorFilter,
   status: statusFilter,
 })
 
-function onSearch(): void {
-  resetPage()
+// Debounce search typing so results update instantly for the user (without a Search button).
+// Requirements:
+// - start after 2 characters
+// - clear input => show full list again
+// - <2 characters should not trigger “No students found"
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
+
+const isSearchActive = computed(() => searchQuery.value.trim().length >= 2)
+
+function onSearchQueryChanged(): void {
+
+if (searchTimeout) clearTimeout(searchTimeout)
+
+  searchTimeout = setTimeout(() => {
+    const q = searchQuery.value.trim()
+
+    if (!q) {
+      // Show full list when cleared.
+      resetPage()
+      return
+    }
+
+    // Start searching after 2 characters.
+    // For 1 character: do nothing (keep existing list).
+    if (q.length >= 2) {
+      resetPage()
+    }
+  }, 250)
 }
+
+
+watch(searchQuery, () => {
+  onSearchQueryChanged()
+})
+
 function onFilterChange(): void {
   resetPage()
 }
+
+
+
 
 function removeFilter(key: string): void {
   if (key === 'search') searchQuery.value = ''

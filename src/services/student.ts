@@ -29,7 +29,8 @@ export const studentService = {
     status?: string
   }): Promise<StudentListResponse> {
     const response = await api.get<StudentListResponse>('/admin/students', { params })
-    return response.data
+    const payload = (response.data as any)?.data ?? response.data
+    return { ...response.data, data: Array.isArray(payload) ? payload : [] }
   },
 
   async get(id: number): Promise<Student> {

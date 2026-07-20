@@ -1,9 +1,8 @@
-# TODO - Tutor Worklog Frontend Verification
-
-- [ ] Step 1: Review `src/views/tutor/worklog/TutorWorklogList.vue` integration with store + UI behaviors.
-- [ ] Step 2: Review `src/stores/worklogStore.ts` for correct calls/updates for tutor fetch + review.
-- [ ] Step 3: Review `src/services/worklogService.ts` endpoints/paths for tutor fetch + review.
-- [ ] Step 4: Identify minimal bugs (if any) without redesigning/replacing architecture.
-- [ ] Step 5: Apply minimal fixes (only tutor worklog relevant) and avoid unrelated student worklog changes.
-- [ ] Step 6: Run frontend typecheck/lint/build to ensure no regressions.
+- [ ] Improve search behavior on `src/views/student/StudentListView.vue`:
+  - [ ] Debounce/handle typing so results update automatically without needing a Search button.
+  - [ ] Start searching only after 2 characters; if less than 2 show existing list (don’t show "No students found").
+  - [ ] If search is cleared, show full list again.
+  - [ ] Ensure empty state shows "No students found" when search term length >= 2 and results are empty.
+  - [ ] Avoid unnecessary server calls by not coupling `searchQuery` directly to pagination dependency triggering.
+- [ ] Build/test (`npm run build`) after code changes.
 

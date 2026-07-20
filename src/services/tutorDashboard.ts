@@ -20,7 +20,8 @@ export const tutorStudentService = {
     page?: number
   }): Promise<StudentListResponse> {
     const response = await api.get<StudentListResponse>('/tutor/students', { params })
-    return response.data
+    const payload = (response.data as any)?.data ?? response.data
+    return { ...response.data, data: Array.isArray(payload) ? payload : [] }
   },
 
   async get(id: number) {

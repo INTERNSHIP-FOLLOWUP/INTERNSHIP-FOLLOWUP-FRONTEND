@@ -708,9 +708,13 @@ async function quickReview(id: number, status: WorklogStatus) {
   submitting.value = true
   reviewingStatus.value = status
   try {
+    const w = worklogs.value.find((item) => item.id === id)
+    const feedback =
+      (w?.tutor_review?.feedback || '').toString().trim() || detailsFeedback.value.trim()
+
     await store.reviewWorklog(id, {
       status,
-      feedback: detailsFeedback.value.trim(),
+      feedback,
     })
     onFilterChange()
   } catch {

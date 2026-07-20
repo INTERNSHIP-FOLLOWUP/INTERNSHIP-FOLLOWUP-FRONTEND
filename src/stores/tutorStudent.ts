@@ -41,8 +41,8 @@ export const useTutorStudentStore = defineStore('tutorStudent', () => {
         batch_id: params?.batch_id,
         has_open_issue: params?.has_open_issue,
       })
-
-      students.value = response.data
+      const payload = (response as any)?.data ?? response
+      students.value = Array.isArray(payload) ? payload : []
       pagination.value = {
         total: response.meta.total,
         per_page: response.meta.per_page,

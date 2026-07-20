@@ -10,23 +10,40 @@
     </div>
 
     <!-- Filters -->
-    <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-      <div class="grid gap-3 md:grid-cols-4">
-        <div>
-          <label class="text-xs font-semibold text-slate-500">Search</label>
+    <div class="rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <div class="flex flex-wrap items-center gap-3 p-4">
+        <div class="relative min-w-0 flex-1 basis-[240px]">
+          <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </span>
           <input
             v-model="search"
             type="text"
-            placeholder="Name, email, or code..."
-            class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            placeholder="Search by name, email, or code..."
+            class="h-10 w-full rounded-xl border border-slate-200 bg-white py-2 pl-10 pr-10 text-sm text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
+          <button
+            v-if="!!search"
+            type="button"
+            @click="clearSearchOnly"
+            class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600"
+            aria-label="Clear search"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18" />
+              <path d="M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-        <div>
-          <label class="text-xs font-semibold text-slate-500">Status</label>
+
+        <div class="min-w-0 basis-[180px]">
           <select
             v-model="status"
-            @change="changed"
-            class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            @change="applyApiIfNeeded"
+            class="h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 transition-all focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
             <option value="">All Statuses</option>
             <option>Assigned</option>
@@ -35,35 +52,16 @@
             <option>Terminated</option>
           </select>
         </div>
-        <div class="flex items-end">
-          <label
-            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 cursor-pointer select-none"
-          >
-            <input
-              type="checkbox"
-              v-model="hasOpenIssue"
-              @change="changed"
-              class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-            />
-            Has open issue
-          </label>
-        </div>
-        <div class="flex items-end gap-2">
-          <button
-            type="button"
-            @click="changed"
-            class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-3.5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 transition"
-          >
-            Search
-          </button>
-          <button
-            type="button"
-            @click="reset"
-            class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
-          >
-            Reset
-          </button>
-        </div>
+
+        <label class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 cursor-pointer select-none whitespace-nowrap transition-all hover:border-indigo-200">
+          <input
+            type="checkbox"
+            v-model="hasOpenIssue"
+            @change="applyApiIfNeeded"
+            class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+          />
+          Has open issue
+        </label>
       </div>
     </div>
 
@@ -111,8 +109,13 @@
         </button>
       </div>
 
+      <div v-else-if="livePendingMessage()" class="px-6 py-10 text-center">
+        <p class="text-sm font-semibold text-slate-700">Type at least {{ MIN_SEARCH_LENGTH }} characters to search.</p>
+        <p class="mt-1 text-xs text-slate-400">Results will update as you type.</p>
+      </div>
+
       <div
-        v-else-if="store.students.length === 0"
+        v-else-if="!store.loading && displayed.length === 0"
         class="flex flex-col items-center justify-center px-6 py-16 text-center"
       >
         <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50">
@@ -153,7 +156,7 @@
           </thead>
           <tbody class="divide-y divide-slate-50">
             <tr
-              v-for="student in store.students"
+              v-for="student in displayed"
               :key="student.id"
               class="transition-colors hover:bg-slate-50/50"
             >
@@ -220,7 +223,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTutorStudentStore } from '@/stores/tutorStudent'
 
@@ -230,7 +233,44 @@ const search = ref('')
 const status = ref('')
 const hasOpenIssue = ref(false)
 
-function load(page = 1) {
+const MIN_SEARCH_LENGTH = 2
+let lastAppliedQuery = ''
+
+const matches = (student: any): boolean => {
+  const q = search.value.trim().toLowerCase()
+  if (!q) return true
+  const hay = `${student.name} ${student.email} ${student.student_code || ''}`.toLowerCase()
+  if (!hay.includes(q)) return false
+  const st = (status.value || '').trim()
+  if (st && student.assignment_status !== st) return false
+  const issuesCount = Number(student.open_issues_count ?? 0)
+  if (hasOpenIssue.value && issuesCount <= 0) return false
+  return true
+}
+
+const displayed = computed(() => {
+  const q = search.value.trim().toLowerCase()
+  if (!q && !status.value && !hasOpenIssue.value) return store.students
+  return store.students.filter(matches)
+})
+
+function applyApiIfNeeded(): void {
+  const q = search.value.trim()
+  const searchToken = q.length === 0 ? 'EMPTY' : q.toLowerCase()
+  const queryKey = `${searchToken}::|${status.value}::|${String(hasOpenIssue.value)}`
+
+  if (queryKey !== lastAppliedQuery) {
+    lastAppliedQuery = queryKey
+    if (q.length === 0 || q.length >= MIN_SEARCH_LENGTH) {
+      void load(1)
+      return
+    }
+  }
+}
+
+watch([search, status, hasOpenIssue], applyApiIfNeeded)
+
+async function load(page = 1) {
   return store.fetchStudents({
     search: search.value || undefined,
     status: status.value || undefined,
@@ -244,15 +284,9 @@ onMounted(() => {
   load(1)
 })
 
-function changed() {
-  load(1)
-}
-
-function reset() {
+function clearSearchOnly(): void {
   search.value = ''
-  status.value = ''
-  hasOpenIssue.value = false
-  load(1)
+  void applyApiIfNeeded()
 }
 
 function goToDetail(id: number) {
@@ -307,5 +341,10 @@ function formatStatus(status?: string) {
 function nextFollowup(student: any) {
   if (!student.next_followup) return '—'
   return `${student.next_followup.date_label} · ${student.next_followup.time_label}`
+}
+
+function livePendingMessage(): boolean {
+  const q = search.value.trim()
+  return q.length > 0 && q.length < MIN_SEARCH_LENGTH
 }
 </script>

@@ -30,7 +30,7 @@ export const useFollowupStore = defineStore('followup', {
       this.loading = true
       this.error = null
       try {
-        const res = await api.get<PaginatedResponse<Followup> | Followup[]>('/followups', {
+        const res = await api.get<PaginatedResponse<Followup> | Followup[]>('/tutor/followups', {
           params,
         })
         const payload = res.data
@@ -46,7 +46,7 @@ export const useFollowupStore = defineStore('followup', {
     async createFollowup(payload: FollowupPayload): Promise<Followup> {
       this.error = null
       try {
-        const res = await api.post<Followup>('/followups', payload)
+        const res = await api.post<Followup>('/tutor/followups', payload)
         this.followups.unshift(res.data)
         return res.data
       } catch (err) {
@@ -59,7 +59,7 @@ export const useFollowupStore = defineStore('followup', {
     async updateFollowup(id: number, payload: FollowupPayload): Promise<Followup> {
       this.error = null
       try {
-        const res = await api.put<Followup>(`/followups/${id}`, payload)
+        const res = await api.put<Followup>(`/tutor/followups/${id}`, payload)
         const idx = this.followups.findIndex((f) => f.id === id)
         if (idx !== -1) this.followups[idx] = res.data
         return res.data

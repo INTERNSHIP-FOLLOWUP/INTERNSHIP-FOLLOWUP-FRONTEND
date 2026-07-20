@@ -73,7 +73,7 @@ export const useIssueStore = defineStore('issue', () => {
       const data = await issueService.getIssueStats()
       stats.value = data
     } catch {
-      // Keep stats as null; UI handles empty state.
+      // Backend does not expose issue stats on this build; leave panel in empty state.
     }
   }
 

@@ -1,7 +1,7 @@
 <!-- src/views/followup/FollowupForm.vue -->
 <template>
-  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-xl">
+  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-3 sm:p-4">
+    <div class="w-full max-h-[calc(100dvh-64px)] overflow-y-auto rounded-xl bg-white shadow-xl sm:max-h-[90vh] sm:max-w-lg sm:p-6 p-4">
       <h2 class="text-lg font-semibold mb-4 text-slate-900">
         {{ isEdit ? 'Edit Follow-up' : 'New Follow-up' }}
       </h2>
@@ -14,12 +14,35 @@
           <label class="block text-sm font-medium text-slate-700 mb-1">Student</label>
           <select
             v-model="form.student_id"
-            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            :disabled="studentsLoading"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60"
             :class="{ 'border-red-400': errors.student_id }"
           >
-            <option :value="null" disabled>Student list is unavailable right now</option>
+            <option :value="null" disabled>Select a student</option>
+            <option v-for="student in students" :key="student.id" :value="student.id">
+              {{ student.name }}
+            </option>
           </select>
+          <p v-if="studentsError" class="text-red-600 text-xs mt-1">{{ studentsError }}</p>
           <p v-if="errors.student_id" class="text-red-600 text-xs mt-1">{{ errors.student_id }}</p>
+        </div>
+
+        <!-- Company selector -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Company</label>
+          <select
+            v-model="form.company_id"
+            :disabled="companiesLoading"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60"
+            :class="{ 'border-red-400': errors.company_id }"
+          >
+            <option :value="null">Auto-assign from student internship</option>
+            <option v-for="company in companies" :key="company.id" :value="company.id">
+              {{ company.name }}
+            </option>
+          </select>
+          <p v-if="companiesError" class="text-red-600 text-xs mt-1">{{ companiesError }}</p>
+          <p v-if="errors.company_id" class="text-red-600 text-xs mt-1">{{ errors.company_id }}</p>
         </div>
 
         <!-- Meeting type -->
@@ -31,9 +54,10 @@
             :class="{ 'border-red-400': errors.meeting_type }"
           >
             <option value="" disabled>Select meeting type</option>
-            <option value="Monthly">Monthly</option>
-            <option value="Quarterly">Quarterly</option>
-            <option value="Annual">Annual</option>
+            <option value="In-Person">In-Person</option>
+            <option value="Online">Online</option>
+            <option value="Phone">Phone</option>
+            <option value="Virtual">Virtual</option>
           </select>
           <p v-if="errors.meeting_type" class="text-red-600 text-xs mt-1">
             {{ errors.meeting_type }}
@@ -86,7 +110,7 @@
           />
         </div>
 
-        <div class="flex justify-end gap-2 pt-2">
+        <div class="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
           <button
             type="button"
             @click="$emit('cancelled')"
@@ -123,11 +147,12 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, onMounted } from 'vue'
 import { useFollowupStore } from '@/stores/followupStore'
 import type { Followup, FollowupPayload, MeetingType } from '@/types/followup'
 import type { AxiosError } from 'axios'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
+import api from '@/services/api'
 
 const props = defineProps<{ followup: Followup | null }>()
 const emit = defineEmits<{ saved: []; cancelled: [] }>()
@@ -136,8 +161,17 @@ const followupStore = useFollowupStore()
 
 const isEdit = computed(() => !!props.followup)
 
+const students = ref<Array<{ id: number; name: string }>>([])
+const studentsLoading = ref(false)
+const studentsError = ref<string | null>(null)
+
+const companies = ref<Array<{ id: number; name: string }>>([])
+const companiesLoading = ref(false)
+const companiesError = ref<string | null>(null)
+
 const form = reactive<FollowupPayload>({
   student_id: props.followup?.student_id ?? (null as unknown as number),
+  company_id: props.followup?.company_id ?? (null as unknown as number),
   meeting_type: props.followup?.meeting_type ?? ('' as MeetingType),
   meeting_date: props.followup?.meeting_date ?? '',
   notes: props.followup?.notes ?? '',
@@ -147,6 +181,7 @@ const form = reactive<FollowupPayload>({
 
 const errors = reactive({
   student_id: '',
+  company_id: '',
   meeting_type: '',
   meeting_date: '',
   notes: '',
@@ -155,8 +190,35 @@ const errors = reactive({
 const submitting = ref(false)
 const submitError = ref<string | null>(null)
 
+async function fetchStudents() {
+  studentsLoading.value = true
+  studentsError.value = null
+  try {
+    const res = await api.get('/tutor/students')
+    students.value = (res.data.data || []).map((s: any) => ({ id: s.id, name: s.name }))
+  } catch {
+    studentsError.value = 'Unable to load students.'
+  } finally {
+    studentsLoading.value = false
+  }
+}
+
+async function fetchCompanies() {
+  companiesLoading.value = true
+  companiesError.value = null
+  try {
+    const res = await api.get('/tutor/companies')
+    companies.value = (res.data.data || res.data || []).map((c: any) => ({ id: c.id, name: c.company_name || c.name }))
+  } catch {
+    companiesError.value = 'Unable to load companies.'
+  } finally {
+    companiesLoading.value = false
+  }
+}
+
 function validate(): boolean {
   errors.student_id = ''
+  errors.company_id = ''
   errors.meeting_type = ''
   errors.meeting_date = ''
   errors.notes = ''
@@ -186,6 +248,11 @@ function validate(): boolean {
 
   return valid
 }
+
+onMounted(() => {
+  fetchStudents()
+  fetchCompanies()
+})
 
 async function submit(): Promise<void> {
   if (!validate()) return

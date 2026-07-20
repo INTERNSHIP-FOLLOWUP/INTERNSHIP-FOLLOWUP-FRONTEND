@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 space-y-6">
+  <div class="p-4 sm:p-6 space-y-6">
     <h1 class="text-2xl font-bold tracking-tight text-slate-900">My Profile</h1>
 
     <div v-if="store.loading" class="flex items-center justify-center py-16">
@@ -12,11 +12,13 @@
     <template v-else>
       <ProfileCard @upload-avatar="triggerAvatarUpload" @remove-avatar="removeAvatar" />
 
-      <PersonalInformationForm />
-
-      <AvatarUpload ref="avatarUploadRef" />
-
-      <ChangePasswordForm />
+      <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <PersonalInformationForm />
+        <div class="space-y-6">
+          <AvatarUpload ref="avatarUploadRef" />
+          <ChangePasswordForm />
+        </div>
+      </div>
 
       <AccountInformation />
     </template>

@@ -55,11 +55,7 @@
       <!-- Bottom user card -->
       <div class="border-t border-slate-700/50 p-4">
         <div class="flex items-center gap-3 rounded-lg bg-slate-800/50 p-3">
-          <div
-            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 text-sm font-bold text-white shadow-lg"
-          >
-            {{ userInitials }}
-          </div>
+          <UserAvatar :avatar="user?.avatar" :name="user?.name" size="sm" />
           <div class="min-w-0 flex-1">
             <p class="truncate text-sm font-medium text-white">{{ user?.name }}</p>
             <p class="truncate text-xs text-slate-400">Tutor</p>
@@ -127,11 +123,7 @@
               class="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100"
               @click.stop="dropdownOpen = !dropdownOpen"
             >
-              <div
-                class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 text-xs font-bold text-white shadow-sm"
-              >
-                {{ userInitials }}
-              </div>
+          <UserAvatar :avatar="user?.avatar" :name="user?.name" size="sm" />
               <div class="hidden text-left md:block">
                 <p class="text-sm font-medium leading-tight text-gray-700">
                   {{ user?.name }}
@@ -268,6 +260,7 @@
 import { ref, computed, onMounted, onUnmounted, h, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import UserAvatar from '@/components/common/UserAvatar.vue'
 
 const route = useRoute()
 const auth = useAuthStore()

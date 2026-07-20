@@ -1,20 +1,26 @@
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Issue Management</h1>
-        <p class="mt-1 text-sm text-slate-500">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Issue Management</h1>
+        <p class="text-sm text-slate-500">
           Track, assign, update, and resolve internship project issues.
         </p>
       </div>
       <button
         v-if="canCreateIssue"
-        class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:translate-y-0.5 hover:shadow"
+        type="button"
         @click="openCreateModal"
+        class="mt-4 mb-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
         </svg>
         Report New Issue
       </button>
@@ -89,16 +95,16 @@
             <option value="Critical">Critical</option>
           </select>
         </div>
-        <div class="flex items-end gap-2">
+        <div class="flex flex-col-reverse gap-2 sm:flex-row sm:items-end">
           <button
-            class="flex-1 rounded-xl bg-[#2563EB] px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
+            class="w-full rounded-xl bg-[#2563EB] px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70 sm:w-auto"
             :disabled="issueStore.loading"
             @click="applyFilters"
           >
             Search
           </button>
           <button
-            class="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50"
+            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50 sm:w-auto"
             @click="resetFilters"
           >
             Reset
@@ -119,11 +125,11 @@
     </div>
 
     <!-- Issue cards -->
-    <div v-else-if="issueStore.paginatedIssues.length" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div v-else-if="filteredIssues.length" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
       <div
-        v-for="issue in issueStore.paginatedIssues"
+        v-for="issue in filteredIssues"
         :key="issue.id"
-        class="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+        class="flex flex-col rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:p-5"
       >
         <div class="flex items-start justify-between">
           <span class="inline-flex items-center rounded-lg bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600">
@@ -137,14 +143,14 @@
           </span>
         </div>
 
-        <h3 class="mt-3 text-base font-bold leading-snug text-gray-900">
+        <h3 class="mt-2 text-sm font-bold leading-snug text-gray-900 sm:mt-3 sm:text-base">
           {{ issue.title }}
         </h3>
-        <p class="mt-2 text-sm leading-relaxed text-slate-500 line-clamp-2">
+        <p class="mt-2 text-xs leading-relaxed text-slate-500 line-clamp-2 sm:text-sm">
           {{ issue.description }}
         </p>
 
-        <div class="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+        <div class="mt-4 flex flex-wrap items-center gap-4 text-[11px] text-slate-500 sm:text-xs">
           <div class="flex items-center gap-1.5">
             <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -160,7 +166,7 @@
           </div>
         </div>
 
-        <div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+        <div class="mt-3 flex flex-wrap items-center gap-4 text-[11px] text-slate-500 sm:text-xs">
           <span class="flex items-center gap-1.5">
             <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -188,7 +194,7 @@
           {{ issue.attachments }} attachment{{ issue.attachments === 1 ? '' : 's' }}
         </div>
 
-        <div class="mt-5 grid grid-cols-5 gap-2">
+        <div class="mt-4 flex flex-wrap gap-2 sm:mt-5">
           <button
             class="rounded-xl border border-gray-200 px-2 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-gray-50"
             @click="openDetail(issue)"
@@ -196,28 +202,21 @@
             View
           </button>
           <button
-            class="rounded-xl bg-[#2563EB] px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
+            class="rounded-xl bg-[#2563EB] px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-60"
             :disabled="closedOnlyView(issue)"
             @click="openUpdateModal(issue)"
           >
-            Update
+            Edit
           </button>
           <button
-            class="rounded-xl bg-[#7C3AED] px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#6a2fd9] disabled:opacity-70"
-            :disabled="closedOnlyView(issue)"
-            @click="openAssignModal(issue)"
-          >
-            Assign
-          </button>
-          <button
-            class="rounded-xl bg-[#22C55E] px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#16a34a] disabled:opacity-70"
+            class="rounded-xl bg-[#22C55E] px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#16a34a] disabled:opacity-60"
             :disabled="closedOnlyView(issue)"
             @click="resolveIssue(issue)"
           >
             Resolve
           </button>
           <button
-            class="rounded-xl bg-red-600 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-70"
+            class="rounded-xl bg-red-600 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60"
             :disabled="closedOnlyView(issue)"
             @click="deleteIssue(issue)"
           >
@@ -238,7 +237,7 @@
       </p>
       <button
         v-if="canCreateIssue"
-        class="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#2258e0]"
+        class="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95"
         @click="openCreateModal"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -290,37 +289,36 @@
     </div>
 
     <!-- Create / Update Modal -->
-    <div v-if="formModal.open" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div class="w-[92%] max-w-[700px] rounded-2xl bg-white shadow-2xl">
-        <div class="border-b border-gray-100 px-5 py-4">
-          <h2 class="text-lg font-bold text-gray-900">{{ formModal.mode === 'create' ? 'New Issue' : 'Update Issue' }}</h2>
-          <p class="mt-0.5 text-xs text-slate-500">Fill in the issue details below to keep shared progress clear.</p>
-        </div>
-        <div class="max-h-[calc(100dvh-96px)] space-y-5 overflow-y-auto px-5 py-5">
+    <div v-if="formModal.open" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-3 sm:p-4">
+      <div class="w-full max-h-[calc(100dvh-64px)] overflow-y-auto rounded-xl bg-white shadow-xl sm:max-h-[90vh] sm:max-w-lg sm:p-6 p-4">
+        <h2 class="text-lg font-semibold mb-4 text-slate-900">
+          {{ formModal.mode === 'create' ? 'New Issue' : 'Update Issue' }}
+        </h2>
+        <div class="space-y-4">
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500">Issue Title <span class="text-red-500">*</span></label>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Issue Title <span class="text-red-500">*</span></label>
             <input
               v-model="formModal.form.title"
-              class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="closedOnlyView(formModal.item!)"
               placeholder="Enter issue title"
             />
           </div>
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500">Description <span class="text-red-500">*</span></label>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Description <span class="text-red-500">*</span></label>
             <textarea
               v-model="formModal.form.description"
-              class="h-32 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
+              class="h-32 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="closedOnlyView(formModal.item!)"
               placeholder="What's the issue?"
             />
           </div>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-500">Priority <span class="text-red-500">*</span></label>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Priority <span class="text-red-500">*</span></label>
               <select
                 v-model="formModal.form.priority"
-                class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-60"
                 :disabled="closedOnlyView(formModal.item!)"
               >
                 <option value="">Select priority</option>
@@ -331,11 +329,11 @@
               </select>
             </div>
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-500">Status <span class="text-red-500">*</span></label>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Status <span class="text-red-500">*</span></label>
               <select
                 v-model="formModal.form.status"
-                class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
-                :disabled="!allowedEditableStatuses.includes('Select status') || !canReopenIssues || (formModal.mode === 'update' && closedOnlyView(formModal.item!))"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+                :disabled="statusDisabled"
               >
                 <option v-for="status in allowedEditableStatuses" :key="status" :value="status">
                   {{ status }}
@@ -344,33 +342,46 @@
             </div>
           </div>
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500">Assign To <span class="text-red-500">*</span></label>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Student <span class="text-red-500">*</span></label>
             <select
-              v-model="formModal.form.assignedUserId"
-              class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
-              :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
+              v-model="formModal.form.studentId"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+              :disabled="closedOnlyView(formModal.item!)"
             >
-              <option value="">Assign an available contact</option>
-              <option v-for="user in formUsers" :key="user.id" :value="user.id">
-                {{ user.name }} · {{ user.role }}
+              <option value="">Select student</option>
+              <option v-for="user in students" :key="user.id" :value="user.id">
+                {{ user.name }}
               </option>
             </select>
           </div>
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500">Due Date</label>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Assign To</label>
+            <select
+              v-model="formModal.form.assignedUserId"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+              :disabled="closedOnlyView(formModal.item!)"
+            >
+              <option value="">Assign an available contact</option>
+              <option v-for="user in assignees" :key="user.id" :value="user.id">
+                {{ user.name }}
+              </option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Due Date</label>
             <input
               v-model="formModal.form.dueDate"
               type="date"
-              class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
-              :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+              :disabled="closedOnlyView(formModal.item!)"
             />
           </div>
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500">Attachments</label>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Attachments</label>
             <button
               type="button"
               class="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 px-5 py-8 text-center text-xs text-slate-500 transition-colors hover:border-[#2563EB] hover:text-[#2563EB] disabled:cursor-not-allowed disabled:opacity-70"
-              :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
+              :disabled="closedOnlyView(formModal.item!)"
               @click="fileInputRef?.click()"
             >
               <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -392,16 +403,18 @@
             </div>
           </div>
         </div>
-        <div class="flex items-center justify-end gap-2 border-t border-gray-100 px-5 py-4">
+        <div class="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
           <button
-            class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50"
+            type="button"
             @click="closeFormModal"
+            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
           >
             Cancel
           </button>
           <button
-            class="rounded-xl bg-[#2563EB] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
+            type="button"
             :disabled="submitDisabled || issueStore.loading"
+            class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95 disabled:opacity-50"
             @click="submitForm"
           >
             {{ formModal.mode === 'create' ? 'Save Issue' : 'Update Issue' }}
@@ -412,8 +425,8 @@
 
     <!-- Detail Modal -->
     <div v-if="detailModal.open" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div class="w-[92%] max-w-2xl rounded-2xl bg-white shadow-2xl">
-        <div class="flex flex-wrap items-start justify-between gap-3 border-b border-gray-100 px-5 py-4">
+      <div class="w-full max-h-[calc(100dvh-64px)] overflow-y-auto rounded-2xl bg-white shadow-2xl sm:max-h-none sm:w-[92%] sm:max-w-2xl">
+        <div class="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p class="text-xs font-semibold text-slate-500">{{ detailModal.item.id }}</p>
             <h2 class="text-lg font-bold text-gray-900">{{ detailModal.item.title }}</h2>
@@ -503,12 +516,13 @@ const context = computed<'admin' | 'company' | 'student' | 'tutor'>(() => {
   return 'tutor'
 })
 const canCreateIssue = true
-const canReopenIssues = computed(() => {
-  return context.value !== 'company'
-})
+const canReopenIssues = computed(() => context.value !== 'company')
 const allowedEditableStatuses = ['Open', 'In Progress', 'Resolved', 'Closed'] as Issue['status'][]
 
-const formUsers = ref<Array<{ id: number; name: string; role: string }>>([])
+const students = ref<Array<{ id: number; name: string }>>([])
+const assignees = ref<Array<{ id: number; name: string }>>([])
+const usersLoading = ref(false)
+const usersError = ref<string | null>(null)
 
 const localSearch = ref('')
 const localStatus = ref('')
@@ -520,7 +534,7 @@ watch([localSearch, localStatus, localPriority], ([search, status, priority]) =>
 onMounted(async () => {
   await issueStore.fetchIssues()
   await issueStore.fetchIssueStats()
-  await loadStudents()
+  await loadUsers()
 })
 
 async function retry() {
@@ -528,12 +542,18 @@ async function retry() {
   await issueStore.fetchIssueStats()
 }
 
-async function loadStudents() {
+async function loadUsers() {
+  usersLoading.value = true
+  usersError.value = null
   try {
     const res = await api.get('/tutor/students')
-    formUsers.value = (res.data.data || []).map((s: any) => ({ id: s.id, name: s.name, role: 'Student' }))
+    const list = (res.data.data || []).map((s: any) => ({ id: s.id, name: s.name }))
+    students.value = list
+    assignees.value = list
   } catch {
-    // silently fail; form will show empty assignee list
+    usersError.value = 'Unable to load users.'
+  } finally {
+    usersLoading.value = false
   }
 }
 
@@ -545,6 +565,8 @@ const displayRange = computed(() => {
   const end = Math.min(page.value * 6, totalItems.value)
   return `${start}–${end}`
 })
+
+const filteredIssues = computed(() => issueStore.filteredIssues)
 
 const visiblePages = computed(() => {
   const tp = totalPages.value
@@ -568,6 +590,7 @@ const formModal = reactive<FormModalState>({
     description: '',
     priority: 'Medium',
     status: 'Open',
+    studentId: '',
     assignedUserId: '',
     dueDate: '',
     files: [],
@@ -595,9 +618,16 @@ const fileInputRef = ref<HTMLInputElement | null>(null)
 
 const submitDisabled = computed(() => {
   const form = formModal.form
-  const status = (form.status as Issue['status']) || 'Open'
+  const status = (form.status || 'Open') as Issue['status']
   const allowed = allowedEditableStatuses.includes(status)
-  return !form.title || !form.description || !form.priority || !form.assignedUserId || !allowed
+  return !form.title || !form.description || !form.priority || !form.studentId || !allowed
+})
+
+const statusDisabled = computed(() => {
+  const currentStatus = (formModal.form.status || 'Open') as Issue['status']
+  const editable = allowedEditableStatuses.includes(currentStatus)
+  const closed = closedOnlyView(formModal.item!)
+  return !editable || !canReopenIssues.value || closed
 })
 
 function applyFilters() {
@@ -623,6 +653,7 @@ function openCreateModal() {
     description: '',
     priority: 'Medium',
     status: 'Open',
+    studentId: '',
     assignedUserId: '',
     dueDate: '',
     files: [],
@@ -631,7 +662,6 @@ function openCreateModal() {
 }
 
 function openUpdateModal(issue: Issue) {
-  const assignee = formUsers.value.find((user) => issue.assignedTo.includes(user.name))
   formModal.mode = 'update'
   formModal.item = issue
   formModal.form = {
@@ -639,15 +669,12 @@ function openUpdateModal(issue: Issue) {
     description: issue.description,
     priority: issue.priority,
     status: issue.status,
-    assignedUserId: assignee ? assignee.id : '',
+    studentId: issue.studentId || '',
+    assignedUserId: issue.assignedUserId || '',
     dueDate: '',
     files: [],
   }
   formModal.open = true
-}
-
-function openAssignModal(issue: Issue) {
-  openUpdateModal(issue)
 }
 
 async function submitForm() {
@@ -687,7 +714,7 @@ function closeFormModal() {
 }
 
 async function openDetail(issue: Issue) {
-  const found = issueStore.issues.find((x) => x.id === issue.id)
+  const found = issueStore.issues.find((x: Issue) => x.id === issue.id)
   if (!found?.history || found.history.length === 0) {
     await issueStore.fetchIssueById(issue.id)
   }

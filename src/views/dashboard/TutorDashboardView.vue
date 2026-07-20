@@ -84,6 +84,7 @@
         title="Recent Worklogs"
         :loading="store.loading"
         :error="store.error"
+        :emptyCheck="store.recentWorklogs"
         empty-title="No recent worklogs"
         empty-message="Once your students submit worklogs, they will appear here."
       >
@@ -102,7 +103,7 @@
               <div class="min-w-0 flex-1">
                 <div class="flex items-center justify-between gap-2">
                   <p class="truncate text-sm font-semibold text-slate-900">
-                    {{ w.student?.name || '—' }}
+                    {{ w.student?.name ?? '' }}
                   </p>
                   <span class="text-xs text-slate-400">Week {{ w.week_number }}</span>
                 </div>
@@ -110,11 +111,12 @@
                 <div class="mt-1 flex items-center gap-2">
                   <span
                     class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700"
-                    >{{ w.status }}</span
                   >
-                  <span class="text-xs text-slate-400">{{
-                    formatDate(w.submission_date || w.submitted_at)
-                  }}</span>
+                    {{ w.status }}
+                  </span>
+                  <span class="text-xs text-slate-400">
+                    {{ formatDate(w.submission_date || w.submitted_at) }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -127,6 +129,7 @@
         title="Upcoming Follow-ups"
         :loading="store.loading"
         :error="store.error"
+        :emptyCheck="store.upcomingFollowups"
         empty-title="No upcoming follow-ups"
         empty-message="Schedule follow-ups with your students to stay aligned."
       >
@@ -140,18 +143,15 @@
               <div
                 class="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"
               >
-                <span class="text-[11px] font-bold leading-none">{{
-                  monthLabel(f.date_label)
-                }}</span>
+                <span class="text-[11px] font-bold leading-none">{{ monthLabel(f.date_label) }}</span>
                 <span class="text-md font-bold leading-tight">{{ dayLabel(f.date_label) }}</span>
               </div>
               <div class="flex-1">
-                <p class="text-sm font-semibold text-slate-900">{{ f.student?.name || '—' }}</p>
+                <p class="text-sm font-semibold text-slate-900">{{ f.student?.name ?? '' }}</p>
                 <p class="text-xs text-slate-500">{{ f.type }} · {{ f.time_label }}</p>
                 <span
                   class="mt-1 inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700"
-                  >{{ f.relative }}</span
-                >
+                >{{ f.relative }}</span>
               </div>
             </div>
           </div>
@@ -163,6 +163,7 @@
         title="Open Issues"
         :loading="store.loading"
         :error="store.error"
+        :emptyCheck="store.openIssues"
         empty-title="No open issues"
         empty-message="When issues are opened, they will show up here."
       >
@@ -175,13 +176,14 @@
             >
               <div>
                 <p class="text-sm font-semibold text-slate-900">{{ issue.title }}</p>
-                <p class="text-xs text-slate-500">{{ issue.student?.name || '—' }}</p>
+                <p class="text-xs text-slate-500">{{ issue.student?.name ?? '' }}</p>
               </div>
               <span
                 class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold"
                 :class="priorityColor(issue.priority)"
-                >{{ issue.priority }}</span
               >
+                {{ issue.priority }}
+              </span>
             </div>
           </div>
         </template>
@@ -192,6 +194,7 @@
         title="Recent Activity"
         :loading="store.loading"
         :error="store.error"
+        :emptyCheck="store.recentActivity"
         empty-title="No recent activity"
         empty-message="Actions like submissions, issues, and follow-ups will appear here."
       >
@@ -199,7 +202,7 @@
           <div class="divide-y divide-slate-100">
             <div
               v-for="item in store.recentActivity"
-              :key="item.reference_id + item.type"
+              :key="(item.reference_id ?? 'no-ref') + '-' + (item.type ?? 'no-type') + '-' + item.message"
               class="flex items-start gap-3 py-3 last:pb-0"
             >
               <div
@@ -296,7 +299,7 @@ function formatDate(date?: string) {
 }
 
 function initials(name?: string) {
-  if (!name || typeof name !== 'string') return '??'
+  if (!name || typeof name !== 'string') return ''
   return name
     .trim()
     .split(' ')
@@ -346,3 +349,4 @@ function relativeTimestamp(iso?: string) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 </script>
+

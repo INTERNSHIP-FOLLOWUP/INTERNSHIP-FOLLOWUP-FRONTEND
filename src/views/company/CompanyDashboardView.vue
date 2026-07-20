@@ -194,7 +194,7 @@
               </div>
               <div>
                 <h4 class="text-xs font-bold text-slate-900">Student #{{ evalItem.student_id }}</h4>
-                <p class="text-[10px] font-semibold text-slate-400">Rating: {{ evalItem.rating }}/5</p>
+                <p class="text-[10px] font-semibold text-slate-400">Overall Score: {{ evalItem.overall_score }}/100</p>
               </div>
             </div>
             <div class="text-right">
@@ -394,12 +394,13 @@ async function load() {
       store.fetchStudents(),
       store.fetchEvaluations(),
     ])
+    assignedStudents.value = Array.isArray(studentsData) ? studentsData : []
+    recentEvaluations.value = Array.isArray(evaluationsData) ? evaluationsData : []
     stats.value = {
-      activeInternships: Array.isArray(students)
-        ? students.filter((s) => s.status === 'assigned').length
-        : 0,
-      assignedStudents: Array.isArray(students) ? students.length : 0,
-      pendingReviews: Array.isArray(evaluations) ? evaluations.length : 0,
+      activeInternships: assignedStudents.value.filter((s) => s.status === 'assigned').length,
+      assignedStudents: assignedStudents.value.length,
+      evaluationsSubmitted: recentEvaluations.value.length,
+      pendingReviews: 0,
     }
   } catch {
     // keep dashboard visible if secondary APIs fail

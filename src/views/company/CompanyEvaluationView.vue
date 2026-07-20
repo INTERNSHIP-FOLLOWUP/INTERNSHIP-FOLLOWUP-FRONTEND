@@ -8,16 +8,16 @@
         </div>
       </div>
 
-      <div v-if="store.loading" class="py-12">
+      <div v-if="loading" class="py-12">
         <div class="flex items-center justify-center">
-          <div class="text-sm text-gray-600">Loading…</div>
+          <div class="text-sm text-gray-600">Loading...</div>
         </div>
       </div>
       <div
-        v-else-if="store.error"
+        v-else-if="error"
         class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3"
       >
-        <p class="text-sm text-rose-600">{{ store.error }}</p>
+        <p class="text-sm text-rose-600">{{ error }}</p>
       </div>
       <div v-else>
         <form class="max-w-xl space-y-5" @submit.prevent="submit">
@@ -26,7 +26,7 @@
               >Student <span class="text-rose-500">*</span></span
             >
             <select
-              v-model="form.studentId"
+              v-model="form.student_id"
               class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
             >
               <option value="" disabled>Select student</option>
@@ -36,32 +36,71 @@
             </select>
           </label>
 
-          <label class="block space-y-1">
-            <span class="text-sm font-medium text-gray-700"
-              >Rating <span class="text-rose-500">*</span></span
-            >
-            <select
-              v-model="form.rating"
-              class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
-            >
-              <option value="" disabled>Select rating</option>
-              <option value="5">Excellent</option>
-              <option value="4">Good</option>
-              <option value="3">Average</option>
-              <option value="2">Below Average</option>
-              <option value="1">Poor</option>
-            </select>
-          </label>
+          <div class="grid grid-cols-2 gap-4">
+            <label class="block space-y-1">
+              <span class="text-sm font-medium text-gray-700"
+                >Technical Skill <span class="text-rose-500">*</span></span
+              >
+              <input
+                v-model.number="form.technical_skill"
+                type="number"
+                min="1"
+                max="100"
+                class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                placeholder="1-100"
+              />
+            </label>
+
+            <label class="block space-y-1">
+              <span class="text-sm font-medium text-gray-700"
+                >Communication <span class="text-rose-500">*</span></span
+              >
+              <input
+                v-model.number="form.communication"
+                type="number"
+                min="1"
+                max="100"
+                class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                placeholder="1-100"
+              />
+            </label>
+
+            <label class="block space-y-1">
+              <span class="text-sm font-medium text-gray-700"
+                >Professionalism <span class="text-rose-500">*</span></span
+              >
+              <input
+                v-model.number="form.professionalism"
+                type="number"
+                min="1"
+                max="100"
+                class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                placeholder="1-100"
+              />
+            </label>
+
+            <label class="block space-y-1">
+              <span class="text-sm font-medium text-gray-700"
+                >Attendance <span class="text-rose-500">*</span></span
+              >
+              <input
+                v-model.number="form.attendance"
+                type="number"
+                min="1"
+                max="100"
+                class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                placeholder="1-100"
+              />
+            </label>
+          </div>
 
           <label class="block space-y-1">
-            <span class="text-sm font-medium text-gray-700"
-              >Remarks <span class="text-rose-500">*</span></span
-            >
+            <span class="text-sm font-medium text-gray-700">Feedback</span>
             <textarea
-              v-model="form.remarks"
-              rows="5"
+              v-model="form.feedback"
+              rows="4"
               class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
-              placeholder="Provide constructive feedback..."
+              placeholder="Provide constructive feedback about the student's performance..."
             />
           </label>
 
@@ -90,19 +129,27 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useCompanyStore } from '@/stores/company'
+import type { CompanyEvaluationPayload } from '@/types/company'
 
 const store = useCompanyStore()
 
 const students = ref<{ id: number; name: string }[]>([])
 const submitting = ref(false)
+const loading = ref(false)
+const error = ref<string | null>(null)
 
-const form = reactive<{ studentId: string; rating: string; remarks: string }>({
-  studentId: '',
-  rating: '',
-  remarks: '',
+const form = reactive<CompanyEvaluationPayload>({
+  student_id: 0,
+  technical_skill: 0,
+  communication: 0,
+  professionalism: 0,
+  attendance: 0,
+  feedback: '',
 })
 
 async function loadStudents() {
+  loading.value = true
+  error.value = null
   try {
     const items = await store.fetchStudents()
     const source = Array.isArray(items) ? items : []
@@ -110,27 +157,56 @@ async function loadStudents() {
       id: Number(item?.id ?? 0),
       name: String(item?.name ?? item?.student_name ?? 'Student'),
     }))
-  } catch {}
+  } catch (e) {
+    error.value = 'Failed to load students'
+  } finally {
+    loading.value = false
+  }
+}
+
+function validate(): string | null {
+  if (!form.student_id) return 'Please select a student'
+  if (form.technical_skill < 1 || form.technical_skill > 100) return 'Technical Skill must be between 1 and 100'
+  if (form.communication < 1 || form.communication > 100) return 'Communication must be between 1 and 100'
+  if (form.professionalism < 1 || form.professionalism > 100) return 'Professionalism must be between 1 and 100'
+  if (form.attendance < 1 || form.attendance > 100) return 'Attendance must be between 1 and 100'
+  return null
 }
 
 async function submit() {
+  const validationError = validate()
+  if (validationError) {
+    error.value = validationError
+    return
+  }
+
   submitting.value = true
+  error.value = null
   try {
     await store.submitEvaluation({
-      studentId: Number(form.studentId),
-      rating: Number(form.rating),
-      remarks: form.remarks || null,
+      student_id: form.student_id,
+      technical_skill: form.technical_skill,
+      communication: form.communication,
+      professionalism: form.professionalism,
+      attendance: form.attendance,
+      feedback: form.feedback || null,
     })
     reset()
+  } catch (e: any) {
+    error.value = e?.response?.data?.message || e?.message || 'Failed to submit evaluation'
   } finally {
     submitting.value = false
   }
 }
 
 function reset() {
-  form.studentId = ''
-  form.rating = ''
-  form.remarks = ''
+  form.student_id = 0
+  form.technical_skill = 0
+  form.communication = 0
+  form.professionalism = 0
+  form.attendance = 0
+  form.feedback = ''
+  error.value = null
 }
 
 loadStudents()

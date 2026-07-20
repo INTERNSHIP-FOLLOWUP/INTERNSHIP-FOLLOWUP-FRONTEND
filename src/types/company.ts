@@ -69,9 +69,20 @@ export interface CompanyStudentItem {
 export interface CompanyEvaluationItem {
   id: number
   student_id: number
-  rating: number
-  remarks?: string
+  company_id: number
+  technical_skill: number
+  communication: number
+  professionalism: number
+  attendance: number
+  overall_score: number
+  feedback?: string | null
   created_at?: string
+  updated_at?: string
+  student?: {
+    id: number
+    name: string
+    email?: string
+  }
 }
 
 export interface CompanyFeedbackItem {
@@ -82,9 +93,12 @@ export interface CompanyFeedbackItem {
 }
 
 export interface CompanyEvaluationPayload {
-  studentId: number
-  rating: number
-  remarks?: string | null
+  student_id: number
+  technical_skill: number
+  communication: number
+  professionalism: number
+  attendance: number
+  feedback?: string | null
 }
 
 export interface CompanyFeedbackPayload {

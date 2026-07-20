@@ -14,7 +14,12 @@
         @click="openCreateModal"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
         </svg>
         Report New Issue
       </button>
@@ -37,7 +42,12 @@
             :class="stat.color"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              />
             </svg>
           </div>
         </div>
@@ -45,9 +55,15 @@
     </div>
 
     <!-- Error -->
-    <div v-if="issueStore.error" class="flex flex-col gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
+    <div
+      v-if="issueStore.error"
+      class="flex flex-col gap-3 rounded-2xl border border-red-200 bg-red-50 p-4"
+    >
       <p class="text-sm font-medium text-red-700">{{ issueStore.error }}</p>
-      <button class="self-start rounded-xl border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100" @click="retry">
+      <button
+        class="self-start rounded-xl border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100"
+        @click="retry"
+      >
         Retry
       </button>
     </div>
@@ -109,7 +125,11 @@
 
     <!-- Loading -->
     <div v-if="issueStore.loading" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <div v-for="i in 6" :key="i" class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+      <div
+        v-for="i in 6"
+        :key="i"
+        class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+      >
         <div class="h-4 w-24 animate-pulse rounded bg-gray-100" />
         <div class="mt-4 h-5 w-3/4 animate-pulse rounded bg-gray-100" />
         <div class="mt-3 h-3 w-full animate-pulse rounded bg-gray-100" />
@@ -119,14 +139,19 @@
     </div>
 
     <!-- Issue cards -->
-    <div v-else-if="issueStore.paginatedIssues.length" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div
+      v-else-if="issueStore.paginatedIssues.length"
+      class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
+    >
       <div
         v-for="issue in issueStore.paginatedIssues"
         :key="issue.id"
         class="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
       >
         <div class="flex items-start justify-between">
-          <span class="inline-flex items-center rounded-lg bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600">
+          <span
+            class="inline-flex items-center rounded-lg bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600"
+          >
             {{ issue.id }}
           </span>
           <span
@@ -146,15 +171,40 @@
 
         <div class="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-500">
           <div class="flex items-center gap-1.5">
-            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            <svg
+              class="h-3.5 w-3.5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
             </svg>
             <span class="font-medium text-gray-700">{{ issue.reporter }}</span>
           </div>
           <div class="flex items-center gap-1.5">
-            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <svg
+              class="h-3.5 w-3.5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
             </svg>
             <span class="text-gray-700">{{ issue.assignedTo }}</span>
           </div>
@@ -162,14 +212,34 @@
 
         <div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-slate-500">
           <span class="flex items-center gap-1.5">
-            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            <svg
+              class="h-3.5 w-3.5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
             </svg>
             {{ format(issue.createdAt) }}
           </span>
           <span class="flex items-center gap-1.5">
-            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            <svg
+              class="h-3.5 w-3.5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
             </svg>
             Updated {{ format(issue.updatedAt) }}
           </span>
@@ -181,9 +251,22 @@
           </span>
         </div>
 
-        <div v-if="issue.attachments && issue.attachments > 0" class="mt-3 flex items-center gap-1.5 text-xs text-slate-500">
-          <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 000 2.828 2 2 0 002.828 0L18 10m0 0h-6m6 0v6" />
+        <div
+          v-if="issue.attachments && issue.attachments > 0"
+          class="mt-3 flex items-center gap-1.5 text-xs text-slate-500"
+        >
+          <svg
+            class="h-3.5 w-3.5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15.172 7l-6.586 6.586a2 2 0 000 2.828 2 2 0 002.828 0L18 10m0 0h-6m6 0v6"
+            />
           </svg>
           {{ issue.attachments }} attachment{{ issue.attachments === 1 ? '' : 's' }}
         </div>
@@ -221,9 +304,17 @@
     </div>
 
     <!-- Empty state -->
-    <div v-else-if="!issueStore.loading && issueStore.isEmpty" class="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-14 text-center">
+    <div
+      v-else-if="!issueStore.loading && issueStore.isEmpty"
+      class="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-14 text-center"
+    >
       <svg class="h-12 w-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+        />
       </svg>
       <h3 class="mt-4 text-lg font-semibold text-gray-900">No Issues Found</h3>
       <p class="mt-2 max-w-md text-sm text-slate-500">
@@ -235,7 +326,12 @@
         @click="openCreateModal"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
         </svg>
         Report New Issue
       </button>
@@ -266,7 +362,11 @@
             v-for="p in visiblePages"
             :key="p"
             class="flex h-8 w-8 items-center justify-center rounded-xl text-xs font-semibold transition-colors"
-            :class="p === issueStore.pagination.page ? 'bg-[#2563EB] text-white' : 'text-slate-700 hover:bg-gray-100'"
+            :class="
+              p === issueStore.pagination.page
+                ? 'bg-[#2563EB] text-white'
+                : 'text-slate-700 hover:bg-gray-100'
+            "
             @click="issueStore.setPage(p)"
           >
             {{ p }}
@@ -283,15 +383,24 @@
     </div>
 
     <!-- Create / Update Modal -->
-    <div v-if="formModal.open" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div
+      v-if="formModal.open"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+    >
       <div class="w-[92%] max-w-[700px] rounded-2xl bg-white shadow-2xl">
         <div class="border-b border-gray-100 px-5 py-4">
-          <h2 class="text-lg font-bold text-gray-900">{{ formModal.mode === 'create' ? 'New Issue' : 'Update Issue' }}</h2>
-          <p class="mt-0.5 text-xs text-slate-500">Fill in the issue details below to keep shared progress clear.</p>
+          <h2 class="text-lg font-bold text-gray-900">
+            {{ formModal.mode === 'create' ? 'New Issue' : 'Update Issue' }}
+          </h2>
+          <p class="mt-0.5 text-xs text-slate-500">
+            Fill in the issue details below to keep shared progress clear.
+          </p>
         </div>
         <div class="max-h-[calc(100dvh-96px)] space-y-5 overflow-y-auto px-5 py-5">
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500">Issue Title <span class="text-red-500">*</span></label>
+            <label class="mb-1 block text-xs font-semibold text-slate-500"
+              >Issue Title <span class="text-red-500">*</span></label
+            >
             <input
               v-model="formModal.form.title"
               class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
@@ -300,7 +409,9 @@
             />
           </div>
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500">Description <span class="text-red-500">*</span></label>
+            <label class="mb-1 block text-xs font-semibold text-slate-500"
+              >Description <span class="text-red-500">*</span></label
+            >
             <textarea
               v-model="formModal.form.description"
               class="h-32 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
@@ -310,7 +421,9 @@
           </div>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-500">Priority <span class="text-red-500">*</span></label>
+              <label class="mb-1 block text-xs font-semibold text-slate-500"
+                >Priority <span class="text-red-500">*</span></label
+              >
               <select
                 v-model="formModal.form.priority"
                 class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
@@ -324,11 +437,19 @@
               </select>
             </div>
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-500">Status <span class="text-red-500">*</span></label>
+              <label class="mb-1 block text-xs font-semibold text-slate-500"
+                >Status <span class="text-red-500">*</span></label
+              >
               <select
                 v-model="formModal.form.status"
                 class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
-                :disabled="!allowedEditableStatuses.includes('Select status') || !canReopenIssues || (formModal.mode === 'update' && closedOnlyView(formModal.item!))"
+                :disabled="
+                  !['Open', 'In Progress', 'Resolved', 'Closed'].includes(
+                    formModal.form.status || '',
+                  ) ||
+                  !canReopenIssues ||
+                  (formModal.mode === 'update' && closedOnlyView(formModal.item!))
+                "
               >
                 <option value="">Select status</option>
                 <option v-for="status in allowedEditableStatuses" :key="status" :value="status">
@@ -338,7 +459,9 @@
             </div>
           </div>
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500">Assign To <span class="text-red-500">*</span></label>
+            <label class="mb-1 block text-xs font-semibold text-slate-500"
+              >Assign To <span class="text-red-500">*</span></label
+            >
             <select
               v-model="formModal.form.assignedUserId"
               class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
@@ -367,8 +490,18 @@
               :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
               @click="fileInputRef?.click()"
             >
-              <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 000 2.828 2 2 0 002.828 0L18 10m0 0h-6m6 0v6" />
+              <svg
+                class="h-8 w-8 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15.172 7l-6.586 6.586a2 2 0 000 2.828 2 2 0 002.828 0L18 10m0 0h-6m6 0v6"
+                />
               </svg>
               <p class="mt-2 font-semibold">Drag & drop files here</p>
               <p class="mt-1">PDF, DOCX, PNG, ZIP</p>
@@ -382,7 +515,8 @@
               @change="handleFiles"
             />
             <div v-if="formModal.form.files.length" class="mt-2 text-left text-xs text-slate-600">
-              <span class="font-semibold">Attached:</span> {{ formModal.form.files.map((file: File) => file.name).join(', ') }}
+              <span class="font-semibold">Attached:</span>
+              {{ formModal.form.files.map((file: File) => file.name).join(', ') }}
             </div>
           </div>
         </div>
@@ -405,9 +539,14 @@
     </div>
 
     <!-- Detail Modal -->
-    <div v-if="detailModal.open" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div
+      v-if="detailModal.open"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+    >
       <div class="w-[92%] max-w-2xl rounded-2xl bg-white shadow-2xl">
-        <div class="flex flex-wrap items-start justify-between gap-3 border-b border-gray-100 px-5 py-4">
+        <div
+          class="flex flex-wrap items-start justify-between gap-3 border-b border-gray-100 px-5 py-4"
+        >
           <div>
             <p class="text-xs font-semibold text-slate-500">{{ detailModal.item.id }}</p>
             <h2 class="text-lg font-bold text-gray-900">{{ detailModal.item.title }}</h2>
@@ -432,28 +571,54 @@
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
               <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Reporter</p>
-              <p class="mt-1 text-sm font-semibold text-gray-900">{{ detailModal.item.reporter }}</p>
+              <p class="mt-1 text-sm font-semibold text-gray-900">
+                {{ detailModal.item.reporter }}
+              </p>
             </div>
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Assigned To</p>
-              <p class="mt-1 text-sm font-semibold text-gray-900">{{ detailModal.item.assignedTo }}</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                Assigned To
+              </p>
+              <p class="mt-1 text-sm font-semibold text-gray-900">
+                {{ detailModal.item.assignedTo }}
+              </p>
             </div>
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
               <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Created</p>
-              <p class="mt-1 text-sm font-semibold text-gray-900">{{ detailModal.item.createdAt }}</p>
+              <p class="mt-1 text-sm font-semibold text-gray-900">
+                {{ detailModal.item.createdAt }}
+              </p>
             </div>
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
               <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Updated</p>
-              <p class="mt-1 text-sm font-semibold text-gray-900">{{ detailModal.item.updatedAt }}</p>
+              <p class="mt-1 text-sm font-semibold text-gray-900">
+                {{ detailModal.item.updatedAt }}
+              </p>
             </div>
           </div>
           <div>
             <h3 class="text-sm font-semibold text-gray-900">Activity Timeline</h3>
             <ol class="mt-3 space-y-4">
-              <li v-for="event in detailModal.item.history || []" :key="event.time + event.text" class="flex gap-3">
-                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB]/10">
-                  <svg class="h-4 w-4 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" />
+              <li
+                v-for="event in detailModal.item.history || []"
+                :key="event.time + event.text"
+                class="flex gap-3"
+              >
+                <div
+                  class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB]/10"
+                >
+                  <svg
+                    class="h-4 w-4 text-[#2563EB]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6v6l4 2"
+                    />
                   </svg>
                 </div>
                 <div>
@@ -526,7 +691,10 @@ async function retry() {
 
 const totalItems = computed(() => issueStore.pagination.totalItems)
 const totalPages = computed(() => issueStore.pagination.totalPages)
-const page = computed({ get: () => issueStore.pagination.page, set: (p: number) => issueStore.setPage(p) })
+const page = computed({
+  get: () => issueStore.pagination.page,
+  set: (p: number) => issueStore.setPage(p),
+})
 const displayRange = computed(() => {
   const start = totalItems.value === 0 ? 0 : (page.value - 1) * 6 + 1
   const end = Math.min(page.value * 6, totalItems.value)

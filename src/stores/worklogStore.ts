@@ -1,22 +1,32 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { worklogService } from '@/services/worklogService'
-
-import type { Worklog, WorklogFilters } from '@/types/worklog'
+import { worklogService } from '@/services/worklogService.ts'
+import type { Worklog, WorklogStatus, WorklogFilters } from '@/types/worklog'
 import { parseApiError } from '@/utils/errorParser'
 
 export const useWorklogStore = defineStore('worklog', () => {
-  // ── Student state ───────────────────────────────────
   const worklogs = ref<Worklog[]>([])
   const worklog = ref<Worklog | null>(null)
-  const pagination = ref<any>(null)
-
-  // ── Tutor state ──────────────────────────────────────
   const tutorWorklogs = ref<Worklog[]>([])
   const tutorWorklog = ref<Worklog | null>(null)
-  const tutorPagination = ref<any>(null)
-
-  // ── Shared state ────────────────────────────────────
+  const pagination = ref<{
+    current_page: number
+    last_page: number
+    per_page: number
+    total: number
+    from?: number
+    to?: number
+    path?: string
+  } | null>(null)
+  const tutorPagination = ref<{
+    current_page: number
+    last_page: number
+    per_page: number
+    total: number
+    from?: number
+    to?: number
+    path?: string
+  } | null>(null)
   const loading = ref(false)
   const errors = ref<Record<string, string>>({})
 
@@ -30,9 +40,9 @@ export const useWorklogStore = defineStore('worklog', () => {
         week: filters.week,
       })
 
-      const data = res.data?.data ?? res.data ?? []
+      const data = res.data ?? []
       worklogs.value = Array.isArray(data) ? data : []
-      pagination.value = res.data?.meta?.pagination ?? res.data?.meta ?? null
+      pagination.value = res.meta?.pagination ?? null
     } catch (err: unknown) {
       const parsed = parseApiError(err)
       errors.value = parsed.fields ?? {}
@@ -46,8 +56,7 @@ export const useWorklogStore = defineStore('worklog', () => {
     loading.value = true
     errors.value = {}
     try {
-      const res = await worklogService.getWorklog(id)
-      const w: Worklog = res.data ?? res
+      const w = await worklogService.getWorklog(id)
       worklog.value = w
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -58,12 +67,11 @@ export const useWorklogStore = defineStore('worklog', () => {
     }
   }
 
-  async function createWorklog(data: FormData): Promise<Worklog> {
+  async function createWorklog(data: FormData) {
     loading.value = true
     errors.value = {}
     try {
-      const res = await worklogService.createWorklog(data)
-      const created: Worklog = res.data ?? res
+      const created = await worklogService.createWorklog(data)
       worklogs.value = [created, ...worklogs.value]
       return created
     } catch (err: unknown) {
@@ -79,13 +87,16 @@ export const useWorklogStore = defineStore('worklog', () => {
     id: number,
     data?: FormData | Record<string, unknown>,
     extra?: Record<string, unknown>,
-  ): Promise<Worklog> {
+  ) {
     loading.value = true
     errors.value = {}
     try {
-      const payload = extra ? (data instanceof FormData ? data : { ...(data ?? {}), ...extra }) : data
-      const res = await worklogService.updateWorklog(id, payload)
-      const updated: Worklog = res.data ?? res
+      const payload: FormData | Record<string, unknown> = extra
+        ? data instanceof FormData
+          ? data
+          : { ...(data as Record<string, unknown> | undefined), ...extra }
+        : (data ?? new FormData())
+      const updated = await worklogService.updateWorklog(id, payload)
       if (worklog.value?.id === id) worklog.value = updated
       worklogs.value = worklogs.value.map((w) => (w.id === id ? updated : w))
       return updated
@@ -114,14 +125,7 @@ export const useWorklogStore = defineStore('worklog', () => {
     }
   }
 
-  // ── Tutor actions ───────────────────────────────────
-
-  async function fetchTutorWorklogs(filters: {
-    student_id?: number
-    status?: WorklogFilters['status']
-    page?: number
-  } = {}) {
-
+  async function fetchTutorWorklogs(filters: WorklogFilters = {}) {
     loading.value = true
     errors.value = {}
     try {
@@ -129,11 +133,12 @@ export const useWorklogStore = defineStore('worklog', () => {
         student_id: filters.student_id,
         status: filters.status,
         page: filters.page,
+        week: filters.week,
       })
 
-      const data = res.data?.data ?? res.data ?? []
+      const data = res.data ?? []
       tutorWorklogs.value = Array.isArray(data) ? data : []
-      tutorPagination.value = res.data?.meta?.pagination ?? res.data?.meta ?? null
+      tutorPagination.value = res.meta?.pagination ?? null
     } catch (err: unknown) {
       const parsed = parseApiError(err)
       errors.value = parsed.fields ?? {}
@@ -147,8 +152,7 @@ export const useWorklogStore = defineStore('worklog', () => {
     loading.value = true
     errors.value = {}
     try {
-      const res = await worklogService.getTutorWorklog(id)
-      const w: Worklog = res.data ?? res
+      const w = await worklogService.getTutorWorklog(id)
       tutorWorklog.value = w
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -159,23 +163,14 @@ export const useWorklogStore = defineStore('worklog', () => {
     }
   }
 
-  async function reviewWorklog(
-    id: number,
-    data: { status: 'Reviewed'; feedback: string },
-  ): Promise<Worklog> {
+  async function reviewWorklog(id: number, payload: { status: WorklogStatus; feedback?: string }) {
     loading.value = true
     errors.value = {}
     try {
-      const res = await worklogService.reviewWorklog(id, {
-        status: data.status,
-        feedback: data.feedback,
-      })
-
-      const updated: Worklog = res.data ?? res
-
+      const updated = await worklogService.reviewWorklog(id, payload)
       if (tutorWorklog.value?.id === id) tutorWorklog.value = updated
-      tutorWorklogs.value = tutorWorklogs.value.map((w) => (w.id === id ? updated : w))
-
+      const idx = tutorWorklogs.value.findIndex((w) => w.id === id)
+      if (idx !== -1) tutorWorklogs.value[idx] = updated
       return updated
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -202,7 +197,6 @@ export const useWorklogStore = defineStore('worklog', () => {
   }
 
   return {
-    // state
     worklogs,
     worklog,
     pagination,
@@ -211,26 +205,19 @@ export const useWorklogStore = defineStore('worklog', () => {
     tutorPagination,
     loading,
     errors,
-
-    // student actions
     fetchWorklogs,
     fetchWorklog,
     createWorklog,
     updateWorklog,
     deleteWorklog,
-
-    // tutor actions
     fetchTutorWorklogs,
     fetchTutorWorklog,
     reviewWorklog,
-
     clearErrors,
     reset,
 
-    // convenience
     get error() {
-      return (errors.value as any)?.message ?? ''
+      return (errors.value as Record<string, unknown> | null)?.message ?? ''
     },
   }
 })
-

@@ -2,7 +2,9 @@ import api from '@/services/api'
 import type { Issue, IssueForm, IssueStats, IssueFilters, PaginationMeta } from '@/types/issue'
 
 export const issueService = {
-  async getIssues(filters: IssueFilters = { search: '', status: '', priority: '' }): Promise<{ data: Issue[]; meta?: PaginationMeta }> {
+  async getIssues(
+    filters: IssueFilters = { search: '', status: '', priority: '' },
+  ): Promise<{ data: Issue[]; meta?: PaginationMeta }> {
     const params: Record<string, string> = {}
     if (filters.search) params.search = filters.search
     if (filters.status) params.status = filters.status
@@ -23,7 +25,8 @@ export const issueService = {
     formData.append('description', payload.description)
     formData.append('priority', payload.priority || 'Medium')
     if (payload.status) formData.append('status', payload.status)
-    if (payload.assignedUserId || payload.assignedUserId === 0) formData.append('assigned_user_id', String(payload.assignedUserId))
+    if (payload.assignedUserId || payload.assignedUserId === 0)
+      formData.append('assigned_user_id', String(payload.assignedUserId))
     if (payload.dueDate) formData.append('due_date', payload.dueDate)
     if (payload.files && payload.files.length) {
       for (const file of payload.files) {
@@ -43,7 +46,9 @@ export const issueService = {
   },
 
   async assignIssue(id: string, userId: string | number): Promise<Issue> {
-    const { data } = await api.patch<Issue>(`/issues/${encodeURIComponent(id)}/assign`, { userId: String(userId) })
+    const { data } = await api.patch<Issue>(`/issues/${encodeURIComponent(id)}/assign`, {
+      userId: String(userId),
+    })
     return data
   },
 

@@ -115,10 +115,7 @@ export const companyService = {
     // `users` table because the company's email also exists on the User record.
     // Password handling is already managed by toBackend (only included if truthy).
     delete body.email
-    const response = await api.put<BackendUpdateResponse>(
-      `/admin/companies/${id}`,
-      body,
-    )
+    const response = await api.put<BackendUpdateResponse>(`/admin/companies/${id}`, body)
     return toFrontend(response.data.company)
   },
 

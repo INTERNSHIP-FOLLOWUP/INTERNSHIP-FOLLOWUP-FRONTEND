@@ -1,7 +1,7 @@
 export interface Company {
   id: number
   companyName: string
-  role: string | null
+  role?: string | null
   address: string | null
   industry: string | null
   contactPerson: string | null

@@ -11,14 +11,18 @@ export interface Student {
   phone?: string
   batch_id?: number | null
   tutor_id?: number | null
-  batch?: string
-  tutor?: string
-  status?: string
+  batch?: { id: number; batch_name?: string; name?: string }
+  tutor?: { id: number; name?: string }
+  status?: 'active' | 'inactive' | 'graduated' | 'suspended' | ''
+  photo?: string | null
+  photo_url?: string | null
   students_count?: number
   created_at?: string
   updated_at?: string
   deleted_at?: string | null
 }
+
+export type StudentStatus = 'active' | 'inactive' | 'graduated' | 'suspended'
 
 export interface StudentFormData {
   student_code: string
@@ -28,9 +32,16 @@ export interface StudentFormData {
   phone: string
   batch_id: number | null
   tutor_id: number | null
-  password?: string
-  password_confirmation?: string
+  status?: StudentStatus | ''
+  password: string
+  password_confirmation: string
+  photo?: File | string | null
+  photo_url?: string | null
   avatar?: File | string | null
+}
+
+export interface StudentSingleResponse {
+  data: Student
 }
 
 export interface Batch {

@@ -17,7 +17,8 @@ export const useIssueStore = defineStore('issue', () => {
   const filteredIssues = computed(() => {
     const query = filters.value.search.trim().toLowerCase()
     return issues.value.filter((item) => {
-      const searchOk = !query || item.title.toLowerCase().includes(query) || item.id.toLowerCase().includes(query)
+      const searchOk =
+        !query || item.title.toLowerCase().includes(query) || item.id.toLowerCase().includes(query)
       const statusOk = !filters.value.status || item.status === filters.value.status
       const priorityOk = !filters.value.priority || item.priority === filters.value.priority
       return searchOk && statusOk && priorityOk
@@ -25,7 +26,10 @@ export const useIssueStore = defineStore('issue', () => {
   })
 
   const paginatedIssues = computed(() => {
-    return filteredIssues.value.slice((pagination.value.page - 1) * pagination.value.perPage, pagination.value.page * pagination.value.perPage)
+    return filteredIssues.value.slice(
+      (pagination.value.page - 1) * pagination.value.perPage,
+      pagination.value.page * pagination.value.perPage,
+    )
   })
 
   const statsItems = computed(() => {
@@ -53,7 +57,7 @@ export const useIssueStore = defineStore('issue', () => {
     try {
       const response = await issueService.getIssues(filters.value)
       issues.value = response.data || []
-      pagination.value.totalItems = response.meta?.totalItems ?? (response.data?.length ?? 0)
+      pagination.value.totalItems = response.meta?.totalItems ?? response.data?.length ?? 0
       pagination.value.totalPages = response.meta?.totalPages ?? 1
     } catch (err: unknown) {
       const parsed = err as { message?: string }

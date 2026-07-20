@@ -1,5 +1,10 @@
 import api from '@/services/api'
-import type { Student, StudentFormData, StudentListResponse, StudentSingleResponse } from '@/types/student'
+import type {
+  Student,
+  StudentFormData,
+  StudentListResponse,
+  StudentSingleResponse,
+} from '@/types/student'
 
 function toFormData(data: Record<string, unknown>): FormData {
   const fd = new FormData()

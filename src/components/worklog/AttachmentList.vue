@@ -1,11 +1,19 @@
 <template>
   <div class="space-y-3">
-    <div v-if="!attachments.length" class="text-sm font-semibold text-slate-500">No attachments.</div>
+    <div v-if="!attachments.length" class="text-sm font-semibold text-slate-500">
+      No attachments.
+    </div>
 
-    <div v-for="att in attachments" :key="att.id ?? att.filename" class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-3">
+    <div
+      v-for="att in attachments"
+      :key="att.id ?? att.filename"
+      class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-3"
+    >
       <div class="min-w-0">
         <p class="truncate text-xs font-semibold text-slate-800">📄 {{ att.filename }}</p>
-        <p class="text-xs text-slate-500">{{ att.mime_type || guessType(att.filename) }} • {{ formatBytes(att.size_bytes ?? 0) }}</p>
+        <p class="text-xs text-slate-500">
+          {{ att.mime_type || guessType(att.filename) }} • {{ formatBytes(att.size_bytes ?? 0) }}
+        </p>
       </div>
 
       <div class="flex items-center gap-2">
@@ -30,7 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { Attachment } from '@/types/worklog'
 
 const props = defineProps<{
@@ -66,7 +73,12 @@ function download(att: Attachment) {
 
 function isPreviewable(att: Attachment): boolean {
   const name = att.filename.toLowerCase()
-  return name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.pdf')
+  return (
+    name.endsWith('.png') ||
+    name.endsWith('.jpg') ||
+    name.endsWith('.jpeg') ||
+    name.endsWith('.pdf')
+  )
 }
 
 function preview(att: Attachment) {
@@ -74,4 +86,3 @@ function preview(att: Attachment) {
   window.open(att.url, '_blank')
 }
 </script>
-

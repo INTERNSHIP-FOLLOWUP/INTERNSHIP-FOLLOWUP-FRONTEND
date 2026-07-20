@@ -1,5 +1,6 @@
 import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
+import api from '@/services/api'
 
 export interface ColorTheme {
   id: string
@@ -191,6 +192,7 @@ export const COLOR_THEMES: ColorTheme[] = [
 
 const STORAGE_KEY = 'admin-theme'
 const SIDEBAR_STORAGE_KEY = 'admin-sidebar-style'
+const DARK_MODE_KEY = 'admin-dark-mode'
 
 export const useThemeStore = defineStore('theme', () => {
   const savedId = localStorage.getItem(STORAGE_KEY) || 'indigo'
@@ -200,6 +202,29 @@ export const useThemeStore = defineStore('theme', () => {
   const sidebarStyle = ref<'dark' | 'colored' | 'light'>(
     savedSidebarStyle as 'dark' | 'colored' | 'light',
   )
+
+  const savedDarkMode = localStorage.getItem(DARK_MODE_KEY) === 'true'
+  const darkMode = ref<boolean>(savedDarkMode)
+
+  function applyDarkMode(value: boolean) {
+    if (value) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }
+
+  async function setDarkMode(value: boolean) {
+    darkMode.value = value
+    applyDarkMode(value)
+    localStorage.setItem(DARK_MODE_KEY, String(value))
+    const theme = value ? 'dark' : 'light'
+    try {
+      await api.put('/auth/profile/theme', { theme })
+    } catch {
+      // silently fail
+    }
+  }
 
   function currentTheme(): ColorTheme {
     return COLOR_THEMES.find((t) => t.id === currentThemeId.value)!
@@ -298,6 +323,7 @@ export const useThemeStore = defineStore('theme', () => {
 
   // Apply on init
   applyTheme(currentTheme())
+  applyDarkMode(darkMode.value)
 
   watch(currentThemeId, () => {
     applyTheme(currentTheme())
@@ -306,9 +332,11 @@ export const useThemeStore = defineStore('theme', () => {
   return {
     currentThemeId,
     sidebarStyle,
+    darkMode,
     currentTheme,
     setTheme,
     setSidebarStyle,
+    setDarkMode,
     COLOR_THEMES,
   }
 })

@@ -8,15 +8,36 @@
           View and manage all enrolled students across batches.
         </p>
       </div>
-      <router-link
-        to="/admin/users/create"
-        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary-500/20 transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95"
-      >
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-        </svg>
-        Add Student
-      </router-link>
+      <div class="flex items-center gap-2">
+        <button @click="showImportModal = true"
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-indigo-200 hover:bg-slate-50">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          Import
+        </button>
+        <button @click="exportPdf"
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-indigo-200 hover:bg-slate-50">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          PDF
+        </button>
+        <button @click="exportExcel"
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-emerald-200 hover:bg-emerald-50">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Excel
+        </button>
+        <button @click="showFormModal = true"
+          class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary-500/20 transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Student
+        </button>
+      </div>
     </div>
 
     <!-- Filters -->
@@ -92,7 +113,8 @@
           <table class="w-full text-left text-sm">
             <thead>
               <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                <th class="px-6 py-3.5 font-medium">Student</th>
+                <th class="px-6 py-3.5 font-medium">First Name</th>
+                <th class="px-6 py-3.5 font-medium">Last Name</th>
                 <th class="px-6 py-3.5 font-medium">Code</th>
                 <th class="px-6 py-3.5 font-medium">Email</th>
                 <th class="px-6 py-3.5 font-medium">Batch</th>
@@ -103,13 +125,11 @@
             </thead>
             <tbody class="divide-y divide-slate-50">
               <tr v-for="student in store.students" :key="student.id" class="transition-colors hover:bg-slate-50/50">
-                <td class="whitespace-nowrap px-6 py-4">
-                  <div class="flex items-center gap-3">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-50 text-xs font-bold text-primary-600">
-                      {{ getInitials(student.name) }}
-                    </div>
-                    <span class="font-semibold text-slate-900">{{ student.name }}</span>
-                  </div>
+                <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">
+                  {{ firstName(student.name) }}
+                </td>
+                <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">
+                  {{ lastName(student.name) }}
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 font-mono text-xs font-medium text-slate-500">
                   {{ student.student_code || '—' }}
@@ -157,7 +177,7 @@
                 {{ getInitials(student.name) }}
               </div>
               <div>
-                <p class="font-semibold text-slate-900">{{ student.name }}</p>
+                <p class="font-semibold text-slate-900">{{ firstName(student.name) }} {{ lastName(student.name) }}</p>
                 <p class="mt-0.5 text-xs text-slate-500">{{ student.email }}</p>
               </div>
             </div>
@@ -201,6 +221,18 @@
 
     <!-- Delete Confirmation -->
     <ConfirmDialog :show="dialog.show.value" :title="dialog.title.value" :message="dialog.message.value" :confirm-text="dialog.confirmText.value" :cancel-text="dialog.cancelText.value" :loading="dialog.loading.value" :error="dialog.error.value" @confirm="handleConfirm" @cancel="dialog.cancel()" />
+
+    <!-- Import Students Modal -->
+    <ImportStudentsModal :show="showImportModal" @close="showImportModal = false; fetchPage({ page: 1 })" />
+
+    <!-- Add / Edit Student Modal -->
+    <transition name="fade">
+      <div v-if="showFormModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-y-auto py-8" @click.self="closeFormModal">
+        <div class="w-[92%] max-w-2xl rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl my-8">
+          <StudentForm :student-id="editingStudentId" @saved="onStudentSaved" @cancel="closeFormModal" />
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -212,10 +244,13 @@ import { useTutorStore } from '@/stores/tutorStore'
 import { useToastStore } from '@/stores/toast'
 import { usePagination } from '@/composables/usePagination'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import { studentService } from '@/services/student'
 import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import DebouncedInput from '@/components/ui/DebouncedInput.vue'
 import ActiveFilters from '@/components/ui/ActiveFilters.vue'
+import StudentForm from '@/components/student/StudentForm.vue'
+import ImportStudentsModal from '@/components/admin/ImportStudentsModal.vue'
 import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
 const store = useStudentStore()
@@ -249,6 +284,15 @@ const activeFilterList = computed<ActiveFilter[]>(() => {
   if (statusFilter.value) list.push({ key: 'status', label: 'Status', value: statusFilter.value })
   return list
 })
+
+function firstName(name: string): string {
+  return (name || '').split(' ')[0] || ''
+}
+
+function lastName(name: string): string {
+  const parts = (name || '').split(' ')
+  return parts.slice(1).join(' ') || ''
+}
 
 function getInitials(name: string): string {
   return name
@@ -294,13 +338,17 @@ function formatStatus(status?: string): string {
   return status.charAt(0).toUpperCase() + status.slice(1)
 }
 
-function fetchPage({ page }: { page: number }): void {
+async function fetchPage({ page }: { page: number }): Promise<void> {
   const params: Record<string, string | number> = { page, per_page: 15 }
   if (searchQuery.value) params.search = searchQuery.value
   if (batchFilter.value) params.batch_id = batchFilter.value
   if (tutorFilter.value) params.tutor_id = tutorFilter.value
   if (statusFilter.value) params.status = statusFilter.value
-  store.fetchStudents(params as { per_page?: number; page?: number; search?: string })
+  try {
+    await store.fetchStudents(params as { per_page?: number; page?: number; search?: string })
+  } catch {
+    // error is already set in store
+  }
 }
 
 const { setPage, resetPage } = usePagination(fetchPage, {
@@ -345,6 +393,50 @@ async function handleConfirm(): Promise<void> {
     await store.deleteStudent(deleteTargetId!)
     toast.success('Student deleted successfully.')
   })
+}
+
+const showImportModal = ref(false)
+const showFormModal = ref(false)
+const editingStudentId = ref<number | undefined>(undefined)
+
+function closeFormModal() {
+  showFormModal.value = false
+  editingStudentId.value = undefined
+}
+
+function onStudentSaved() {
+  closeFormModal()
+  toast.success(editingStudentId.value ? 'Student updated successfully.' : 'Student created successfully.')
+}
+
+async function exportPdf() {
+  try {
+    const blob = await studentService.exportPdf()
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `students-${new Date().toISOString().slice(0, 10)}.pdf`
+    a.click()
+    window.URL.revokeObjectURL(url)
+    toast.success('PDF exported successfully.')
+  } catch {
+    toast.error('Failed to export PDF.')
+  }
+}
+
+async function exportExcel() {
+  try {
+    const blob = await studentService.exportExcel()
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `students-${new Date().toISOString().slice(0, 10)}.xlsx`
+    a.click()
+    window.URL.revokeObjectURL(url)
+    toast.success('Excel exported successfully.')
+  } catch {
+    toast.error('Failed to export Excel.')
+  }
 }
 
 onMounted(() => {

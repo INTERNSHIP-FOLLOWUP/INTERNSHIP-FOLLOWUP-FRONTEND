@@ -32,7 +32,8 @@
             <tr
               class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400"
             >
-              <th class="px-6 py-3.5 font-medium">Name</th>
+              <th class="px-6 py-3.5 font-medium">First Name</th>
+              <th class="px-6 py-3.5 font-medium">Last Name</th>
               <th class="px-6 py-3.5 font-medium">Email</th>
               <th class="px-6 py-3.5 font-medium">Assigned Students</th>
               <th class="px-6 py-3.5 text-right font-medium">Actions</th>
@@ -41,7 +42,7 @@
           <tbody class="divide-y divide-slate-50">
             <!-- Loading -->
             <tr v-if="store.loading && tutors.length === 0">
-              <td colspan="4" class="px-6 py-16">
+              <td colspan="5" class="px-6 py-16">
                 <div class="flex flex-col items-center justify-center text-center">
                   <svg
                     class="h-8 w-8 animate-spin text-primary-500"
@@ -69,7 +70,7 @@
 
             <!-- Empty -->
             <tr v-else-if="tutors.length === 0">
-              <td colspan="4" class="px-6 py-16">
+              <td colspan="5" class="px-6 py-16">
                 <div class="flex flex-col items-center justify-center text-center">
                   <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50">
                     <svg
@@ -111,8 +112,11 @@
                   >
                     {{ getInitials(tutor.name) }}
                   </div>
-                  <span class="font-semibold text-slate-900">{{ tutor.name }}</span>
+                  <span class="font-semibold text-slate-900">{{ tutor.first_name }}</span>
                 </div>
+              </td>
+              <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">
+                {{ tutor.last_name }}
               </td>
               <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-500">
                 {{ tutor.email }}

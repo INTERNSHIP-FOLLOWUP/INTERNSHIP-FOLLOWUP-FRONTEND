@@ -6,15 +6,42 @@
         <h1 class="text-2xl font-bold tracking-tight text-slate-900">Students</h1>
         <p class="mt-1 text-sm text-slate-500">Manage and monitor all enrolled students across batches.</p>
       </div>
-      <button
-        @click="$emit('add')"
-        class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary-500/20 transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md hover:shadow-primary-500/25 active:scale-95"
-      >
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-        </svg>
-        Add Student
-      </button>
+      <div class="flex items-center gap-2">
+        <button @click="$emit('import')"
+          class="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-indigo-200 hover:bg-slate-50">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          Import
+        </button>
+        <button @click="$emit('export-pdf')"
+          class="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-indigo-200 hover:bg-slate-50">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          PDF
+        </button>
+        <button @click="$emit('export-excel')"
+          class="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-emerald-200 hover:bg-emerald-50">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Excel
+        </button>
+        <button type="button" @click="$emit('cancel')"
+          class="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50">
+          Cancel
+        </button>
+        <button
+          @click="$emit('add')"
+          class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary-500/20 transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md hover:shadow-primary-500/25 active:scale-95"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Student
+        </button>
+      </div>
     </div>
 
     <!-- Stats -->
@@ -98,32 +125,35 @@
         <table class="w-full text-left text-sm">
           <thead>
             <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400">
-              <th class="px-6 py-3.5 font-medium">Student</th>
+              <th class="px-6 py-3.5 font-medium">First Name</th>
+              <th class="px-6 py-3.5 font-medium">Last Name</th>
               <th class="px-6 py-3.5 font-medium">Email</th>
               <th class="px-6 py-3.5 font-medium">Batch</th>
               <th class="px-6 py-3.5 font-medium">Status</th>
+              <th class="px-6 py-3.5 font-medium">Profile</th>
               <th class="px-6 py-3.5 text-right font-medium">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
             <tr v-for="student in store.students" :key="student.id" class="transition-colors hover:bg-slate-50/50">
-              <td class="whitespace-nowrap px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-50 text-xs font-bold text-primary-600">
-                    {{ getInitials(student.name) }}
-                  </div>
-                  <span class="font-semibold text-slate-900">{{ student.name }}</span>
-                </div>
-              </td>
+              <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.first_name }}</td>
+              <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.last_name }}</td>
               <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-500">{{ student.email }}</td>
               <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                {{ student.batch?.batch_name || student.batch?.name || student.batch || '—' }}
+                {{ (student.batch && typeof student.batch === 'object') ? (student.batch.batch_name ?? student.batch.name ?? '—') : (student.batch || '—') }}
               </td>
               <td class="whitespace-nowrap px-6 py-4">
                 <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold" :class="statusBadgeClass(student.status)">
                   <span class="h-1.5 w-1.5 rounded-full" :class="statusDotClass(student.status)" />
                   {{ formatStatus(student.status) }}
                 </span>
+              </td>
+              <td class="whitespace-nowrap px-6 py-4">
+                <router-link v-if="student.user_id" :to="`/admin/student-profile/${student.user_id}`"
+                  class="rounded-lg px-3 py-1.5 text-xs font-bold text-blue-600 transition-all hover:bg-blue-50">
+                  Profile
+                </router-link>
+                <span v-else class="text-xs text-slate-400">—</span>
               </td>
               <td class="whitespace-nowrap px-6 py-4 text-right">
                 <div class="flex items-center justify-end gap-1">
@@ -222,7 +252,11 @@ import type { Student } from '@/types/student'
 const emit = defineEmits<{
   view: [id: number]
   add: []
+  cancel: []
   delete: [id: number]
+  import: []
+  'export-pdf': []
+  'export-excel': []
 }>()
 
 const deletingTarget = ref<Student | null>(null)
@@ -288,6 +322,15 @@ const visiblePages = computed(() => {
   pages.push(last)
   return pages
 })
+
+function firstName(name: string): string {
+  return (name || '').split(' ')[0] || ''
+}
+
+function lastName(name: string): string {
+  const parts = (name || '').split(' ')
+  return parts.slice(1).join(' ') || ''
+}
 
 function getInitials(name: string): string {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)

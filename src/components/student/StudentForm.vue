@@ -9,11 +9,6 @@
           {{ isEdit ? 'Update the student record below.' : 'Fill in the details to register a new student.' }}
         </p>
       </div>
-      <button type="button" @click="$router.back()"
-        class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50">
-        Cancel
-      </button>
-    </div>
     </div>
 
     <!-- Photo Upload -->
@@ -207,6 +202,10 @@
 
     <!-- Actions -->
     <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-5">
+      <button type="button" @click="$emit('cancel')"
+        class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
+        Cancel
+      </button>
       <button
         type="submit"
         :disabled="submitting"
@@ -260,8 +259,9 @@ const tutorStore = useTutorStore()
 
 const isEdit = computed(() => !!props.studentId)
 
-const form = reactive<StudentFormData>({
+const form = reactive<StudentFormData & { status: string; photo: File | null }>({
   student_code: '',
+  name: '',
   first_name: '',
   last_name: '',
   email: '',
@@ -397,23 +397,22 @@ async function handleSubmit(): Promise<void> {
   formError.value = ''
 
   try {
-    const basePayload: StudentFormData = {
+    const basePayload: StudentFormData & Record<string, unknown> = {
       ...form,
       name: `${form.first_name} ${form.last_name}`.trim(),
     }
-    delete (basePayload as Record<string, unknown>).first_name
-    delete (basePayload as Record<string, unknown>).last_name
 
     if (basePayload.photo === null && isEdit.value) {
       basePayload.photo = originalPhoto.value || null
     }
 
+    if (isEdit.value) {
+      delete basePayload.password
+      delete basePayload.password_confirmation
+    }
+
     const result = isEdit.value
-      ? await studentStore.updateStudent(props.studentId!, {
-          ...basePayload,
-          password: undefined,
-          password_confirmation: undefined,
-        })
+      ? await studentStore.updateStudent(props.studentId!, basePayload)
       : await studentStore.createStudent(basePayload)
 
     emit('saved', result)
@@ -445,9 +444,8 @@ function populateForm(): void {
   if (!s) return
 
   form.student_code = s.student_code || ''
-  const nameParts = (s.name || '').split(' ')
-  form.first_name = nameParts[0] || ''
-  form.last_name = nameParts.slice(1).join(' ') || ''
+  form.first_name = s.first_name || ''
+  form.last_name = s.last_name || ''
   form.email = s.email || ''
   form.gender = s.gender || ''
   form.phone = s.phone || ''

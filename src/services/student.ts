@@ -60,4 +60,20 @@ export const studentService = {
     const response = await api.delete<{ message: string }>(`/admin/students/${id}`)
     return response.data
   },
+
+  async exportPdf(params?: Record<string, string | number>): Promise<Blob> {
+    const response = await api.get('/admin/students/export/pdf', {
+      params,
+      responseType: 'blob',
+    })
+    return response.data
+  },
+
+  async exportExcel(params?: Record<string, string | number>): Promise<Blob> {
+    const response = await api.get('/admin/students/export/excel', {
+      params,
+      responseType: 'blob',
+    })
+    return response.data
+  },
 }

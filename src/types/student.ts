@@ -2,6 +2,8 @@ import type { UserRole } from '@/types/auth'
 
 export interface Student {
   id: number
+  first_name?: string
+  last_name?: string
   name: string
   email: string
   role: UserRole
@@ -22,6 +24,8 @@ export interface Student {
 
 export interface StudentFormData {
   student_code: string
+  first_name: string
+  last_name: string
   name: string
   email: string
   gender: string

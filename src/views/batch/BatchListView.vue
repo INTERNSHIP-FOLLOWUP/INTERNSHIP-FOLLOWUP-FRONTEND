@@ -7,15 +7,33 @@
           Manage cohort batches and student enrollment.
         </p>
       </div>
-      <button
-        @click="openCreate"
-        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95"
-      >
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        Create Batch
-      </button>
+      <div class="flex items-center gap-2">
+        <button @click="exportPdf(selectedBatch)"
+          :disabled="!selectedBatch"
+          class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          Export PDF
+        </button>
+        <button @click="exportExcel(selectedBatch)"
+          :disabled="!selectedBatch"
+          class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Export Excel
+        </button>
+        <button
+          @click="openCreate"
+          class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Create Batch
+        </button>
+      </div>
     </div>
 
     <div
@@ -106,7 +124,9 @@
               <tr
                 v-for="batch in filteredBatches"
                 :key="batch.id"
-                class="hover:bg-slate-50/30 transition-colors dark:hover:bg-slate-800/30"
+                @click="selectBatch(batch)"
+                class="cursor-pointer transition-colors"
+                :class="selectedBatch?.id === batch.id ? 'bg-indigo-50/50 dark:bg-indigo-900/20' : 'hover:bg-slate-50/30 dark:hover:bg-slate-800/30'"
               >
                 <td class="whitespace-nowrap px-5 py-4">
                   <div class="flex items-center gap-3">
@@ -151,7 +171,9 @@
           <div
             v-for="batch in filteredBatches"
             :key="batch.id"
-            class="px-4 py-4 hover:bg-slate-50/30 transition-colors dark:hover:bg-slate-800/30"
+            @click="selectBatch(batch)"
+            class="px-4 py-4 cursor-pointer transition-colors"
+            :class="selectedBatch?.id === batch.id ? 'bg-indigo-50/50 dark:bg-indigo-900/20' : 'hover:bg-slate-50/30 dark:hover:bg-slate-800/30'"
           >
             <div class="flex items-start justify-between gap-3">
               <div class="flex items-center gap-3 min-w-0">
@@ -218,7 +240,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useBatchStore } from '@/stores/batchStore'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
-import type { Batch } from '@/services/batch'
+import { batchService, type Batch } from '@/services/batch'
 import BatchForm from './BatchForm.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
@@ -229,6 +251,7 @@ const confirm = useConfirmDialog()
 const searchQuery = ref('')
 const showForm = ref(false)
 const editingBatch = ref<Batch | null>(null)
+const selectedBatch = ref<Batch | null>(null)
 
 const confirmMessage = computed(() =>
   `Are you sure you want to delete "${confirm.title.value}"? This action cannot be undone.`
@@ -313,6 +336,42 @@ async function handleConfirmDelete() {
       toast.success(`Batch "${deleteTarget!.batch_name}" deleted successfully.`)
     }
   })
+}
+
+async function exportPdf(batch: Batch | null) {
+  if (!batch) return
+  try {
+    const blob = await batchService.exportPdf(batch.id)
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `batch-${batch.batch_name}-students.pdf`
+    a.click()
+    window.URL.revokeObjectURL(url)
+    toast.success('PDF exported successfully.')
+  } catch {
+    toast.error('Failed to export PDF.')
+  }
+}
+
+async function exportExcel(batch: Batch | null) {
+  if (!batch) return
+  try {
+    const blob = await batchService.exportExcel(batch.id)
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `batch-${batch.batch_name}-students.xlsx`
+    a.click()
+    window.URL.revokeObjectURL(url)
+    toast.success('Excel exported successfully.')
+  } catch {
+    toast.error('Failed to export Excel.')
+  }
+}
+
+function selectBatch(batch: Batch) {
+  selectedBatch.value = selectedBatch.value?.id === batch.id ? null : batch
 }
 
 onMounted(fetchBatches)

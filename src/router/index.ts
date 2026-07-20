@@ -140,6 +140,12 @@ const router = createRouter({
           meta: { adminOnly: true, title: 'Edit Assignment' } as AppRouteMeta,
         },
         {
+          path: 'feedback',
+          name: 'AdminFeedback',
+          component: () => import('@/views/company/AdminCompanyFeedbackView.vue'),
+          meta: { title: 'Company Feedback' } as AppRouteMeta,
+        },
+        {
           path: 'reports',
           name: 'AdminReports',
           component: () => import('@/views/report/ReportGenerationView.vue'),

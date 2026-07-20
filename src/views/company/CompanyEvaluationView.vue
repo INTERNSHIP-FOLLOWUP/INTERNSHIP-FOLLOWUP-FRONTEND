@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="space-y-6">
     <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
@@ -13,13 +13,14 @@
           <div class="text-sm text-gray-600">Loading...</div>
         </div>
       </div>
-      <div
-        v-else-if="error"
-        class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3"
-      >
-        <p class="text-sm text-rose-600">{{ error }}</p>
-      </div>
       <div v-else>
+        <div
+          v-if="formError"
+          class="mb-5 rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3"
+        >
+          <p class="text-sm text-rose-600">{{ formError }}</p>
+        </div>
+
         <form class="max-w-xl space-y-5" @submit.prevent="submit">
           <label class="block space-y-1">
             <span class="text-sm font-medium text-gray-700"
@@ -29,7 +30,7 @@
               v-model="form.student_id"
               class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
             >
-              <option value="" disabled>Select student</option>
+              <option value="0" disabled>Select student</option>
               <option v-for="student in students" :key="student.id" :value="student.id">
                 {{ student.name }}
               </option>
@@ -50,7 +51,6 @@
                 placeholder="1-100"
               />
             </label>
-
             <label class="block space-y-1">
               <span class="text-sm font-medium text-gray-700"
                 >Communication <span class="text-rose-500">*</span></span
@@ -64,7 +64,6 @@
                 placeholder="1-100"
               />
             </label>
-
             <label class="block space-y-1">
               <span class="text-sm font-medium text-gray-700"
                 >Professionalism <span class="text-rose-500">*</span></span
@@ -78,7 +77,6 @@
                 placeholder="1-100"
               />
             </label>
-
             <label class="block space-y-1">
               <span class="text-sm font-medium text-gray-700"
                 >Attendance <span class="text-rose-500">*</span></span
@@ -108,7 +106,7 @@
             <button
               type="button"
               class="rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
-              @click="reset"
+              @click="resetForm"
             >
               Reset
             </button>
@@ -123,20 +121,83 @@
         </form>
       </div>
     </div>
+
+    <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+      <div class="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900">Submitted Evaluations</h2>
+          <p class="mt-1 text-sm text-gray-500">Evaluations you have submitted.</p>
+        </div>
+      </div>
+
+      <div v-if="loadingEvaluations" class="flex items-center justify-center py-8">
+        <div class="text-sm text-gray-600">Loading...</div>
+      </div>
+
+      <div v-else-if="!submittedEvaluations.length" class="py-8 text-center text-sm text-gray-500">
+        No evaluations submitted yet.
+      </div>
+
+      <div v-else class="space-y-3">
+        <div
+          v-for="item in submittedEvaluations"
+          :key="item.id"
+          class="rounded-xl border border-gray-100 bg-gray-50/50 p-4"
+        >
+          <div class="mb-2 flex items-start justify-between gap-3">
+            <div>
+              <h3 class="text-sm font-semibold text-gray-900">
+                {{ item.student?.name || 'Student #' + item.student_id }}
+              </h3>
+              <p class="mt-0.5 text-xs text-gray-500">{{ formatDate(item.created_at) }}</p>
+            </div>
+            <span
+              class="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold"
+              :class="scoreBadge(item.overall_score)"
+            >
+              {{ item.overall_score }}/100
+            </span>
+          </div>
+          <div class="grid grid-cols-4 gap-2">
+            <div class="text-center">
+              <p class="text-[10px] text-gray-400">Technical</p>
+              <p class="text-xs font-semibold text-gray-800">{{ item.technical_skill }}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-[10px] text-gray-400">Communication</p>
+              <p class="text-xs font-semibold text-gray-800">{{ item.communication }}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-[10px] text-gray-400">Professionalism</p>
+              <p class="text-xs font-semibold text-gray-800">{{ item.professionalism }}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-[10px] text-gray-400">Attendance</p>
+              <p class="text-xs font-semibold text-gray-800">{{ item.attendance }}</p>
+            </div>
+          </div>
+          <p v-if="item.feedback" class="mt-2 text-xs text-gray-600">
+            "{{ item.feedback }}"
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useCompanyStore } from '@/stores/company'
-import type { CompanyEvaluationPayload } from '@/types/company'
+import type { CompanyEvaluationPayload, CompanyEvaluationItem } from '@/types/company'
 
 const store = useCompanyStore()
 
 const students = ref<{ id: number; name: string }[]>([])
+const submittedEvaluations = ref<CompanyEvaluationItem[]>([])
 const submitting = ref(false)
 const loading = ref(false)
-const error = ref<string | null>(null)
+const loadingEvaluations = ref(false)
+const formError = ref<string | null>(null)
 
 const form = reactive<CompanyEvaluationPayload>({
   student_id: 0,
@@ -149,7 +210,7 @@ const form = reactive<CompanyEvaluationPayload>({
 
 async function loadStudents() {
   loading.value = true
-  error.value = null
+  formError.value = null
   try {
     const items = await store.fetchStudents()
     const source = Array.isArray(items) ? items : []
@@ -157,10 +218,22 @@ async function loadStudents() {
       id: Number(item?.id ?? 0),
       name: String(item?.name ?? item?.student_name ?? 'Student'),
     }))
-  } catch (e) {
-    error.value = 'Failed to load students'
+  } catch {
+    formError.value = 'Failed to load students'
   } finally {
     loading.value = false
+  }
+}
+
+async function loadEvaluations() {
+  loadingEvaluations.value = true
+  try {
+    const items = await store.fetchEvaluations()
+    submittedEvaluations.value = Array.isArray(items) ? items : []
+  } catch {
+    // silently fail
+  } finally {
+    loadingEvaluations.value = false
   }
 }
 
@@ -176,12 +249,12 @@ function validate(): string | null {
 async function submit() {
   const validationError = validate()
   if (validationError) {
-    error.value = validationError
+    formError.value = validationError
     return
   }
 
   submitting.value = true
-  error.value = null
+  formError.value = null
   try {
     await store.submitEvaluation({
       student_id: form.student_id,
@@ -191,23 +264,43 @@ async function submit() {
       attendance: form.attendance,
       feedback: form.feedback || null,
     })
-    reset()
+    resetForm()
+    await loadEvaluations()
   } catch (e: any) {
-    error.value = e?.response?.data?.message || e?.message || 'Failed to submit evaluation'
+    formError.value = e?.response?.data?.message || e?.message || 'Failed to submit evaluation'
   } finally {
     submitting.value = false
   }
 }
 
-function reset() {
+function resetForm() {
   form.student_id = 0
   form.technical_skill = 0
   form.communication = 0
   form.professionalism = 0
   form.attendance = 0
   form.feedback = ''
-  error.value = null
+  formError.value = null
 }
 
-loadStudents()
+function formatDate(dateStr?: string) {
+  if (!dateStr) return ''
+  try {
+    const d = new Date(dateStr)
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+  } catch {
+    return dateStr.slice(0, 10)
+  }
+}
+
+function scoreBadge(score: number) {
+  if (score >= 80) return 'bg-emerald-50 text-emerald-700'
+  if (score >= 60) return 'bg-amber-50 text-amber-700'
+  return 'bg-rose-50 text-rose-700'
+}
+
+onMounted(() => {
+  loadStudents()
+  loadEvaluations()
+})
 </script>

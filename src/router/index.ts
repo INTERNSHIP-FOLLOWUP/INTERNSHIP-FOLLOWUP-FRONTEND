@@ -231,6 +231,12 @@ const router = createRouter({
           meta: { title: 'Issues' },
         },
         {
+          path: 'messages',
+          name: 'TutorMessages',
+          component: () => import('@/views/company/MessageView.vue'),
+          meta: { title: 'Messages' },
+        },
+        {
           path: 'profile',
           name: 'TutorProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
@@ -327,6 +333,12 @@ const router = createRouter({
           name: 'CompanyInternships',
           component: () => import('@/views/company/CompanyInternshipInfoView.vue'),
           meta: { title: 'Internship Information' },
+        },
+        {
+          path: 'messages',
+          name: 'CompanyMessages',
+          component: () => import('@/views/company/MessageView.vue'),
+          meta: { title: 'Messages' },
         },
         {
           path: 'profile',

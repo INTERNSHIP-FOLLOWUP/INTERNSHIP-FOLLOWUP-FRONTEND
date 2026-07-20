@@ -38,12 +38,6 @@
 <script setup lang="ts">
 let timeout: ReturnType<typeof setTimeout>
 
-const props = defineProps<{
-  modelValue: string
-  placeholder?: string
-  delay?: number
-}>()
-
 const props = withDefaults(defineProps<{
   modelValue: string
   placeholder?: string

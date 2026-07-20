@@ -204,15 +204,22 @@
       </div>
       <div v-if="r.assignments.length > pageSize" class="border-t border-slate-100 px-5 py-3">
         <div class="flex items-center justify-between">
-            <span class="text-xs text-slate-500">
-            Showing {{ ((currentPage - 1) * pageSize) + 1 }} to {{ Math.min(currentPage * pageSize, r.assignments.length) }} of {{ r.assignments.length }}
+          <span class="text-xs text-slate-500">
+            Showing {{ ((currentPage - 1) * pageSize) + 1 }}-{{ Math.min(currentPage * pageSize, r.assignments.length) }} of {{ r.assignments.length }}
           </span>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1">
             <button @click="currentPage = Math.max(1, currentPage - 1)" :disabled="currentPage === 1"
-              class="rounded-lg border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 transition-all hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
-            <span class="text-xs text-slate-500">Page {{ currentPage }} of {{ totalPages }}</span>
+              class="rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition-all hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">&lsaquo;</button>
+            <template v-for="p in visiblePages" :key="p">
+              <span v-if="p === '...'" class="px-1 text-xs text-slate-400">...</span>
+              <button v-else @click="currentPage = p"
+                class="min-w-[28px] rounded-lg border px-2 py-1 text-xs font-bold transition-all"
+                :class="p === currentPage
+                  ? 'border-primary-500 bg-primary-500 text-white'
+                  : 'border-slate-200 text-slate-600 hover:bg-slate-50'">{{ p }}</button>
+            </template>
             <button @click="currentPage = Math.min(totalPages, currentPage + 1)" :disabled="currentPage === totalPages"
-              class="rounded-lg border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 transition-all hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+              class="rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition-all hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">&rsaquo;</button>
           </div>
         </div>
       </div>
@@ -255,6 +262,20 @@
         </div>
       </div>
     </Teleport>
+
+    <div v-if="!loading && !hasData && !fetched" class="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 py-16 text-center">
+      <svg class="mx-auto h-12 w-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <p class="mt-4 text-sm font-semibold text-slate-500">Ready to generate a report</p>
+      <p class="mt-1 text-xs text-slate-400">Optionally set filters above, then click <strong>Generate Report</strong> to get started. After the first run, reports auto-refresh when filters change.</p>
+      <button @click="fetchReport" :disabled="loading" class="mt-5 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-primary-700 active:scale-95">
+        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        Generate Report
+      </button>
+    </div>
 
     <div v-if="!loading && !hasData && fetched" class="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 py-16 text-center">
       <svg class="mx-auto h-10 w-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -361,11 +382,11 @@ const activeFilterCount = computed(() =>
 const activeFilterBadges = computed(() => {
   const badges: Array<{ key: string; label: string }> = []
   if (filters.batch_id) {
-    const b = batches.value.find(x => String(x.id) === filters.batch_id)
-    badges.push({ key: 'batch_id', label: `Batch: ${b ? b.batch_name : filters.batch_id}` })
+    const b = batches.value.find(x => x.id === Number(filters.batch_id))
+    badges.push({ key: 'batch_id', label: `Batch: ${b ? `${b.batch_name} (${b.year})` : filters.batch_id}` })
   }
   if (filters.company_id) {
-    const c = companies.value.find(x => String(x.id) === filters.company_id)
+    const c = companies.value.find(x => x.id === Number(filters.company_id))
     badges.push({ key: 'company_id', label: `Company: ${c ? c.companyName : filters.company_id}` })
   }
   if (filters.tutor_id) {
@@ -387,6 +408,19 @@ const paginatedAssignments = computed(() => {
 const totalPages = computed(() =>
   report.value?.assignments ? Math.ceil(report.value.assignments.length / pageSize.value) : 0
 )
+
+const visiblePages = computed(() => {
+  const total = totalPages.value
+  const current = currentPage.value
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+  const pages: (number | string)[] = []
+  if (current > 3) pages.push(1, '...')
+  const start = Math.max(1, current - 1)
+  const end = Math.min(total, current + 1)
+  for (let i = start; i <= end; i++) pages.push(i)
+  if (current < total - 2) pages.push('...', total)
+  return pages
+})
 
 function buildParams(): Record<string, string> {
   const params: Record<string, string> = {}
@@ -549,6 +583,8 @@ watch(() => [filters.batch_id, filters.company_id, filters.tutor_id, filters.sta
 
 onMounted(() => {
   loadFilterOptions()
-  loadSavedReport()
+  if (fetched.value) {
+    fetchReport()
+  }
 })
 </script>

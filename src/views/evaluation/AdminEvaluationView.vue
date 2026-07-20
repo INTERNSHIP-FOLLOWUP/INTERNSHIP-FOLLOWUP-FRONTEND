@@ -94,12 +94,27 @@
               </div>
               <div>
                 <h3 class="text-sm font-semibold text-gray-900">{{ item.student?.name || 'Student #' + item.student_id }}</h3>
-                <p class="mt-0.5 flex items-center gap-1.5 text-xs font-medium text-gray-500">
-                  <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                  {{ item.company?.company_name || 'Company #' + item.company_id }}
-                </p>
+                <div class="mt-0.5 flex items-center gap-1.5">
+                  <div
+                    v-if="item.company?.company_image_url"
+                    class="h-5 w-5 shrink-0 overflow-hidden rounded border border-gray-200 bg-white"
+                  >
+                    <img
+                      :src="item.company.company_image_url"
+                      :alt="item.company.company_name"
+                      class="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div
+                    v-else
+                    class="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-gray-100 text-[8px] font-bold text-gray-500"
+                  >
+                    {{ companyInitials(item.company?.company_name) }}
+                  </div>
+                  <span class="text-xs font-medium text-gray-500">
+                    {{ item.company?.company_name || 'Company #' + item.company_id }}
+                  </span>
+                </div>
               </div>
             </div>
             <div class="flex shrink-0 flex-col items-end gap-1">
@@ -199,6 +214,7 @@ interface EvaluationItem {
   company?: {
     id: number
     company_name: string
+    company_image_url?: string | null
   }
 }
 
@@ -305,6 +321,16 @@ function avatarBg(name?: string) {
 }
 
 function studentInitials(name?: string) {
+  if (!name) return '?'
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}
+
+function companyInitials(name?: string) {
   if (!name) return '?'
   return name
     .split(' ')

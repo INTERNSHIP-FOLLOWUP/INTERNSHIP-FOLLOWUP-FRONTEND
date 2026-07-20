@@ -87,9 +87,11 @@ export interface CompanyEvaluationItem {
 
 export interface CompanyFeedbackItem {
   id: number
+  company_id: number
+  title: string
   message: string
-  status?: string | null
   created_at?: string
+  updated_at?: string
 }
 
 export interface CompanyEvaluationPayload {
@@ -102,6 +104,6 @@ export interface CompanyEvaluationPayload {
 }
 
 export interface CompanyFeedbackPayload {
+  title: string
   message: string
-  status?: string | null
 }

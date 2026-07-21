@@ -328,7 +328,7 @@
               <select
                 v-model="formModal.form.status"
                 class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
-                :disabled="!allowedEditableStatuses.includes('Select status') || !canReopenIssues || (formModal.mode === 'update' && closedOnlyView(formModal.item!))"
+                :disabled="!allowedEditableStatuses.includes(formModal.form.status as Issue['status']) || !canReopenIssues || (formModal.mode === 'update' && closedOnlyView(formModal.item!))"
               >
                 <option value="">Select status</option>
                 <option v-for="status in allowedEditableStatuses" :key="status" :value="status">

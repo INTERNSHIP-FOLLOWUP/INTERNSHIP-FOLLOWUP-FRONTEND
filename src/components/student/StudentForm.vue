@@ -455,8 +455,8 @@ function populateForm(): void {
   form.password = ''
   form.password_confirmation = ''
   form.photo = null
-  originalPhoto.value = s.photo_url || s.photo
-  photoPreview.value = s.photo_url || s.photo
+  originalPhoto.value = s.avatar
+  photoPreview.value = s.avatar
 }
 
 onMounted(async () => {

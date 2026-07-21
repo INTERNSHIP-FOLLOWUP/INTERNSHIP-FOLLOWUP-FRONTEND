@@ -212,7 +212,7 @@
               class="rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition-all hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">&lsaquo;</button>
             <template v-for="p in visiblePages" :key="p">
               <span v-if="p === '...'" class="px-1 text-xs text-slate-400">...</span>
-              <button v-else @click="currentPage = p"
+              <button v-else @click="currentPage = Number(p)"
                 class="min-w-[28px] rounded-lg border px-2 py-1 text-xs font-bold transition-all"
                 :class="p === currentPage
                   ? 'border-primary-500 bg-primary-500 text-white'

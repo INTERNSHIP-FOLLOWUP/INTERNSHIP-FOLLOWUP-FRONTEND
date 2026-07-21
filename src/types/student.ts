@@ -13,10 +13,15 @@ export interface Student {
   phone?: string
   batch_id?: number | null
   tutor_id?: number | null
-  batch?: string
-  tutor?: string
+  batch?: string | { batch_name?: string; name?: string }
+  tutor?: string | { name?: string }
   status?: string
   students_count?: number
+  user_id?: number
+  position?: string
+  company_name?: string
+  photo_url?: string
+  photo?: string
   created_at?: string
   updated_at?: string
   deleted_at?: string | null
@@ -35,6 +40,11 @@ export interface StudentFormData {
   password?: string
   password_confirmation?: string
   avatar?: File | string | null
+  photo?: File | string | null
+}
+
+export interface StudentSingleResponse {
+  data: Student
 }
 
 export interface Batch {

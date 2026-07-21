@@ -139,12 +139,12 @@
                 </td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <span v-if="student.batch" class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
-                    {{ student.batch.batch_name || student.batch.name || student.batch }}
+                    {{ getBatchDisplay(student.batch) }}
                   </span>
                   <span v-else class="text-slate-300">—</span>
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                  {{ student.tutor?.name || student.tutor || '—' }}
+                  {{ getTutorDisplay(student.tutor) }}
                 </td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold" :class="statusClass(student.status)">
@@ -188,8 +188,8 @@
           </div>
           <div class="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-500">
             <div><span class="font-medium text-slate-700">Code:</span> {{ student.student_code || '—' }}</div>
-            <div><span class="font-medium text-slate-700">Batch:</span> {{ student.batch?.batch_name || student.batch?.name || student.batch || '—' }}</div>
-            <div><span class="font-medium text-slate-700">Tutor:</span> {{ student.tutor?.name || student.tutor || '—' }}</div>
+            <div><span class="font-medium text-slate-700">Batch:</span> {{ getBatchDisplay(student.batch) }}</div>
+            <div><span class="font-medium text-slate-700">Tutor:</span> {{ getTutorDisplay(student.tutor) }}</div>
           </div>
           <div class="mt-3 flex items-center gap-2">
             <router-link :to="`/admin/users/${student.id}`" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-center text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50">
@@ -331,6 +331,16 @@ function statusDotClass(status?: string): string {
     default:
       return 'bg-slate-400'
   }
+}
+
+function getBatchDisplay(batch: string | { batch_name?: string; name?: string } | undefined): string {
+  if (typeof batch === 'object' && batch !== null) return batch.batch_name ?? batch.name ?? '—'
+  return batch || '—'
+}
+
+function getTutorDisplay(tutor: string | { name?: string } | undefined): string {
+  if (typeof tutor === 'object' && tutor !== null) return tutor.name ?? '—'
+  return tutor || '—'
 }
 
 function formatStatus(status?: string): string {

@@ -187,7 +187,7 @@ async function handleUpdateProfile(): Promise<void> {
     const axiosErr = err as { response?: { data?: { errors?: Record<string, string[]>; message?: string } } }
     if (axiosErr.response?.data?.errors) {
       for (const [key, msgs] of Object.entries(axiosErr.response.data.errors)) {
-        profileErrors[key] = msgs[0]
+        profileErrors[key] = msgs[0] ?? ''
       }
     } else {
       profileFormError.value = (err as Error).message || 'Failed to update profile.'
@@ -223,7 +223,7 @@ async function handleChangePassword(): Promise<void> {
     const axiosErr = err as { response?: { data?: { errors?: Record<string, string[]>; message?: string } } }
     if (axiosErr.response?.data?.errors) {
       for (const [key, msgs] of Object.entries(axiosErr.response.data.errors)) {
-        passwordErrors[key] = msgs[0]
+        passwordErrors[key] = msgs[0] ?? ''
       }
     } else {
       passwordFormError.value = (axiosErr.response?.data?.message as string) || 'Failed to change password.'

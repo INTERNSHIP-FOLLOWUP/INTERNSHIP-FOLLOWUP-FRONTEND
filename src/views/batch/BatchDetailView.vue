@@ -173,7 +173,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { batchService, type BatchStatistics } from '@/services/batch'
 import { useStudentStore } from '@/stores/student'
@@ -186,7 +186,7 @@ import type { StudentPaginationMeta } from '@/types/student'
 const route = useRoute()
 const studentStore = useStudentStore()
 const toast = useToastStore()
-const confirm = useConfirmDialog()
+const confirm = reactive(useConfirmDialog())
 
 const batchId = computed(() => Number(route.params.id))
 

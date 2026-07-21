@@ -78,18 +78,6 @@ const router = createRouter({
           redirect: { name: 'AdminAllUsers' },
         },
         {
-          path: 'users/create',
-          name: 'AdminUsersCreate',
-          component: () => import('@/views/user/UserFormView.vue'),
-          meta: { title: 'Create User' } as AppRouteMeta,
-        },
-        {
-          path: 'users/:id/edit',
-          name: 'AdminUsersEdit',
-          component: () => import('@/views/user/UserFormView.vue'),
-          meta: { title: 'Edit User' } as AppRouteMeta,
-        },
-        {
           path: 'students',
           name: 'AdminStudents',
           component: () => import('@/views/user/AdminStudentsView.vue'),

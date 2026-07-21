@@ -199,6 +199,7 @@ export const useCompanyStore = defineStore('company', () => {
       if (raw?.id) {
         const summary = toSummary({
           id: raw.id,
+          role: raw.role ?? null,
           companyName: raw.company_name ?? raw.name ?? '',
           address: raw.address ?? null,
           industry: raw.industry ?? null,
@@ -244,6 +245,7 @@ export const useCompanyStore = defineStore('company', () => {
       if (raw?.id) {
         const summary = toSummary({
           id: raw.id,
+          role: raw.role ?? null,
           companyName: raw.company_name ?? raw.name ?? '',
           address: raw.address ?? null,
           industry: raw.industry ?? null,

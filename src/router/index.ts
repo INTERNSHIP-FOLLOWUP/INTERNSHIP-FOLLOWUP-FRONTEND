@@ -213,13 +213,19 @@ const router = createRouter({
         {
           path: 'students',
           name: 'TutorStudents',
-          component: () => import('@/views/student/StudentDashboardView.vue'),
+          component: () => import('@/views/tutor/TutorStudentListView.vue'),
           meta: { title: 'My Students' },
+        },
+        {
+          path: 'students/:id',
+          name: 'TutorStudentDetail',
+          component: () => import('@/views/tutor/TutorStudentDetailView.vue'),
+          meta: { title: 'Student Details' },
         },
         {
           path: 'worklogs',
           name: 'TutorWorklogs',
-          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
+          component: () => import('@/views/tutor/worklog/TutorWorklogList.vue'),
           meta: { title: 'Worklogs' },
         },
         {

@@ -7,13 +7,21 @@
       @dragleave.prevent="onDragLeave"
       @drop.prevent="onDrop"
     >
-      <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+      <div
+        class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"
+      >
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V8a2 2 0 012-2h6a2 2 0 012 2v8M9 14l3-3 3 3M12 11v9" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M7 16V8a2 2 0 012-2h6a2 2 0 012 2v8M9 14l3-3 3 3M12 11v9"
+          />
         </svg>
       </div>
       <p class="text-sm font-semibold text-slate-700">
-        Drag files here or <button type="button" class="text-indigo-600 hover:underline">browse</button>
+        Drag files here or
+        <button type="button" class="text-indigo-600 hover:underline">browse</button>
       </p>
       <p class="text-xs text-slate-500">Allowed: PDF, DOC/DOCX, PNG/JPG, ZIP</p>
     </div>
@@ -65,10 +73,17 @@
       {{ validationError }}
     </div>
 
-    <div v-if="submitting" class="mt-4 text-xs font-semibold text-slate-500 flex items-center gap-2">
+    <div
+      v-if="submitting"
+      class="mt-4 text-xs font-semibold text-slate-500 flex items-center gap-2"
+    >
       <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+        />
       </svg>
       Uploading...
     </div>
@@ -168,4 +183,3 @@ function clear() {
   emit('update:modelValue', [])
 }
 </script>
-

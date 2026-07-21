@@ -6,7 +6,11 @@
           {{ isEdit ? 'Edit Student' : 'Add Student' }}
         </h2>
         <p class="mt-1 text-sm text-slate-500">
-          {{ isEdit ? 'Update the student record below.' : 'Fill in the details to register a new student.' }}
+          {{
+            isEdit
+              ? 'Update the student record below.'
+              : 'Fill in the details to register a new student.'
+          }}
         </p>
       </div>
     </div>
@@ -238,7 +242,7 @@ import { useStudentStore } from '@/stores/student'
 import { useBatchStore } from '@/stores/batchStore'
 import { useTutorStore } from '@/stores/tutorStore'
 import FormField from '@/components/ui/FormField.vue'
-import type { StudentFormData } from '@/types/student'
+import type { StudentFormData, StudentStatus } from '@/types/student'
 
 const props = withDefaults(
   defineProps<{
@@ -356,6 +360,7 @@ function validateAll(): boolean {
     'tutor_id',
     'status',
   ]
+  if (!isEdit.value) fieldsToValidate.push('password')
   return fieldsToValidate.every((field) => validateField(field))
 }
 
@@ -406,13 +411,8 @@ async function handleSubmit(): Promise<void> {
       basePayload.photo = originalPhoto.value || null
     }
 
-    if (isEdit.value) {
-      delete basePayload.password
-      delete basePayload.password_confirmation
-    }
-
     const result = isEdit.value
-      ? await studentStore.updateStudent(props.studentId!, basePayload)
+      ? await studentStore.updateStudent(props.studentId!, omitPassword(basePayload))
       : await studentStore.createStudent(basePayload)
 
     emit('saved', result)
@@ -451,12 +451,17 @@ function populateForm(): void {
   form.phone = s.phone || ''
   form.batch_id = s.batch_id ?? null
   form.tutor_id = s.tutor_id ?? null
-  form.status = s.status || ''
+  form.status = (s.status || '') as StudentStatus | ''
   form.password = ''
   form.password_confirmation = ''
   form.photo = null
   originalPhoto.value = s.avatar
   photoPreview.value = s.avatar
+}
+
+function omitPassword(payload: StudentFormData & Record<string, unknown>): Record<string, unknown> {
+  const { password, password_confirmation, ...rest } = payload
+  return rest
 }
 
 onMounted(async () => {

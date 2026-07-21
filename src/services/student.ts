@@ -1,5 +1,10 @@
 import api from '@/services/api'
-import type { Student, StudentFormData, StudentListResponse, StudentSingleResponse } from '@/types/student'
+import type {
+  Student,
+  StudentFormData,
+  StudentListResponse,
+  StudentSingleResponse,
+} from '@/types/student'
 
 function toFormData(data: Record<string, unknown>): FormData {
   const fd = new FormData()
@@ -24,7 +29,8 @@ export const studentService = {
     status?: string
   }): Promise<StudentListResponse> {
     const response = await api.get<StudentListResponse>('/admin/students', { params })
-    return response.data
+    const payload = (response.data as any)?.data ?? response.data
+    return { ...response.data, data: Array.isArray(payload) ? payload : [] }
   },
 
   async get(id: number): Promise<Student> {

@@ -1,52 +1,84 @@
-import type { Student } from '@/types/student'
-
-export type WorklogStatus = 'Pending' | 'Reviewed' | 'Approved' | 'Rejected'
-
 export interface Attachment {
   id: number
+  worklog_id: number
+  file_path: string
+  file_type: string
+  file_size: string
   filename: string
-  mime_type?: string
-  size_bytes?: number
   url?: string
+  size_bytes?: number
+  mime_type?: string
+  created_at?: string
+}
+
+export type WorklogStatus = 'Pending' | 'Reviewed' | 'Approved' | 'Rejected' | 'Draft' | 'Submitted'
+
+export interface WorklogStudent {
+  id: number
+  name: string
+  email: string
+  student_code?: string
+  tutor_name?: string
+  company_name?: string
+  position?: string
+  internship_position?: string
+  batch_name?: string
+  phone?: string | null
 }
 
 export interface TutorReview {
-  tutor_name: string
-  reviewed_at?: string
-  feedback: string
-  status: WorklogStatus
-}
-
-export interface WorklogPayload {
-  week_number: number
-  description: string
-  challenges?: string
-  attachments?: Attachment[]
-}
-
-export interface WorklogFilters {
-  page?: number
-  week?: number
+  id?: number
+  tutor_id?: number
+  tutor_name?: string
   status?: WorklogStatus
-  student_id?: number
+  feedback?: string
+  reviewed_at?: string
 }
 
 export interface Worklog {
   id: number
   week_number: number
   description: string
-  challenges?: string
   status: WorklogStatus
-  submitted_at: string
-  attachments: Attachment[]
-  student?: {
-    name: string
-    company_name?: string
-    position?: string
-  } | Student
-  tutor_review?: TutorReview
-
-  // optional backend flag
+  submitted_at?: string
+  created_at?: string
+  updated_at?: string
+  student_id?: number
+  tutor_id?: number
+  challenges?: string
   can_edit?: boolean
+  submission_date?: string
+  student?: WorklogStudent | null
+  tutor_review?: TutorReview | null
+  attachments?: Attachment[]
 }
 
+export interface WorklogPaginationMeta {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+  from?: number
+  to?: number
+  path?: string
+}
+
+export interface WorklogListResponse {
+  data: Worklog[]
+  meta: {
+    pagination?: WorklogPaginationMeta
+  }
+}
+
+export interface WorklogFilters {
+  page?: number
+  status?: WorklogStatus
+  week?: number
+  student_id?: number
+  search?: string
+}
+
+export interface ReviewWorklogPayload {
+  status: WorklogStatus
+  feedback?: string
+}

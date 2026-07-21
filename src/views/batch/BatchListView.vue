@@ -47,7 +47,12 @@
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
           <input
             v-model="searchQuery"
@@ -60,14 +65,33 @@
 
       <div v-if="store.loading" class="flex items-center justify-center py-16">
         <svg class="h-8 w-8 animate-spin text-indigo-500" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          />
         </svg>
       </div>
 
-      <div v-else-if="store.error" class="flex flex-col items-center justify-center py-16 text-center px-4">
+      <div
+        v-else-if="store.error"
+        class="flex flex-col items-center justify-center py-16 text-center px-4"
+      >
         <svg class="h-10 w-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+          />
         </svg>
         <p class="mt-3 text-sm font-semibold text-red-500">{{ store.error }}</p>
         <button
@@ -79,11 +103,26 @@
       </div>
 
       <div v-else-if="filteredBatches.length === 0">
-        <div v-if="searchQuery" class="flex flex-col items-center justify-center py-16 text-center px-4">
-          <svg class="h-10 w-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        <div
+          v-if="searchQuery"
+          class="flex flex-col items-center justify-center py-16 text-center px-4"
+        >
+          <svg
+            class="h-10 w-10 text-slate-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
-          <p class="mt-3 text-sm font-semibold text-slate-400">No batches match "{{ searchQuery }}".</p>
+          <p class="mt-3 text-sm font-semibold text-slate-400">
+            No batches match "{{ searchQuery }}".
+          </p>
           <button
             @click="searchQuery = ''"
             class="mt-2 text-xs font-medium text-indigo-500 hover:text-indigo-600 transition-colors"
@@ -92,8 +131,18 @@
           </button>
         </div>
         <div v-else class="flex flex-col items-center justify-center py-16 text-center px-4">
-          <svg class="h-12 w-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v12a2 2 0 002 2z" />
+          <svg
+            class="h-12 w-12 text-slate-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v12a2 2 0 002 2z"
+            />
           </svg>
           <p class="mt-4 text-sm font-semibold text-slate-400">No batches created yet.</p>
           <p class="mt-1 text-xs text-slate-400">Get started by creating your first batch.</p>
@@ -102,7 +151,12 @@
             class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 active:scale-95"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             Create Batch
           </button>
@@ -113,7 +167,9 @@
         <div class="overflow-x-auto">
           <table class="hidden w-full border-collapse text-left text-sm md:table">
             <thead>
-              <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400 dark:border-slate-800 dark:bg-slate-800/50">
+              <tr
+                class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400 dark:border-slate-800 dark:bg-slate-800/50"
+              >
                 <th class="px-5 py-3.5">Batch Name</th>
                 <th class="px-5 py-3.5">Year</th>
                 <th class="px-5 py-3.5">Students</th>
@@ -135,17 +191,25 @@
                     >
                       {{ getInitials(batch.batch_name) }}
                     </div>
-                    <span class="font-semibold text-slate-900 dark:text-white">{{ batch.batch_name }}</span>
+                    <span class="font-semibold text-slate-900 dark:text-white">{{
+                      batch.batch_name
+                    }}</span>
                   </div>
                 </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400">{{ batch.year }}</td>
+                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400">
+                  {{ batch.year }}
+                </td>
                 <td class="whitespace-nowrap px-5 py-4">
                   <span
                     class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
                     :class="countBadgeClass(batch.students_count)"
                   >
-                    <span class="h-1.5 w-1.5 rounded-full" :class="countDotClass(batch.students_count)" />
-                    {{ batch.students_count ?? 0 }} {{ batch.students_count === 1 ? 'student' : 'students' }}
+                    <span
+                      class="h-1.5 w-1.5 rounded-full"
+                      :class="countDotClass(batch.students_count)"
+                    />
+                    {{ batch.students_count ?? 0 }}
+                    {{ batch.students_count === 1 ? 'student' : 'students' }}
                   </span>
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-right">
@@ -183,7 +247,9 @@
                   {{ getInitials(batch.batch_name) }}
                 </div>
                 <div class="min-w-0">
-                  <p class="text-sm font-semibold text-slate-900 truncate dark:text-white">{{ batch.batch_name }}</p>
+                  <p class="text-sm font-semibold text-slate-900 truncate dark:text-white">
+                    {{ batch.batch_name }}
+                  </p>
                   <p class="text-xs text-slate-500 dark:text-slate-400">Year {{ batch.year }}</p>
                 </div>
               </div>
@@ -191,7 +257,10 @@
                 class="shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold"
                 :class="countBadgeClass(batch.students_count)"
               >
-                <span class="h-1.5 w-1.5 rounded-full" :class="countDotClass(batch.students_count)" />
+                <span
+                  class="h-1.5 w-1.5 rounded-full"
+                  :class="countDotClass(batch.students_count)"
+                />
                 {{ batch.students_count ?? 0 }}
               </span>
             </div>
@@ -214,12 +283,7 @@
       </div>
     </div>
 
-    <BatchForm
-      :show="showForm"
-      :batch="editingBatch"
-      @close="closeForm"
-      @saved="onSaved"
-    />
+    <BatchForm :show="showForm" :batch="editingBatch" @close="closeForm" @saved="onSaved" />
 
     <ConfirmDialog
       :show="confirm.show.value"
@@ -253,8 +317,8 @@ const showForm = ref(false)
 const editingBatch = ref<Batch | null>(null)
 const selectedBatch = ref<Batch | null>(null)
 
-const confirmMessage = computed(() =>
-  `Are you sure you want to delete "${confirm.title.value}"? This action cannot be undone.`
+const confirmMessage = computed(
+  () => `Are you sure you want to delete "${confirm.title.value}"? This action cannot be undone.`,
 )
 
 const storeBatches = computed(() => store.batches as unknown as Batch[])
@@ -263,9 +327,7 @@ const filteredBatches = computed(() => {
   const q = searchQuery.value.toLowerCase().trim()
   if (!q) return storeBatches.value
   return storeBatches.value.filter(
-    (b) =>
-      b.batch_name.toLowerCase().includes(q) ||
-      b.year.toString().includes(q),
+    (b) => b.batch_name.toLowerCase().includes(q) || b.year.toString().includes(q),
   )
 })
 
@@ -281,7 +343,8 @@ function getInitials(name: string): string {
 }
 
 function countBadgeClass(count?: number): string {
-  if (!count || count === 0) return 'bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+  if (!count || count === 0)
+    return 'bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
   if (count <= 5) return 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
   return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
 }

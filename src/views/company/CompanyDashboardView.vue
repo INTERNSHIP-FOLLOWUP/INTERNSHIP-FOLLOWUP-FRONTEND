@@ -378,19 +378,11 @@ async function load() {
       store.fetchStudents(),
       store.fetchEvaluations(),
     ])
-<<<<<<< HEAD
-    stats.value = {
-      activeInternships: Array.isArray(students)
-        ? students.filter((s) => s.status === 'assigned').length
-        : 0,
-      assignedStudents: Array.isArray(students) ? students.length : 0,
-      pendingReviews: Array.isArray(evaluations) ? evaluations.length : 0,
-=======
 
     try {
       await store.fetchProfile()
     } catch {
-      // profile fetch might throw — use empty state
+      // profile fetch might throw; use empty state
     }
 
     const raw = store.currentCompany
@@ -419,7 +411,6 @@ async function load() {
       assignedStudents: Array.isArray(studentsData) ? studentsData.length : 0,
       evaluationsSubmitted: Array.isArray(evaluationsData) ? evaluationsData.length : 0,
       pendingReviews: Array.isArray(evaluationsData) ? 0 : 0,
->>>>>>> a8630a8f5a1455b50aa7311bd9fc7e630492c5a1
     }
   } catch {
     // keep dashboard visible if secondary APIs fail
@@ -429,8 +420,4 @@ async function load() {
 }
 
 onMounted(load)
-</script><｜end▁of▁thinking｜>Let me fix a bug in the script - the `store.fetchStudents()` and `store.fetchEvaluations()` are being called twice:
-
-<｜｜DSML｜｜tool_calls>
-<｜｜DSML｜｜invoke name="edit">
-<｜｜DSML｜｜parameter name="filePath" string="true">C:\PHEM SEREY\VC2\INTERNSHIP-FOLLOWUP-FRONTEND\src\views\company\CompanyDashboardView.vue
+</script>

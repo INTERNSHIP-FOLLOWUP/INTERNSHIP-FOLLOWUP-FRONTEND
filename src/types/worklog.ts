@@ -1,13 +1,16 @@
 import type { Student } from '@/types/student'
 
-export type WorklogStatus = 'Pending' | 'Reviewed' | 'Approved' | 'Rejected'
+export type WorklogStatus = 'Draft' | 'Pending' | 'Reviewed' | 'Approved' | 'Rejected'
 
 export interface Attachment {
   id: number
-  filename: string
+  filename?: string
   mime_type?: string
   size_bytes?: number
   url?: string
+  file_path?: string
+  file_type?: string
+  file_size?: number
 }
 
 export interface TutorReview {

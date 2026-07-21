@@ -394,6 +394,24 @@ async function load() {
       store.fetchStudents(),
       store.fetchEvaluations(),
     ])
+
+    try {
+      await store.fetchProfile()
+    } catch {
+      // profile fetch might throw; use empty state
+    }
+
+    const raw = store.currentCompany
+    if (raw) {
+      displayName.value = raw.name || 'Company'
+      companyProfile.value = {
+        name: raw.name || '',
+        industry: raw.industry || '',
+        contactPerson: raw.contactPerson || '',
+        phone: raw.phone || '',
+      }
+    }
+
     assignedStudents.value = Array.isArray(studentsData) ? studentsData : []
     recentEvaluations.value = Array.isArray(evaluationsData) ? evaluationsData : []
     stats.value = {
@@ -410,8 +428,4 @@ async function load() {
 }
 
 onMounted(load)
-</script><｜end▁of▁thinking｜>Let me fix a bug in the script - the `store.fetchStudents()` and `store.fetchEvaluations()` are being called twice:
-
-<｜｜DSML｜｜tool_calls>
-<｜｜DSML｜｜invoke name="edit">
-<｜｜DSML｜｜parameter name="filePath" string="true">C:\PHEM SEREY\VC2\INTERNSHIP-FOLLOWUP-FRONTEND\src\views\company\CompanyDashboardView.vue
+</script>

@@ -24,7 +24,7 @@
             <p class="text-sm font-semibold text-red-500">{{ store.error }}</p>
         </div>
 
-        <div v-else-if="!store.worklog" class="flex flex-col items-center justify-center py-16 text-center">
+        <div v-else-if="!store.tutorWorklog" class="flex flex-col items-center justify-center py-16 text-center">
             <p class="text-sm font-semibold text-slate-500">Worklog not found.</p>
         </div>
 
@@ -34,15 +34,15 @@
                 <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
                     <div>
                         <p class="text-xs font-semibold text-slate-500">Name</p>
-                        <p class="text-sm font-bold text-slate-900">{{ store.worklog.student?.name || '—' }}</p>
+                        <p class="text-sm font-bold text-slate-900">{{ store.tutorWorklog.student?.name || '—' }}</p>
                     </div>
                     <div>
                         <p class="text-xs font-semibold text-slate-500">Company</p>
-                        <p class="text-sm font-bold text-slate-900">{{ store.worklog.student?.company_name || '—' }}</p>
+                        <p class="text-sm font-bold text-slate-900">{{ (store.tutorWorklog.student as any)?.company_name || '—' }}</p>
                     </div>
                     <div>
                         <p class="text-xs font-semibold text-slate-500">Position</p>
-                        <p class="text-sm font-bold text-slate-900">{{ store.worklog.student?.position || '—' }}</p>
+                        <p class="text-sm font-bold text-slate-900">{{ (store.tutorWorklog.student as any)?.position || '—' }}</p>
                     </div>
                 </div>
             </section>
@@ -52,34 +52,34 @@
                 <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
                     <div>
                         <p class="text-xs font-semibold text-slate-500">Week</p>
-                        <p class="text-sm font-bold text-slate-900">{{ store.worklog.week_number }}</p>
+                        <p class="text-sm font-bold text-slate-900">{{ store.tutorWorklog.week_number }}</p>
                     </div>
                     <div>
                         <p class="text-xs font-semibold text-slate-500">Submitted</p>
-                        <p class="text-sm font-bold text-slate-900">{{ formatDate(store.worklog.submitted_at) }}</p>
+                        <p class="text-sm font-bold text-slate-900">{{ formatDate(store.tutorWorklog.submitted_at) }}</p>
                     </div>
                     <div>
                         <p class="text-xs font-semibold text-slate-500">Current Status</p>
                         <div class="mt-1">
-                            <WorklogStatusBadge :status="store.worklog.status" />
+                            <WorklogStatusBadge :status="store.tutorWorklog.status" />
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-4">
                     <p class="text-xs font-semibold text-slate-500">Description</p>
-                    <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.worklog.description }}</p>
+                    <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.description }}</p>
                 </div>
 
-                <div class="mt-4" v-if="store.worklog.challenges">
+                <div class="mt-4" v-if="store.tutorWorklog.challenges">
                     <p class="text-xs font-semibold text-slate-500">Challenges</p>
-                    <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.worklog.challenges }}</p>
+                    <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.challenges }}</p>
                 </div>
 
                 <div class="mt-4">
                     <p class="text-xs font-semibold text-slate-500">Attachments</p>
                     <div class="mt-2">
-                        <AttachmentList :attachments="store.worklog.attachments || []" />
+                        <AttachmentList :attachments="store.tutorWorklog.attachments || []" />
                     </div>
                 </div>
             </section>
@@ -102,7 +102,7 @@
             <button
               type="button"
               :disabled="submitting"
-              @click="setStatus('Reviewed')"
+              @click="submitReview('Reviewed')"
               class="rounded-xl bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-700 hover:bg-blue-100 disabled:opacity-60"
             >
                             Mark Reviewed
@@ -110,7 +110,7 @@
             <button
               type="button"
               :disabled="submitting"
-              @click="setStatus('Approved')"
+              @click="submitReview('Approved')"
               class="rounded-xl bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 disabled:opacity-60"
             >
                             Approve
@@ -118,7 +118,7 @@
             <button
               type="button"
               :disabled="submitting"
-              @click="setStatus('Rejected')"
+              @click="submitReview('Rejected')"
               class="rounded-xl bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
             >
                             Reject
@@ -126,7 +126,7 @@
             <button
               type="button"
               :disabled="submitting"
-              @click="setStatus('Pending')"
+              @click="submitReview('Pending')"
               class="rounded-xl bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-60"
             >
                             Pending
@@ -163,9 +163,9 @@ const serverError = ref('')
 onMounted(async () => {
     const id = worklogId.value
     if (!Number.isFinite(id)) return
-    await store.fetchWorklog(id)
-    if (store.worklog?.tutor_review?.feedback) {
-        feedback.value = store.worklog.tutor_review.feedback
+    await store.fetchTutorWorklog(id)
+    if (store.tutorWorklog?.tutor_review?.feedback) {
+        feedback.value = store.tutorWorklog.tutor_review.feedback
     }
 })
 
@@ -174,15 +174,15 @@ function formatDate(date?: string): string {
     return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-async function setStatus(status: WorklogStatus) {
-    if (!store.worklog) return
+async function submitReview(status: WorklogStatus) {
+    if (!store.tutorWorklog) return
     submitting.value = true
     serverError.value = ''
     try {
-        await store.updateWorklog(store.worklog.id, undefined as any, {
-            tutor_feedback: feedback.value,
-            tutor_status: status,
-        } as any)
+        await store.reviewWorklog(store.tutorWorklog.id, {
+            status,
+            feedback: feedback.value,
+        })
         router.push('/tutor/worklogs')
     } catch (e) {
         serverError.value = 'Failed to submit review.'

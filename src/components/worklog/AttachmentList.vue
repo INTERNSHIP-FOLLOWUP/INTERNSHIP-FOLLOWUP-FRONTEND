@@ -1,11 +1,10 @@
 <template>
   <div class="space-y-3">
     <div v-if="!attachments.length" class="text-sm font-semibold text-slate-500">No attachments.</div>
-
-    <div v-for="att in attachments" :key="att.id ?? att.filename" class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-3">
+    <div v-for="att in attachments" :key="att.id ?? att.filename ?? att.file_path" class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-3">
       <div class="min-w-0">
-        <p class="truncate text-xs font-semibold text-slate-800">📄 {{ att.filename }}</p>
-        <p class="text-xs text-slate-500">{{ att.mime_type || guessType(att.filename) }} • {{ formatBytes(att.size_bytes ?? 0) }}</p>
+        <p class="truncate text-xs font-semibold text-slate-800">📄 {{ att.filename || att.file_path || 'attachment' }}</p>
+        <p class="text-xs text-slate-500">{{ att.mime_type || att.file_type || guessType(att.filename || att.file_path || '') }} • {{ formatBytes(att.size_bytes ?? att.file_size) }}</p>
       </div>
 
       <div class="flex items-center gap-2">
@@ -30,16 +29,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { Attachment } from '@/types/worklog'
 
 const props = defineProps<{
   attachments: Attachment[]
 }>()
 
-function formatBytes(bytes: number): string {
-  if (!Number.isFinite(bytes) || bytes <= 0) return '—'
-  const units = ['B', 'KB', 'MB', 'GB']
+function formatBytes(bytes?: number): string {
+  if (!bytes || !Number.isFinite(bytes) || bytes <= 0) return '—'
+  const units = ['B', 'KB', 'MB', 'GB'] as const
   let i = 0
   let v = bytes
   while (v >= 1024 && i < units.length - 1) {
@@ -49,13 +47,13 @@ function formatBytes(bytes: number): string {
   return `${v.toFixed(v >= 10 || i === 0 ? 0 : 1)} ${units[i]}`
 }
 
-function guessType(filename: string): string {
-  const lower = filename.toLowerCase()
-  if (lower.endsWith('.pdf')) return 'application/pdf'
-  if (lower.endsWith('.png')) return 'image/png'
-  if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return 'image/jpeg'
-  if (lower.endsWith('.doc') || lower.endsWith('.docx')) return 'application/msword'
-  if (lower.endsWith('.zip')) return 'application/zip'
+function guessType(filename?: string): string {
+  const name = (filename || '').toLowerCase()
+  if (name.endsWith('.pdf')) return 'application/pdf'
+  if (name.endsWith('.png')) return 'image/png'
+  if (name.endsWith('.jpg') || name.endsWith('.jpeg')) return 'image/jpeg'
+  if (name.endsWith('.doc') || name.endsWith('.docx')) return 'application/msword'
+  if (name.endsWith('.zip')) return 'application/zip'
   return 'file'
 }
 
@@ -65,7 +63,7 @@ function download(att: Attachment) {
 }
 
 function isPreviewable(att: Attachment): boolean {
-  const name = att.filename.toLowerCase()
+  const name = (att.filename || att.file_path || '').toLowerCase()
   return name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.pdf')
 }
 
@@ -74,4 +72,3 @@ function preview(att: Attachment) {
   window.open(att.url, '_blank')
 }
 </script>
-

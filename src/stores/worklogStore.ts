@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { worklogService } from '@/services/worklogService'
 
-import type { Worklog, WorklogFilters } from '@/types/worklog'
+import type { Worklog, WorklogFilters, WorklogStatus } from '@/types/worklog'
 import { parseApiError } from '@/utils/errorParser'
 
 export const useWorklogStore = defineStore('worklog', () => {
@@ -47,7 +47,7 @@ export const useWorklogStore = defineStore('worklog', () => {
     errors.value = {}
     try {
       const res = await worklogService.getWorklog(id)
-      const w: Worklog = res.data ?? res
+      const w = (res.data?.data ?? res.data) as Worklog
       worklog.value = w
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -63,7 +63,7 @@ export const useWorklogStore = defineStore('worklog', () => {
     errors.value = {}
     try {
       const res = await worklogService.createWorklog(data)
-      const created: Worklog = res.data ?? res
+      const created = (res.data?.data ?? res.data) as Worklog
       worklogs.value = [created, ...worklogs.value]
       return created
     } catch (err: unknown) {
@@ -85,7 +85,7 @@ export const useWorklogStore = defineStore('worklog', () => {
     try {
       const payload = extra ? (data instanceof FormData ? data : { ...(data ?? {}), ...extra }) : data
       const res = await worklogService.updateWorklog(id, payload)
-      const updated: Worklog = res.data ?? res
+      const updated = (res.data?.data ?? res.data) as Worklog
       if (worklog.value?.id === id) worklog.value = updated
       worklogs.value = worklogs.value.map((w) => (w.id === id ? updated : w))
       return updated
@@ -148,7 +148,7 @@ export const useWorklogStore = defineStore('worklog', () => {
     errors.value = {}
     try {
       const res = await worklogService.getTutorWorklog(id)
-      const w: Worklog = res.data ?? res
+      const w = (res.data?.data ?? res.data) as Worklog
       tutorWorklog.value = w
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -161,7 +161,7 @@ export const useWorklogStore = defineStore('worklog', () => {
 
   async function reviewWorklog(
     id: number,
-    data: { status: 'Reviewed'; feedback: string },
+    data: { status: WorklogStatus; feedback: string },
   ): Promise<Worklog> {
     loading.value = true
     errors.value = {}
@@ -171,11 +171,10 @@ export const useWorklogStore = defineStore('worklog', () => {
         feedback: data.feedback,
       })
 
-      const updated: Worklog = res.data ?? res
+      const updated = (res.data?.data ?? res.data) as Worklog
 
       if (tutorWorklog.value?.id === id) tutorWorklog.value = updated
       tutorWorklogs.value = tutorWorklogs.value.map((w) => (w.id === id ? updated : w))
-
       return updated
     } catch (err: unknown) {
       const parsed = parseApiError(err)

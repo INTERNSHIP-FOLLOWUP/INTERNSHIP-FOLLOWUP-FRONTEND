@@ -279,6 +279,15 @@
             View
           </button>
           <button
+            v-if="context === 'tutor'"
+            class="rounded-xl bg-[#2563EB] px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
+            :disabled="closedOnlyView(issue)"
+            @click="openEditModal(issue)"
+          >
+            Edit
+          </button>
+          <button
+            v-else
             class="rounded-xl bg-[#2563EB] px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
             :disabled="closedOnlyView(issue)"
             @click="openUpdateModal(issue)"
@@ -427,7 +436,7 @@
               <select
                 v-model="formModal.form.priority"
                 class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
-                :disabled="closedOnlyView(formModal.item!)"
+                :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
               >
                 <option value="">Select priority</option>
                 <option value="Low">Low</option>
@@ -458,10 +467,27 @@
               </select>
             </div>
           </div>
-          <div>
+          <!-- Assign To dropdown - shows tutor's students for tutor context -->
+          <div v-if="context === 'tutor'">
             <label class="mb-1 block text-xs font-semibold text-slate-500"
-              >Assign To <span class="text-red-500">*</span></label
+              >Assign To Student <span class="text-red-500">*</span></label
             >
+            <select
+              v-model="formModal.form.studentId"
+              class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
+            >
+              <option value="">Select student</option>
+              <option
+                v-for="student in tutorStudents"
+                :key="student.id"
+                :value="student.id"
+              >
+                {{ student.name }}
+              </option>
+            </select>
+          </div>
+          <div v-else>
+            <label class="mb-1 block text-xs font-semibold text-slate-500">Assign To</label>
             <select
               v-model="formModal.form.assignedUserId"
               class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
@@ -481,6 +507,45 @@
               class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
             />
+          </div>
+          <!-- Existing attachments display (tutor edit mode) -->
+          <div v-if="context === 'tutor' && formModal.mode === 'update' && existingAttachments.length">
+            <label class="mb-1 block text-xs font-semibold text-slate-500"
+              >Current Attachments</label
+            >
+            <ul class="rounded-xl border border-gray-200 divide-y divide-gray-100">
+              <li
+                v-for="att in existingAttachments"
+                :key="att.id"
+                class="flex items-center justify-between px-3 py-2"
+              >
+                <div class="flex items-center gap-2 text-xs text-slate-600">
+                  <svg
+                    class="h-4 w-4 shrink-0 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15.172 7l-6.586 6.586a2 2 0 000 2.828 2 2 0 002.828 0L18 10m0 0h-6m6 0v6"
+                    />
+                  </svg>
+                  <a
+                    :href="att.file_path"
+                    target="_blank"
+                    class="font-medium text-[#2563EB] hover:underline"
+                  >
+                    {{ att.filename }}
+                  </a>
+                  <span v-if="att.file_size" class="text-slate-400">
+                    ({{ formatFileSize(att.file_size) }})
+                  </span>
+                </div>
+              </li>
+            </ul>
           </div>
           <div>
             <label class="mb-1 block text-xs font-semibold text-slate-500">Attachments</label>
@@ -518,6 +583,16 @@
               <span class="font-semibold">Attached:</span>
               {{ formModal.form.files.map((file: File) => file.name).join(', ') }}
             </div>
+          </div>
+          <!-- Validation errors display -->
+          <div
+            v-if="validationErrors.length"
+            class="rounded-xl border border-red-200 bg-red-50 p-3"
+          >
+            <p class="text-xs font-semibold text-red-700">Please fix the following errors:</p>
+            <ul class="mt-1 list-inside list-disc text-xs text-red-600">
+              <li v-for="err in validationErrors" :key="err">{{ err }}</li>
+            </ul>
           </div>
         </div>
         <div class="flex items-center justify-end gap-2 border-t border-gray-100 px-5 py-4">
@@ -647,11 +722,13 @@ import { computed, reactive, ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { useIssueStore } from '@/stores/issueStore'
-import type { Issue, FormModalState } from '@/types/issue'
+import { useTutorStudentStore } from '@/stores/tutorStudent'
+import type { Issue, FormModalState, Attachment } from '@/types/issue'
 
 const route = useRoute()
 const issueStore = useIssueStore()
 const toast = useToastStore()
+const tutorStudentStore = useTutorStudentStore()
 
 const context = computed<'admin' | 'company' | 'student' | 'tutor'>(() => {
   const raw = String(route.path || '')
@@ -672,6 +749,32 @@ const formUsers = [
   { id: 3, name: 'Company Rep', role: 'Company Representative' },
 ]
 
+const tutorStudents = computed(() => {
+  return tutorStudentStore.students.map((s) => ({
+    id: Number(s.id),
+    name: s.name,
+  }))
+})
+
+const validationErrors = computed(() => {
+  const errs: string[] = []
+  if (context.value === 'tutor') {
+    if (!formModal.form.title?.trim()) errs.push('Title is required.')
+    if (!formModal.form.description?.trim()) errs.push('Description is required.')
+    if (!formModal.form.priority) errs.push('Priority is required.')
+    if (!formModal.form.status) errs.push('Status is required.')
+    if (!formModal.form.studentId) errs.push('Please select a student to assign the issue to.')
+  }
+  return errs
+})
+
+const existingAttachments = computed<Attachment[]>(() => {
+  if (formModal.mode === 'update' && formModal.item?.attachmentList) {
+    return formModal.item.attachmentList
+  }
+  return []
+})
+
 const localSearch = ref('')
 const localStatus = ref('')
 const localPriority = ref('')
@@ -682,6 +785,10 @@ watch([localSearch, localStatus, localPriority], ([search, status, priority]) =>
 onMounted(async () => {
   await issueStore.fetchIssues()
   await issueStore.fetchIssueStats()
+  // Fetch tutor's students for the edit modal student dropdown
+  if (context.value === 'tutor') {
+    tutorStudentStore.fetchStudents({ per_page: 100 })
+  }
 })
 
 async function retry() {
@@ -723,6 +830,7 @@ const formModal = reactive<FormModalState>({
     description: '',
     priority: 'Medium',
     status: 'Open',
+    studentId: '',
     assignedUserId: '',
     dueDate: '',
     files: [],
@@ -751,7 +859,8 @@ const fileInputRef = ref<HTMLInputElement | null>(null)
 const submitDisabled = computed(() => {
   const form = formModal.form
   const allowed = allowedEditableStatuses.includes((form.status as Issue['status']) || 'Open')
-  return !form.title || !form.description || !form.priority || !allowed
+  const studentOk = context.value !== 'tutor' || form.studentId
+  return !form.title || !form.description || !form.priority || !allowed || !studentOk
 })
 
 function applyFilters() {
@@ -773,8 +882,28 @@ function openCreateModal() {
     description: '',
     priority: 'Medium',
     status: 'Open',
+    studentId: '',
     assignedUserId: '',
     dueDate: '',
+    files: [],
+  }
+  formModal.open = true
+}
+
+async function openEditModal(issue: Issue) {
+  // Fetch full detail from tutor-specific endpoint
+  const fullIssue = await issueStore.fetchTutorIssueById(issue.id)
+
+  formModal.mode = 'update'
+  formModal.item = fullIssue || issue
+  formModal.form = {
+    title: (fullIssue || issue).title,
+    description: (fullIssue || issue).description,
+    priority: (fullIssue || issue).priority,
+    status: (fullIssue || issue).status,
+    studentId: (fullIssue || issue).studentId ?? '',
+    assignedUserId: (fullIssue || issue).assignedUserId ?? '',
+    dueDate: (fullIssue || issue).due_date ?? '',
     files: [],
   }
   formModal.open = true
@@ -789,6 +918,7 @@ function openUpdateModal(issue: Issue) {
     description: issue.description,
     priority: issue.priority,
     status: issue.status,
+    studentId: '',
     assignedUserId: assignee ? assignee.id : '',
     dueDate: '',
     files: [],
@@ -809,10 +939,27 @@ async function submitForm() {
       closeFormModal()
     }
   } else if (formModal.item) {
-    const updated = await issueStore.updateIssue({ id: formModal.item.id, form: formModal.form })
-    if (updated) {
-      toast.success('Issue updated successfully.', 'Updated')
-      closeFormModal()
+    if (context.value === 'tutor' && formModal.mode === 'update') {
+      // Use tutor-specific update endpoint
+      const updated = await issueStore.updateTutorIssue({
+        id: formModal.item.id,
+        title: formModal.form.title,
+        description: formModal.form.description,
+        priority: formModal.form.priority as string,
+        status: formModal.form.status as string,
+        student_id: formModal.form.studentId,
+        assigned_user_id: formModal.form.assignedUserId || null,
+        due_date: formModal.form.dueDate || null,
+      })
+      if (updated) {
+        closeFormModal()
+      }
+    } else {
+      const updated = await issueStore.updateIssue({ id: formModal.item.id, form: formModal.form })
+      if (updated) {
+        toast.success('Issue updated successfully.', 'Updated')
+        closeFormModal()
+      }
     }
   }
 }
@@ -852,6 +999,18 @@ function closedOnlyView(issue: Issue | undefined) {
 function format(value: string | undefined): string {
   if (!value) return '-'
   return value
+}
+
+function formatFileSize(bytes: number): string {
+  if (!bytes) return ''
+  const units = ['B', 'KB', 'MB', 'GB']
+  let size = bytes
+  let unitIndex = 0
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024
+    unitIndex++
+  }
+  return `${size.toFixed(1)} ${units[unitIndex]}`
 }
 
 function statusBadgeClasses(status: string) {

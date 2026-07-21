@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import { issueService } from '@/services/issueService'
 import { useToastStore } from '@/stores/toast'
 import type { AxiosError } from 'axios'
-import type { Issue, IssueStats, IssueFilters, PaginationMeta, IssueForm } from '@/types/issue'
+import type { Issue, IssueStats, IssueFilters, PaginationMeta, IssueForm, Attachment } from '@/types/issue'
 
 export const useIssueStore = defineStore('issue', () => {
   const perPage = 6
@@ -81,6 +81,26 @@ export const useIssueStore = defineStore('issue', () => {
   async function fetchIssueById(id: string): Promise<Issue | null> {
     try {
       const item = await issueService.getIssue(id)
+      const found = issues.value.find((x) => x.id === id)
+      if (found) {
+        Object.assign(found, item)
+      } else {
+        issues.value.push(item)
+      }
+      return item
+    } catch {
+      return null
+    }
+  }
+
+  /**
+   * Fetch a single issue via tutor-specific endpoint.
+   * Returns the full issue with attachments, history etc.
+   */
+  async function fetchTutorIssueById(id: string): Promise<Issue | null> {
+    try {
+      const response = await issueService.getTutorIssue(id)
+      const item = response.data
       const found = issues.value.find((x) => x.id === id)
       if (found) {
         Object.assign(found, item)
@@ -181,6 +201,59 @@ export const useIssueStore = defineStore('issue', () => {
     }
   }
 
+  /**
+   * Update an issue using the tutor-specific endpoint.
+   * Sends PUT /api/tutor/issues/{id} with title, description, priority, status, student_id, assigned_user_id, due_date.
+   */
+  async function updateTutorIssue(payload: {
+    id: string
+    title: string
+    description: string
+    priority: string
+    status: string
+    student_id: string | number
+    assigned_user_id?: string | number | null
+    due_date?: string | null
+  }): Promise<Issue | null> {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await issueService.updateTutorIssue(payload.id, {
+        title: payload.title,
+        description: payload.description,
+        priority: payload.priority,
+        status: payload.status,
+        student_id: payload.student_id,
+        assigned_user_id: payload.assigned_user_id ?? null,
+        due_date: payload.due_date ?? null,
+      })
+      const updatedIssue = response.data
+      const found = issues.value.find((x) => x.id === payload.id)
+      if (found) Object.assign(found, updatedIssue)
+      await fetchIssueStats()
+      useToastStore().success(response.message || 'Issue updated successfully.', 'Updated')
+      return updatedIssue
+    } catch (err: unknown) {
+      const axiosErr = err as AxiosError<{ message?: string; errors?: Record<string, unknown> }>
+      const backendErrors = axiosErr.response?.data?.errors
+      if (backendErrors) {
+        const messages = Object.entries(backendErrors)
+          .map(([field, msgs]) => {
+            const messageList = Array.isArray(msgs) ? msgs : [String(msgs ?? '')]
+            return `${field}: ${messageList.join(', ')}`
+          })
+          .join('; ')
+        error.value = messages || 'Failed to update issue.'
+      } else {
+        error.value = axiosErr.response?.data?.message || 'Failed to update issue.'
+      }
+      useToastStore().error(error.value, 'Update Issue Failed')
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function deleteIssue(id: string): Promise<boolean> {
     loading.value = true
     error.value = null
@@ -229,8 +302,10 @@ export const useIssueStore = defineStore('issue', () => {
     fetchIssues,
     fetchIssueStats,
     fetchIssueById,
+    fetchTutorIssueById,
     createIssue,
     updateIssue,
+    updateTutorIssue,
     assignIssue,
     resolveIssue,
     setFilters,

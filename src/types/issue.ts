@@ -1,6 +1,10 @@
 export interface Attachment {
+  id?: number
   filename: string
+  file_path?: string
   url?: string
+  file_type?: string
+  file_size?: number
 }
 
 export interface IssueHistoryEvent {
@@ -21,9 +25,11 @@ export interface Issue {
   status: 'Open' | 'In Progress' | 'Resolved' | 'Closed'
   priority: 'Low' | 'Medium' | 'High' | 'Critical'
   attachments?: number
+  attachmentList?: Attachment[]
   history?: IssueHistoryEvent[]
   studentId?: string | number
   assignedUserId?: string | number
+  due_date?: string
 }
 
 export interface IssueStats {

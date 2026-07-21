@@ -43,7 +43,7 @@
     </div>
 
     <div
-      v-else-if="Array.isArray(emptyCheck) ? emptyCheck.length : !emptyCheck"
+      v-else-if="emptyCheck === null || emptyCheck === undefined || (Array.isArray(emptyCheck) && emptyCheck.length === 0)"
       class="flex flex-col items-center justify-center py-10 text-center"
     >
       <div class="rounded-2xl bg-slate-50 p-3 text-slate-300">

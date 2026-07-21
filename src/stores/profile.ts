@@ -1,37 +1,39 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { profileService } from '@/services/profileService'
+import { profileService, type ProfileResponse, type UpdateProfilePayload, type ChangePasswordPayload } from '@/services/profileService'
 import { useToastStore } from '@/stores/toast'
 
 export const useProfileStore = defineStore('profile', () => {
-  const profile = ref(null)
+  const profile = ref<ProfileResponse | null>(null)
   const loading = ref(false)
-  const error = ref(null)
+  const error = ref<string | null>(null)
 
-  async function getProfile() {
+  async function getProfile(): Promise<void> {
     loading.value = true
     error.value = null
     try {
       const data = await profileService.getProfile()
-      profile.value = data.data || data
-    } catch (err) {
-      error.value = err.response?.data?.message || 'Failed to load profile.'
+      profile.value = data
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string } } }
+      error.value = axiosErr?.response?.data?.message || 'Failed to load profile.'
       useToastStore().error(error.value, 'Load Profile Failed')
     } finally {
       loading.value = false
     }
   }
 
-  async function updateProfile(payload) {
+  async function updateProfile(payload: UpdateProfilePayload): Promise<{ message: string; user: Partial<ProfileResponse> } | undefined> {
     loading.value = true
     error.value = null
     try {
       const data = await profileService.updateProfile(payload)
-      profile.value = { ...profile.value, ...data.data }
+      profile.value = { ...profile.value!, ...data.user }
       useToastStore().success('Profile updated successfully.', 'Profile')
       return data
-    } catch (err) {
-      error.value = err.response?.data?.message || 'Failed to update profile.'
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string } } }
+      error.value = axiosErr?.response?.data?.message || 'Failed to update profile.'
       useToastStore().error(error.value, 'Update Profile Failed')
       throw err
     } finally {
@@ -39,18 +41,19 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
-  async function uploadAvatar(formData) {
+  async function uploadAvatar(formData: FormData): Promise<{ message: string; avatar: string } | undefined> {
     loading.value = true
     error.value = null
     try {
       const data = await profileService.uploadAvatar(formData)
       if (profile.value) {
-        profile.value.avatar = data.data?.avatar || profile.value.avatar
+        profile.value.avatar = data.avatar
       }
       useToastStore().success('Avatar uploaded successfully.', 'Avatar')
       return data
-    } catch (err) {
-      error.value = err.response?.data?.message || 'Failed to upload avatar.'
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string } } }
+      error.value = axiosErr?.response?.data?.message || 'Failed to upload avatar.'
       useToastStore().error(error.value, 'Upload Avatar Failed')
       throw err
     } finally {
@@ -58,7 +61,7 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
-  async function removeAvatar() {
+  async function removeAvatar(): Promise<{ message: string } | undefined> {
     loading.value = true
     error.value = null
     try {
@@ -68,8 +71,9 @@ export const useProfileStore = defineStore('profile', () => {
       }
       useToastStore().success('Avatar removed successfully.', 'Avatar')
       return data
-    } catch (err) {
-      error.value = err.response?.data?.message || 'Failed to remove avatar.'
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string } } }
+      error.value = axiosErr?.response?.data?.message || 'Failed to remove avatar.'
       useToastStore().error(error.value, 'Remove Avatar Failed')
       throw err
     } finally {
@@ -77,15 +81,16 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
-  async function changePassword(payload) {
+  async function changePassword(payload: ChangePasswordPayload): Promise<{ message: string } | undefined> {
     loading.value = true
     error.value = null
     try {
       const data = await profileService.changePassword(payload)
       useToastStore().success('Password changed successfully.', 'Password')
       return data
-    } catch (err) {
-      const msg = err.response?.data?.errors?.current_password?.[0] || err.response?.data?.message || 'Failed to change password.'
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } }
+      const msg = axiosErr?.response?.data?.errors?.current_password?.[0] || axiosErr?.response?.data?.message || 'Failed to change password.'
       error.value = msg
       useToastStore().error(msg, 'Change Password Failed')
       throw err
@@ -105,3 +110,4 @@ export const useProfileStore = defineStore('profile', () => {
     changePassword,
   }
 })
+

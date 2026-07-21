@@ -1,5 +1,5 @@
 import api from '@/services/api'
-import type { Issue, IssueForm, IssueStats, IssueFilters, PaginationMeta } from '@/types/issue'
+import type { Issue, IssueForm, IssueStats, IssueFilters, PaginationMeta, Attachment } from '@/types/issue'
 
 export const issueService = {
   async getIssues(
@@ -24,6 +24,7 @@ export const issueService = {
     formData.append('title', payload.title)
     formData.append('description', payload.description)
     formData.append('priority', payload.priority || 'Medium')
+    formData.append('student_id', String(payload.studentId))
     if (payload.status) formData.append('status', payload.status)
     if (payload.assignedUserId || payload.assignedUserId === 0)
       formData.append('assigned_user_id', String(payload.assignedUserId))
@@ -59,6 +60,37 @@ export const issueService = {
 
   async getIssueStats(): Promise<IssueStats> {
     const { data } = await api.get<IssueStats>('/issues/stats')
+    return data
+  },
+
+  // ── Tutor-specific endpoints ──
+
+  /**
+   * GET /api/tutor/issues/{id}
+   * Fetch full issue detail for tutor edit modal.
+   */
+  async getTutorIssue(id: string): Promise<{ data: Issue }> {
+    const { data } = await api.get<{ data: Issue }>(`/tutor/issues/${encodeURIComponent(id)}`)
+    return data
+  },
+
+  /**
+   * PUT /api/tutor/issues/{id}
+   * Update an issue as a tutor.
+   */
+  async updateTutorIssue(id: string, payload: {
+    title: string
+    description: string
+    priority: string
+    status: string
+    student_id: string | number
+    assigned_user_id?: string | number | null
+    due_date?: string | null
+  }): Promise<{ message: string; data: Issue }> {
+    const { data } = await api.put<{ message: string; data: Issue }>(
+      `/tutor/issues/${encodeURIComponent(id)}`,
+      payload,
+    )
     return data
   },
 }

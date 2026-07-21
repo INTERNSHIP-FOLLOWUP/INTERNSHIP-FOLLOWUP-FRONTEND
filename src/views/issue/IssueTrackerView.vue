@@ -351,9 +351,6 @@
               <option v-for="user in students" :key="user.id" :value="String(user.id)">
                 {{ user.name }}
               </option>
-              <option v-for="user in students" :key="user.id" :value="String(user.id)">
-                {{ user.name }}
-              </option>
             </select>
           </div>
           <div>
@@ -363,12 +360,6 @@
               class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="closedOnlyView(formModal.item!)"
             >
-              <option v-for="user in assignees" :key="user.id" :value="String(user.id)">
-                {{ user.name }}
-              </option>
-              <option v-for="user in assignees" :key="user.id" :value="String(user.id)">
-                {{ user.name }}
-              </option>
               <option v-for="user in assignees" :key="user.id" :value="String(user.id)">
                 {{ user.name }}
               </option>
@@ -676,9 +667,6 @@ function openUpdateModal(issue: Issue) {
     description: issue.description,
     priority: issue.priority,
     status: issue.status,
-    studentId: issue.studentId != null ? String(issue.studentId) : '',
-    assignedUserId: issue.assignedUserId != null ? String(issue.assignedUserId) : '',
-    dueDate: issue.dueDate || '',
     studentId: issue.studentId != null ? String(issue.studentId) : '',
     assignedUserId: issue.assignedUserId != null ? String(issue.assignedUserId) : '',
     dueDate: issue.dueDate || '',

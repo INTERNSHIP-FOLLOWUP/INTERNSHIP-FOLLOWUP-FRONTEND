@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, h, defineComponent, onMounted } from 'vue'
+import { computed, h, defineComponent, onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
@@ -85,7 +85,7 @@ function createIcon(path: string) {
   })
 }
 
-const stats = [
+const stats = ref([
   {
     label: 'Total Issues',
     value: 0,
@@ -122,7 +122,7 @@ const stats = [
       'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
     ),
   },
-]
+])
 
 onMounted(async () => {
   try {
@@ -132,17 +132,17 @@ onMounted(async () => {
     const currentStats = issueStore.stats
     if (currentStats) {
       const total = currentStats.total ?? 0
-      stats[0]!.value = total
-      stats[0]!.trend = 'All issues'
-      stats[1]!.value = currentStats.open || 0
-      stats[1]!.trend = `of ${total} total`
-      stats[2]!.value = currentStats.inProgress || 0
-      stats[2]!.trend = `of ${total} total`
-      stats[3]!.value = currentStats.resolved || 0
-      stats[3]!.trend = `of ${total} total`
+      stats.value[0]!.value = total
+      stats.value[0]!.trend = 'All issues'
+      stats.value[1]!.value = currentStats.open || 0
+      stats.value[1]!.trend = `of ${total} total`
+      stats.value[2]!.value = currentStats.inProgress || 0
+      stats.value[2]!.trend = `of ${total} total`
+      stats.value[3]!.value = currentStats.resolved || 0
+      stats.value[3]!.trend = `of ${total} total`
     }
   } catch {
-    stats.forEach((s) => (s.trend = 'Unable to load'))
+    stats.value.forEach((s) => (s.trend = 'Unable to load'))
   }
 })
 </script>

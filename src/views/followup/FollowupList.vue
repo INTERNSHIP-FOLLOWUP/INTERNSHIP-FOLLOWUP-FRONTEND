@@ -247,7 +247,8 @@ function onSaved() {
 }
 
 function onSearchInput() {
-  // optional debounce could be added here
+  followupStore.search = search.value
+  followupStore.fetchFollowups().catch(() => {})
 }
 
 function applySearch() {

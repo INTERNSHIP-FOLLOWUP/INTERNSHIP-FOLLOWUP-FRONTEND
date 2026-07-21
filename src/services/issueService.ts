@@ -20,8 +20,8 @@ export const issueService = {
   },
 
   async getIssue(id: string): Promise<Issue> {
-    const { data } = await api.get<Issue>(`/issues/${encodeURIComponent(id)}`)
-    return data
+    const { data } = await api.get<{ success: boolean; data: Issue }>(`/issues/${encodeURIComponent(id)}`)
+    return data.data
   },
 
   async createIssue(payload: IssueForm): Promise<Issue> {

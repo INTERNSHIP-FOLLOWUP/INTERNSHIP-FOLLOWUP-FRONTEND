@@ -33,16 +33,16 @@ export const useIssueStore = defineStore('issue', () => {
     if (!stats.value) {
       return [
         { label: 'Total Issues', value: 0, color: 'bg-[#2563EB]' },
-        { label: 'Open Issues', value: 0, color: 'bg-[#F59E0B]' },
-        { label: 'In Progress', value: 0, color: 'bg-[#7C3AED]' },
-        { label: 'Resolved', value: 0, color: 'bg-[#22C55E]' },
+        { label: 'Total Open Issues', value: 0, color: 'bg-[#F59E0B]' },
+        { label: 'Total In Progress', value: 0, color: 'bg-[#7C3AED]' },
+        { label: 'Total Resolved', value: 0, color: 'bg-[#22C55E]' },
       ]
     }
     return [
       { label: 'Total Issues', value: stats.value.total, color: 'bg-[#2563EB]' },
-      { label: 'Open Issues', value: stats.value.open, color: 'bg-[#F59E0B]' },
-      { label: 'In Progress', value: stats.value.inProgress, color: 'bg-[#7C3AED]' },
-      { label: 'Resolved', value: stats.value.resolved, color: 'bg-[#22C55E]' },
+      { label: 'Total Open Issues', value: stats.value.open, color: 'bg-[#F59E0B]' },
+      { label: 'Total In Progress', value: stats.value.inProgress, color: 'bg-[#7C3AED]' },
+      { label: 'Total Resolved', value: stats.value.resolved, color: 'bg-[#22C55E]' },
     ]
   })
 
@@ -195,12 +195,12 @@ export const useIssueStore = defineStore('issue', () => {
     }
   }
 
-  function setFilters(next: Partial<IssueFilters>): void {
+  async function setFilters(next: Partial<IssueFilters>): Promise<void> {
     filters.value = { ...filters.value, ...next }
     pagination.value.page = 1
   }
 
-  function resetFilters(): void {
+  async function resetFilters(): Promise<void> {
     filters.value = { search: '', status: '', priority: '' }
     pagination.value.page = 1
   }

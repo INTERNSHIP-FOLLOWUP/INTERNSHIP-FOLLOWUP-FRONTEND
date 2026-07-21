@@ -19,11 +19,12 @@
 
     <!-- Filters -->
     <div class="flex flex-wrap items-center gap-3">
-      <DebouncedInput
+      <input
         v-model="searchQuery"
+        type="text"
         placeholder="Search by name or email..."
-        class="min-w-0 flex-1 basis-[200px]"
-        @change="onSearch"
+        class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-4 pr-4 text-sm text-slate-700 placeholder-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+        @input="onSearch"
       />
 
       <button
@@ -166,7 +167,6 @@ import { useStudentStore } from '@/stores/student'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
-import DebouncedInput from '@/components/ui/DebouncedInput.vue'
 import ActiveFilters from '@/components/ui/ActiveFilters.vue'
 import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
@@ -182,8 +182,8 @@ const tutors = computed(() => store.tutors)
 
 const studentCounts = computed(() => {
   const counts: Record<number, number> = {}
-  for (const student of studentStore.students) {
-    const tutorId = (student as Record<string, unknown>).tutor_id ?? (student as Record<string, { id: number }>).tutor?.id
+  for (const student of studentStore.students as any[]) {
+    const tutorId = student.tutor_id ?? student.tutor?.id
     if (tutorId !== null && tutorId !== undefined) {
       counts[tutorId] = (counts[tutorId] || 0) + 1
     }

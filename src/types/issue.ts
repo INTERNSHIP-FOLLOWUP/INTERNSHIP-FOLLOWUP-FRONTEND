@@ -24,6 +24,7 @@ export interface Issue {
   history?: IssueHistoryEvent[]
   studentId?: string | number
   assignedUserId?: string | number
+  dueDate?: string
 }
 
 export interface IssueStats {

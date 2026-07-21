@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, h, defineComponent } from 'vue'
+import { computed, h, defineComponent, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
@@ -87,40 +87,62 @@ function createIcon(path: string) {
 
 const stats = [
   {
-    label: 'Assigned Students',
+    label: 'Total Issues',
     value: 0,
-    trend: 'No data yet',
-    color: 'bg-indigo-500',
+    trend: 'Loading...',
+    color: 'bg-blue-500',
     icon: createIcon(
-      'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',
+      'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
     ),
   },
   {
-    label: 'Pending Reviews',
+    label: 'Total Open Issues',
     value: 0,
-    trend: 'No data yet',
+    trend: 'Loading...',
     color: 'bg-amber-500',
     icon: createIcon(
-      'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
+      'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
     ),
   },
   {
-    label: 'Follow-ups',
+    label: 'Total In Progress',
     value: 0,
-    trend: 'No data yet',
+    trend: 'Loading...',
+    color: 'bg-indigo-500',
+    icon: createIcon(
+      'M13 10V3L4 14h7v7l9-11h-7z',
+    ),
+  },
+  {
+    label: 'Total Resolved',
+    value: 0,
+    trend: 'Loading...',
     color: 'bg-emerald-500',
     icon: createIcon(
-      'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
-    ),
-  },
-  {
-    label: 'Open Issues',
-    value: 0,
-    trend: 'No data yet',
-    color: 'bg-rose-500',
-    icon: createIcon(
-      'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z',
+      'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
     ),
   },
 ]
+
+onMounted(async () => {
+  try {
+    const { useIssueStore } = await import('@/stores/issueStore')
+    const issueStore = useIssueStore()
+    await issueStore.fetchIssueStats()
+    const currentStats = issueStore.stats
+    if (currentStats) {
+      const total = currentStats.total ?? 0
+      stats[0]!.value = total
+      stats[0]!.trend = 'All issues'
+      stats[1]!.value = currentStats.open || 0
+      stats[1]!.trend = `of ${total} total`
+      stats[2]!.value = currentStats.inProgress || 0
+      stats[2]!.trend = `of ${total} total`
+      stats[3]!.value = currentStats.resolved || 0
+      stats[3]!.trend = `of ${total} total`
+    }
+  } catch {
+    stats.forEach((s) => (s.trend = 'Unable to load'))
+  }
+})
 </script>

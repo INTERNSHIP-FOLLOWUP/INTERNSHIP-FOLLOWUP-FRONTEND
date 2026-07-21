@@ -6,6 +6,7 @@ export interface User {
   email: string
   role: UserRole
   avatar: string | null
+  avatar_url?: string | null
   permissions?: string[]
 }
 

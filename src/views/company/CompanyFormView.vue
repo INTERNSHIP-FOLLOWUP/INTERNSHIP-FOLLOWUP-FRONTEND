@@ -17,9 +17,9 @@
         Back to Companies
       </button>
       <span class="text-sm text-slate-300">/</span>
-      <span class="text-sm font-medium text-slate-900">{{
-        mode === 'create' ? 'New Company' : 'Edit Company'
-      }}</span>
+      <span class="text-sm font-medium text-slate-900">
+        {{ isProfileMode ? 'Company Profile' : mode === 'create' ? 'New Company' : 'Edit Company' }}
+      </span>
     </div>
 
     <CompanyForm
@@ -40,14 +40,19 @@ import CompanyForm from '@/components/company/CompanyForm.vue'
 import type { CompanyFormData } from '@/components/company/CompanyForm.vue'
 import type { CompanyFormData as StoreCompanyFormData } from '@/stores/company'
 import { useCompanyStore } from '@/stores/company'
+import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
 import { mapValidationErrors } from '@/utils/mapValidationErrors'
 import { parseApiError } from '@/utils/errorParser'
 
 const store = useCompanyStore()
+const authStore = useAuthStore()
+const toast = useToastStore()
 const route = useRoute()
 const router = useRouter()
 
 const mode = computed(() => (route.params.id ? 'edit' : 'create'))
+const isProfileMode = computed(() => route.name === 'CompanyProfile')
 const apiErrors = ref<Record<string, string>>({})
 
 function getCompanyId(): number {
@@ -61,11 +66,35 @@ const initialData = ref<Partial<CompanyFormData>>({
   location: '',
   contactPhone: '',
   website: '',
-  companyProfileImage: '',
+  companyImage: null,
+  avatar: null,
   telegramLink: '',
 })
 
 async function loadIfNeeded() {
+  if (isProfileMode.value) {
+    // Company profile — load from the /company/profile endpoint
+    await store.fetchProfile()
+    const c = store.currentCompany
+    if (!c) return
+
+    initialData.value = {
+      companyName: c.name,
+      companyEmail: c.email ?? '',
+      location: c.location ?? '',
+      industry: c.industry ?? '',
+      contactPerson: c.contactPerson ?? '',
+      contactPhone: c.phone ?? '',
+      website: c.website ?? '',
+      companyImage: c.companyImageUrl ?? c.companyImage ?? null,
+      avatar: authStore.userAvatar,
+      telegramLink: c.telegramLink ?? '',
+      role: c.role ?? '',
+      password: '',
+    }
+    return
+  }
+
   if (mode.value !== 'edit') return
   const id = getCompanyId()
   if (!Number.isFinite(id)) return
@@ -82,7 +111,8 @@ async function loadIfNeeded() {
     contactPerson: c.contactPerson ?? '',
     contactPhone: c.phone ?? '',
     website: c.website ?? '',
-    companyProfileImage: c.companyProfileImage ?? '',
+    companyImage: c.companyImageUrl ?? c.companyImage ?? null,
+    avatar: authStore.userAvatar,
     telegramLink: c.telegramLink ?? '',
   }
 }
@@ -92,7 +122,11 @@ onMounted(async () => {
 })
 
 function goBack() {
-  router.push({ name: 'AdminCompanies' }).catch(() => {})
+  if (isProfileMode.value) {
+    router.push({ name: 'CompanyDashboard' }).catch(() => {})
+  } else {
+    router.push({ name: 'AdminCompanies' }).catch(() => {})
+  }
 }
 
 async function onSubmit(formData: CompanyFormData) {
@@ -100,12 +134,20 @@ async function onSubmit(formData: CompanyFormData) {
   apiErrors.value = {}
 
   try {
-    if (mode.value === 'create') {
+    if (isProfileMode.value) {
+      await store.updateProfile(payload)
+      await store.fetchProfile()
+      toast.success('Profile updated successfully.')
+    } else if (mode.value === 'create') {
       await store.createCompany(payload)
+      await store.fetchCompanies()
+      toast.success('Company created successfully.')
     } else {
       const id = getCompanyId()
       if (!Number.isFinite(id)) return
       await store.updateCompany(id, payload)
+      await store.fetchCompanies()
+      toast.success('Company updated successfully.')
     }
     await store.fetchCompanies()
     goBack()
@@ -115,11 +157,13 @@ async function onSubmit(formData: CompanyFormData) {
     }
     if (axiosErr.response?.status === 422) {
       apiErrors.value = mapValidationErrors(axiosErr.response.data?.errors)
+      toast.error('Please fix the highlighted errors.', 'Validation Error')
     } else if (axiosErr.response?.status && axiosErr.response.status >= 500) {
-      // Use the friendly 500 message from the error parser
       const parsed = parseApiError(err)
+      toast.error(parsed.message, 'Server Error')
       throw new Error(parsed.message)
     } else {
+      toast.error('Failed to save. Please try again.', 'Error')
       throw err
     }
   }

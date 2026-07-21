@@ -75,6 +75,24 @@ export const NAV_ITEMS: NavItem[] = [
     ),
   },
   {
+    name: 'evaluations',
+    label: 'Evaluations',
+    to: '/admin/evaluations',
+    trackShade: 600,
+    icon: createIcon(
+      'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+    ),
+  },
+  {
+    name: 'feedback',
+    label: 'Company Feedback',
+    to: '/admin/feedback',
+    trackShade: 500,
+    icon: createIcon(
+      'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z',
+    ),
+  },
+  {
     name: 'batches',
     label: 'Batches',
     to: '/admin/batches',

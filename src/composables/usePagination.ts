@@ -40,7 +40,6 @@ export function usePagination(
   }
 
   function setPage(page: number) {
-    if (page === currentPage.value) return
     currentPage.value = page
     router.replace({ query: buildQuery() })
     fetchFn({ page })

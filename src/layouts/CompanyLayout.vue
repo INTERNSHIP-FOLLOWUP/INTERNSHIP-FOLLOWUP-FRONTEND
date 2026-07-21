@@ -18,14 +18,14 @@
         :style="{ borderBottom: '1px solid var(--sidebar-border)' }"
       >
         <div
-          class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white shadow-lg"
-          :style="{ background: 'var(--sidebar-logo-bg)', boxShadow: 'var(--sidebar-logo-shadow)' }"
+          class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg text-sm font-bold text-white shadow-lg"
+          :style="{ background: companyLogoUrl ? 'transparent' : 'var(--sidebar-logo-bg)', boxShadow: 'var(--sidebar-logo-shadow)' }"
         >
           <img
-            v-if="company?.companyProfileImage"
-            :src="company.companyProfileImage"
+            v-if="companyLogoUrl"
+            :src="companyLogoUrl"
             :alt="companyName"
-            class="h-8 w-8 rounded-lg object-cover"
+            class="h-9 w-9 rounded-lg object-cover"
           />
           <span v-else>{{ companyInitial }}</span>
         </div>
@@ -72,10 +72,16 @@
           :style="{ backgroundColor: 'var(--sidebar-user-bg)' }"
         >
           <div
-            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white shadow-lg"
-            :style="{ background: 'var(--sidebar-avatar-bg)' }"
+            class="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-bold text-white shadow-lg"
+            :style="{ background: userAvatar ? 'transparent' : 'var(--sidebar-avatar-bg)' }"
           >
-            {{ userInitials }}
+            <img
+              v-if="userAvatar"
+              :src="userAvatar"
+              :alt="user?.name ?? 'Avatar'"
+              class="h-full w-full rounded-full object-cover"
+            />
+            <span v-else>{{ userInitials }}</span>
           </div>
           <div class="min-w-0 flex-1">
             <p class="truncate text-sm font-medium" :style="{ color: 'var(--sidebar-user-name)' }">
@@ -171,10 +177,16 @@
               @click.stop="dropdownOpen = !dropdownOpen"
             >
               <div
-                class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm"
-                :style="{ background: 'var(--sidebar-avatar-bg)' }"
+                class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-white shadow-sm"
+                :style="{ background: userAvatar ? 'transparent' : 'var(--sidebar-avatar-bg)' }"
               >
-                {{ userInitials }}
+                <img
+                  v-if="userAvatar"
+                  :src="userAvatar"
+                  :alt="user?.name ?? 'Avatar'"
+                  class="h-full w-full rounded-full object-cover"
+                />
+                <span v-else>{{ userInitials }}</span>
               </div>
               <div class="hidden text-left md:block">
                 <p class="text-sm font-medium leading-tight text-gray-700">
@@ -335,10 +347,12 @@ function handleClickOutside() {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  companyStore.fetchProfile().catch(() => {})
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
+  stopHeartbeat()
 })
 
 const company = computed(() => companyStore.currentCompany)
@@ -347,7 +361,14 @@ const companyName = computed(() => company.value?.name ?? 'Company Panel')
 
 const companyInitial = computed(() => companyName.value.charAt(0).toUpperCase())
 
+const companyLogoUrl = computed(() => {
+  if (!company.value) return null
+  return company.value.companyImageUrl || company.value.companyImage || company.value.companyProfileImageUrl || company.value.companyProfileImage || null
+})
+
 const user = computed(() => auth.user)
+
+const userAvatar = computed(() => auth.userAvatar)
 
 const userInitials = computed(() => {
   if (!user.value?.name) return '?'
@@ -478,6 +499,14 @@ const navItems: NavItem[] = [
     to: '/company/internships',
     icon: createIcon(
       'M21 13.255A23.893 23.893 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 002 2v10a2 2 0 002 2z',
+    ),
+  },
+  {
+    name: 'messages',
+    label: 'Messages',
+    to: '/company/messages',
+    icon: createIcon(
+      'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
     ),
   },
 ]

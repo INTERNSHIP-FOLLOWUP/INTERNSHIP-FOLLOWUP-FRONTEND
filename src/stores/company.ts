@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import api from '@/services/api'
 import { companyService } from '@/services/company'
 import { parseApiError } from '@/utils/errorParser'
+import { normalizeImageUrl } from '@/utils/normalizeImageUrl'
 import type {
   Company,
   CreateCompanyPayload,
@@ -25,6 +26,9 @@ export interface CompanySummary {
   phone: string | null
   website: string | null
   companyProfileImage: string | null
+  companyProfileImageUrl: string | null
+  companyImage: string | null
+  companyImageUrl: string | null
   telegramLink: string | null
 }
 
@@ -38,7 +42,8 @@ export interface CompanyFormData {
   contactPerson: string
   contactPhone: string
   website: string
-  companyProfileImage: string
+  companyImage: File | string | null
+  avatar: File | string | null
   telegramLink: string
 }
 
@@ -53,6 +58,9 @@ function toSummary(c: Company): CompanySummary {
     phone: c.phone,
     website: c.website,
     companyProfileImage: c.companyProfileImage,
+    companyProfileImageUrl: c.companyProfileImageUrl,
+    companyImage: c.companyImage,
+    companyImageUrl: c.companyImageUrl,
     telegramLink: c.telegramLink,
   }
 }
@@ -66,7 +74,8 @@ function mapFromForm(form: CompanyFormData): CreateCompanyPayload {
     contactPerson: form.contactPerson || null,
     phone: form.contactPhone || null,
     website: form.website || null,
-    companyProfileImage: form.companyProfileImage || null,
+    companyImage: form.companyImage || null,
+    avatar: form.avatar || null,
     telegramLink: form.telegramLink || null,
   }
 }
@@ -206,13 +215,26 @@ export const useCompanyStore = defineStore('company', () => {
           phone: raw.phone ?? null,
           email: raw.email ?? null,
           website: raw.website ?? null,
-          companyProfileImage: raw.company_profile_image ?? null,
+          companyProfileImage: normalizeImageUrl(raw.company_profile_image) ?? null,
+          companyProfileImageUrl: normalizeImageUrl(raw.company_profile_image_url) ?? null,
+          companyImage: normalizeImageUrl(raw.company_image) ?? null,
+          companyImageUrl: normalizeImageUrl(raw.company_image_url) ?? null,
           telegramLink: raw.telegram_link ?? null,
           createdAt: raw.created_at ?? '',
           updatedAt: raw.updated_at ?? '',
         })
         companies.value = [summary, ...companies.value.filter((c) => c.id !== summary.id)]
         currentCompanyId.value = summary.id
+      }
+
+      const userData = res.data?.user
+      if (userData?.id) {
+        const { useAuthStore } = await import('@/stores/auth')
+        const authStore = useAuthStore()
+        authStore.updateUser({
+          avatar: normalizeImageUrl(userData.avatar) ?? null,
+          avatar_url: normalizeImageUrl(userData.avatar_url) ?? null,
+        })
       }
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -228,19 +250,72 @@ export const useCompanyStore = defineStore('company', () => {
     error.value = null
 
     try {
-      const body: Record<string, unknown> = {
-        company_name: payload.companyName,
-        address: payload.address ?? null,
-        industry: payload.industry ?? null,
-        contact_person: payload.contactPerson ?? null,
-        phone: payload.phone ?? null,
-        email: payload.email ?? null,
-        website: payload.website ?? null,
-        company_profile_image: payload.companyProfileImage ?? null,
-        telegram_link: payload.telegramLink ?? null,
+      let resData
+      const hasFile = payload.companyImage instanceof File
+      const hasProfileFile = payload.companyProfileImage instanceof File
+      const hasAvatarFile = (payload as Record<string, unknown>).avatar instanceof File
+      const needsFormData = hasFile || hasProfileFile || hasAvatarFile
+
+      if (needsFormData) {
+        const fd = new FormData()
+        fd.append('_method', 'PUT')
+        fd.append('company_name', payload.companyName ?? '')
+        if (payload.address) fd.append('address', payload.address)
+        if (payload.industry) fd.append('industry', payload.industry)
+        if (payload.contactPerson) fd.append('contact_person', payload.contactPerson)
+        if (payload.phone) fd.append('phone', payload.phone)
+        if (payload.website) fd.append('website', payload.website)
+        if (payload.telegramLink) fd.append('telegram_link', payload.telegramLink)
+
+        if (hasProfileFile) {
+          fd.append('company_profile_image', payload.companyProfileImage as File)
+        } else if (payload.companyProfileImage && typeof payload.companyProfileImage === 'string') {
+          fd.append('company_profile_image', payload.companyProfileImage)
+        }
+
+        if (hasFile) {
+          fd.append('company_image', payload.companyImage as File)
+        } else if (payload.companyImage && typeof payload.companyImage === 'string') {
+          fd.append('company_image', payload.companyImage)
+        }
+
+        const avatar = (payload as Record<string, unknown>).avatar
+        if (avatar instanceof File) {
+          fd.append('avatar', avatar)
+        } else if (avatar && typeof avatar === 'string') {
+          fd.append('avatar', avatar)
+        }
+
+        const res = await api.post('/company/profile', fd, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        resData = res.data
+      } else {
+        const body: Record<string, unknown> = {
+          company_name: payload.companyName,
+          address: payload.address ?? null,
+          industry: payload.industry ?? null,
+          contact_person: payload.contactPerson ?? null,
+          phone: payload.phone ?? null,
+          website: payload.website ?? null,
+          telegram_link: payload.telegramLink ?? null,
+        }
+        // Only include image fields if actually set and non-null (to avoid overwriting existing values)
+        if (payload.companyImage != null) {
+          body.company_image = payload.companyImage
+        }
+        if (payload.companyProfileImage != null) {
+          body.company_profile_image = payload.companyProfileImage
+        }
+        const avatar = (payload as Record<string, unknown>).avatar
+        if (avatar != null) {
+          body.avatar = avatar
+        }
+        const res = await api.put('/company/profile', body)
+        resData = res.data
       }
-      const res = await api.put('/company/profile', body)
-      const raw = res.data?.company ?? res.data?.data ?? res.data
+
+      const raw = resData?.company ?? resData?.data ?? resData
       if (raw?.id) {
         const summary = toSummary({
           id: raw.id,
@@ -251,7 +326,10 @@ export const useCompanyStore = defineStore('company', () => {
           phone: raw.phone ?? null,
           email: raw.email ?? null,
           website: raw.website ?? null,
-          companyProfileImage: raw.company_profile_image ?? null,
+          companyProfileImage: normalizeImageUrl(raw.company_profile_image) ?? null,
+          companyProfileImageUrl: normalizeImageUrl(raw.company_profile_image_url) ?? null,
+          companyImage: normalizeImageUrl(raw.company_image) ?? null,
+          companyImageUrl: normalizeImageUrl(raw.company_image_url) ?? null,
           telegramLink: raw.telegram_link ?? null,
           createdAt: raw.created_at ?? '',
           updatedAt: raw.updated_at ?? '',
@@ -260,6 +338,17 @@ export const useCompanyStore = defineStore('company', () => {
           c.id === summary.id ? { ...c, ...summary, id: summary.id } : c,
         )
         currentCompanyId.value = summary.id
+      }
+
+      // Update auth store with user data (avatar)
+      const userData = resData?.user
+      if (userData?.id) {
+        const { useAuthStore } = await import('@/stores/auth')
+        const authStore = useAuthStore()
+        authStore.updateUser({
+          avatar: normalizeImageUrl(userData.avatar) ?? null,
+          avatar_url: normalizeImageUrl(userData.avatar_url) ?? null,
+        })
       }
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -282,7 +371,7 @@ export const useCompanyStore = defineStore('company', () => {
 
   async function fetchEvaluations(): Promise<CompanyEvaluationItem[]> {
     try {
-      const res = await api.get('/company/evaluations')
+      const res = await api.get('/evaluations')
       const payload = res.data
       return Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : []
     } catch {
@@ -293,7 +382,7 @@ export const useCompanyStore = defineStore('company', () => {
   async function submitEvaluation(
     payload: CompanyEvaluationPayload,
   ): Promise<CompanyEvaluationItem> {
-    const res = await api.post<CompanyEvaluationItem>('/company/evaluations', payload)
+    const res = await api.post<CompanyEvaluationItem>('/evaluations', payload)
     return res.data
   }
 

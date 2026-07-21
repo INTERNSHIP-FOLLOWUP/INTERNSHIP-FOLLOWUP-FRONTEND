@@ -31,6 +31,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = computed(() => !!user.value)
   const userRole = computed<UserRole | null>(() => user.value?.role ?? null)
   const userName = computed(() => user.value?.name ?? '')
+  const userAvatar = computed(() => user.value?.avatar_url ?? user.value?.avatar ?? null)
   const isAdmin = computed(() => user.value?.role === 'admin')
 
   // ── RBAC ──
@@ -68,6 +69,12 @@ export const useAuthStore = defineStore('auth', () => {
     const tok = data.access_token || data.token
     if (tok) {
       localStorage.setItem(AUTH_TOKEN_KEY, tok)
+    }
+  }
+
+  function updateUser(data: Partial<User>): void {
+    if (user.value) {
+      user.value = { ...user.value, ...data }
     }
   }
 
@@ -216,6 +223,8 @@ export const useAuthStore = defineStore('auth', () => {
     isLoggedIn,
     userRole,
     userName,
+    userAvatar,
+    updateUser,
     isAdmin,
     hasRole,
     hasAnyRole,

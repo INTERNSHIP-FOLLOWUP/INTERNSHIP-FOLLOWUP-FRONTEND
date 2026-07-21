@@ -15,8 +15,8 @@
           class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white/50 bg-white shadow-xl"
         >
           <img
-            v-if="form.companyProfileImage && !errors.companyProfileImage"
-            :src="form.companyProfileImage"
+            v-if="companyImagePreview"
+            :src="companyImagePreview"
             alt="Company logo preview"
             class="h-full w-full object-cover"
           />
@@ -186,17 +186,171 @@
             </p>
           </div>
 
-          <div
-            class="lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6 space-y-5"
-          >
-            <!-- Profile Image URL -->
-            <InputField
-              v-model="form.companyProfileImage"
-              label="Profile Image URL"
-              placeholder="e.g. https://example.com/logo.png"
-              :error="errors.companyProfileImage"
-              autocomplete="url"
-            />
+          <div class="lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6 space-y-5">
+            <!-- Company Logo Upload -->
+            <div class="space-y-1.5">
+              <label class="flex items-center gap-1 text-sm font-medium text-slate-700">
+                Company Logo
+                <span class="text-xs font-normal text-slate-400">(PNG, JPG, max 2MB)</span>
+              </label>
+
+              <!-- Upload Dropzone -->
+              <div
+                class="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 transition-all duration-200"
+                :class="{
+                  'border-indigo-300 bg-indigo-50/40': isDragOver,
+                  'border-slate-200 bg-slate-50/50 hover:border-indigo-200 hover:bg-indigo-50/20': !isDragOver,
+                  'border-red-300 bg-red-50': errors.companyImage,
+                }"
+                @dragover.prevent="isDragOver = true"
+                @dragleave.prevent="isDragOver = false"
+                @drop.prevent="onDrop"
+                @click="$refs.fileInput?.click()"
+              >
+                <!-- Preview when a file is selected -->
+                <template v-if="form.companyImage">
+                  <div class="relative mb-3">
+                    <img
+                      :src="companyImagePreview"
+                      alt="Company logo preview"
+                      class="h-24 w-24 rounded-xl object-cover shadow-sm ring-2 ring-indigo-100"
+                    />
+                    <button
+                      type="button"
+                      class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm transition-colors hover:bg-red-600"
+                      @click.stop="removeCompanyImage"
+                    >
+                      <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <p class="text-xs font-medium text-indigo-600">
+                    {{ isFile(form.companyImage) ? form.companyImage.name : 'Logo uploaded' }}
+                  </p>
+                  <p class="mt-0.5 text-[10px] text-slate-400">
+                    Tap to replace
+                  </p>
+                </template>
+
+                <!-- Empty state -->
+                <template v-else>
+                  <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100">
+                    <svg class="h-7 w-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                  </div>
+                  <p class="text-xs font-medium text-slate-500">
+                    Drop your logo here or <span class="text-indigo-600 underline underline-offset-2">browse</span>
+                  </p>
+                  <p class="mt-0.5 text-[10px] text-slate-400">
+                    Supported: JPEG, PNG
+                  </p>
+                </template>
+
+                <input
+                  ref="fileInput"
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg"
+                  class="hidden"
+                  @change="onFileSelected"
+                />
+              </div>
+              <p v-if="errors.companyImage" class="text-xs font-medium text-red-500">{{ errors.companyImage }}</p>
+
+              <!-- URL Input -->
+              <div class="mt-3">
+                <div class="relative">
+                  <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                  </div>
+                  <input
+                    v-model="companyLogoUrlInput"
+                    type="url"
+                    placeholder="Or paste an image URL..."
+                    class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 transition-colors focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                    @input="onLogoUrlInput"
+                  />
+                  <button
+                    v-if="companyLogoUrlInput"
+                    type="button"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
+                    @click="clearLogoUrl"
+                  >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- User Avatar Upload -->
+            <div class="space-y-1.5">
+              <label class="flex items-center gap-1 text-sm font-medium text-slate-700">
+                Your Avatar
+                <span class="text-xs font-normal text-slate-400">(PNG, JPG, max 2MB)</span>
+              </label>
+
+              <div
+                class="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 transition-all duration-200"
+                :class="{
+                  'border-indigo-300 bg-indigo-50/40': isAvatarDragOver,
+                  'border-slate-200 bg-slate-50/50 hover:border-indigo-200 hover:bg-indigo-50/20': !isAvatarDragOver,
+                  'border-red-300 bg-red-50': errors.avatar,
+                }"
+                @dragover.prevent="isAvatarDragOver = true"
+                @dragleave.prevent="isAvatarDragOver = false"
+                @drop.prevent="onAvatarDrop"
+                @click="$refs.avatarFileInput?.click()"
+              >
+                <template v-if="avatarPreview">
+                  <div class="relative mb-3">
+                    <img
+                      :src="avatarPreview"
+                      alt="Avatar preview"
+                      class="h-24 w-24 rounded-full object-cover shadow-sm ring-2 ring-indigo-100"
+                    />
+                    <button
+                      type="button"
+                      class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm transition-colors hover:bg-red-600"
+                      @click.stop="removeAvatar"
+                    >
+                      <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <p class="text-xs font-medium text-indigo-600">
+                    {{ isFile(form.avatar) ? form.avatar.name : 'Avatar uploaded' }}
+                  </p>
+                  <p class="mt-0.5 text-[10px] text-slate-400">Tap to replace</p>
+                </template>
+
+                <template v-else>
+                  <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
+                    <svg class="h-7 w-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <p class="text-xs font-medium text-slate-500">
+                    Drop your photo here or <span class="text-indigo-600 underline underline-offset-2">browse</span>
+                  </p>
+                  <p class="mt-0.5 text-[10px] text-slate-400">Supported: JPEG, PNG</p>
+                </template>
+
+                <input
+                  ref="avatarFileInput"
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg"
+                  class="hidden"
+                  @change="onAvatarFileSelected"
+                />
+              </div>
+              <p v-if="errors.avatar" class="text-xs font-medium text-red-500">{{ errors.avatar }}</p>
+            </div>
 
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <InputField
@@ -284,7 +438,8 @@ export type CompanyFormData = {
   contactPerson: string
   contactPhone: string
   website: string
-  companyProfileImage: string
+  companyImage: File | string | null
+  avatar: File | string | null
   telegramLink: string
 }
 
@@ -318,7 +473,8 @@ const BACKEND_FIELD_MAP: Record<string, keyof CompanyFormData> = {
   contact_person: 'contactPerson',
   phone: 'contactPhone',
   website: 'website',
-  company_profile_image: 'companyProfileImage',
+  company_image: 'companyImage',
+  avatar: 'avatar',
   telegram_link: 'telegramLink',
 }
 
@@ -333,14 +489,47 @@ const initialForm: CompanyFormData = {
   contactPerson: '',
   contactPhone: '',
   website: '',
-  companyProfileImage: '',
+  companyImage: null,
+  avatar: null,
   telegramLink: '',
 }
+
+const fileInput = ref<HTMLInputElement | null>(null)
+const isDragOver = ref(false)
+const companyLogoUrlInput = ref(
+  props.initialData?.companyImage && typeof props.initialData.companyImage === 'string'
+    ? props.initialData.companyImage
+    : '',
+)
+
+const companyImagePreview = computed(() => {
+  if (form.companyImage instanceof File) {
+    return URL.createObjectURL(form.companyImage)
+  }
+  return form.companyImage || ''
+})
+
+const avatarFileInput = ref<HTMLInputElement | null>(null)
+const isAvatarDragOver = ref(false)
+
+const avatarPreview = computed(() => {
+  if (form.avatar instanceof File) {
+    return URL.createObjectURL(form.avatar)
+  }
+  if (typeof form.avatar === 'string') {
+    return form.avatar
+  }
+  return ''
+})
 
 const form = reactive<CompanyFormData>({ ...initialForm })
 const errors = reactive<CompanyFormErrors>({})
 
 const showCancel = computed(() => props.showCancel)
+
+function isFile(value: unknown): value is File {
+  return value instanceof File
+}
 
 function validateEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
@@ -392,6 +581,106 @@ function validate(): boolean {
   }
 
   return ok
+}
+
+function onFileSelected(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    const file = target.files[0]
+    if (file.size > 2 * 1024 * 1024) {
+      errors.companyImage = 'File size must be less than 2MB'
+      return
+    }
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+      errors.companyImage = 'Only JPEG and PNG files are allowed'
+      return
+    }
+    errors.companyImage = ''
+    form.companyImage = file
+  }
+  isDragOver.value = false
+}
+
+function onDrop(event: DragEvent) {
+  isDragOver.value = false
+  if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+    const file = event.dataTransfer.files[0]
+    if (file.size > 2 * 1024 * 1024) {
+      errors.companyImage = 'File size must be less than 2MB'
+      return
+    }
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+      errors.companyImage = 'Only JPEG and PNG files are allowed'
+      return
+    }
+    errors.companyImage = ''
+    form.companyImage = file
+  }
+}
+
+function removeCompanyImage() {
+  form.companyImage = null
+  companyLogoUrlInput.value = ''
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
+}
+
+function onLogoUrlInput() {
+  const url = companyLogoUrlInput.value.trim()
+  if (url) {
+    form.companyImage = url
+    if (fileInput.value) {
+      fileInput.value.value = ''
+    }
+  }
+}
+
+function clearLogoUrl() {
+  companyLogoUrlInput.value = ''
+  form.companyImage = null
+}
+
+function onAvatarFileSelected(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    const file = target.files[0]
+    if (file.size > 2 * 1024 * 1024) {
+      errors.avatar = 'File size must be less than 2MB'
+      return
+    }
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+      errors.avatar = 'Only JPEG and PNG files are allowed'
+      return
+    }
+    errors.avatar = ''
+    form.avatar = file
+  }
+  isAvatarDragOver.value = false
+}
+
+function onAvatarDrop(event: DragEvent) {
+  isAvatarDragOver.value = false
+  if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+    const file = event.dataTransfer.files[0]
+    if (file.size > 2 * 1024 * 1024) {
+      errors.avatar = 'File size must be less than 2MB'
+      return
+    }
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+      errors.avatar = 'Only JPEG and PNG files are allowed'
+      return
+    }
+    errors.avatar = ''
+    form.avatar = file
+  }
+}
+
+function removeAvatar() {
+  form.avatar = null
+  if (avatarFileInput.value) {
+    avatarFileInput.value.value = ''
+  }
 }
 
 function reset() {

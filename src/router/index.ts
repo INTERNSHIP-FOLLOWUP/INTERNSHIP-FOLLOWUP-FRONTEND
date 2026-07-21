@@ -140,6 +140,18 @@ const router = createRouter({
           meta: { adminOnly: true, title: 'Edit Assignment' } as AppRouteMeta,
         },
         {
+          path: 'evaluations',
+          name: 'AdminEvaluations',
+          component: () => import('@/views/evaluation/AdminEvaluationView.vue'),
+          meta: { title: 'Evaluations' } as AppRouteMeta,
+        },
+        {
+          path: 'feedback',
+          name: 'AdminFeedback',
+          component: () => import('@/views/company/AdminCompanyFeedbackView.vue'),
+          meta: { title: 'Company Feedback' } as AppRouteMeta,
+        },
+        {
           path: 'reports',
           name: 'AdminReports',
           component: () => import('@/views/report/ReportGenerationView.vue'),
@@ -217,6 +229,12 @@ const router = createRouter({
           name: 'TutorIssues',
           component: () => import('@/views/issue/IssueTrackerView.vue'),
           meta: { title: 'Issues' },
+        },
+        {
+          path: 'messages',
+          name: 'TutorMessages',
+          component: () => import('@/views/company/MessageView.vue'),
+          meta: { title: 'Messages' },
         },
         {
           path: 'profile',
@@ -315,6 +333,12 @@ const router = createRouter({
           name: 'CompanyInternships',
           component: () => import('@/views/company/CompanyInternshipInfoView.vue'),
           meta: { title: 'Internship Information' },
+        },
+        {
+          path: 'messages',
+          name: 'CompanyMessages',
+          component: () => import('@/views/company/MessageView.vue'),
+          meta: { title: 'Messages' },
         },
         {
           path: 'profile',

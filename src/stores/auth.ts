@@ -196,6 +196,16 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // ── Refresh user data (e.g. after profile update) ──
+  async function refreshUser(): Promise<void> {
+    try {
+      const userData = await authService.fetchUser()
+      user.value = userData
+    } catch {
+      // Silent — user can still use the app with stale data
+    }
+  }
+
   // ── Force logout (session timeout, 401) ──
   async function forceLogout(): Promise<void> {
     clearSession()
@@ -228,6 +238,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     register,
     logout,
+    refreshUser,
     forceLogout,
   }
 })

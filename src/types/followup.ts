@@ -1,6 +1,12 @@
 // src/types/followup.ts
 export type MeetingType = 'Monthly' | 'Quarterly' | 'Annual'
 
+export interface FollowupUser {
+  id: number
+  name: string
+  email: string
+}
+
 export interface Followup {
   id: number
   student_id: number
@@ -13,6 +19,9 @@ export interface Followup {
   next_followup: string | null
   created_at: string
   updated_at: string
+  // Optional relationship data returned by API with ->with(['student', 'tutor'])
+  student?: FollowupUser
+  tutor?: FollowupUser
 }
 
 export interface FollowupPayload {

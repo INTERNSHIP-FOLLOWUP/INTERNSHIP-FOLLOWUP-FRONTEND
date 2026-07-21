@@ -9,6 +9,9 @@ export interface Company {
   email: string | null
   website: string | null
   companyProfileImage: string | null
+  companyProfileImageUrl: string | null
+  companyImage: string | null
+  companyImageUrl: string | null
   telegramLink: string | null
   createdAt: string
   updatedAt: string
@@ -24,7 +27,9 @@ export interface CreateCompanyPayload {
   password?: string | null
   role?: string | null
   website?: string | null
-  companyProfileImage?: string | null
+  companyProfileImage?: File | string | null
+  companyImage?: File | string | null
+  avatar?: File | string | null
   telegramLink?: string | null
 }
 
@@ -55,30 +60,50 @@ export interface CompanyStudentItem {
   status?: string
   assignedDate?: string
   created_at?: string
+  position?: string
+  start_date?: string
+  end_date?: string
+  tutor_name?: string
 }
 
 export interface CompanyEvaluationItem {
   id: number
   student_id: number
-  rating: number
-  remarks?: string
+  company_id: number
+  technical_skill: number
+  communication: number
+  professionalism: number
+  attendance: number
+  overall_score: number
+  feedback?: string | null
   created_at?: string
+  updated_at?: string
+  student?: {
+    id: number
+    name: string
+    email?: string
+  }
 }
 
 export interface CompanyFeedbackItem {
   id: number
+  company_id: number
+  title: string
   message: string
-  status?: string | null
   created_at?: string
+  updated_at?: string
 }
 
 export interface CompanyEvaluationPayload {
-  studentId: number
-  rating: number
-  remarks?: string | null
+  student_id: number
+  technical_skill: number
+  communication: number
+  professionalism: number
+  attendance: number
+  feedback?: string | null
 }
 
 export interface CompanyFeedbackPayload {
+  title: string
   message: string
-  status?: string | null
 }

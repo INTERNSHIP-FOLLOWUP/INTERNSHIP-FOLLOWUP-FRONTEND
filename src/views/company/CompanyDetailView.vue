@@ -68,8 +68,8 @@
             class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white/50 bg-white shadow-xl"
           >
             <img
-              v-if="company.companyProfileImage"
-              :src="company.companyProfileImage"
+              v-if="companyLogoUrl"
+              :src="companyLogoUrl"
               :alt="company.companyName"
               class="h-full w-full object-cover"
             />
@@ -372,7 +372,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { companyService } from '@/services/company'
 import { useCompanyStore } from '@/stores/company'
@@ -391,6 +391,11 @@ const company = ref<Company | null>(null)
 const loading = ref(false)
 const error = ref('')
 const deleting = ref(false)
+
+const companyLogoUrl = computed(() => {
+  if (!company.value) return null
+  return company.value.companyImageUrl || company.value.companyProfileImageUrl || company.value.companyProfileImage || null
+})
 
 function getCompanyId(): number {
   const idRaw = route.params.id

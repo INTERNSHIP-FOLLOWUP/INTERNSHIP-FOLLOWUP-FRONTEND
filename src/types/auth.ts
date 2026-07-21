@@ -9,6 +9,7 @@ export interface User {
   role: UserRole
   avatar: string | null
   theme: 'light' | 'dark'
+  avatar_url?: string | null
   permissions?: string[]
 }
 

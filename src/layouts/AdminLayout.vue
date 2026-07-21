@@ -185,12 +185,18 @@
           :style="{ backgroundColor: 'var(--sidebar-user-bg)' }"
         >
           <div
-            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white shadow-md"
+            class="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-white shadow-md"
             :style="{
-              background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
+              background: userAvatar ? 'transparent' : `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
             }"
           >
-            {{ userInitials }}
+            <img
+              v-if="userAvatar"
+              :src="userAvatar"
+              :alt="user?.name ?? 'Avatar'"
+              class="h-full w-full rounded-full object-cover"
+            />
+            <span v-else>{{ userInitials }}</span>
           </div>
           <div v-show="!sidebarCollapsed" class="min-w-0 flex-1">
             <p class="truncate text-sm font-semibold text-white">
@@ -310,12 +316,18 @@
               @click.stop="dropdownOpen = !dropdownOpen"
             >
               <div
-                class="flex h-8.5 w-8.5 items-center justify-center rounded-xl text-xs font-bold text-white shadow-sm"
+                class="flex h-8.5 w-8.5 items-center justify-center overflow-hidden rounded-xl text-xs font-bold text-white shadow-sm"
                 :style="{
-                  background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
+                  background: userAvatar ? 'transparent' : `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
                 }"
               >
-                {{ userInitials }}
+                <img
+                  v-if="userAvatar"
+                  :src="userAvatar"
+                  :alt="user?.name ?? 'Avatar'"
+                  class="h-full w-full rounded-xl object-cover"
+                />
+                <span v-else>{{ userInitials }}</span>
               </div>
               <div class="hidden text-left md:block">
                 <p class="text-sm font-semibold leading-tight text-slate-800">
@@ -559,6 +571,8 @@ onUnmounted(() => {
 })
 
 const user = computed(() => auth.user)
+
+const userAvatar = computed(() => auth.userAvatar)
 
 const userInitials = computed(() => {
   const name = user.value?.name || 'Admin User'

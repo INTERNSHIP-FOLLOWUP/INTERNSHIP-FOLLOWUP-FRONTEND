@@ -194,7 +194,7 @@
               </div>
               <div>
                 <h4 class="text-xs font-bold text-slate-900">Student #{{ evalItem.student_id }}</h4>
-                <p class="text-[10px] font-semibold text-slate-400">Rating: {{ evalItem.rating }}/5</p>
+                <p class="text-[10px] font-semibold text-slate-400">Overall Score: {{ evalItem.overall_score }}/100</p>
               </div>
             </div>
             <div class="text-right">
@@ -251,12 +251,25 @@
           <p class="text-sm font-semibold text-slate-900">{{ companyProfile.phone || 'N/A' }}</p>
         </div>
       </div>
+
+      <!-- Company Logo Section -->
+      <div v-if="companyLogoUrl" class="mt-4 flex items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+        <img
+          :src="companyLogoUrl"
+          alt="Company Logo"
+          class="h-16 w-16 rounded-xl object-cover shadow-sm ring-2 ring-white"
+        />
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Company Logo</p>
+          <p class="text-sm font-medium text-slate-700">Uploaded brand logo</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, h, defineComponent } from 'vue'
+import { ref, computed, onMounted, h, defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCompanyStore } from '@/stores/company'
 import StatCard from '@/components/dashboard/StatCard.vue'
@@ -275,7 +288,10 @@ const companyProfile = ref({
   industry: '',
   contactPerson: '',
   phone: '',
+  logoUrl: '',
 })
+
+const companyLogoUrl = computed(() => companyProfile.value.logoUrl || null)
 
 const stats = ref({
   activeInternships: 0,
@@ -378,39 +394,13 @@ async function load() {
       store.fetchStudents(),
       store.fetchEvaluations(),
     ])
-
-    try {
-      await store.fetchProfile()
-    } catch {
-      // profile fetch might throw — use empty state
-    }
-
-    const raw = store.currentCompany
-    if (raw) {
-      displayName.value = raw.name || 'Company'
-      companyProfile.value = {
-        name: raw.name || '',
-        industry: raw.industry || '',
-        contactPerson: raw.contactPerson || '',
-        phone: raw.phone || '',
-      }
-    }
-
     assignedStudents.value = Array.isArray(studentsData) ? studentsData : []
-    recentEvaluations.value = (Array.isArray(evaluationsData) ? evaluationsData : []).slice(-5).reverse()
-
-    const activeInternships = Array.isArray(studentsData)
-      ? studentsData.filter((s: any) => {
-          const st = (s.status || '').toLowerCase()
-          return st === 'assigned' || st === 'active' || st === 'in_progress'
-        }).length
-      : 0
-
+    recentEvaluations.value = Array.isArray(evaluationsData) ? evaluationsData : []
     stats.value = {
-      activeInternships,
-      assignedStudents: Array.isArray(studentsData) ? studentsData.length : 0,
-      evaluationsSubmitted: Array.isArray(evaluationsData) ? evaluationsData.length : 0,
-      pendingReviews: Array.isArray(evaluationsData) ? 0 : 0,
+      activeInternships: assignedStudents.value.filter((s) => s.status === 'assigned').length,
+      assignedStudents: assignedStudents.value.length,
+      evaluationsSubmitted: recentEvaluations.value.length,
+      pendingReviews: 0,
     }
   } catch {
     // keep dashboard visible if secondary APIs fail

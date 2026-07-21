@@ -13,7 +13,7 @@
 
         <div class="mb-4 rounded-xl border border-indigo-100 bg-indigo-50 p-4 text-sm text-indigo-700">
           <p class="font-semibold">Format</p>
-          <p class="mt-1 text-indigo-600">Upload an .xlsx file with columns: Student Code, Last Name, First Name, Email, Gender, Phone, Batch, Tutor</p>
+          <p class="mt-1 text-indigo-600">Upload an .xlsx file with columns: Student Code, First Name, Last Name, Email, Gender, Phone, Batch, Tutor</p>
           <a :href="templateUrl" class="mt-2 inline-flex items-center gap-1.5 font-semibold text-indigo-700 hover:text-indigo-900 underline">
             Download template
           </a>

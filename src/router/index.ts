@@ -91,13 +91,13 @@ const router = createRouter({
         },
         {
           path: 'student-profile/:id',
-          name: 'StudentProfile',
+          name: 'AdminStudentProfile',
           component: () => import('@/views/student_profile/StudentProfileView.vue'),
           meta: { title: 'Student Profile' } as AppRouteMeta,
         },
         {
           path: 'tutor-profile/:id',
-          name: 'TutorProfile',
+          name: 'AdminTutorProfile',
           component: () => import('@/views/student_profile/TutorProfileView.vue'),
           meta: { title: 'Tutor Profile' } as AppRouteMeta,
         },
@@ -242,7 +242,7 @@ const router = createRouter({
         },
         {
           path: 'profile',
-          name: 'TutorProfile',
+          name: 'TutorSelfProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
           meta: { title: 'Profile' },
         },
@@ -291,7 +291,7 @@ const router = createRouter({
         },
         {
           path: 'profile',
-          name: 'StudentProfile',
+          name: 'StudentSelfProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
           meta: { title: 'Profile' },
         },

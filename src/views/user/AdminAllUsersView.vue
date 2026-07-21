@@ -15,6 +15,26 @@
           </svg>
           Import Excel
         </button>
+        <button @click="exportUsers"
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-emerald-200 hover:bg-emerald-50">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Export Excel
+        </button>
+        <button @click="selectMode ? clearSelection() : enterSelectMode()"
+          class="flex h-10 items-center gap-2 rounded-xl border px-4 text-sm font-semibold transition-all"
+          :class="selectMode
+            ? 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100'
+            : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-rose-200 hover:bg-rose-50'">
+          <svg v-if="selectMode" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          {{ selectMode ? 'Cancel' : 'Select All' }}
+        </button>
       </div>
     </div>
 
@@ -53,9 +73,11 @@
     </div>
 
     <div class="rounded-xl border border-slate-200/80 bg-white shadow-sm">
+      <!-- Loading skeleton -->
       <div v-if="loading && users.length === 0">
         <div class="space-y-0 divide-y divide-slate-50">
           <div v-for="n in 5" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse">
+            <div class="h-4 w-4 rounded bg-slate-200" />
             <div class="h-8 w-8 rounded-full bg-slate-200" />
             <div class="flex-1 space-y-2">
               <div class="h-3 w-1/3 rounded bg-slate-200" />
@@ -75,6 +97,11 @@
           <table class="w-full text-left text-sm">
             <thead>
               <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <th v-if="selectMode" class="px-4 py-3.5 w-10">
+                  <input type="checkbox" :checked="isAllSelected" :indeterminate="isIndeterminate"
+                    @change="toggleSelectAll"
+                    class="h-4 w-4 rounded border-slate-300 text-rose-600 cursor-pointer accent-rose-600" />
+                </th>
                 <th class="px-6 py-3.5 font-medium">User</th>
                 <th class="px-6 py-3.5 font-medium">Email</th>
                 <th class="px-6 py-3.5 font-medium">Role</th>
@@ -83,7 +110,14 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
-              <tr v-for="user in users" :key="user.id" class="transition-colors hover:bg-slate-50/50">
+              <tr v-for="user in users" :key="user.id"
+                class="transition-colors hover:bg-slate-50/50"
+                :class="{ 'bg-rose-50/40': selectedIds.has(user.id) }">
+                <td v-if="selectMode" class="px-4 py-4 w-10">
+                  <input type="checkbox" :checked="selectedIds.has(user.id)"
+                    @change="toggleSelect(user.id)"
+                    class="h-4 w-4 rounded border-slate-300 text-rose-600 cursor-pointer accent-rose-600" />
+                </td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <div class="flex items-center gap-3">
                     <div class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold" :class="roleAvatarClass(user.role?.name)">
@@ -116,9 +150,6 @@
                     <button v-else @click="deactivateUser(user)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-amber-600 transition-all hover:bg-amber-50 hover:text-amber-800">
                       Deactivate
                     </button>
-                    <button @click="resetPassword(user)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-blue-600 transition-all hover:bg-blue-50 hover:text-blue-800">
-                      Reset Pwd
-                    </button>
                     <button @click="deleteUser(user)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-800">
                       Delete
                     </button>
@@ -129,6 +160,7 @@
           </table>
         </div>
 
+        <!-- Pagination -->
         <div v-if="pagination && pagination.last_page > 1" class="flex flex-col gap-3 border-t border-slate-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
           <p class="text-xs font-medium text-slate-500">
             Showing <span class="font-semibold text-slate-700">{{ pagination.from }}</span> – <span class="font-semibold text-slate-700">{{ pagination.to }}</span> of <span class="font-semibold text-slate-700">{{ pagination.total }}</span> user{{ pagination.total !== 1 ? 's' : '' }}
@@ -161,6 +193,80 @@
       </div>
     </div>
 
+    <!-- ── Floating Bulk Action Bar ── -->
+    <transition name="slide-up">
+      <div v-if="selectedIds.size > 0"
+        class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
+        <div class="flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3 shadow-2xl shadow-rose-100 ring-1 ring-rose-100">
+          <!-- Count badge -->
+          <span class="flex h-7 min-w-[28px] items-center justify-center rounded-full bg-rose-600 px-2 text-xs font-bold text-white">
+            {{ selectedIds.size }}
+          </span>
+          <span class="text-sm font-semibold text-slate-700">
+            user{{ selectedIds.size !== 1 ? 's' : '' }} selected
+          </span>
+          <div class="mx-1 h-5 w-px bg-slate-200" />
+          <button @click="bulkDelete"
+            :disabled="bulkDeleting"
+            class="flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition-all hover:bg-rose-700 disabled:opacity-60 active:scale-95">
+            <svg v-if="bulkDeleting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            {{ bulkDeleting ? 'Deleting...' : 'Delete Selected' }}
+          </button>
+          <button @click="clearSelection"
+            class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 active:scale-95">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </transition>
+
+    <!-- ── Bulk Confirm Modal ── -->
+    <transition name="fade">
+      <div v-if="showBulkConfirm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" @click.self="showBulkConfirm = false">
+        <div class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50">
+              <svg class="h-5 w-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-slate-900">Delete {{ selectedIds.size }} User{{ selectedIds.size !== 1 ? 's' : '' }}</h3>
+              <p class="mt-0.5 text-sm text-slate-500">
+                This action is permanent and cannot be undone.
+              </p>
+            </div>
+          </div>
+          <div v-if="bulkError" class="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">{{ bulkError }}</div>
+          <div class="mt-5 flex items-center justify-end gap-3">
+            <button @click="showBulkConfirm = false" :disabled="bulkDeleting"
+              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
+              Cancel
+            </button>
+            <button @click="confirmBulkDelete" :disabled="bulkDeleting"
+              class="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-rose-700 disabled:opacity-60">
+              <svg v-if="bulkDeleting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              {{ bulkDeleting ? 'Deleting...' : `Delete ${selectedIds.size}` }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <ImportUsersModal :show="showImportModal" @close="showImportModal = false; fetchUsers()" />
+
     <ConfirmDialog
       :show="confirmShow"
       :title="confirmTitle"
@@ -172,8 +278,6 @@
       @confirm="handleConfirmAction"
       @cancel="confirmCancel"
     />
-
-    <ImportUsersModal :show="showImportModal" @close="showImportModal = false; fetchUsers()" />
   </div>
 </template>
 
@@ -207,16 +311,79 @@ const error = ref('')
 const pagination = ref<PaginationMeta | null>(null)
 const roleStats = ref<RoleCounts>({ admin: 0, tutor: 0, student: 0, company: 0 })
 const currentPage = ref(1)
+const showImportModal = ref(false)
 const searchQuery = ref('')
 const roleFilter = ref('')
 const statusFilter = ref('')
-const showImportModal = ref(false)
-
 const confirmTitle = ref('')
 const confirmMessage = ref('')
 const confirmButtonText = ref('Confirm')
-type ActionType = 'delete' | 'deactivate' | 'activate' | 'reset-password'
+type ActionType = 'delete' | 'deactivate' | 'activate'
 const pendingAction = ref<{ type: ActionType; user: User } | null>(null)
+
+// ── Bulk select state ──
+const selectMode = ref(false)
+const selectedIds = ref<Set<number>>(new Set())
+const showBulkConfirm = ref(false)
+const bulkDeleting = ref(false)
+const bulkError = ref('')
+
+function enterSelectMode() {
+  selectMode.value = true
+}
+
+const isAllSelected = computed(() =>
+  users.value.length > 0 && users.value.every(u => selectedIds.value.has(u.id))
+)
+const isIndeterminate = computed(() =>
+  users.value.some(u => selectedIds.value.has(u.id)) && !isAllSelected.value
+)
+
+function toggleSelect(id: number) {
+  const next = new Set(selectedIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  selectedIds.value = next
+}
+
+function toggleSelectAll() {
+  if (isAllSelected.value) {
+    const next = new Set(selectedIds.value)
+    users.value.forEach(u => next.delete(u.id))
+    selectedIds.value = next
+  } else {
+    const next = new Set(selectedIds.value)
+    users.value.forEach(u => next.add(u.id))
+    selectedIds.value = next
+  }
+}
+
+function clearSelection() {
+  selectedIds.value = new Set()
+  selectMode.value = false
+}
+
+function bulkDelete() {
+  bulkError.value = ''
+  showBulkConfirm.value = true
+}
+
+async function confirmBulkDelete() {
+  bulkDeleting.value = true
+  bulkError.value = ''
+  try {
+    const ids = Array.from(selectedIds.value)
+    await api.delete('/admin/users/bulk-delete', { data: { ids } })
+    toast.success(`Deleted ${ids.length} user${ids.length !== 1 ? 's' : ''} successfully.`)
+    showBulkConfirm.value = false
+    clearSelection()
+    fetchUsers()
+  } catch (err: unknown) {
+    bulkError.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Bulk delete failed.'
+  } finally {
+    bulkDeleting.value = false
+  }
+}
 
 const totalUsers = computed(() => {
   if (pagination.value) return pagination.value.total
@@ -284,10 +451,6 @@ async function confirmAction(type: ActionType, user: User) {
     confirmTitle.value = 'Activate User'
     confirmMessage.value = `Activate ${user.name}?`
     confirmButtonText.value = 'Activate'
-  } else if (type === 'reset-password') {
-    confirmTitle.value = 'Reset Password'
-    confirmMessage.value = `Reset password for ${user.name} to a new password?`
-    confirmButtonText.value = 'Reset'
   }
   const confirmed = await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value })
   if (!confirmed) return
@@ -307,9 +470,6 @@ async function handleConfirmAction() {
     } else if (type === 'activate') {
       await api.put(`/admin/users/${user.id}/activate`)
       toast.success(`User "${user.name}" activated.`)
-    } else if (type === 'reset-password') {
-      await api.post(`/admin/users/${user.id}/reset-password`, { password: 'newpassword123' })
-      toast.success(`Password reset for "${user.name}". New password: newpassword123`)
     }
     pendingAction.value = null
     fetchUsers()
@@ -319,7 +479,21 @@ async function handleConfirmAction() {
 function deleteUser(user: User) { confirmAction('delete', user) }
 function deactivateUser(user: User) { confirmAction('deactivate', user) }
 function activateUser(user: User) { confirmAction('activate', user) }
-function resetPassword(user: User) { confirmAction('reset-password', user) }
+
+async function exportUsers() {
+  try {
+    const res = await api.get('/admin/users/export/excel', { responseType: 'blob' })
+    const url = window.URL.createObjectURL(res.data)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `users-${new Date().toISOString().slice(0, 10)}.xlsx`
+    a.click()
+    window.URL.revokeObjectURL(url)
+    toast.success('Users exported successfully.')
+  } catch {
+    toast.error('Failed to export users.')
+  }
+}
 
 function getInitials(name: string): string {
   return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -366,3 +540,13 @@ watch(statusFilter, () => { currentPage.value = 1; fetchUsers() })
 
 onMounted(() => { fetchUsers() })
 </script>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.slide-up-enter-active { transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.slide-up-leave-active { transition: all 0.2s ease-in; }
+.slide-up-enter-from  { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.95); }
+.slide-up-leave-to    { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.95); }
+</style>

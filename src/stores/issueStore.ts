@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { issueService } from '@/services/issueService'
 import { useToastStore } from '@/stores/toast'
+import type { AxiosError } from 'axios'
 import type { Issue, IssueStats, IssueFilters, PaginationMeta, IssueForm } from '@/types/issue'
 
 export const useIssueStore = defineStore('issue', () => {
@@ -97,9 +98,10 @@ export const useIssueStore = defineStore('issue', () => {
     error.value = null
     try {
       const created = await issueService.createIssue(payload.form)
-      issues.value.unshift(created)
+      const issue = created as Issue
+      issues.value.unshift(issue)
       await fetchIssueStats()
-      return created
+      return issue
     } catch (err: unknown) {
       const parsed = err as { message?: string }
       error.value = parsed?.message || 'Failed to create issue.'
@@ -115,13 +117,25 @@ export const useIssueStore = defineStore('issue', () => {
     error.value = null
     try {
       const updated = await issueService.updateIssue(payload.id, payload.form)
+      const issue = updated as Issue
       const found = issues.value.find((x) => x.id === payload.id)
-      if (found) Object.assign(found, updated)
+      if (found) Object.assign(found, issue)
       await fetchIssueStats()
-      return updated
+      return issue
     } catch (err: unknown) {
-      const parsed = err as { message?: string }
-      error.value = parsed?.message || 'Failed to update issue.'
+      const axiosErr = err as AxiosError<{ message?: string; errors?: Record<string, unknown> }>
+      const backendErrors = axiosErr.response?.data?.errors
+      if (backendErrors) {
+        const messages = Object.entries(backendErrors)
+          .map(([field, msgs]) => {
+            const messageList = Array.isArray(msgs) ? msgs : [String(msgs ?? '')]
+            return `${field}: ${messageList.join(', ')}`
+          })
+          .join('; ')
+        error.value = messages || 'Failed to update issue.'
+      } else {
+        error.value = axiosErr.response?.data?.message || 'Failed to update issue.'
+      }
       useToastStore().error(error.value, 'Update Issue Failed')
       return null
     } finally {
@@ -167,6 +181,24 @@ export const useIssueStore = defineStore('issue', () => {
     }
   }
 
+  async function deleteIssue(id: string): Promise<boolean> {
+    loading.value = true
+    error.value = null
+    try {
+      await issueService.deleteIssue(id)
+      issues.value = issues.value.filter((x) => x.id !== id)
+      await fetchIssueStats()
+      return true
+    } catch (err: unknown) {
+      const parsed = err as { message?: string }
+      error.value = parsed?.message || 'Failed to delete issue.'
+      useToastStore().error(error.value, 'Delete Issue Failed')
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
   function setFilters(next: Partial<IssueFilters>): void {
     filters.value = { ...filters.value, ...next }
     pagination.value.page = 1
@@ -204,5 +236,6 @@ export const useIssueStore = defineStore('issue', () => {
     setFilters,
     resetFilters,
     setPage,
+    deleteIssue,
   }
 })

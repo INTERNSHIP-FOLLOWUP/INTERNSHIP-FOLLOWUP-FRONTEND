@@ -14,6 +14,7 @@ export interface Issue {
   title: string
   description: string
   reporter: string
+  studentName?: string
   assignedTo: string
   createdAt: string
   updatedAt: string
@@ -21,6 +22,8 @@ export interface Issue {
   priority: 'Low' | 'Medium' | 'High' | 'Critical'
   attachments?: number
   history?: IssueHistoryEvent[]
+  studentId?: string | number
+  assignedUserId?: string | number
 }
 
 export interface IssueStats {
@@ -35,6 +38,7 @@ export interface IssueForm {
   description: string
   priority: Issue['priority'] | ''
   status: Issue['status'] | ''
+  studentId: string | number
   assignedUserId: string | number
   dueDate: string
   files: File[]

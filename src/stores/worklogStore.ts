@@ -56,7 +56,8 @@ export const useWorklogStore = defineStore('worklog', () => {
     loading.value = true
     errors.value = {}
     try {
-      const w = await worklogService.getWorklog(id)
+      const res = await worklogService.getWorklog(id)
+      const w = (res.data?.data ?? res.data) as Worklog
       worklog.value = w
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -71,7 +72,8 @@ export const useWorklogStore = defineStore('worklog', () => {
     loading.value = true
     errors.value = {}
     try {
-      const created = await worklogService.createWorklog(data)
+      const res = await worklogService.createWorklog(data)
+      const created = (res.data?.data ?? res.data) as Worklog
       worklogs.value = [created, ...worklogs.value]
       return created
     } catch (err: unknown) {
@@ -152,7 +154,8 @@ export const useWorklogStore = defineStore('worklog', () => {
     loading.value = true
     errors.value = {}
     try {
-      const w = await worklogService.getTutorWorklog(id)
+      const res = await worklogService.getTutorWorklog(id)
+      const w = (res.data?.data ?? res.data) as Worklog
       tutorWorklog.value = w
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -163,14 +166,22 @@ export const useWorklogStore = defineStore('worklog', () => {
     }
   }
 
-  async function reviewWorklog(id: number, payload: { status: WorklogStatus; feedback?: string }) {
+  async function reviewWorklog(
+    id: number,
+    data: { status: WorklogStatus; feedback: string },
+  ): Promise<Worklog> {
     loading.value = true
     errors.value = {}
     try {
-      const updated = await worklogService.reviewWorklog(id, payload)
+      const res = await worklogService.reviewWorklog(id, {
+        status: data.status,
+        feedback: data.feedback,
+      })
+
+      const updated = (res.data?.data ?? res.data) as Worklog
+
       if (tutorWorklog.value?.id === id) tutorWorklog.value = updated
-      const idx = tutorWorklogs.value.findIndex((w) => w.id === id)
-      if (idx !== -1) tutorWorklogs.value[idx] = updated
+      tutorWorklogs.value = tutorWorklogs.value.map((w) => (w.id === id ? updated : w))
       return updated
     } catch (err: unknown) {
       const parsed = parseApiError(err)

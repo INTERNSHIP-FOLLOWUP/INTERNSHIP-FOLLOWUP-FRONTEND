@@ -1,27 +1,20 @@
 <template>
-  <div class="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-4">
+  <div class="rounded-xl border border-dashed border-slate-300 bg-white p-4 transition-all duration-200 hover:border-indigo-300 hover:shadow-sm">
     <div
-      class="flex flex-col items-center justify-center gap-2 rounded-xl p-6 text-center"
-      :class="isDragging ? 'bg-indigo-50 border-indigo-200' : 'bg-white'"
+      class="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl bg-slate-50/50 p-8 text-center transition-all duration-200"
+      :class="isDragging ? 'border-2 border-indigo-400 bg-indigo-50/60 shadow-inner' : 'border-2 border-transparent hover:border-slate-200'"
       @dragover.prevent="onDragOver"
       @dragleave.prevent="onDragLeave"
       @drop.prevent="onDrop"
+      @click="browse"
     >
-      <div
-        class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"
-      >
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M7 16V8a2 2 0 012-2h6a2 2 0 012 2v8M9 14l3-3 3 3M12 11v9"
-          />
+      <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-sm">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V8a2 2 0 012-2h6a2 2 0 012 2v8M9 14l3-3 3 3M12 11v9" />
         </svg>
       </div>
       <p class="text-sm font-semibold text-slate-700">
-        Drag files here or
-        <button type="button" class="text-indigo-600 hover:underline">browse</button>
+        Drag files here or <span class="text-indigo-600 hover:underline">browse</span>
       </p>
       <p class="text-xs text-slate-500">Allowed: PDF, DOC/DOCX, PNG/JPG, ZIP</p>
     </div>
@@ -51,7 +44,7 @@
         <div
           v-for="(f, idx) in internalFiles"
           :key="`${f.name}-${f.size}-${idx}`"
-          class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-3"
+          class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-white p-3 shadow-sm"
         >
           <div class="min-w-0">
             <p class="truncate text-xs font-semibold text-slate-800">{{ f.name }}</p>
@@ -73,10 +66,7 @@
       {{ validationError }}
     </div>
 
-    <div
-      v-if="submitting"
-      class="mt-4 text-xs font-semibold text-slate-500 flex items-center gap-2"
-    >
+    <div v-if="submitting" class="mt-4 flex items-center gap-2 text-xs font-semibold text-slate-500">
       <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
         <path
@@ -156,9 +146,11 @@ function addFiles(files: File[]) {
 function onDragOver() {
   isDragging.value = true
 }
+
 function onDragLeave() {
   isDragging.value = false
 }
+
 function onDrop(e: DragEvent) {
   isDragging.value = false
   const list = e.dataTransfer?.files
@@ -172,6 +164,10 @@ function onFileChange(e: Event) {
   if (!list || list.length === 0) return
   addFiles(Array.from(list))
   input.value = ''
+}
+
+function browse() {
+  inputRef.value?.click()
 }
 
 function remove(idx: number) {

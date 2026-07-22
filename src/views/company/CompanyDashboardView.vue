@@ -469,10 +469,11 @@ async function load() {
       store.fetchStudents(),
       store.fetchEvaluations(),
     ])
+
     try {
       await store.fetchProfile()
     } catch {
-      // profile fetch might throw — use empty state
+      // profile fetch might throw; use empty state
     }
 
     const raw = store.currentCompany

@@ -229,6 +229,12 @@ const router = createRouter({
           meta: { title: 'Worklogs' },
         },
         {
+          path: 'worklogs/:id',
+          name: 'TutorWorklogDetail',
+          component: () => import('@/views/worklog/TutorWorklogDetail.vue'),
+          meta: { title: 'Review Worklog' },
+        },
+        {
           path: 'followups',
           name: 'TutorFollowups',
           component: () => import('@/views/followup/FollowupListView.vue'),
@@ -280,8 +286,26 @@ const router = createRouter({
         {
           path: 'worklogs',
           name: 'StudentWorklogs',
-          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
+          component: () => import('@/views/worklog/WorklogList.vue'),
           meta: { title: 'Worklogs' },
+        },
+        {
+          path: 'worklogs/create',
+          name: 'StudentWorklogsCreate',
+          component: () => import('@/views/worklog/WorklogForm.vue'),
+          meta: { title: 'Create Worklog' },
+        },
+        {
+          path: 'worklogs/:id',
+          name: 'StudentWorklogDetail',
+          component: () => import('@/views/worklog/WorklogDetail.vue'),
+          meta: { title: 'Worklog Detail' },
+        },
+        {
+          path: 'worklogs/:id/edit',
+          name: 'StudentWorklogEdit',
+          component: () => import('@/views/worklog/WorklogForm.vue'),
+          meta: { title: 'Edit Worklog' },
         },
         {
           path: 'followups',

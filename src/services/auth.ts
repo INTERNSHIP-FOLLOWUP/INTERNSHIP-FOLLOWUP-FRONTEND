@@ -101,6 +101,22 @@ export const authService = {
     return response.data
   },
 
+  async updateProfile(data: FormData): Promise<User> {
+    const response = await api.post<{ user: User }>('/profile/update', data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return normalizeUser(response.data.user)
+  },
+
+  async changePassword(payload: {
+    current_password: string
+    password: string
+    password_confirmation: string
+  }): Promise<{ message: string }> {
+    const response = await api.put<{ message: string }>('/profile/password', payload)
+    return response.data
+  },
+
   async refreshToken(): Promise<RefreshResponse> {
     const refreshToken = tokenService.getRefreshToken()
     const response = await api.post<RefreshResponse>(ENDPOINTS.REFRESH, {

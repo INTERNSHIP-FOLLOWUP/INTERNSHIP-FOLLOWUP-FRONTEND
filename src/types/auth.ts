@@ -2,10 +2,13 @@ export type UserRole = 'admin' | 'tutor' | 'student' | 'company' | 'company repr
 
 export interface User {
   id: number
+  first_name: string
+  last_name: string
   name: string
   email: string
   role: UserRole
   avatar: string | null
+  theme: 'light' | 'dark'
   avatar_url?: string | null
   permissions?: string[]
 }
@@ -22,7 +25,8 @@ export interface LoginCredentials {
 }
 
 export interface RegisterData {
-  name: string
+  first_name: string
+  last_name: string
   email: string
   password: string
   password_confirmation: string

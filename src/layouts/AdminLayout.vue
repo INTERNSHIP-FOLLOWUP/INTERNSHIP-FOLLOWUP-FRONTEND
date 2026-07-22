@@ -20,8 +20,8 @@
     >
       <!-- Logo / Branding -->
       <div
-        class="flex h-16 items-center px-4 transition-all duration-300"
-        :class="sidebarCollapsed ? 'justify-center' : 'gap-3 px-6'"
+        class="relative flex h-16 items-center transition-all duration-300"
+        :class="sidebarCollapsed ? 'justify-center px-4' : 'gap-3 px-6'"
         :style="{ borderBottom: '1px solid var(--sidebar-border)' }"
       >
         <div
@@ -38,6 +38,28 @@
             Internship Management
           </p>
         </div>
+        <!-- Collapse toggle -->
+        <button
+          @click="toggleSidebarCollapse"
+          class="sidebar-nav-link absolute right-1 top-1/2 -translate-y-1/2 flex items-center justify-center rounded-xl p-2 text-sm font-medium transition-all duration-200"
+          :style="{ color: 'var(--sidebar-nav-text)' }"
+          :title="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+        >
+          <svg
+            class="h-4 w-4 transition-transform duration-300"
+            :class="sidebarCollapsed ? 'rotate-180' : ''"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+            />
+          </svg>
+        </button>
       </div>
 
       <!-- Navigation Links -->
@@ -154,32 +176,8 @@
         </div>
       </nav>
 
-      <!-- Bottom: Collapse Toggle + User -->
+      <!-- Bottom: User -->
       <div class="border-t p-3" :style="{ borderColor: 'var(--sidebar-border)' }">
-        <!-- Collapse toggle -->
-        <button
-          @click="toggleSidebarCollapse"
-          class="sidebar-nav-link mb-2 flex w-full items-center justify-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200"
-          :style="{ color: 'var(--sidebar-nav-text)' }"
-          :title="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
-        >
-          <svg
-            class="h-4 w-4 transition-transform duration-300"
-            :class="sidebarCollapsed ? 'rotate-180' : ''"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-            />
-          </svg>
-          <span v-show="!sidebarCollapsed" class="truncate text-xs opacity-70">Collapse</span>
-        </button>
-
         <!-- User info -->
         <div
           class="flex items-center rounded-xl p-2.5 transition-colors"
@@ -248,6 +246,19 @@
 
         <!-- User Controls / Notifications -->
         <div class="flex items-center gap-3">
+          <!-- Dark Mode Toggle -->
+          <button
+            @click="themeStore.setDarkMode(!themeStore.darkMode)"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-50 hover:text-slate-600"
+            :title="themeStore.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+          >
+            <svg v-if="!themeStore.darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <svg v-else class="h-5 w-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </button>
           <!-- Theme Settings Button -->
           <button
             @click.stop="themeSettingsOpen = !themeSettingsOpen"

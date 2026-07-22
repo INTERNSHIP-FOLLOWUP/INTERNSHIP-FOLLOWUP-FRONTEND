@@ -215,7 +215,7 @@
                 @dragover.prevent="isDragOver = true"
                 @dragleave.prevent="isDragOver = false"
                 @drop.prevent="onDrop"
-                @click="$refs.fileInput?.click()"
+                @click="fileInput?.click()"
               >
                 <!-- Preview when a file is selected -->
                 <template v-if="form.companyImage">
@@ -314,7 +314,7 @@
                 @dragover.prevent="isAvatarDragOver = true"
                 @dragleave.prevent="isAvatarDragOver = false"
                 @drop.prevent="onAvatarDrop"
-                @click="$refs.avatarFileInput?.click()"
+                @click="avatarFileInput?.click()"
               >
                 <template v-if="avatarPreview">
                   <div class="relative mb-3">
@@ -515,11 +515,11 @@ const companyLogoUrlInput = ref(
     : '',
 )
 
-const companyImagePreview = computed(() => {
+const companyImagePreview = computed<string | undefined>(() => {
   if (form.companyImage instanceof File) {
     return URL.createObjectURL(form.companyImage)
   }
-  return form.companyImage || ''
+  return (form.companyImage as string) || undefined
 })
 
 const avatarFileInput = ref<HTMLInputElement | null>(null)
@@ -608,37 +608,35 @@ function validate(): boolean {
 
 function onFileSelected(event: Event) {
   const target = event.target as HTMLInputElement
-  if (target.files && target.files.length > 0) {
-    const file = target.files[0]
-    if (file.size > 2 * 1024 * 1024) {
-      errors.companyImage = 'File size must be less than 2MB'
-      return
-    }
-    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-      errors.companyImage = 'Only JPEG and PNG files are allowed'
-      return
-    }
-    errors.companyImage = ''
-    form.companyImage = file
+  const file = target.files?.[0]
+  if (!file) return
+  if (file.size > 2 * 1024 * 1024) {
+    errors.companyImage = 'File size must be less than 2MB'
+    return
   }
+  if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+    errors.companyImage = 'Only JPEG and PNG files are allowed'
+    return
+  }
+  errors.companyImage = ''
+  form.companyImage = file
   isDragOver.value = false
 }
 
 function onDrop(event: DragEvent) {
   isDragOver.value = false
-  if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
-    const file = event.dataTransfer.files[0]
-    if (file.size > 2 * 1024 * 1024) {
-      errors.companyImage = 'File size must be less than 2MB'
-      return
-    }
-    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-      errors.companyImage = 'Only JPEG and PNG files are allowed'
-      return
-    }
-    errors.companyImage = ''
-    form.companyImage = file
+  const file = event.dataTransfer?.files?.[0]
+  if (!file) return
+  if (file.size > 2 * 1024 * 1024) {
+    errors.companyImage = 'File size must be less than 2MB'
+    return
   }
+  if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+    errors.companyImage = 'Only JPEG and PNG files are allowed'
+    return
+  }
+  errors.companyImage = ''
+  form.companyImage = file
 }
 
 function removeCompanyImage() {
@@ -666,37 +664,35 @@ function clearLogoUrl() {
 
 function onAvatarFileSelected(event: Event) {
   const target = event.target as HTMLInputElement
-  if (target.files && target.files.length > 0) {
-    const file = target.files[0]
-    if (file.size > 2 * 1024 * 1024) {
-      errors.avatar = 'File size must be less than 2MB'
-      return
-    }
-    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-      errors.avatar = 'Only JPEG and PNG files are allowed'
-      return
-    }
-    errors.avatar = ''
-    form.avatar = file
+  const file = target.files?.[0]
+  if (!file) return
+  if (file.size > 2 * 1024 * 1024) {
+    errors.avatar = 'File size must be less than 2MB'
+    return
   }
+  if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+    errors.avatar = 'Only JPEG and PNG files are allowed'
+    return
+  }
+  errors.avatar = ''
+  form.avatar = file
   isAvatarDragOver.value = false
 }
 
 function onAvatarDrop(event: DragEvent) {
   isAvatarDragOver.value = false
-  if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
-    const file = event.dataTransfer.files[0]
-    if (file.size > 2 * 1024 * 1024) {
-      errors.avatar = 'File size must be less than 2MB'
-      return
-    }
-    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-      errors.avatar = 'Only JPEG and PNG files are allowed'
-      return
-    }
-    errors.avatar = ''
-    form.avatar = file
+  const file = event.dataTransfer?.files?.[0]
+  if (!file) return
+  if (file.size > 2 * 1024 * 1024) {
+    errors.avatar = 'File size must be less than 2MB'
+    return
   }
+  if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+    errors.avatar = 'Only JPEG and PNG files are allowed'
+    return
+  }
+  errors.avatar = ''
+  form.avatar = file
 }
 
 function removeAvatar() {

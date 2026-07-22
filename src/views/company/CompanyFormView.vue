@@ -90,8 +90,6 @@ async function loadIfNeeded() {
       companyImage: c.companyImageUrl ?? c.companyImage ?? null,
       avatar: authStore.userAvatar,
       telegramLink: c.telegramLink ?? '',
-      role: c.role ?? '',
-      password: '',
     }
     return
   }

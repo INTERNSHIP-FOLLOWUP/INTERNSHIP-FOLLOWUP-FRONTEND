@@ -486,8 +486,8 @@ const quickActions = [
     ),
   },
   {
-    label: 'Assign Student',
-    route: '/admin/assignments/create',
+    label: 'Assignments',
+    route: '/admin/assignments',
     bgColor: 'bg-amber-50/50',
     icon: createActionIcon('M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4'),
   },

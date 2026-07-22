@@ -27,7 +27,9 @@
             <option disabled value="">Select a week</option>
             <option v-for="w in weeks" :key="w" :value="w">Week {{ w }}</option>
           </select>
-          <p v-if="errors.week_number" class="mt-1 text-xs font-semibold text-red-500">{{ errors.week_number }}</p>
+          <p v-if="errors.week_number" class="mt-1 text-xs font-semibold text-red-500">
+            {{ errors.week_number }}
+          </p>
         </div>
 
         <div>
@@ -39,7 +41,9 @@
             placeholder="What did you work on this week?"
             class="mt-2 w-full resize-none rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
-          <p v-if="errors.description" class="mt-1 text-xs font-semibold text-red-500">{{ errors.description }}</p>
+          <p v-if="errors.description" class="mt-1 text-xs font-semibold text-red-500">
+            {{ errors.description }}
+          </p>
         </div>
 
         <div>
@@ -50,7 +54,9 @@
             placeholder="What difficulties did you face?"
             class="mt-2 w-full resize-none rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
-          <p v-if="errors.challenges" class="mt-1 text-xs font-semibold text-red-500">{{ errors.challenges }}</p>
+          <p v-if="errors.challenges" class="mt-1 text-xs font-semibold text-red-500">
+            {{ errors.challenges }}
+          </p>
         </div>
 
         <div>
@@ -58,7 +64,9 @@
           <div class="mt-2">
             <FileUpload v-model="files" />
           </div>
-          <p v-if="errors.attachments" class="mt-1 text-xs font-semibold text-red-500">{{ errors.attachments }}</p>
+          <p v-if="errors.attachments" class="mt-1 text-xs font-semibold text-red-500">
+            {{ errors.attachments }}
+          </p>
         </div>
 
         <div class="flex items-center gap-3 pt-3">
@@ -69,8 +77,19 @@
           >
             <span v-if="submitting" class="inline-flex items-center gap-2">
               <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                />
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
               </svg>
               Saving...
             </span>
@@ -87,7 +106,10 @@
           </button>
         </div>
 
-        <div v-if="serverError" class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">
+        <div
+          v-if="serverError"
+          class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700"
+        >
           {{ serverError }}
         </div>
       </form>
@@ -115,13 +137,11 @@ const weeks = Array.from({ length: 52 }, (_, i) => i + 1)
 
 const files = ref<File[]>([])
 
-const form = reactive<{ week_number: number | '' ; description: string; challenges: string }>(
-  {
-    week_number: '',
-    description: '',
-    challenges: '',
-  },
-)
+const form = reactive<{ week_number: number | ''; description: string; challenges: string }>({
+  week_number: '',
+  description: '',
+  challenges: '',
+})
 
 const errors = reactive<Record<string, string>>({})
 const serverError = ref<string>('')
@@ -154,8 +174,8 @@ async function onSubmit() {
     fd.append('week_number', String(form.week_number))
     fd.append('description', form.description)
     if (form.challenges?.trim()) fd.append('challenges', form.challenges)
-
-    for (const f of files.value) fd.append('attachments', f)
+    fd.append('submission_date', new Date().toISOString().split('T')[0] ?? '')
+    for (const f of files.value) fd.append('attachments[]', f)
 
     if (isEdit.value) {
       const id = Number(route.params.id)
@@ -178,4 +198,3 @@ async function onSubmit() {
   }
 }
 </script>
-

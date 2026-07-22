@@ -1,28 +1,116 @@
 <!-- src/views/followup/FollowupForm.vue -->
 <template>
-  <transition name="form-scale" appear>
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-      @click.self="$emit('cancelled')"
-      @keydown.escape="$emit('cancelled')"
-    >
-      <div class="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-100 bg-white shadow-2xl">
-        <!-- Header with gradient -->
-        <div class="sticky top-0 z-10 flex items-center justify-between bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-4 rounded-t-2xl">
-          <div class="flex items-center gap-3">
-            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
-              <svg v-if="isEdit" class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-              </svg>
-              <svg v-else class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <h2 class="text-lg font-semibold text-white">{{ isEdit ? 'Edit Follow-up' : 'New Follow-up' }}</h2>
-              <p class="text-xs text-indigo-200">{{ isEdit ? 'Update the follow-up record details' : 'Create a new follow-up record' }}</p>
-            </div>
-          </div>
+  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-3 sm:p-4">
+    <div class="w-full max-h-[calc(100dvh-64px)] overflow-y-auto rounded-xl bg-white shadow-xl sm:max-h-[90vh] sm:max-w-lg sm:p-6 p-4">
+      <h2 class="text-lg font-semibold mb-4 text-slate-900">
+        {{ isEdit ? 'Edit Follow-up' : 'New Follow-up' }}
+      </h2>
+
+      <ErrorAlert :message="submitError" />
+
+      <form @submit.prevent="submit" class="space-y-4">
+        <!-- Student selector -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Student</label>
+          <select
+            v-model="form.student_id"
+            :disabled="studentsLoading"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60"
+            :class="{ 'border-red-400': errors.student_id }"
+          >
+            <option :value="null" disabled>Select a student</option>
+            <option v-for="student in students" :key="student.id" :value="student.id">
+              {{ student.name }}
+            </option>
+          </select>
+          <p v-if="studentsError" class="text-red-600 text-xs mt-1">{{ studentsError }}</p>
+          <p v-if="errors.student_id" class="text-red-600 text-xs mt-1">{{ errors.student_id }}</p>
+        </div>
+
+        <!-- Company selector -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Company</label>
+          <select
+            v-model="form.company_id"
+            :disabled="companiesLoading"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60"
+            :class="{ 'border-red-400': errors.company_id }"
+          >
+            <option :value="null">Auto-assign from student internship</option>
+            <option v-for="company in companies" :key="company.id" :value="company.id">
+              {{ company.name }}
+            </option>
+          </select>
+          <p v-if="companiesError" class="text-red-600 text-xs mt-1">{{ companiesError }}</p>
+          <p v-if="errors.company_id" class="text-red-600 text-xs mt-1">{{ errors.company_id }}</p>
+        </div>
+
+        <!-- Meeting type -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Meeting Type</label>
+          <select
+            v-model="form.meeting_type"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            :class="{ 'border-red-400': errors.meeting_type }"
+          >
+            <option value="" disabled>Select meeting type</option>
+            <option value="In-Person">In-Person</option>
+            <option value="Online">Online</option>
+            <option value="Phone">Phone</option>
+            <option value="Virtual">Virtual</option>
+          </select>
+          <p v-if="errors.meeting_type" class="text-red-600 text-xs mt-1">
+            {{ errors.meeting_type }}
+          </p>
+        </div>
+
+        <!-- Meeting date -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Meeting Date</label>
+          <input
+            v-model="form.meeting_date"
+            type="date"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            :class="{ 'border-red-400': errors.meeting_date }"
+          />
+          <p v-if="errors.meeting_date" class="text-red-600 text-xs mt-1">
+            {{ errors.meeting_date }}
+          </p>
+        </div>
+
+        <!-- Notes -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+          <textarea
+            v-model="form.notes"
+            rows="3"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            :class="{ 'border-red-400': errors.notes }"
+          ></textarea>
+          <p v-if="errors.notes" class="text-red-600 text-xs mt-1">{{ errors.notes }}</p>
+        </div>
+
+        <!-- Action items -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Action Items</label>
+          <textarea
+            v-model="form.action_items"
+            rows="3"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+          ></textarea>
+        </div>
+
+        <!-- Next follow-up date -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Next Follow-up Date</label>
+          <input
+            v-model="form.next_followup"
+            type="date"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+          />
+        </div>
+
+        <div class="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
           <button
             type="button"
             @click="$emit('cancelled')"
@@ -33,6 +121,7 @@
             </svg>
           </button>
         </div>
+          </form>
 
         <div class="p-6">
           <ErrorAlert :message="submitError" />
@@ -240,16 +329,16 @@
         </div>
       </div>
     </div>
-  </transition>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, onMounted } from 'vue'
 import { useFollowupStore } from '@/stores/followupStore'
 import { useAuthStore } from '@/stores/auth'
 import type { Followup, FollowupPayload, MeetingType } from '@/types/followup'
 import type { AxiosError } from 'axios'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
+import api from '@/services/api'
 
 const props = defineProps<{ followup: Followup | null }>()
 const emit = defineEmits<{ saved: []; cancelled: [] }>()
@@ -257,16 +346,21 @@ const emit = defineEmits<{ saved: []; cancelled: [] }>()
 const followupStore = useFollowupStore()
 const auth = useAuthStore()
 
+const studentDisplayName = computed(() => auth.user?.name || auth.user?.email || 'You')
 const isStudent = computed(() => auth.userRole === 'student')
 const isEdit = computed(() => !!props.followup)
 
-const studentDisplayName = computed(() => {
-  if (auth.user?.name) return `${auth.user.name} (ID: ${auth.user.id})`
-  return `Student #${auth.user?.id ?? '—'}`
-})
+const students = ref<Array<{ id: number; name: string }>>([])
+const studentsLoading = ref(false)
+const studentsError = ref<string | null>(null)
+
+const companies = ref<Array<{ id: number; name: string }>>([])
+const companiesLoading = ref(false)
+const companiesError = ref<string | null>(null)
 
 const form = reactive<FollowupPayload>({
-  student_id: props.followup?.student_id ?? (isEdit.value ? (null as unknown as number) : (auth.user?.id ?? (null as unknown as number))),
+  student_id: props.followup?.student_id ?? (null as unknown as number),
+  company_id: props.followup?.company_id ?? (null as unknown as number),
   meeting_type: props.followup?.meeting_type ?? ('' as MeetingType),
   meeting_date: props.followup?.meeting_date ?? '',
   notes: props.followup?.notes ?? '',
@@ -276,6 +370,7 @@ const form = reactive<FollowupPayload>({
 
 const errors = reactive({
   student_id: '',
+  company_id: '',
   meeting_type: '',
   meeting_date: '',
   notes: '',
@@ -287,8 +382,35 @@ const actionItemsLength = computed(() => form.action_items.length)
 const submitting = ref(false)
 const submitError = ref<string | null>(null)
 
+async function fetchStudents() {
+  studentsLoading.value = true
+  studentsError.value = null
+  try {
+    const res = await api.get('/tutor/students')
+    students.value = (res.data.data || []).map((s: any) => ({ id: s.id, name: s.name }))
+  } catch {
+    studentsError.value = 'Unable to load students.'
+  } finally {
+    studentsLoading.value = false
+  }
+}
+
+async function fetchCompanies() {
+  companiesLoading.value = true
+  companiesError.value = null
+  try {
+    const res = await api.get('/tutor/companies')
+    companies.value = (res.data.data || res.data || []).map((c: any) => ({ id: c.id, name: c.company_name || c.name }))
+  } catch {
+    companiesError.value = 'Unable to load companies.'
+  } finally {
+    companiesLoading.value = false
+  }
+}
+
 function validate(): boolean {
   errors.student_id = ''
+  errors.company_id = ''
   errors.meeting_type = ''
   errors.meeting_date = ''
   errors.notes = ''
@@ -318,6 +440,11 @@ function validate(): boolean {
 
   return valid
 }
+
+onMounted(() => {
+  fetchStudents()
+  fetchCompanies()
+})
 
 async function submit(): Promise<void> {
   if (!validate()) return

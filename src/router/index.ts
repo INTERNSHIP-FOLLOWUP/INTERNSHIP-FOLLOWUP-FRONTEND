@@ -68,28 +68,38 @@ const router = createRouter({
           redirect: { name: 'AdminDashboard' },
         },
         {
+          path: 'all-users',
+          name: 'AdminAllUsers',
+          component: () => import('@/views/user/AdminAllUsersView.vue'),
+          meta: { title: 'All Users' } as AppRouteMeta,
+        },
+        {
           path: 'users',
-          name: 'AdminUsers',
-          component: () => import('@/views/user/AdminUsersView.vue'),
-          meta: { title: 'Users' } as AppRouteMeta,
-        },
-        {
-          path: 'users/create',
-          name: 'AdminUsersCreate',
-          component: () => import('@/views/user/AdminUsersView.vue'),
-          meta: { adminOnly: true, title: 'Add Student' } as AppRouteMeta,
-        },
-        {
-          path: 'users/:id',
-          name: 'AdminUsersEdit',
-          component: () => import('@/views/user/AdminUsersView.vue'),
-          meta: { adminOnly: true, title: 'Edit Student' } as AppRouteMeta,
+          redirect: { name: 'AdminAllUsers' },
         },
         {
           path: 'students',
           name: 'AdminStudents',
-          component: () => import('@/views/student/StudentListView.vue'),
+          component: () => import('@/views/user/AdminStudentsView.vue'),
           meta: { title: 'Students' } as AppRouteMeta,
+        },
+        {
+          path: 'tutors',
+          name: 'AdminTutors',
+          component: () => import('@/views/user/AdminTutorsView.vue'),
+          meta: { title: 'Tutors' } as AppRouteMeta,
+        },
+        {
+          path: 'student-profile/:id',
+          name: 'AdminStudentProfile',
+          component: () => import('@/views/student_profile/StudentProfileView.vue'),
+          meta: { title: 'Student Profile' } as AppRouteMeta,
+        },
+        {
+          path: 'tutor-profile/:id',
+          name: 'AdminTutorProfile',
+          component: () => import('@/views/student_profile/TutorProfileView.vue'),
+          meta: { title: 'Tutor Profile' } as AppRouteMeta,
         },
         {
           path: 'companies',
@@ -140,6 +150,18 @@ const router = createRouter({
           meta: { adminOnly: true, title: 'Edit Assignment' } as AppRouteMeta,
         },
         {
+          path: 'evaluations',
+          name: 'AdminEvaluations',
+          component: () => import('@/views/evaluation/AdminEvaluationView.vue'),
+          meta: { title: 'Evaluations' } as AppRouteMeta,
+        },
+        {
+          path: 'feedback',
+          name: 'AdminFeedback',
+          component: () => import('@/views/company/AdminCompanyFeedbackView.vue'),
+          meta: { title: 'Company Feedback' } as AppRouteMeta,
+        },
+        {
           path: 'reports',
           name: 'AdminReports',
           component: () => import('@/views/report/ReportGenerationView.vue'),
@@ -156,12 +178,6 @@ const router = createRouter({
           name: 'AdminProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
           meta: { title: 'Profile' } as AppRouteMeta,
-        },
-        {
-          path: 'tutors',
-          name: 'AdminTutors',
-          component: () => import('@/views/tutor/TutorList.vue'),
-          meta: { title: 'Tutors' } as AppRouteMeta,
         },
         {
           path: 'tutors/create',
@@ -197,14 +213,26 @@ const router = createRouter({
         {
           path: 'students',
           name: 'TutorStudents',
-          component: () => import('@/views/student/StudentDashboardView.vue'),
+          component: () => import('@/views/tutor/TutorStudentListView.vue'),
           meta: { title: 'My Students' },
+        },
+        {
+          path: 'students/:id',
+          name: 'TutorStudentDetail',
+          component: () => import('@/views/tutor/TutorStudentDetailView.vue'),
+          meta: { title: 'Student Details' },
         },
         {
           path: 'worklogs',
           name: 'TutorWorklogs',
-          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
+          component: () => import('@/views/tutor/worklog/TutorWorklogList.vue'),
           meta: { title: 'Worklogs' },
+        },
+        {
+          path: 'worklogs/:id',
+          name: 'TutorWorklogDetail',
+          component: () => import('@/views/worklog/TutorWorklogDetail.vue'),
+          meta: { title: 'Review Worklog' },
         },
         {
           path: 'followups',
@@ -219,8 +247,14 @@ const router = createRouter({
           meta: { title: 'Issues' },
         },
         {
+          path: 'messages',
+          name: 'TutorMessages',
+          component: () => import('@/views/company/MessageView.vue'),
+          meta: { title: 'Messages' },
+        },
+        {
           path: 'profile',
-          name: 'TutorProfile',
+          name: 'TutorSelfProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
           meta: { title: 'Profile' },
         },
@@ -252,8 +286,26 @@ const router = createRouter({
         {
           path: 'worklogs',
           name: 'StudentWorklogs',
-          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
+          component: () => import('@/views/worklog/WorklogList.vue'),
           meta: { title: 'Worklogs' },
+        },
+        {
+          path: 'worklogs/create',
+          name: 'StudentWorklogsCreate',
+          component: () => import('@/views/worklog/WorklogForm.vue'),
+          meta: { title: 'Create Worklog' },
+        },
+        {
+          path: 'worklogs/:id',
+          name: 'StudentWorklogDetail',
+          component: () => import('@/views/worklog/WorklogDetail.vue'),
+          meta: { title: 'Worklog Detail' },
+        },
+        {
+          path: 'worklogs/:id/edit',
+          name: 'StudentWorklogEdit',
+          component: () => import('@/views/worklog/WorklogForm.vue'),
+          meta: { title: 'Edit Worklog' },
         },
         {
           path: 'followups',
@@ -315,6 +367,12 @@ const router = createRouter({
           name: 'CompanyInternships',
           component: () => import('@/views/company/CompanyInternshipInfoView.vue'),
           meta: { title: 'Internship Information' },
+        },
+        {
+          path: 'messages',
+          name: 'CompanyMessages',
+          component: () => import('@/views/company/MessageView.vue'),
+          meta: { title: 'Messages' },
         },
         {
           path: 'profile',

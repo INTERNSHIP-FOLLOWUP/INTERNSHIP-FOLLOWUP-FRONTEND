@@ -17,24 +17,44 @@
     </div>
 
     <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
-      <!-- Name -->
+      <!-- First Name -->
       <div class="space-y-1.5">
-        <label for="name" class="block text-sm font-medium text-slate-700">
-          Full Name <span class="text-error">*</span>
+        <label for="firstName" class="block text-sm font-medium text-slate-700">
+          First Name <span class="text-error">*</span>
         </label>
         <input
-          id="name"
-          v-model="form.name"
+          id="firstName"
+          v-model="form.first_name"
           type="text"
-          placeholder="e.g. Sokha Mao"
-          :aria-invalid="!!errors.name"
-          :aria-describedby="errors.name ? 'name-error' : undefined"
+          placeholder="e.g. Sokha"
+          :aria-invalid="!!errors.first_name"
+          :aria-describedby="errors.first_name ? 'firstName-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
-          :class="inputClass('name')"
-          @input="clearFieldError('name')"
-          @blur="validateField('name')"
+          :class="inputClass('first_name')"
+          @input="clearFieldError('first_name')"
+          @blur="validateField('first_name')"
         />
-        <p v-if="errors.name" id="name-error" class="text-sm text-error">{{ errors.name }}</p>
+        <p v-if="errors.first_name" id="firstName-error" class="text-sm text-error">{{ errors.first_name }}</p>
+      </div>
+
+      <!-- Last Name -->
+      <div class="space-y-1.5">
+        <label for="lastName" class="block text-sm font-medium text-slate-700">
+          Last Name <span class="text-error">*</span>
+        </label>
+        <input
+          id="lastName"
+          v-model="form.last_name"
+          type="text"
+          placeholder="e.g. Mao"
+          :aria-invalid="!!errors.last_name"
+          :aria-describedby="errors.last_name ? 'lastName-error' : undefined"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          :class="inputClass('last_name')"
+          @input="clearFieldError('last_name')"
+          @blur="validateField('last_name')"
+        />
+        <p v-if="errors.last_name" id="lastName-error" class="text-sm text-error">{{ errors.last_name }}</p>
       </div>
 
       <!-- Email -->
@@ -148,7 +168,8 @@ const tutorStore = useTutorStore()
 const isEdit = computed(() => !!props.tutorId)
 
 const form = reactive({
-  name: '',
+  first_name: '',
+  last_name: '',
   email: '',
   password: '',
 })
@@ -159,7 +180,7 @@ const submitting = ref(false)
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const requiredFields = ['name', 'email'] as const
+const requiredFields = ['first_name', 'last_name', 'email'] as const
 const conditionalFields = ['password'] as const
 
 function inputClass(field: string): string {
@@ -191,6 +212,10 @@ function validateField(field: string): boolean {
     return false
   }
 
+  if (field === 'first_name' || field === 'last_name') {
+    return true
+  }
+
   delete errors[field]
   return true
 }
@@ -210,8 +235,9 @@ async function handleSubmit(): Promise<void> {
   formError.value = ''
 
   try {
-    const payload: { name: string; email: string; password?: string } = {
-      name: form.name,
+    const payload: { first_name: string; last_name: string; email: string; password?: string } = {
+      first_name: form.first_name,
+      last_name: form.last_name,
       email: form.email,
     }
 
@@ -249,7 +275,8 @@ function populateForm(): void {
   const tutor = tutorStore.tutors.find((t) => t.id === props.tutorId)
   if (!tutor) return
 
-  form.name = tutor.name
+  form.first_name = tutor.first_name ?? ''
+  form.last_name = tutor.last_name ?? ''
   form.email = tutor.email
   form.password = ''
 }

@@ -27,7 +27,8 @@ export const useStudentStore = defineStore('student', () => {
 
     try {
       const response = await studentService.list(params)
-      students.value = response.data
+      const payload = (response as any)?.data ?? response
+      students.value = Array.isArray(payload) ? payload : []
       pagination.value = response.meta
     } catch (err: unknown) {
       const parsed = parseApiError(err)

@@ -467,7 +467,7 @@
               </select>
             </div>
           </div>
-          <!-- Assign To dropdown - shows tutor's students for tutor context -->
+          <!-- Student selector - shown for tutor and admin contexts -->
           <div v-if="context === 'tutor'">
             <label class="mb-1 block text-xs font-semibold text-slate-500"
               >Assign To Student <span class="text-red-500">*</span></label
@@ -479,6 +479,24 @@
               <option value="">Select student</option>
               <option
                 v-for="student in tutorStudents"
+                :key="student.id"
+                :value="student.id"
+              >
+                {{ student.name }}
+              </option>
+            </select>
+          </div>
+          <div v-else-if="context === 'admin'">
+            <label class="mb-1 block text-xs font-semibold text-slate-500"
+              >Student <span class="text-red-500">*</span></label
+            >
+            <select
+              v-model="formModal.form.studentId"
+              class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
+            >
+              <option value="">Select student</option>
+              <option
+                v-for="student in allStudents"
                 :key="student.id"
                 :value="student.id"
               >
@@ -723,12 +741,14 @@ import { useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { useIssueStore } from '@/stores/issueStore'
 import { useTutorStudentStore } from '@/stores/tutorStudent'
+import { useStudentStore } from '@/stores/student'
 import type { Issue, FormModalState, Attachment } from '@/types/issue'
 
 const route = useRoute()
 const issueStore = useIssueStore()
 const toast = useToastStore()
 const tutorStudentStore = useTutorStudentStore()
+const studentStore = useStudentStore()
 
 const context = computed<'admin' | 'company' | 'student' | 'tutor'>(() => {
   const raw = String(route.path || '')
@@ -756,6 +776,13 @@ const tutorStudents = computed(() => {
   }))
 })
 
+const allStudents = computed(() => {
+  return studentStore.students.map((s) => ({
+    id: Number(s.id),
+    name: s.name,
+  }))
+})
+
 const validationErrors = computed(() => {
   const errs: string[] = []
   if (context.value === 'tutor') {
@@ -764,6 +791,11 @@ const validationErrors = computed(() => {
     if (!formModal.form.priority) errs.push('Priority is required.')
     if (!formModal.form.status) errs.push('Status is required.')
     if (!formModal.form.studentId) errs.push('Please select a student to assign the issue to.')
+  } else if (context.value === 'admin') {
+    if (!formModal.form.title?.trim()) errs.push('Title is required.')
+    if (!formModal.form.description?.trim()) errs.push('Description is required.')
+    if (!formModal.form.priority) errs.push('Priority is required.')
+    if (!formModal.form.studentId) errs.push('Please select a student for the issue.')
   }
   return errs
 })
@@ -785,9 +817,11 @@ watch([localSearch, localStatus, localPriority], ([search, status, priority]) =>
 onMounted(async () => {
   await issueStore.fetchIssues()
   await issueStore.fetchIssueStats()
-  // Fetch tutor's students for the edit modal student dropdown
+  // Fetch students for the create/edit modal student dropdown
   if (context.value === 'tutor') {
     tutorStudentStore.fetchStudents({ per_page: 100 })
+  } else if (context.value === 'admin') {
+    studentStore.fetchStudents({ per_page: 200 })
   }
 })
 
@@ -859,7 +893,7 @@ const fileInputRef = ref<HTMLInputElement | null>(null)
 const submitDisabled = computed(() => {
   const form = formModal.form
   const allowed = allowedEditableStatuses.includes((form.status as Issue['status']) || 'Open')
-  const studentOk = context.value !== 'tutor' || form.studentId
+  const studentOk = (context.value !== 'tutor' && context.value !== 'admin') || form.studentId
   return !form.title || !form.description || !form.priority || !allowed || !studentOk
 })
 

@@ -57,7 +57,7 @@ export const useWorklogStore = defineStore('worklog', () => {
     errors.value = {}
     try {
       const res = await worklogService.getWorklog(id)
-      const w = (res.data?.data ?? res.data) as Worklog
+      const w = res as Worklog
       worklog.value = w
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -73,7 +73,7 @@ export const useWorklogStore = defineStore('worklog', () => {
     errors.value = {}
     try {
       const res = await worklogService.createWorklog(data)
-      const created = (res.data?.data ?? res.data) as Worklog
+      const created = res as Worklog
       worklogs.value = [created, ...worklogs.value]
       return created
     } catch (err: unknown) {
@@ -155,7 +155,7 @@ export const useWorklogStore = defineStore('worklog', () => {
     errors.value = {}
     try {
       const res = await worklogService.getTutorWorklog(id)
-      const w = (res.data?.data ?? res.data) as Worklog
+      const w = res as Worklog
       tutorWorklog.value = w
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -178,7 +178,7 @@ export const useWorklogStore = defineStore('worklog', () => {
         feedback: data.feedback,
       })
 
-      const updated = (res.data?.data ?? res.data) as Worklog
+      const updated = res as Worklog
 
       if (tutorWorklog.value?.id === id) tutorWorklog.value = updated
       tutorWorklogs.value = tutorWorklogs.value.map((w) => (w.id === id ? updated : w))

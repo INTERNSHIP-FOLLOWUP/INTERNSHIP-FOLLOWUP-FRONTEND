@@ -174,7 +174,7 @@ async function onSubmit() {
     fd.append('week_number', String(form.week_number))
     fd.append('description', form.description)
     if (form.challenges?.trim()) fd.append('challenges', form.challenges)
-    fd.append('submission_date', new Date().toISOString().split('T')[0])
+    fd.append('submission_date', new Date().toISOString().split('T')[0] ?? '')
     for (const f of files.value) fd.append('attachments[]', f)
 
     if (isEdit.value) {

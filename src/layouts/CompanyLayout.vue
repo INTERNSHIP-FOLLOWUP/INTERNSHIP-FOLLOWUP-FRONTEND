@@ -352,7 +352,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
-  stopHeartbeat()
 })
 
 const company = computed(() => companyStore.currentCompany)

@@ -4,7 +4,7 @@
     <div v-for="att in attachments" :key="att.id ?? att.filename ?? att.file_path" class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-3">
       <div class="min-w-0">
         <p class="truncate text-xs font-semibold text-slate-800">📄 {{ att.filename || att.file_path || 'attachment' }}</p>
-        <p class="text-xs text-slate-500">{{ att.mime_type || att.file_type || guessType(att.filename || att.file_path || '') }} • {{ formatBytes(att.size_bytes ?? att.file_size) }}</p>
+        <p class="text-xs text-slate-500">{{ att.mime_type || att.file_type || guessType(att.filename || att.file_path || '') }} • {{ formatBytes(Number(att.size_bytes ?? att.file_size)) }}</p>
       </div>
 
       <div class="flex items-center gap-2">

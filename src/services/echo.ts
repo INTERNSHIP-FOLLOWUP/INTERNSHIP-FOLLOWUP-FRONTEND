@@ -28,7 +28,7 @@ export function updateEchoAuth(token: string): void {
     const echo = (window as Window & typeof globalThis).Echo
     if (!echo) return
 
-    const connector = (echo as Record<string, unknown>).connector as Record<string, unknown> | undefined
+    const connector = (echo as unknown as Record<string, unknown>).connector as Record<string, unknown> | undefined
     const pusher = connector?.pusher as Record<string, unknown> | undefined
     const config = pusher?.config as Record<string, unknown> | undefined
     const auth = config?.auth as Record<string, unknown> | undefined

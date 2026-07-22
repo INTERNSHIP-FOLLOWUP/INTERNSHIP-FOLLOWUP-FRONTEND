@@ -118,7 +118,7 @@
               >
                 <img
                   v-if="conv.user?.avatar_url || conv.company?.logo_url"
-                  :src="conv.user?.avatar_url || conv.company?.logo_url"
+                  :src="conv.user?.avatar_url || conv.company?.logo_url || undefined"
                   :alt="getConversationName(conv)"
                   class="h-full w-full rounded-full object-cover"
                 />
@@ -236,7 +236,7 @@
           >
             <img
               v-if="activeConversation.user?.avatar_url || activeConversation.company?.logo_url"
-              :src="activeConversation.user?.avatar_url || activeConversation.company?.logo_url"
+              :src="activeConversation.user?.avatar_url || activeConversation.company?.logo_url || undefined"
               :alt="getConversationName(activeConversation)"
               class="h-full w-full rounded-full object-cover"
             />

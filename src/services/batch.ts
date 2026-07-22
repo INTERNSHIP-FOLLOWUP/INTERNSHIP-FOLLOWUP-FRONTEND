@@ -14,6 +14,14 @@ export interface BatchListResponse {
   message: string
 }
 
+export interface BatchStatistics {
+  batch_id: number
+  batch_name: string
+  year: string
+  total_students: number
+  status_breakdown: Record<string, number>
+}
+
 export const batchService = {
   async list(): Promise<BatchListResponse> {
     const response = await api.get<BatchListResponse>('/admin/batches')
@@ -46,6 +54,21 @@ export const batchService = {
 
   async delete(id: number): Promise<{ message: string }> {
     const response = await api.delete<{ message: string }>(`/admin/batches/${id}`)
+    return response.data
+  },
+
+  async getStatistics(id: number): Promise<{ data: BatchStatistics; message: string }> {
+    const response = await api.get<{ data: BatchStatistics; message: string }>(`/admin/batches/${id}/statistics`)
+    return response.data
+  },
+
+  async exportPdf(id: number): Promise<Blob> {
+    const response = await api.get(`/admin/batches/${id}/export/pdf`, { responseType: 'blob' })
+    return response.data
+  },
+
+  async exportExcel(id: number): Promise<Blob> {
+    const response = await api.get(`/admin/batches/${id}/export/excel`, { responseType: 'blob' })
     return response.data
   },
 }

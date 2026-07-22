@@ -6,7 +6,7 @@ import router from './router'
 import { createPinia } from 'pinia'
 import Echo from 'laravel-echo'
 import Pusher from 'pusher-js'
-import { getEchoAuthCallback } from '@/services/echo'
+import { tokenService } from '@/services/token'
 
 const app = createApp(App)
 
@@ -17,7 +17,7 @@ app.use(createPinia())
 declare global {
   interface Window {
     Pusher: typeof Pusher
-    Echo: Echo
+    Echo: Echo<'reverb'>
   }
 }
 
@@ -25,7 +25,7 @@ window.Pusher = Pusher
 
 const reverbKey = import.meta.env.VITE_REVERB_APP_KEY
 if (reverbKey) {
-  const echo = new Echo({
+  const echo = new Echo<'reverb'>({
     broadcaster: 'reverb',
     key: reverbKey,
     wsHost: import.meta.env.VITE_REVERB_HOST || '127.0.0.1',
@@ -34,8 +34,12 @@ if (reverbKey) {
     forceTLS: (import.meta.env.VITE_REVERB_SCHEME || 'http') === 'https',
     enabledTransports: ['ws', 'wss'],
     authEndpoint: `${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'}/broadcasting/auth`,
-    // Dynamic auth — reads current token on every private channel auth request
-    auth: getEchoAuthCallback(),
+    auth: {
+      headers: {
+        Authorization: `Bearer ${tokenService.getAccessToken()}`,
+        Accept: 'application/json',
+      },
+    },
   })
 
   window.Echo = echo

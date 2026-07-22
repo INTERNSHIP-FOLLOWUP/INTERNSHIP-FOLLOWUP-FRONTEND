@@ -26,10 +26,11 @@ export interface CompanySummary {
   phone: string | null
   website: string | null
   companyProfileImage: string | null
-  companyProfileImageUrl: string | null
-  companyImage: string | null
-  companyImageUrl: string | null
+  companyProfileImageUrl?: string | null
+  companyImage?: string | null
+  companyImageUrl?: string | null
   telegramLink: string | null
+  role?: string | null
 }
 
 export type CompanyUpdatePayload = Partial<CreateCompanyPayload>
@@ -208,6 +209,7 @@ export const useCompanyStore = defineStore('company', () => {
       if (raw?.id) {
         const summary = toSummary({
           id: raw.id,
+          role: raw.role ?? null,
           companyName: raw.company_name ?? raw.name ?? '',
           address: raw.address ?? null,
           industry: raw.industry ?? null,
@@ -319,6 +321,7 @@ export const useCompanyStore = defineStore('company', () => {
       if (raw?.id) {
         const summary = toSummary({
           id: raw.id,
+          role: raw.role ?? null,
           companyName: raw.company_name ?? raw.name ?? '',
           address: raw.address ?? null,
           industry: raw.industry ?? null,

@@ -68,28 +68,38 @@ const router = createRouter({
           redirect: { name: 'AdminDashboard' },
         },
         {
+          path: 'all-users',
+          name: 'AdminAllUsers',
+          component: () => import('@/views/user/AdminAllUsersView.vue'),
+          meta: { title: 'All Users' } as AppRouteMeta,
+        },
+        {
           path: 'users',
-          name: 'AdminUsers',
-          component: () => import('@/views/user/AdminUsersView.vue'),
-          meta: { title: 'Users' } as AppRouteMeta,
-        },
-        {
-          path: 'users/create',
-          name: 'AdminUsersCreate',
-          component: () => import('@/views/user/AdminUsersView.vue'),
-          meta: { adminOnly: true, title: 'Add Student' } as AppRouteMeta,
-        },
-        {
-          path: 'users/:id',
-          name: 'AdminUsersEdit',
-          component: () => import('@/views/user/AdminUsersView.vue'),
-          meta: { adminOnly: true, title: 'Edit Student' } as AppRouteMeta,
+          redirect: { name: 'AdminAllUsers' },
         },
         {
           path: 'students',
           name: 'AdminStudents',
-          component: () => import('@/views/student/StudentListView.vue'),
+          component: () => import('@/views/user/AdminStudentsView.vue'),
           meta: { title: 'Students' } as AppRouteMeta,
+        },
+        {
+          path: 'tutors',
+          name: 'AdminTutors',
+          component: () => import('@/views/user/AdminTutorsView.vue'),
+          meta: { title: 'Tutors' } as AppRouteMeta,
+        },
+        {
+          path: 'student-profile/:id',
+          name: 'AdminStudentProfile',
+          component: () => import('@/views/student_profile/StudentProfileView.vue'),
+          meta: { title: 'Student Profile' } as AppRouteMeta,
+        },
+        {
+          path: 'tutor-profile/:id',
+          name: 'AdminTutorProfile',
+          component: () => import('@/views/student_profile/TutorProfileView.vue'),
+          meta: { title: 'Tutor Profile' } as AppRouteMeta,
         },
         {
           path: 'companies',
@@ -170,12 +180,6 @@ const router = createRouter({
           meta: { title: 'Profile' } as AppRouteMeta,
         },
         {
-          path: 'tutors',
-          name: 'AdminTutors',
-          component: () => import('@/views/tutor/TutorList.vue'),
-          meta: { title: 'Tutors' } as AppRouteMeta,
-        },
-        {
           path: 'tutors/create',
           name: 'AdminTutorsCreate',
           component: () => import('@/views/tutor/TutorFormView.vue'),
@@ -209,8 +213,14 @@ const router = createRouter({
         {
           path: 'students',
           name: 'TutorStudents',
-          component: () => import('@/views/student/StudentDashboardView.vue'),
+          component: () => import('@/views/tutor/TutorStudentListView.vue'),
           meta: { title: 'My Students' },
+        },
+        {
+          path: 'students/:id',
+          name: 'TutorStudentDetail',
+          component: () => import('@/views/tutor/TutorStudentDetailView.vue'),
+          meta: { title: 'Student Details' },
         },
         {
           path: 'worklogs',
@@ -244,7 +254,7 @@ const router = createRouter({
         },
         {
           path: 'profile',
-          name: 'TutorProfile',
+          name: 'TutorSelfProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
           meta: { title: 'Profile' },
         },
@@ -311,7 +321,7 @@ const router = createRouter({
         },
         {
           path: 'profile',
-          name: 'StudentProfile',
+          name: 'StudentSelfProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
           meta: { title: 'Profile' },
         },

@@ -132,6 +132,16 @@
               :error="errors.location"
               autocomplete="address-level2"
             />
+            <InputField
+              v-if="mode === 'create'"
+              v-model="form.password"
+              label="Account Password"
+              type="password"
+              placeholder="Min. 8 characters"
+              required
+              :error="errors.password"
+              autocomplete="new-password"
+            />
           </div>
         </div>
 
@@ -441,6 +451,7 @@ export type CompanyFormData = {
   companyImage: File | string | null
   avatar: File | string | null
   telegramLink: string
+  password: string
 }
 
 type CompanyFormErrors = Partial<Record<keyof CompanyFormData, string>>
@@ -476,6 +487,7 @@ const BACKEND_FIELD_MAP: Record<string, keyof CompanyFormData> = {
   company_image: 'companyImage',
   avatar: 'avatar',
   telegram_link: 'telegramLink',
+  password: 'password',
 }
 
 const submitting = ref(false)
@@ -492,6 +504,7 @@ const initialForm: CompanyFormData = {
   companyImage: null,
   avatar: null,
   telegramLink: '',
+  password: '',
 }
 
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -578,6 +591,16 @@ function validate(): boolean {
   if (form.website.trim() && !validateUrl(form.website)) {
     errors.website = 'Please enter a valid website URL.'
     ok = false
+  }
+
+  if (props.mode === 'create') {
+    if (!form.password) {
+      errors.password = 'Password is required.'
+      ok = false
+    } else if (form.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters.'
+      ok = false
+    }
   }
 
   return ok

@@ -45,6 +45,7 @@ export interface CompanyFormData {
   companyImage: File | string | null
   avatar: File | string | null
   telegramLink: string
+  password: string
 }
 
 function toSummary(c: Company): CompanySummary {
@@ -77,6 +78,7 @@ function mapFromForm(form: CompanyFormData): CreateCompanyPayload {
     companyImage: form.companyImage || null,
     avatar: form.avatar || null,
     telegramLink: form.telegramLink || null,
+    ...(form.password ? { password: form.password } : {}),
   }
 }
 

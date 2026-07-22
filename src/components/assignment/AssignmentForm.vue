@@ -234,7 +234,7 @@ import { useAssignmentStore } from '@/stores/assignment'
 import { useTutorStore } from '@/stores/tutorStore'
 import { assignmentService } from '@/services/assignment'
 import api from '@/services/api'
-import { mapValidationErrors } from '@/utils/mapValidationErrors'
+
 import type { AssignmentStatus, Assignment, CreateAssignmentPayload, UpdateAssignmentPayload } from '@/types/assignment'
 
 interface OptionItem {
@@ -373,13 +373,13 @@ async function handleSubmit(): Promise<void> {
       response?: { status?: number; data?: { message?: string; errors?: Record<string, string[]> } }
     }
     if (axiosErr.response?.status === 422 && axiosErr.response.data?.errors) {
-      const mapped = mapValidationErrors(axiosErr.response.data.errors)
-      if (Object.keys(mapped).length > 0) {
-        for (const [key, msg] of Object.entries(mapped)) {
-          errors[key] = msg
+      const apiErrors = axiosErr.response.data.errors
+      for (const [key, messages] of Object.entries(apiErrors)) {
+        if (messages.length > 0 && messages[0]) {
+          errors[key] = messages[0]
         }
-        return
       }
+      return
     }
     formError.value = axiosErr?.response?.data?.message || 'Failed to save assignment.'
   } finally {
@@ -423,7 +423,7 @@ watch(
     if (!val) return
 
     const [studentsRes, companiesRes] = await Promise.all([
-      api.get('/admin/users', { params: { role: 'student', per_page: 200 } }),
+      api.get('/admin/students', { params: { per_page: 100 } }),
       api.get('/admin/companies', { params: { per_page: 200 } }).catch(() => null),
     ])
 

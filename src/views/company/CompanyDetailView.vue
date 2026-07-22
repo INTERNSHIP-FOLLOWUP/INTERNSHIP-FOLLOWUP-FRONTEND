@@ -372,7 +372,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { companyService } from '@/services/company'
 import { useCompanyStore } from '@/stores/company'

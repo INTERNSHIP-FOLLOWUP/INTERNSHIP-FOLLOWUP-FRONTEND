@@ -65,7 +65,11 @@ function toFrontend(raw: BackendCompany): Company {
 function hasFileUpload(
   payload: CreateCompanyPayload | UpdateCompanyPayload,
 ): boolean {
-  return payload.companyImage instanceof File || payload.companyProfileImage instanceof File
+  return (
+    payload.companyImage instanceof File ||
+    payload.companyProfileImage instanceof File ||
+    payload.avatar instanceof File
+  )
 }
 
 /**
@@ -100,6 +104,12 @@ function toFormData(
     fd.append('company_profile_image', payload.companyProfileImage)
   } else if (payload.companyProfileImage && typeof payload.companyProfileImage === 'string') {
     fd.append('company_profile_image', payload.companyProfileImage)
+  }
+
+  if (payload.avatar instanceof File) {
+    fd.append('avatar', payload.avatar)
+  } else if (payload.avatar && typeof payload.avatar === 'string') {
+    fd.append('avatar', payload.avatar)
   }
 
   return fd
@@ -137,6 +147,9 @@ function toBackend(payload: CreateCompanyPayload | UpdateCompanyPayload): Record
   if (payload.companyProfileImage != null) {
     body.company_profile_image = payload.companyProfileImage
   }
+  if (payload.avatar != null) {
+    body.avatar = payload.avatar
+  }
 
   return body
 }
@@ -152,17 +165,6 @@ function computeMeta(
   return { current_page, last_page, per_page, total, from, to }
 }
 
-/** Detect whether body is FormData (file upload) or a plain object */
-function getPostConfig(body: unknown) {
-  if (body instanceof FormData) {
-    return {
-      data: body,
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }
-  }
-  return { data: body }
-}
-
 /** Detect whether body is FormData for PUT requests (Laravel needs _method trick) */
 function getPutConfig(body: unknown, id: number) {
   if (body instanceof FormData) {
@@ -172,7 +174,6 @@ function getPutConfig(body: unknown, id: number) {
       data: body,
       url: `/admin/companies/${id}`,
       method: 'post' as const,
-      headers: { 'Content-Type': 'multipart/form-data' },
     }
   }
   return {
@@ -204,12 +205,10 @@ export const companyService = {
   },
 
   async create(payload: CreateCompanyPayload): Promise<Company> {
-    const body = toBackend(payload)
-    const { data, headers } = getPostConfig(body)
+    const data = toBackend(payload)
     const response = await api.post<{ company: BackendCompany }>(
       '/admin/companies',
       data,
-      headers ? { headers } : undefined,
     )
     return toFrontend(response.data.company)
   },
@@ -223,12 +222,11 @@ export const companyService = {
       delete (body as Record<string, unknown>).email
     }
 
-    const { url, method, data, headers } = getPutConfig(body, id)
+    const { url, method, data } = getPutConfig(body, id)
     const response = await api.request<BackendUpdateResponse>({
       url,
       method,
       data,
-      ...(headers ? { headers } : {}),
     })
     return toFrontend(response.data.company)
   },

@@ -52,11 +52,11 @@
         <div class="mb-3 flex items-start justify-between gap-3">
           <div class="flex items-center gap-3">
             <div
-              v-if="item.company?.company_image_url"
+              v-if="item.company?.company_image_url || item.company?.company_profile_image_url"
               class="h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white"
             >
               <img
-                :src="item.company.company_image_url"
+                :src="item.company.company_image_url || item.company.company_profile_image_url"
                 :alt="item.company.company_name"
                 class="h-full w-full object-cover"
               />
@@ -137,6 +137,7 @@ interface FeedbackItem {
     id: number
     company_name: string
     company_image_url?: string | null
+    company_profile_image_url?: string | null
   }
 }
 

@@ -83,7 +83,7 @@ export const useWorklogStore = defineStore('worklog', () => {
     loading.value = true
     errors.value = {}
     try {
-      const payload = extra ? (data instanceof FormData ? data : { ...(data ?? {}), ...extra }) : data
+      const payload = extra ? (data instanceof FormData ? data : { ...data, ...extra }) : data
       const res = await worklogService.updateWorklog(id, payload)
       const updated: Worklog = res.data ?? res
       if (worklog.value?.id === id) worklog.value = updated

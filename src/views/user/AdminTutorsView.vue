@@ -106,6 +106,12 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                       </button>
+                      <button type="button" @click.stop="deleteUser(user)" title="Delete Tutor"
+                        class="flex h-8 w-8 items-center justify-center rounded-lg text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-700">
+                        <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                       <button type="button" @click.stop="toggleTutor(user.id)" title="Toggle Activity"
                         class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
                         :class="{ 'bg-slate-100 text-slate-900': expandedTutorId === user.id }">
@@ -199,6 +205,18 @@
         </div>
       </div>
     </transition>
+
+    <ConfirmDialog
+      :show="confirmShow"
+      :title="confirmTitle"
+      :message="confirmMessage"
+      :confirm-text="confirmButtonText"
+      cancel-text="Cancel"
+      :loading="confirmLoading"
+      :error="confirmError"
+      @confirm="handleConfirmAction"
+      @cancel="confirmCancel"
+    />
   </div>
 </template>
 
@@ -207,7 +225,9 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
+import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import TutorRowDetails from '@/components/admin/TutorRowDetails.vue'
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
 interface Role { id: number; name: string }
 interface User { id: number; first_name?: string; last_name?: string; name: string; email: string; role: Role | null; deleted_at: string | null; students_count?: number }
@@ -228,6 +248,12 @@ interface TutorActivity {
 
 const router = useRouter()
 const toast = useToastStore()
+const { show: confirmShow, loading: confirmLoading, error: confirmError, open: confirmOpen, cancel: confirmCancel, confirmAsync: confirmAsyncFn } = useConfirmDialog()
+const confirmTitle = ref('')
+const confirmMessage = ref('')
+const confirmButtonText = ref('Confirm')
+type ActionType = 'delete'
+const pendingAction = ref<{ type: ActionType; user: User } | null>(null)
 const users = ref<User[]>([])
 const loading = ref(false)
 const searchQuery = ref('')
@@ -287,7 +313,7 @@ async function confirmBulkDelete() {
   bulkError.value = ''
   try {
     const ids = Array.from(selectedIds.value)
-    await api.delete('/admin/users/bulk-delete', { data: { ids } })
+    await api.post('/admin/users/bulk-delete', { ids })
     toast.success(`Deleted ${ids.length} tutor${ids.length !== 1 ? 's' : ''} successfully.`)
     showBulkConfirm.value = false
     clearSelection()
@@ -306,6 +332,33 @@ function editTutor(userId: number) {
 function goToProfile(userId: number) {
   router.push(`/admin/tutor-profile/${userId}`)
 }
+
+async function confirmAction(type: ActionType, user: User) {
+  pendingAction.value = { type, user }
+  if (type === 'delete') {
+    confirmTitle.value = 'Delete Tutor'
+    confirmMessage.value = `Are you sure you want to permanently delete ${user.first_name} ${user.last_name}?`
+    confirmButtonText.value = 'Delete'
+  }
+  const confirmed = await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value })
+  if (!confirmed) return
+  await handleConfirmAction()
+}
+
+async function handleConfirmAction() {
+  if (!pendingAction.value) return
+  const { type, user } = pendingAction.value
+  await confirmAsyncFn(async () => {
+    if (type === 'delete') {
+      await api.delete(`/admin/users/${user.id}`)
+      toast.success(`Tutor "${user.first_name} ${user.last_name}" deleted.`)
+    }
+    pendingAction.value = null
+    fetchUsers()
+  })
+}
+
+function deleteUser(user: User) { confirmAction('delete', user) }
 
 function activityFor(userId: number): TutorActivity | undefined {
   return tutorActivity.value[userId]

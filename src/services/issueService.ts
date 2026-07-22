@@ -1,8 +1,10 @@
 import api from '@/services/api'
-import type { Issue, IssueForm, IssueStats, IssueFilters, PaginationMeta } from '@/types/issue'
+import type { Issue, IssueForm, IssueStats, IssueFilters, PaginationMeta, Attachment } from '@/types/issue'
 
 export const issueService = {
-  async getIssues(filters: IssueFilters = { search: '', status: '', priority: '' }): Promise<{ data: Issue[]; meta?: PaginationMeta }> {
+  async getIssues(
+    filters: IssueFilters = { search: '', status: '', priority: '' },
+  ): Promise<{ data: Issue[]; meta?: PaginationMeta }> {
     const params: Record<string, string> = {}
     if (filters.search) params.search = filters.search
     if (filters.status) params.status = filters.status
@@ -22,8 +24,10 @@ export const issueService = {
     formData.append('title', payload.title)
     formData.append('description', payload.description)
     formData.append('priority', payload.priority || 'Medium')
+    formData.append('student_id', String(payload.studentId))
     if (payload.status) formData.append('status', payload.status)
-    if (payload.assignedUserId || payload.assignedUserId === 0) formData.append('assigned_user_id', String(payload.assignedUserId))
+    if (payload.assignedUserId || payload.assignedUserId === 0)
+      formData.append('assigned_user_id', String(payload.assignedUserId))
     if (payload.dueDate) formData.append('due_date', payload.dueDate)
     if (payload.files && payload.files.length) {
       for (const file of payload.files) {
@@ -43,7 +47,9 @@ export const issueService = {
   },
 
   async assignIssue(id: string, userId: string | number): Promise<Issue> {
-    const { data } = await api.patch<Issue>(`/issues/${encodeURIComponent(id)}/assign`, { userId: String(userId) })
+    const { data } = await api.patch<Issue>(`/issues/${encodeURIComponent(id)}/assign`, {
+      userId: String(userId),
+    })
     return data
   },
 
@@ -54,6 +60,41 @@ export const issueService = {
 
   async getIssueStats(): Promise<IssueStats> {
     const { data } = await api.get<IssueStats>('/issues/stats')
+    return data
+  },
+
+  async deleteIssue(id: string): Promise<void> {
+    await api.delete(`/issues/${encodeURIComponent(id)}`)
+  },
+
+  // ── Tutor-specific endpoints ──
+
+  /**
+   * GET /api/tutor/issues/{id}
+   * Fetch full issue detail for tutor edit modal.
+   */
+  async getTutorIssue(id: string): Promise<{ data: Issue }> {
+    const { data } = await api.get<{ data: Issue }>(`/tutor/issues/${encodeURIComponent(id)}`)
+    return data
+  },
+
+  /**
+   * PUT /api/tutor/issues/{id}
+   * Update an issue as a tutor.
+   */
+  async updateTutorIssue(id: string, payload: {
+    title: string
+    description: string
+    priority: string
+    status: string
+    student_id: string | number
+    assigned_user_id?: string | number | null
+    due_date?: string | null
+  }): Promise<{ message: string; data: Issue }> {
+    const { data } = await api.put<{ message: string; data: Issue }>(
+      `/tutor/issues/${encodeURIComponent(id)}`,
+      payload,
+    )
     return data
   },
 }

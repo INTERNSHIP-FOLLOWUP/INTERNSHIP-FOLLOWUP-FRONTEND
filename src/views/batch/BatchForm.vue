@@ -25,7 +25,12 @@
               aria-label="Close"
             >
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -33,7 +38,10 @@
           <form @submit.prevent="submit" novalidate>
             <div class="space-y-4">
               <div>
-                <label for="batch_name" class="block text-xs font-semibold text-slate-600 mb-1.5 dark:text-slate-400">
+                <label
+                  for="batch_name"
+                  class="block text-xs font-semibold text-slate-600 mb-1.5 dark:text-slate-400"
+                >
                   Batch Name
                 </label>
                 <input
@@ -49,13 +57,20 @@
                   :class="inputClass('batch_name')"
                   @input="clearFieldError('batch_name')"
                 />
-                <p v-if="errors.batch_name" id="batch-name-error" class="mt-1.5 text-xs font-medium text-red-500">
+                <p
+                  v-if="errors.batch_name"
+                  id="batch-name-error"
+                  class="mt-1.5 text-xs font-medium text-red-500"
+                >
                   {{ errors.batch_name }}
                 </p>
               </div>
 
               <div>
-                <label for="year" class="block text-xs font-semibold text-slate-600 mb-1.5 dark:text-slate-400">
+                <label
+                  for="year"
+                  class="block text-xs font-semibold text-slate-600 mb-1.5 dark:text-slate-400"
+                >
                   Year
                 </label>
                 <input
@@ -71,7 +86,11 @@
                   :class="inputClass('year')"
                   @input="clearFieldError('year')"
                 />
-                <p v-if="errors.year" id="year-error" class="mt-1.5 text-xs font-medium text-red-500">
+                <p
+                  v-if="errors.year"
+                  id="year-error"
+                  class="mt-1.5 text-xs font-medium text-red-500"
+                >
                   {{ errors.year }}
                 </p>
               </div>
@@ -100,8 +119,19 @@
                 class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <svg v-if="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  />
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
                 </svg>
                 {{ submitting ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Batch' }}
               </button>
@@ -125,10 +155,13 @@ interface BatchData {
   year?: string | number
 }
 
-const props = withDefaults(defineProps<{
-  show: boolean
-  batch?: BatchData | null
-}>(), { batch: null })
+const props = withDefaults(
+  defineProps<{
+    show: boolean
+    batch?: BatchData | null
+  }>(),
+  { batch: null },
+)
 
 const emit = defineEmits<{
   close: []
@@ -153,21 +186,26 @@ const errors = reactive<Record<string, string>>({ batch_name: '', year: '' })
 const submitting = ref(false)
 const submitError = ref('')
 
-watch(() => props.show, (val) => {
-  if (val) {
-    form.batch_name = props.batch?.batch_name ?? ''
-    form.year = String(props.batch?.year ?? new Date().getFullYear())
-    errors.batch_name = ''
-    errors.year = ''
-    submitError.value = ''
-    nextTick(() => nameInput.value?.focus())
-  }
-})
+watch(
+  () => props.show,
+  (val) => {
+    if (val) {
+      form.batch_name = props.batch?.batch_name ?? ''
+      form.year = String(props.batch?.year ?? new Date().getFullYear())
+      errors.batch_name = ''
+      errors.year = ''
+      submitError.value = ''
+      nextTick(() => nameInput.value?.focus())
+    }
+  },
+)
 
 function inputClass(field: string): Record<string, boolean> {
   return {
-    'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600': !errors[field],
-    'border-red-300 focus:border-red-400 focus:ring-red-500/20 dark:border-red-500': !!errors[field],
+    'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600':
+      !errors[field],
+    'border-red-300 focus:border-red-400 focus:ring-red-500/20 dark:border-red-500':
+      !!errors[field],
   }
 }
 
@@ -241,7 +279,8 @@ async function submit() {
     if (Object.keys(serverErrors).length > 0) {
       Object.assign(errors, serverErrors)
     } else {
-      submitError.value = axiosErr?.response?.data?.message || 'Failed to save batch. Please try again.'
+      submitError.value =
+        axiosErr?.response?.data?.message || 'Failed to save batch. Please try again.'
     }
   } finally {
     submitting.value = false

@@ -8,16 +8,18 @@
         </div>
       </div>
 
-      <div v-if="store.loading" class="py-12">
-        <div class="flex items-center justify-center">
-          <div class="text-sm text-gray-600">Loading students…</div>
-        </div>
+      <div v-if="loading" class="flex items-center justify-center py-12">
+        <svg class="h-6 w-6 animate-spin text-indigo-500" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+        <span class="ml-3 text-sm text-gray-500">Loading students…</span>
       </div>
       <div
-        v-else-if="store.error"
+        v-else-if="error"
         class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3"
       >
-        <p class="text-sm text-rose-600">{{ store.error }}</p>
+        <p class="text-sm text-rose-600">{{ error }}</p>
       </div>
 
       <div v-else class="overflow-x-auto">
@@ -29,7 +31,9 @@
               <th class="px-4 py-3 font-medium">Student</th>
               <th class="px-4 py-3 font-medium">Email</th>
               <th class="px-4 py-3 font-medium">Batch</th>
-              <th class="px-4 py-3 font-medium">Assigned Date</th>
+              <th class="px-4 py-3 font-medium">Position</th>
+              <th class="px-4 py-3 font-medium">Tutor</th>
+              <th class="px-4 py-3 font-medium">Period</th>
               <th class="px-4 py-3 font-medium">Status</th>
             </tr>
           </thead>
@@ -52,7 +56,13 @@
               </td>
               <td class="px-4 py-3.5 text-gray-600">{{ student.email }}</td>
               <td class="px-4 py-3.5 text-gray-600">{{ student.batch }}</td>
-              <td class="px-4 py-3.5 text-gray-600">{{ student.assignedDate }}</td>
+              <td class="px-4 py-3.5 text-gray-600">{{ student.position }}</td>
+              <td class="px-4 py-3.5 text-gray-600">{{ student.tutorName }}</td>
+              <td class="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                <span class="text-xs text-slate-400">{{ student.startDate }}</span>
+                <span v-if="student.startDate && student.endDate" class="text-xs text-slate-300 mx-1">→</span>
+                <span v-if="student.endDate" class="text-xs text-slate-400">{{ student.endDate }}</span>
+              </td>
               <td class="px-4 py-3.5">
                 <span
                   class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
@@ -99,11 +109,12 @@ import { useCompanyStore } from '@/stores/company'
 
 const store = useCompanyStore()
 
-const avatarColors = ['bg-primary-500', 'bg-primary-600', 'bg-primary-700']
+const avatarColors = ['bg-indigo-500', 'bg-emerald-500', 'bg-violet-500', 'bg-rose-500', 'bg-amber-500', 'bg-cyan-500']
 const statusMap: Record<string, { text: string; class: string }> = {
-  assigned: { text: 'Assigned', class: 'rounded-full bg-primary-500/10 text-primary-700' },
-  active: { text: 'Active', class: 'rounded-full bg-emerald-500/10 text-emerald-700' },
-  completed: { text: 'Completed', class: 'rounded-full bg-gray-500/10 text-gray-700' },
+  'Assigned': { text: 'Assigned', class: 'bg-blue-50 text-blue-700' },
+  'In Progress': { text: 'In Progress', class: 'bg-amber-50 text-amber-700' },
+  'Completed': { text: 'Completed', class: 'bg-emerald-50 text-emerald-700' },
+  'Terminated': { text: 'Terminated', class: 'bg-red-50 text-red-700' },
 }
 
 interface StudentRow {
@@ -112,17 +123,22 @@ interface StudentRow {
   initials: string
   email: string
   batch: string
-  assignedDate: string
+  position: string
+  tutorName: string
+  startDate: string
+  endDate: string
   status: string
   avatarColor: string
   statusClass: string
 }
 
 const students = ref<StudentRow[]>([])
+const loading = ref(true)
+const error = ref('')
 
 function initialsFrom(name: string | undefined | null): string {
   const text = name?.trim()
-  if (!text) return 'U'
+  if (!text) return '?'
   const parts = text.split(' ')
   const first = parts[0]?.[0] ?? ''
   const last = parts[parts.length - 1]?.[0] || ''
@@ -135,34 +151,51 @@ function colorFor(id: number | undefined | null): string {
   if (typeof colorValue === 'string') {
     return colorValue
   }
-  return 'bg-primary-500'
+  return 'bg-indigo-500'
 }
 
 function statusClassFor(rawItem: { status?: string }): string {
-  const statusKey = String(rawItem?.status ?? 'assigned')
-  const matched = statusMap[statusKey] || statusMap['assigned']
+  const statusKey = String(rawItem?.status ?? 'Assigned')
+  const matched = statusMap[statusKey] || statusMap['Assigned']
   const matchedClass = matched?.class
   return typeof matchedClass === 'string'
     ? matchedClass
-    : 'rounded-full bg-primary-500/10 text-primary-700'
+    : 'bg-blue-50 text-blue-700'
+}
+
+function formatDate(dateStr: string | undefined | null): string {
+  if (!dateStr) return ''
+  try {
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  } catch {
+    return dateStr
+  }
 }
 
 onMounted(async () => {
+  loading.value = true
+  error.value = ''
   try {
     const rawStudents = await store.fetchStudents()
     students.value = rawStudents.map((item) => ({
       id: Number(item?.id ?? 0),
-      name: String(item?.name ?? item?.student_name ?? 'Student'),
-      initials: initialsFrom(String(item?.name ?? item?.student_name ?? '')),
-      email: String(item?.email ?? item?.student_email ?? ''),
-      batch: String(item?.batch ?? item?.program ?? item?.batch ?? ''),
-      assignedDate: String(item?.assignedDate ?? item?.created_at ?? ''),
-      status: String(item?.status ?? 'assigned'),
+      name: String(item?.student_name ?? 'Student'),
+      initials: initialsFrom(String(item?.student_name ?? '')),
+      email: String(item?.student_email ?? ''),
+      batch: String(item?.batch ?? ''),
+      position: String(item?.position ?? ''),
+      tutorName: String(item?.tutor_name ?? ''),
+      startDate: formatDate(item?.start_date),
+      endDate: formatDate(item?.end_date),
+      status: String(item?.status ?? 'Assigned'),
       avatarColor: colorFor(item?.id),
       statusClass: statusClassFor(item),
     }))
-  } catch {
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Failed to load assigned students.'
     students.value = []
+  } finally {
+    loading.value = false
   }
 })
 </script>

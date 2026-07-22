@@ -28,7 +28,9 @@
         v-model="searchQuery"
         placeholder="Search by name or industry..."
         class="flex-1 max-w-xs"
+        clearable
         @change="onSearch"
+        @clear="onClearSearch"
       />
       <select
         v-model="industryFilter"
@@ -39,7 +41,6 @@
         <option v-for="ind in industries" :key="ind" :value="ind">{{ ind }}</option>
       </select>
     </div>
-    <ActiveFilters :filters="activeFilterList" @remove="removeFilter" @clear-all="clearFilters" />
 
     <div
       class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
@@ -128,7 +129,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCompanyStore } from '@/stores/company'
 import { useToastStore } from '@/stores/toast'
@@ -138,8 +139,7 @@ import CompanyCard from '@/components/company/CompanyCard.vue'
 import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import DebouncedInput from '@/components/ui/DebouncedInput.vue'
-import ActiveFilters from '@/components/ui/ActiveFilters.vue'
-import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
+
 
 const store = useCompanyStore()
 const router = useRouter()
@@ -158,14 +158,6 @@ const industries = [
   'Retail',
   'Consulting',
 ]
-
-const activeFilterList = computed<ActiveFilter[]>(() => {
-  const list: ActiveFilter[] = []
-  if (searchQuery.value) list.push({ key: 'search', label: 'Search', value: searchQuery.value })
-  if (industryFilter.value)
-    list.push({ key: 'industry', label: 'Industry', value: industryFilter.value })
-  return list
-})
 
 function fetchPage({ page }: { page: number }) {
   store.fetchCompanies({
@@ -188,15 +180,8 @@ function onFilterChange() {
   resetPage()
 }
 
-function removeFilter(key: string) {
-  if (key === 'search') searchQuery.value = ''
-  if (key === 'industry') industryFilter.value = ''
-  resetPage()
-}
-
-function clearFilters() {
+function onClearSearch() {
   searchQuery.value = ''
-  industryFilter.value = ''
   resetPage()
 }
 

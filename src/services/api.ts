@@ -2,6 +2,7 @@ import axios, { AxiosError, type AxiosResponse } from 'axios'
 import type { InternalAxiosRequestConfig } from 'axios'
 import { AUTH_CONFIG } from '@/constants/auth'
 import { tokenService } from '@/services/token'
+import { updateEchoAuth } from '@/services/echo'
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -65,6 +66,9 @@ async function attemptTokenRefresh(): Promise<string> {
     refreshToken: refresh_token,
     expiresAt: expires_in ? Date.now() + expires_in * 1000 : undefined,
   })
+
+  // Update Echo's auth headers with the new token
+  updateEchoAuth(access_token)
 
   return access_token
 }

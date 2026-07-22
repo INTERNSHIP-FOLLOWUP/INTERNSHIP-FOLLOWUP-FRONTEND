@@ -112,7 +112,7 @@
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.first_name }}</td>
                 <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.last_name }}</td>
-                <td class="whitespace-nowrap px-6 py-4 font-mono text-xs font-medium text-slate-500">{{ student.student_code || '—' }}</td>
+                <td class="whitespace-nowrap px-6 py-4 font-mono text-xs font-medium text-slate-500">{{ student.student_profile?.student_code || student.student_code || '—' }}</td>
                 <td class="whitespace-nowrap px-6 py-4 text-slate-500">{{ student.email }}</td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
@@ -134,6 +134,12 @@
                       class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900">
                       <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button type="button" @click.stop="deleteStudent(student)" title="Delete Student"
+                      class="flex h-8 w-8 items-center justify-center rounded-lg text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-700">
+                      <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                     </button>
                   </div>
@@ -238,7 +244,7 @@
     </transition>
 
     <!-- Import Modal -->
-    <ImportStudentsModal :show="showImportModal" @close="showImportModal = false; fetchStudents()" />
+    <ImportStudentsModal :show="showImportModal" @close="handleImportModalClose" />
 
     <!-- Add/Edit Student Modal -->
     <transition name="fade">
@@ -248,6 +254,18 @@
         </div>
       </div>
     </transition>
+
+    <ConfirmDialog
+      :show="confirmShow"
+      :title="confirmTitle"
+      :message="confirmMessage"
+      :confirm-text="confirmButtonText"
+      cancel-text="Cancel"
+      :loading="confirmLoading"
+      :error="confirmError"
+      @confirm="handleConfirmAction"
+      @cancel="confirmCancel"
+    />
   </div>
 </template>
 
@@ -255,20 +273,31 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
+import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import { studentService } from '@/services/student'
 import api from '@/services/api'
 import StudentForm from '@/components/student/StudentForm.vue'
 import ImportStudentsModal from '@/components/admin/ImportStudentsModal.vue'
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
 interface Role { id: number; name: string }
-interface Student {
+interface Batch { id: number; batch_name: string; year: string }
+interface StudentProfile {
   id: number
+  student_code: string | null
+  batch_id: number | null
+}
+interface Student {
+  id: number                    // This is the user ID
+  user_id: number
   first_name: string
   last_name: string
   name: string
   email: string
   student_code: string | null
   role: Role | null
+  batch: Batch | null
+  student_profile?: StudentProfile
   deleted_at: string | null
 }
 interface PaginationMeta { current_page: number; last_page: number; per_page: number; total: number; from: number; to: number }
@@ -285,6 +314,12 @@ const showFormModal = ref(false)
 const editingStudentId = ref<number | undefined>(undefined)
 const router = useRouter()
 const toast = useToastStore()
+const { show: confirmShow, loading: confirmLoading, error: confirmError, open: confirmOpen, cancel: confirmCancel, confirmAsync: confirmAsyncFn } = useConfirmDialog()
+const confirmTitle = ref('')
+const confirmMessage = ref('')
+const confirmButtonText = ref('Confirm')
+type ActionType = 'delete'
+const pendingAction = ref<{ type: ActionType; student: Student } | null>(null)
 
 // ── Bulk select state ──
 const selectMode = ref(false)
@@ -338,13 +373,18 @@ async function confirmBulkDelete() {
   bulkError.value = ''
   try {
     const ids = Array.from(selectedIds.value)
-    await api.delete('/admin/users/bulk-delete', { data: { ids } })
+    const response = await api.delete('/admin/users/bulk-delete', { data: { ids } })
     toast.success(`Deleted ${ids.length} student${ids.length !== 1 ? 's' : ''} successfully.`)
     showBulkConfirm.value = false
     clearSelection()
     fetchStudents()
   } catch (err: unknown) {
-    bulkError.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Bulk delete failed.'
+    const errorData = (err as { response?: { data?: { message?: string; errors?: string[] } } })?.response?.data
+    if (errorData?.errors && errorData.errors.length > 0) {
+      bulkError.value = errorData.errors.join('; ')
+    } else {
+      bulkError.value = errorData?.message || 'Bulk delete failed.'
+    }
   } finally {
     bulkDeleting.value = false
   }
@@ -380,9 +420,40 @@ function onStudentSaved() {
   fetchStudents()
   toast.success('Student saved successfully.')
 }
+function handleImportModalClose() {
+  showImportModal.value = false
+  fetchStudents()
+}
 function goToProfile(userId: number) {
   router.push(`/admin/student-profile/${userId}`)
 }
+
+async function confirmAction(type: ActionType, student: Student) {
+  pendingAction.value = { type, student }
+  if (type === 'delete') {
+    confirmTitle.value = 'Delete Student'
+    confirmMessage.value = `Are you sure you want to permanently delete ${student.first_name} ${student.last_name}?`
+    confirmButtonText.value = 'Delete'
+  }
+  const confirmed = await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value })
+  if (!confirmed) return
+  await handleConfirmAction()
+}
+
+async function handleConfirmAction() {
+  if (!pendingAction.value) return
+  const { type, student } = pendingAction.value
+  await confirmAsyncFn(async () => {
+    if (type === 'delete') {
+      await api.delete(`/admin/users/${student.id}`)
+      toast.success(`Student "${student.first_name} ${student.last_name}" deleted.`)
+    }
+    pendingAction.value = null
+    fetchStudents()
+  })
+}
+
+function deleteStudent(student: Student) { confirmAction('delete', student) }
 function goToPage(page: number) {
   if (page < 1 || (pagination.value && page > pagination.value.last_page)) return
   currentPage.value = page

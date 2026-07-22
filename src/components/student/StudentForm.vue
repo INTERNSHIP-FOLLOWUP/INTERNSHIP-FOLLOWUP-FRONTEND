@@ -407,8 +407,9 @@ async function handleSubmit(): Promise<void> {
       name: `${form.first_name} ${form.last_name}`.trim(),
     }
 
-    if (basePayload.photo === null && isEdit.value) {
-      basePayload.photo = originalPhoto.value || null
+    // Don't send photo field if no new file was selected (edit mode keeps existing)
+    if (basePayload.photo === null || basePayload.photo === originalPhoto.value) {
+      delete basePayload.photo
     }
 
     const result = isEdit.value
@@ -465,38 +466,26 @@ function omitPassword(payload: StudentFormData & Record<string, unknown>): Recor
 }
 
 onMounted(async () => {
-  await batchStore.fetchBatches()
-  await tutorStore.fetchTutors()
-
-  if (props.studentId) {
-    await studentStore.fetchStudent(props.studentId)
-    populateForm()
-  }
+    const promises: Promise<unknown>[] = [
+        batchStore.fetchBatches(),
+        tutorStore.fetchTutors(),
+    ]
+    if (props.studentId) {
+        promises.push(studentStore.fetchStudent(props.studentId).then(populateForm))
+    }
+    await Promise.all(promises)
 })
 
-watch(
-  () => props.studentId,
-  (id) => {
-    if (id) {
-      studentStore.fetchStudent(id).then(populateForm)
-    }
-  },
-)
-
-watch(
-  () => props.apiErrors,
-  (vals) => {
+watch(() => props.apiErrors, (vals) => {
     if (vals) {
-      formError.value = ''
-      for (const [key, msg] of Object.entries(vals)) {
-        ;(errors as Record<string, string>)[key] = msg
-      }
+        formError.value = ''
+        for (const [key, msg] of Object.entries(vals)) {
+            ;(errors as Record<string, string>)[key] = msg
+        }
     }
-  },
-  { immediate: true },
-)
+}, { immediate: true })
 
 onUnmounted(() => {
-  if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
+    if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
 })
 </script>

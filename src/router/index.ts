@@ -250,7 +250,7 @@ const router = createRouter({
         {
           path: 'messages',
           name: 'TutorMessages',
-          component: () => import('@/views/company/MessageView.vue'),
+          component: () => import('@/views/tutor/TutorMessagesView.vue'),
           meta: { title: 'Messages' },
         },
         {

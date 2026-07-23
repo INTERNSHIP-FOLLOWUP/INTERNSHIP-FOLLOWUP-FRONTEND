@@ -499,7 +499,8 @@ const filteredAssignments = computed(() => {
   return list
 })
 
-function getInitials(name: string): string {
+function getInitials(name: string | null | undefined): string {
+  if (!name) return ''
   return name
     .split(' ')
     .map((n) => n[0])

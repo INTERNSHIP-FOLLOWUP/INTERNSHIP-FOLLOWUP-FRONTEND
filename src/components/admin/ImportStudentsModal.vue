@@ -254,12 +254,22 @@ async function upload() {
       }, 2000)
     }
   } catch (err: unknown) {
-    const error = err as { response?: { data?: { message?: string; errors?: { row: number; reason: string }[] } } }
-    
-    if (error?.response?.data?.errors && error.response.data.errors.length > 0) {
-      uploadError.value = `Import failed: ${error.response.data.errors[0].reason}`
+    const error = err as {
+      response?: {
+        data?: {
+          message?: string
+          error?: string
+          errors?: { row: number; reason: string }[]
+        }
+      }
+    }
+    const data = error.response?.data
+    const firstRowError = data?.errors?.[0]?.reason
+
+    if (firstRowError) {
+      uploadError.value = `Import failed: ${firstRowError}`
     } else {
-      uploadError.value = error?.response?.data?.message || error?.response?.data?.error || 'Import failed. Please try again.'
+      uploadError.value = data?.message || data?.error || 'Import failed. Please try again.'
     }
   } finally {
     uploading.value = false

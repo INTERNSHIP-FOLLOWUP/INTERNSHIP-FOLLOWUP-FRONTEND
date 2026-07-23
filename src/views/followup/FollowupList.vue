@@ -331,12 +331,7 @@ const deleteError = ref<string | null>(null)
 const isStudent = computed(() => auth.userRole === 'student')
 
 const fetchParams = computed(() => {
-  if (auth.userRole === 'student' && auth.user?.id) {
-    return { student_id: auth.user.id }
-  }
-  if (auth.userRole === 'tutor' && auth.user?.id) {
-    return { tutor_id: auth.user.id }
-  }
+  // Backend auto-scopes by authenticated user — no params needed
   return {}
 })
 
@@ -368,7 +363,8 @@ function formatDateTime(dateStr: string): string {
 
 function studentLabel(f: Followup): string {
   if (!f.student_id) return '—'
-  if (isStudent.value && auth.user?.id === f.student_id) return 'Me'
+  // For students: backend scopes to the authenticated student, so all follow-ups are theirs
+  if (isStudent.value) return 'Me'
   if (f.student?.name) return f.student.name
   return `Student #${f.student_id}`
 }

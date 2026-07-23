@@ -56,7 +56,77 @@
                 class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-500 cursor-not-allowed"
               />
 
-              <!-- Tutor/Admin: number input for student ID -->
+              <!-- Tutor/Admin: search student by name -->
+              <div v-else-if="canSearchStudents" class="relative">
+                <div class="relative">
+                  <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <input
+                    ref="studentSearchInput"
+                    v-model="studentSearch"
+                    type="text"
+                    placeholder="Search student by name..."
+                    autocomplete="off"
+                    @input="onStudentSearchInput"
+                    @focus="showStudentDropdown = studentResults.length > 0"
+                    @blur="onStudentSearchBlur"
+                    class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    :class="{ 'border-red-400 ring-2 ring-red-500/20': errors.student_id }"
+                  />
+                  <!-- Clear button when student is selected -->
+                  <button
+                    v-if="form.student_id && studentSearch"
+                    type="button"
+                    @click="clearStudent"
+                    class="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+                  >
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Search results dropdown -->
+                <transition name="dropdown">
+                  <div
+                    v-if="showStudentDropdown && studentResults.length > 0"
+                    class="absolute z-50 mt-1 w-full rounded-xl border border-slate-200 bg-white py-1 shadow-lg shadow-slate-200/50 max-h-60 overflow-y-auto"
+                  >
+                    <button
+                      v-for="(s, idx) in studentResults"
+                      :key="s.id"
+                      type="button"
+                      @mousedown.prevent="selectStudent(s)"
+                      class="flex w-full items-center gap-3 px-3.5 py-2.5 text-left text-sm transition-colors hover:bg-indigo-50"
+                      :class="idx < studentResults.length - 1 ? 'border-b border-slate-50' : ''"
+                    >
+                      <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-xs font-bold text-indigo-600">
+                        {{ s.name?.charAt(0)?.toUpperCase() || '?' }}
+                      </div>
+                      <div class="min-w-0">
+                        <p class="font-medium text-slate-800 truncate">{{ s.name }}</p>
+                        <p class="text-xs text-slate-400 truncate">
+                          {{ s.student_code ? `#${s.student_code}` : '' }}
+                          {{ s.student_code && s.email ? '·' : '' }}
+                          {{ s.email || '' }}
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                </transition>
+
+                <!-- No results message -->
+                <transition name="dropdown">
+                  <div
+                    v-if="showStudentDropdown && studentSearch.length >= 2 && studentResults.length === 0 && !searchingStudents"
+                    class="absolute z-50 mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 shadow-lg shadow-slate-200/50 text-center"
+                  >
+                    <p class="text-sm text-slate-500">No students found matching "{{ studentSearch }}"</p>
+                  </div>
+                </transition>
+              </div>
+              <!-- Other roles: fallback text input -->
               <input
                 v-else
                 v-model.number="form.student_id"
@@ -244,9 +314,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, nextTick } from 'vue'
 import { useFollowupStore } from '@/stores/followupStore'
 import { useAuthStore } from '@/stores/auth'
+import { useStudentProfileStore } from '@/stores/studentProfile'
+import api from '@/services/api'
 import type { Followup, FollowupPayload, MeetingType } from '@/types/followup'
 import type { AxiosError } from 'axios'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
@@ -256,17 +328,19 @@ const emit = defineEmits<{ saved: []; cancelled: [] }>()
 
 const followupStore = useFollowupStore()
 const auth = useAuthStore()
+const profileStore = useStudentProfileStore()
 
 const isStudent = computed(() => auth.userRole === 'student')
 const isEdit = computed(() => !!props.followup)
+const canSearchStudents = computed(() => auth.userRole === 'tutor' || auth.userRole === 'admin')
+const searchRolePrefix = computed(() => auth.userRole === 'admin' ? 'admin' : 'tutor')
 
 const studentDisplayName = computed(() => {
-  if (auth.user?.name) return `${auth.user.name} (ID: ${auth.user.id})`
-  return `Student #${auth.user?.id ?? '—'}`
+  return auth.user?.name || 'You'
 })
 
 const form = reactive<FollowupPayload>({
-  student_id: props.followup?.student_id ?? (isEdit.value ? (null as unknown as number) : (auth.user?.id ?? (null as unknown as number))),
+  student_id: props.followup?.student_id ?? (isEdit.value ? (null as unknown as number) : (profileStore.profile?.id ?? (null as unknown as number))),
   meeting_type: props.followup?.meeting_type ?? ('' as MeetingType),
   meeting_date: props.followup?.meeting_date ?? '',
   notes: props.followup?.notes ?? '',
@@ -281,9 +355,78 @@ const errors = reactive({
   notes: '',
 })
 
-const notesLength = computed(() => form.notes.length)
-const actionItemsLength = computed(() => form.action_items.length)
+// ── Student search state ──
+const studentSearchInput = ref<HTMLInputElement | null>(null)
+const studentSearch = ref('')
+const studentResults = ref<Array<{ id: number; name: string; student_code?: string; email?: string }>>([])
+const showStudentDropdown = ref(false)
+const searchingStudents = ref(false)
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
+// On edit mode, pre-fill student name from existing follow-up data
+if (props.followup?.student?.name) {
+  studentSearch.value = props.followup.student.name
+}
+
+async function onStudentSearchInput() {
+  if (searchTimeout) clearTimeout(searchTimeout)
+
+  if (studentSearch.value.length < 2) {
+    studentResults.value = []
+    showStudentDropdown.value = false
+    // If they cleared the input but had a student selected, clear selection
+    if (!studentSearch.value && form.student_id) {
+      form.student_id = null as unknown as number
+    }
+    return
+  }
+
+  // User is typing something different from the selected student's name
+  // So clear the current selection
+  if (form.student_id && studentSearch.value !== props.followup?.student?.name) {
+    form.student_id = null as unknown as number
+  }
+
+  searchingStudents.value = true
+  searchTimeout = setTimeout(async () => {
+    try {
+      const res = await api.get(`/${searchRolePrefix.value}/students`, {
+        params: { search: studentSearch.value, per_page: 10 },
+      })
+      studentResults.value = Array.isArray(res.data.data) ? res.data.data : Array.isArray(res.data) ? res.data : []
+      showStudentDropdown.value = studentResults.value.length > 0
+    } catch {
+      studentResults.value = []
+      showStudentDropdown.value = false
+    } finally {
+      searchingStudents.value = false
+    }
+  }, 350)
+}
+
+function selectStudent(s: { id: number; name: string }) {
+  form.student_id = s.id
+  studentSearch.value = s.name
+  showStudentDropdown.value = false
+  errors.student_id = ''
+}
+
+function onStudentSearchBlur() {
+  // Delay hiding so click on dropdown item registers first
+  setTimeout(() => {
+    showStudentDropdown.value = false
+  }, 200)
+}
+
+function clearStudent() {
+  form.student_id = null as unknown as number
+  studentSearch.value = ''
+  studentResults.value = []
+  showStudentDropdown.value = false
+  nextTick(() => studentSearchInput.value?.focus())
+}
+
+// ── Form submission state ──
 const submitting = ref(false)
 const submitError = ref<string | null>(null)
 
@@ -296,7 +439,7 @@ function validate(): boolean {
   let valid = true
 
   if (!form.student_id) {
-    errors.student_id = isStudent.value ? 'Please select a student.' : 'Please enter a student ID.'
+    errors.student_id = isStudent.value ? 'Please select a student.' : 'Please select a student from the search results.'
     valid = false
   }
   if (!form.meeting_type) {
@@ -320,7 +463,23 @@ function validate(): boolean {
 }
 
 async function submit(): Promise<void> {
+  // For students creating new, ensure we send the correct students.id, not users.id
+  // Run this BEFORE validation so student_id is set correctly before checking
+  if (isStudent.value && !isEdit.value) {
+    if (!profileStore.profile?.id) {
+      try {
+        await profileStore.fetchProfile()
+      } catch {
+        // Will use whatever student_id we have
+      }
+    }
+    if (profileStore.profile?.id) {
+      form.student_id = profileStore.profile.id
+    }
+  }
+
   if (!validate()) return
+
   submitting.value = true
   submitError.value = null
   try {
@@ -368,5 +527,17 @@ async function submit(): Promise<void> {
 .error-slide-leave-to {
   opacity: 0;
   transform: translateY(-2px);
+}
+
+.dropdown-enter-active {
+  transition: all 0.2s ease-out;
+}
+.dropdown-leave-active {
+  transition: all 0.15s ease-in;
+}
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 </style>

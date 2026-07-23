@@ -321,6 +321,12 @@ const router = createRouter({
           meta: { title: 'Issues' },
         },
         {
+          path: 'messages',
+          name: 'StudentMessages',
+          component: () => import('@/views/student/StudentMessagesView.vue'),
+          meta: { title: 'Messages' },
+        },
+        {
           path: 'profile',
           name: 'StudentSelfProfile',
           component: () => import('@/views/profile/ProfileView.vue'),

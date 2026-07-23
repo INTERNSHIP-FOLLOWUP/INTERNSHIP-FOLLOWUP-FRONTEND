@@ -74,6 +74,7 @@ export interface TutorStudentMessageItem {
   created_at: string
   tutor_id?: number
   student_id?: number
+  tutor_name?: string
 }
 
 export interface TutorStudentConversationsResponse {
@@ -82,4 +83,6 @@ export interface TutorStudentConversationsResponse {
 
 export interface TutorStudentMessagesResponse {
   data: TutorStudentMessageItem[]
+  tutor_name?: string | null
+  tutor_photo_url?: string | null
 }

@@ -590,10 +590,6 @@ function validate(): boolean {
     errors.status = 'Please select a status.'
     valid = false
   }
-  if (form.next_followup && form.next_followup < form.meeting_date) {
-    submitError.value = 'Next follow-up date must be after the meeting date.'
-    valid = false
-  }
 
   return valid
 }

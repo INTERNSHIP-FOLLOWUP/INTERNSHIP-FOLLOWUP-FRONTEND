@@ -79,6 +79,6 @@ export interface WorklogFilters {
 }
 
 export interface ReviewWorklogPayload {
-  status: WorklogStatus
+  status?: WorklogStatus
   feedback?: string
 }

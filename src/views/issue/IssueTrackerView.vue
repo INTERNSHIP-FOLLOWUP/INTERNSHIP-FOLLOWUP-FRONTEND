@@ -396,23 +396,23 @@
       v-if="formModal.open"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
     >
-      <div class="w-[92%] max-w-[700px] rounded-2xl bg-white shadow-2xl">
-        <div class="border-b border-gray-100 px-5 py-4">
-          <h2 class="text-lg font-bold text-gray-900">
+      <div class="w-[92%] max-w-[480px] rounded-2xl bg-white shadow-2xl">
+        <div class="border-b border-gray-100 px-4 py-3">
+          <h2 class="text-base font-bold text-gray-900">
             {{ formModal.mode === 'create' ? 'New Issue' : 'Update Issue' }}
           </h2>
           <p class="mt-0.5 text-xs text-slate-500">
             Fill in the issue details below to keep shared progress clear.
           </p>
         </div>
-        <div class="max-h-[calc(100dvh-96px)] space-y-5 overflow-y-auto px-5 py-5">
+        <div class="max-h-[calc(100dvh-120px)] space-y-3 overflow-y-auto px-4 py-4">
           <div>
             <label class="mb-1 block text-xs font-semibold text-slate-500"
               >Issue Title <span class="text-red-500">*</span></label
             >
             <input
               v-model="formModal.form.title"
-              class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
+              class="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="closedOnlyView(formModal.item!)"
               placeholder="Enter issue title"
             />
@@ -423,19 +423,19 @@
             >
             <textarea
               v-model="formModal.form.description"
-              class="h-32 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
+              class="h-20 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="closedOnlyView(formModal.item!)"
               placeholder="What's the issue?"
             />
           </div>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-500"
+              <label class="mb-0.5 block text-xs font-semibold text-slate-500"
                 >Priority <span class="text-red-500">*</span></label
               >
               <select
                 v-model="formModal.form.priority"
-                class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
+                class="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
                 :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
               >
                 <option value="">Select priority</option>
@@ -446,12 +446,12 @@
               </select>
             </div>
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-500"
+              <label class="mb-0.5 block text-xs font-semibold text-slate-500"
                 >Status <span class="text-red-500">*</span></label
               >
               <select
                 v-model="formModal.form.status"
-                class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
+                class="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
                 :disabled="
                   !['Open', 'In Progress', 'Resolved', 'Closed'].includes(
                     formModal.form.status || '',
@@ -469,7 +469,7 @@
           </div>
           <!-- Student selector - shown for tutor and admin contexts -->
           <div v-if="context === 'tutor'">
-            <label class="mb-1 block text-xs font-semibold text-slate-500"
+            <label class="mb-0.5 block text-xs font-semibold text-slate-500"
               >Assign To Student <span class="text-red-500">*</span></label
             >
             <select
@@ -487,7 +487,7 @@
             </select>
           </div>
           <div v-else-if="context === 'admin'">
-            <label class="mb-1 block text-xs font-semibold text-slate-500"
+            <label class="mb-0.5 block text-xs font-semibold text-slate-500"
               >Student <span class="text-red-500">*</span></label
             >
             <select
@@ -505,10 +505,10 @@
             </select>
           </div>
           <div v-else>
-            <label class="mb-1 block text-xs font-semibold text-slate-500">Assign To</label>
+            <label class="mb-0.5 block text-xs font-semibold text-slate-500">Assign To</label>
             <select
               v-model="formModal.form.assignedUserId"
-              class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
+              class="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
             >
               <option value="">Assign an available contact</option>
@@ -518,17 +518,17 @@
             </select>
           </div>
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500">Due Date</label>
+            <label class="mb-0.5 block text-xs font-semibold text-slate-500">Due Date</label>
             <input
               v-model="formModal.form.dueDate"
               type="date"
-              class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
+              class="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
             />
           </div>
           <!-- Existing attachments display (tutor edit mode) -->
           <div v-if="context === 'tutor' && formModal.mode === 'update' && existingAttachments.length">
-            <label class="mb-1 block text-xs font-semibold text-slate-500"
+            <label class="mb-0.5 block text-xs font-semibold text-slate-500"
               >Current Attachments</label
             >
             <ul class="rounded-xl border border-gray-200 divide-y divide-gray-100">
@@ -566,15 +566,15 @@
             </ul>
           </div>
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500">Attachments</label>
+            <label class="mb-0.5 block text-xs font-semibold text-slate-500">Attachments</label>
             <button
               type="button"
-              class="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 px-5 py-8 text-center text-xs text-slate-500 transition-colors hover:border-[#2563EB] hover:text-[#2563EB] disabled:cursor-not-allowed disabled:opacity-70"
+              class="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 px-5 py-4 text-center text-xs text-slate-500 transition-colors hover:border-[#2563EB] hover:text-[#2563EB] disabled:cursor-not-allowed disabled:opacity-70"
               :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
               @click="fileInputRef?.click()"
             >
               <svg
-                class="h-8 w-8 text-gray-400"
+                class="h-6 w-6 text-gray-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -586,8 +586,8 @@
                   d="M15.172 7l-6.586 6.586a2 2 0 000 2.828 2 2 0 002.828 0L18 10m0 0h-6m6 0v6"
                 />
               </svg>
-              <p class="mt-2 font-semibold">Drag & drop files here</p>
-              <p class="mt-1">PDF, DOCX, PNG, ZIP</p>
+              <p class="mt-1.5 font-semibold">Drag & drop files here</p>
+              <p class="mt-0.5">PDF, DOCX, PNG, ZIP</p>
             </button>
             <input
               ref="fileInputRef"
@@ -605,7 +605,7 @@
           <!-- Validation errors display -->
           <div
             v-if="validationErrors.length"
-            class="rounded-xl border border-red-200 bg-red-50 p-3"
+            class="rounded-lg border border-red-200 bg-red-50 p-2.5"
           >
             <p class="text-xs font-semibold text-red-700">Please fix the following errors:</p>
             <ul class="mt-1 list-inside list-disc text-xs text-red-600">
@@ -613,15 +613,15 @@
             </ul>
           </div>
         </div>
-        <div class="flex items-center justify-end gap-2 border-t border-gray-100 px-5 py-4">
+        <div class="flex items-center justify-end gap-2 border-t border-gray-100 px-4 py-3">
           <button
-            class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50"
+            class="rounded-lg border border-gray-200 px-3.5 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50"
             @click="closeFormModal"
           >
             Cancel
           </button>
           <button
-            class="rounded-xl bg-[#2563EB] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
+            class="rounded-lg bg-[#2563EB] px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
             :disabled="submitDisabled || issueStore.loading"
             @click="submitForm"
           >

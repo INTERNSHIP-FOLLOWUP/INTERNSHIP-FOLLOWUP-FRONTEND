@@ -1,12 +1,15 @@
 <template>
   <button
+    v-motion
+    :while-hover="{ scale: 1.01, transition: { type: 'spring', stiffness: 400, damping: 15 } }"
+    :while-tap="{ scale: 0.97 }"
     :type="type"
     :disabled="disabled || loading"
     class="w-full h-[48px] inline-flex items-center justify-center rounded-xl font-semibold text-[15px] text-white transition-all duration-300 ease-out outline-none focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2"
     :class="[
       disabled || loading
         ? 'opacity-60 cursor-not-allowed'
-        : 'hover:shadow-lg hover:shadow-primary-500/25 active:scale-[0.98]',
+        : 'hover:shadow-lg hover:shadow-primary-500/25',
       'bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600',
     ]"
     v-bind="$attrs"

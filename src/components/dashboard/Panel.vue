@@ -1,5 +1,10 @@
 <template>
-  <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+  <div
+    v-motion
+    :initial="{ opacity: 0, y: 20, scale: 0.97 }"
+    :visible="{ opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 280, damping: 25, mass: 0.8 } }"
+    class="premium-card rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
+  >
     <div class="mb-4 flex items-center justify-between">
       <h2 class="text-base font-bold text-slate-900">{{ title }}</h2>
       <slot name="action" />
@@ -7,10 +12,10 @@
 
     <div v-if="loading" class="space-y-3">
       <div v-for="n in 4" :key="n" class="flex items-start gap-3">
-        <div class="h-8 w-8 rounded-full bg-slate-200 animate-pulse" />
+        <div class="skeleton-shimmer h-8 w-8 rounded-full bg-slate-200" />
         <div class="flex-1 space-y-2">
-          <div class="h-3 w-1/3 rounded bg-slate-200 animate-pulse" />
-          <div class="h-3 w-2/3 rounded bg-slate-100 animate-pulse" />
+          <div class="skeleton-shimmer h-3 w-1/3 rounded bg-slate-200" />
+          <div class="skeleton-shimmer h-3 w-2/3 rounded bg-slate-100" />
         </div>
       </div>
     </div>

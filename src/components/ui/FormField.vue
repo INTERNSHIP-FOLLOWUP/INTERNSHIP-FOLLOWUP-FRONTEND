@@ -1,11 +1,13 @@
 <template>
-  <div class="space-y-1.5">
+  <div class="form-field space-y-1.5">
     <label v-if="label" :for="id" class="block text-sm font-medium text-slate-700">
       {{ label }}
       <span v-if="required" class="text-error">*</span>
     </label>
     <slot />
-    <p v-if="error" :id="errorId" class="text-sm text-error">{{ error }}</p>
+    <transition name="field-error">
+      <p v-if="error" :id="errorId" class="text-sm text-error">{{ error }}</p>
+    </transition>
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen overflow-hidden bg-gray-50">
+  <div class="premium-shell flex h-screen overflow-hidden bg-gray-50">
     <!-- Mobile overlay -->
     <transition name="fade">
       <div
@@ -218,7 +218,11 @@
       <!-- Page content -->
       <main class="flex-1 overflow-y-auto">
         <div class="mx-auto max-w-7xl p-4 lg:p-6">
-          <router-view />
+          <router-view v-slot="{ Component }">
+            <transition name="page-shift">
+              <component :is="Component" />
+            </transition>
+          </router-view>
         </div>
       </main>
     </div>
@@ -418,28 +422,3 @@ const navItems: NavItem[] = [
 ]
 </script>
 
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.dropdown-enter-active {
-  transition: all 0.2s ease-out;
-}
-.dropdown-leave-active {
-  transition: all 0.15s ease-in;
-}
-.dropdown-enter-from {
-  opacity: 0;
-  transform: translateY(-8px) scale(0.96);
-}
-.dropdown-leave-to {
-  opacity: 0;
-  transform: translateY(-4px) scale(0.98);
-}
-</style>

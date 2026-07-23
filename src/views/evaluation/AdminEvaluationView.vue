@@ -100,7 +100,7 @@
                     class="h-5 w-5 shrink-0 overflow-hidden rounded border border-gray-200 bg-white"
                   >
                     <img
-                      :src="item.company.company_image_url || item.company.company_profile_image_url"
+                      :src="item.company.company_image_url || item.company.company_profile_image_url || undefined"
                       :alt="item.company.company_name"
                       class="h-full w-full object-cover"
                     />

@@ -13,7 +13,7 @@ export const tutorService = {
     page?: number
   }): Promise<TutorListResponse> {
     const response = await api.get<TutorListResponse>('/admin/users', {
-      params: { role: 'tutor', ...params },
+      params: { ...params, role: 'tutor' },
     })
     return response.data
   },

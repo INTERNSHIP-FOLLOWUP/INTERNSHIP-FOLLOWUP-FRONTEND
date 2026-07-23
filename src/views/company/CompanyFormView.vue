@@ -69,6 +69,7 @@ const initialData = ref<Partial<CompanyFormData>>({
   companyImage: null,
   avatar: null,
   telegramLink: '',
+  password: '',
 })
 
 async function loadIfNeeded() {

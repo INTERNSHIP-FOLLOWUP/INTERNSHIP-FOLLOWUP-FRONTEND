@@ -1,7 +1,13 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="space-y-6" novalidate>
-    <!-- Header -->
-    <div class="flex items-center justify-between">
+  <div
+    v-if="show"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm"
+    @click.self="$emit('close')"
+  >
+    <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-xl dark:border-slate-700 dark:bg-slate-900">
+      <form @submit.prevent="handleSubmit" class="space-y-6" novalidate>
+      <!-- Header -->
+      <div class="flex items-center justify-between">
       <div>
         <h2 class="text-xl font-bold text-slate-900">
           {{ isEdit ? 'Edit Assignment' : 'New Assignment' }}
@@ -43,7 +49,6 @@
         <select
           id="student_id"
           v-model.number="form.student_id"
-          :disabled="isEdit"
           :aria-invalid="!!errors.student_id"
           :aria-describedby="errors.student_id ? 'student_id-error' : undefined"
           class="h-10 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 dark:bg-slate-800 dark:text-slate-200"
@@ -72,7 +77,6 @@
         <select
           id="company_id"
           v-model.number="form.company_id"
-          :disabled="isEdit"
           :aria-invalid="!!errors.company_id"
           :aria-describedby="errors.company_id ? 'company_id-error' : undefined"
           class="h-10 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 dark:bg-slate-800 dark:text-slate-200"
@@ -225,39 +229,41 @@
     </p>
 
     <!-- Actions -->
-    <div class="mt-6 flex items-center justify-end gap-3">
-      <button
-        type="button"
-        :disabled="submitting"
-        class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
-        @click="$emit('close')"
-      >
-        Cancel
-      </button>
-      <button
-        type="submit"
-        :disabled="submitting"
-        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
-      >
-        <svg v-if="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          />
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-          />
-        </svg>
-        {{ submitting ? 'Saving...' : isEdit ? 'Update Assignment' : 'Create Assignment' }}
-      </button>
+        <div class="mt-6 flex items-center justify-end gap-3">
+          <button
+            type="button"
+            :disabled="submitting"
+            class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+            @click="$emit('close')"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            :disabled="submitting"
+            class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <svg v-if="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
+            </svg>
+            {{ submitting ? 'Saving...' : isEdit ? 'Update Assignment' : 'Create Assignment' }}
+          </button>
+        </div>
+      </form>
     </div>
-  </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -299,8 +305,8 @@ const VALID_TRANSITIONS: Record<AssignmentStatus, AssignmentStatus[]> = {
 }
 
 const props = withDefaults(
-  defineProps<{ assignmentId?: number; apiErrors?: Record<string, string> }>(),
-  { assignmentId: undefined, apiErrors: () => ({}) },
+  defineProps<{ show?: boolean; assignmentId?: number; apiErrors?: Record<string, string> }>(),
+  { show: false, assignmentId: undefined, apiErrors: () => ({}) },
 )
 
 const emit = defineEmits<{
@@ -424,6 +430,7 @@ async function handleSubmit(): Promise<void> {
       : await assignmentStore.createAssignment(payload)
 
     emit('saved', result)
+    emit('close')
   } catch (err: unknown) {
     const axiosErr = err as {
       response?: { status?: number; data?: { errors?: Record<string, string[]> } }
@@ -431,10 +438,10 @@ async function handleSubmit(): Promise<void> {
     if (axiosErr.response?.status === 422) {
       const apiErrs = axiosErr.response.data?.errors
       if (apiErrs) {
-        const { mapValidationErrors } = await import('@/utils/mapValidationErrors')
-        const mapped = mapValidationErrors(apiErrs)
-        for (const [key, msg] of Object.entries(mapped)) {
-          if (key in errors) errors[key] = msg
+        for (const [key, messages] of Object.entries(apiErrs)) {
+          if (messages.length > 0 && messages[0]) {
+            errors[key] = messages[0]
+          }
         }
       }
     } else {
@@ -445,6 +452,18 @@ async function handleSubmit(): Promise<void> {
   }
 }
 
+function resetForm(): void {
+  form.student_id = null
+  form.company_id = null
+  form.tutor_id = null
+  form.position = ''
+  form.start_date = ''
+  form.end_date = ''
+  form.status = ''
+  Object.keys(errors).forEach((key) => delete errors[key])
+  formError.value = ''
+}
+
 function populateForm(data: Assignment): void {
   form.student_id = data.student_id
   form.company_id = data.company_id
@@ -453,16 +472,17 @@ function populateForm(data: Assignment): void {
   form.start_date = data.start_date
   form.end_date = data.end_date
   form.status = data.status
+  Object.keys(errors).forEach((key) => delete errors[key])
+  formError.value = ''
 }
 
-onMounted(async () => {
+async function loadDropdownData(): Promise<void> {
   studentsLoading.value = true
   companiesLoading.value = true
-  tutorStore.fetchTutors()
 
   try {
     const [studentsRes, companiesRes] = await Promise.all([
-      api.get('/admin/users', { params: { role: 'student', per_page: 200 } }),
+      api.get('/admin/students', { params: { per_page: 100 } }),
       api.get('/admin/companies', { params: { per_page: 200 } }),
     ])
     students.value = studentsRes.data.data ?? studentsRes.data
@@ -473,16 +493,50 @@ onMounted(async () => {
     studentsLoading.value = false
     companiesLoading.value = false
   }
+}
 
-  if (props.assignmentId) {
-    try {
-      const data = await assignmentService.get(props.assignmentId)
-      populateForm(data)
-    } catch {
-      formError.value = 'Failed to load assignment details.'
-    }
+async function loadAssignmentDetails(id: number): Promise<void> {
+  try {
+    const data = await assignmentService.get(id)
+    populateForm(data)
+  } catch {
+    formError.value = 'Failed to load assignment details.'
   }
+}
+
+onMounted(async () => {
+  tutorStore.fetchTutors()
+  await loadDropdownData()
 })
+
+watch(
+  () => props.show,
+  async (isOpen) => {
+    if (!isOpen) return
+
+    await loadDropdownData()
+
+    if (props.assignmentId) {
+      await loadAssignmentDetails(props.assignmentId)
+    } else {
+      resetForm()
+    }
+  },
+  { immediate: true },
+)
+
+watch(
+  () => props.assignmentId,
+  async (id) => {
+    if (!props.show) return
+
+    if (id) {
+      await loadAssignmentDetails(id)
+    } else {
+      resetForm()
+    }
+  },
+)
 
 watch(
   () => props.apiErrors,

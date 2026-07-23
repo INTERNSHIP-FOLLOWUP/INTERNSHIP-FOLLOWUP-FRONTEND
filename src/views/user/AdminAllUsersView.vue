@@ -373,7 +373,7 @@ async function confirmBulkDelete() {
   bulkError.value = ''
   try {
     const ids = Array.from(selectedIds.value)
-    await api.delete('/admin/users/bulk-delete', { data: { ids } })
+    await api.post('/admin/users/bulk-delete', { ids })
     toast.success(`Deleted ${ids.length} user${ids.length !== 1 ? 's' : ''} successfully.`)
     showBulkConfirm.value = false
     clearSelection()

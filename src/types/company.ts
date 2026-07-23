@@ -88,10 +88,21 @@ export interface CompanyEvaluationItem {
 export interface CompanyFeedbackItem {
   id: number
   company_id: number
-  title: string
+  student_id?: number
+  title?: string | null
   message: string
+  strengths?: string[]
+  improvement_areas?: string[]
   created_at?: string
   updated_at?: string
+  student?: {
+    id: number
+    name: string
+    email?: string
+    student_code?: string
+    photo_url?: string | null
+    photo?: string | null
+  }
 }
 
 export interface CompanyEvaluationPayload {
@@ -104,6 +115,8 @@ export interface CompanyEvaluationPayload {
 }
 
 export interface CompanyFeedbackPayload {
-  title: string
+  student_id: number
   message: string
+  strengths: string[]
+  improvement_areas: string[]
 }

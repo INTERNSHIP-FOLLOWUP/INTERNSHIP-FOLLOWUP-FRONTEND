@@ -4,7 +4,7 @@
       <div>
         <h1 class="text-xl font-semibold text-gray-900">Company Feedback</h1>
         <p class="mt-1 text-sm text-gray-500">
-          View feedback submitted by companies about their internship experience.
+          View student performance feedback submitted by companies.
         </p>
       </div>
     </div>
@@ -49,6 +49,7 @@
         :key="item.id"
         class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:border-gray-200 hover:shadow-md"
       >
+        <!-- Header: Company + Date -->
         <div class="mb-3 flex items-start justify-between gap-3">
           <div class="flex items-center gap-3">
             <div
@@ -68,19 +69,55 @@
             >
               {{ companyInitials(item.company?.company_name) }}
             </div>
-            <div>
-              <h3 class="text-sm font-semibold text-gray-900">{{ item.title }}</h3>
-              <p class="mt-0.5 flex items-center gap-1.5 text-xs font-medium text-gray-500">
-                <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                {{ item.company?.company_name || 'Company #' + item.company_id }}
-              </p>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm font-semibold text-gray-900 truncate">{{ item.company?.company_name || 'Company' }}</h3>
+                <span class="shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">Feedback</span>
+              </div>
+              <!-- Student info with photo -->
+              <div class="mt-1.5 flex items-center gap-2">
+                <UserAvatar
+                  :avatar="item.student?.photo_url || item.student?.photo"
+                  :name="item.student?.name"
+                  size="sm"
+                />
+                <p class="truncate text-xs font-medium text-gray-700">{{ item.student?.name || 'Student' }}</p>
+              </div>
             </div>
           </div>
           <span class="shrink-0 whitespace-nowrap text-xs text-gray-400">{{ formatDate(item.created_at) }}</span>
         </div>
-        <div class="relative rounded-lg border border-gray-100 bg-gray-50/70 px-4 py-3">
+
+        <!-- Strengths -->
+        <div v-if="item.strengths?.length" class="mb-2.5">
+          <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500">Strengths</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span
+              v-for="s in item.strengths"
+              :key="s"
+              class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-600/10"
+            >
+              {{ s }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Improvement Areas -->
+        <div v-if="item.improvement_areas?.length" class="mb-2.5">
+          <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500">Areas for Improvement</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span
+              v-for="a in item.improvement_areas"
+              :key="a"
+              class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-amber-600/10"
+            >
+              {{ a }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Comment -->
+        <div v-if="item.message" class="relative mt-2 rounded-lg border border-gray-100 bg-gray-50/70 px-4 py-3">
           <svg class="absolute left-3 top-3 h-4 w-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zm-4 0H9v2h2V9z" clip-rule="evenodd" />
           </svg>
@@ -88,6 +125,7 @@
         </div>
       </div>
 
+      <!-- Pagination -->
       <div v-if="meta && meta.last_page > 1" class="flex items-center justify-between border-t border-gray-100 pt-4">
         <p class="text-xs text-gray-500">
           Page {{ meta.current_page }} of {{ meta.last_page }}
@@ -105,7 +143,7 @@
             v-for="p in visiblePages"
             :key="p"
             class="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-semibold transition-colors"
-            :class="p === meta.current_page ? 'bg-primary-600 text-white shadow-sm' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'"
+            :class="p === meta.current_page ? 'bg-indigo-600 text-white shadow-sm' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'"
             @click="load(p)"
           >
             {{ p }}
@@ -126,18 +164,29 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import api from '@/services/api'
+import UserAvatar from '@/components/common/UserAvatar.vue'
 
 interface FeedbackItem {
   id: number
   company_id: number
-  title: string
+  student_id?: number
+  title?: string | null
   message: string
+  strengths?: string[]
+  improvement_areas?: string[]
   created_at?: string
   company?: {
     id: number
     company_name: string
     company_image_url?: string | null
     company_profile_image_url?: string | null
+  }
+  student?: {
+    id: number
+    name: string
+    email?: string
+    photo_url?: string | null
+    photo?: string | null
   }
 }
 
@@ -166,7 +215,7 @@ const visiblePages = computed(() => {
 })
 
 const avatarColors = [
-  'bg-primary-500', 'bg-emerald-500', 'bg-violet-500',
+  'bg-indigo-500', 'bg-emerald-500', 'bg-violet-500',
   'bg-amber-500', 'bg-rose-500', 'bg-cyan-500',
   'bg-orange-500', 'bg-indigo-500', 'bg-teal-500',
 ]
@@ -181,7 +230,7 @@ async function load(page = 1) {
   loading.value = true
   error.value = null
   try {
-    const res = await api.get('/admin/feedback', { params: { page } })
+    const res = await api.get('/tutor/feedback', { params: { page } })
     const data = res.data
     feedback.value = data?.data ?? []
     meta.value = {

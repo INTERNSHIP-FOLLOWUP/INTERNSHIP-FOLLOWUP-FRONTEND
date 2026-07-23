@@ -44,7 +44,7 @@ export const worklogService = {
     return response.data as Worklog
   },
 
-  async reviewWorklog(id: number, data: { status: string; feedback?: string }): Promise<Worklog> {
+  async reviewWorklog(id: number, data: { status?: string; feedback?: string }): Promise<Worklog> {
     const response = await api.post(`/tutor/worklogs/${id}`, data)
     return response.data as Worklog
   },

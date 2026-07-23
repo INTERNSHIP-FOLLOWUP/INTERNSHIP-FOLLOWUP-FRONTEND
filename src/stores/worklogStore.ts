@@ -168,15 +168,16 @@ export const useWorklogStore = defineStore('worklog', () => {
 
   async function reviewWorklog(
     id: number,
-    data: { status: WorklogStatus; feedback: string },
+    data: { status?: WorklogStatus; feedback?: string },
   ): Promise<Worklog> {
     loading.value = true
     errors.value = {}
     try {
-      const res = await worklogService.reviewWorklog(id, {
-        status: data.status,
-        feedback: data.feedback,
-      })
+      const payload: { status?: string; feedback?: string } = {}
+      if (data.status !== undefined) payload.status = data.status
+      if (data.feedback !== undefined) payload.feedback = data.feedback
+
+      const res = await worklogService.reviewWorklog(id, payload)
 
       const updated = res as Worklog
 

@@ -78,10 +78,12 @@
               <div class="mt-1.5 flex items-center gap-2">
                 <UserAvatar
                   :avatar="item.student?.photo_url || item.student?.photo"
-                  :name="item.student?.name"
+                  :name="feedbackStudentName(item)"
                   size="sm"
                 />
-                <p class="truncate text-xs font-medium text-gray-700">{{ item.student?.name || 'Student' }}</p>
+                <p class="truncate text-xs font-medium text-gray-700">
+                  {{ feedbackStudentName(item) }}
+                </p>
               </div>
             </div>
           </div>
@@ -164,12 +166,17 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import api from '@/services/api'
+import { useTutorStudentStore } from '@/stores/tutorStudent'
 import UserAvatar from '@/components/common/UserAvatar.vue'
 
 interface FeedbackItem {
   id: number
   company_id: number
   student_id?: number
+  student_name?: string
+  name?: string
+  first_name?: string
+  last_name?: string
   title?: string | null
   message: string
   strengths?: string[]
@@ -184,6 +191,8 @@ interface FeedbackItem {
   student?: {
     id: number
     name: string
+    first_name?: string
+    last_name?: string
     email?: string
     photo_url?: string | null
     photo?: string | null
@@ -203,6 +212,7 @@ const feedback = ref<FeedbackItem[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const meta = ref<PaginationMeta | null>(null)
+const studentStore = useTutorStudentStore()
 
 const visiblePages = computed(() => {
   if (!meta.value) return []
@@ -272,5 +282,35 @@ function formatDate(dateStr?: string) {
   }
 }
 
-onMounted(() => load())
+function studentDisplayName(item: unknown) {
+  const raw = item as Record<string, unknown> | null
+  if (!raw) return 'Student'
+
+  const nestedStudent = raw.student as Record<string, unknown> | undefined
+  const firstName = String(raw.first_name ?? nestedStudent?.first_name ?? '').trim()
+  const lastName = String(raw.last_name ?? nestedStudent?.last_name ?? '').trim()
+  const fullName = `${firstName} ${lastName}`.trim()
+
+  return (
+    String(nestedStudent?.name ?? '').trim() ||
+    String(raw.student_name ?? '').trim() ||
+    String(raw.name ?? '').trim() ||
+    fullName ||
+    'Student'
+  )
+}
+
+function feedbackStudentName(item: FeedbackItem) {
+  const directName = studentDisplayName(item)
+  if (directName !== 'Student') return directName
+
+  const studentId = Number(item.student_id ?? 0)
+  const student = studentStore.students.find((s) => s.id === studentId)
+  return student ? studentDisplayName(student) : 'Student'
+}
+
+onMounted(() => {
+  load()
+  studentStore.fetchStudents({ per_page: 100 }).catch(() => {})
+})
 </script>

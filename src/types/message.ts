@@ -86,3 +86,8 @@ export interface TutorStudentMessagesResponse {
   tutor_name?: string | null
   tutor_photo_url?: string | null
 }
+
+export interface TutorStudentSendMessageResponse {
+  data: TutorStudentMessageItem
+  message: string
+}

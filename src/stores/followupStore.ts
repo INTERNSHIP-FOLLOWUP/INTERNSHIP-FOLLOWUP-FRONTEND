@@ -1,4 +1,3 @@
-// src/stores/followupStore.ts
 import { defineStore } from 'pinia'
 import api from '@/services/api'
 import type { Followup, FollowupPayload } from '@/types/followup'
@@ -30,7 +29,7 @@ export const useFollowupStore = defineStore('followup', {
       this.loading = true
       this.error = null
       try {
-        const res = await api.get<PaginatedResponse<Followup> | Followup[]>('/tutor/followups', {
+        const res = await api.get<PaginatedResponse<Followup> | Followup[]>('/followups', {
           params,
         })
         const payload = res.data
@@ -46,9 +45,10 @@ export const useFollowupStore = defineStore('followup', {
     async createFollowup(payload: FollowupPayload): Promise<Followup> {
       this.error = null
       try {
-        const res = await api.post<Followup>('/tutor/followups', payload)
-        this.followups.unshift(res.data)
-        return res.data
+        const res = await api.post<{ data: Followup }>('/followups', payload)
+        const followup = res.data.data
+        this.followups.unshift(followup)
+        return followup
       } catch (err) {
         const axiosErr = err as AxiosError<ApiErrorResponse>
         this.error = axiosErr.response?.data?.message ?? 'Failed to create follow-up'
@@ -59,10 +59,11 @@ export const useFollowupStore = defineStore('followup', {
     async updateFollowup(id: number, payload: FollowupPayload): Promise<Followup> {
       this.error = null
       try {
-        const res = await api.put<Followup>(`/tutor/followups/${id}`, payload)
+        const res = await api.put<{ data: Followup }>(`/followups/${id}`, payload)
+        const followup = res.data.data
         const idx = this.followups.findIndex((f) => f.id === id)
-        if (idx !== -1) this.followups[idx] = res.data
-        return res.data
+        if (idx !== -1) this.followups[idx] = followup
+        return followup
       } catch (err) {
         const axiosErr = err as AxiosError<ApiErrorResponse>
         this.error = axiosErr.response?.data?.message ?? 'Failed to update follow-up'

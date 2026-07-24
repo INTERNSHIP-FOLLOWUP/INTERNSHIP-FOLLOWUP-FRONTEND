@@ -25,6 +25,85 @@
       </button>
     </div>
 
+    <!-- Student filter (tutor only) -->
+    <div v-if="isTutor" class="relative">
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div class="relative flex-1 max-w-xs">
+          <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            ref="filterSearchInput"
+            v-model="filterSearch"
+            type="text"
+            placeholder="Filter by student name..."
+            autocomplete="off"
+            @input="onFilterSearchInput"
+            @focus="showFilterDropdown = filterResults.length > 0"
+            @blur="onFilterSearchBlur"
+            class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+          />
+          <!-- Clear filter button -->
+          <button
+            v-if="selectedStudentFilter"
+            type="button"
+            @click="clearFilterStudent"
+            title="Clear student filter"
+            class="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+          >
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <p v-if="selectedStudentFilter" class="text-xs font-medium text-indigo-600 bg-indigo-50 rounded-lg px-3 py-1.5 inline-flex items-center gap-1.5">
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          Showing follow-ups for <strong>{{ selectedStudentFilter.name }}</strong>
+        </p>
+      </div>
+
+      <!-- Search results dropdown -->
+      <transition name="dropdown">
+        <div
+          v-if="showFilterDropdown && filterResults.length > 0"
+          class="absolute z-50 mt-1 w-full max-w-xs rounded-xl border border-slate-200 bg-white py-1 shadow-lg shadow-slate-200/50 max-h-60 overflow-y-auto"
+        >
+          <button
+            v-for="(s, idx) in filterResults"
+            :key="s.id"
+            type="button"
+            @mousedown.prevent="selectFilterStudent(s)"
+            class="flex w-full items-center gap-3 px-3.5 py-2.5 text-left text-sm transition-colors hover:bg-indigo-50"
+            :class="idx < filterResults.length - 1 ? 'border-b border-slate-50' : ''"
+          >
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-xs font-bold text-indigo-600">
+              {{ s.name?.charAt(0)?.toUpperCase() || '?' }}
+            </div>
+            <div class="min-w-0">
+              <p class="font-medium text-slate-800 truncate">{{ s.name }}</p>
+              <p class="text-xs text-slate-400 truncate">
+                {{ s.student_code ? `#${s.student_code}` : '' }}
+                {{ s.student_code && s.email ? '·' : '' }}
+                {{ s.email || '' }}
+              </p>
+            </div>
+          </button>
+        </div>
+      </transition>
+
+      <!-- No results message -->
+      <transition name="dropdown">
+        <div
+          v-if="showFilterDropdown && filterSearch.length >= 2 && filterResults.length === 0 && !searchingFilter"
+          class="absolute z-50 mt-1 w-full max-w-xs rounded-xl border border-slate-200 bg-white p-3 shadow-lg shadow-slate-200/50 text-center"
+        >
+          <p class="text-sm text-slate-500">No students found matching "{{ filterSearch }}"</p>
+        </div>
+      </transition>
+    </div>
+
     <!-- Error Alert -->
     <ErrorAlert :message="followupStore.error" />
 
@@ -357,6 +436,7 @@ import { useFollowupStore } from '@/stores/followupStore'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import type { Followup } from '@/types/followup'
+import api from '@/services/api'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import FollowupForm from './FollowupForm.vue'
@@ -377,16 +457,78 @@ const deleting = ref(false)
 const deleteError = ref<string | null>(null)
 
 const isStudent = computed(() => auth.userRole === 'student')
+const isTutor = computed(() => auth.userRole === 'tutor' || auth.userRole === 'admin')
+
+// ── Student filter state ──
+const filterSearchInput = ref<HTMLInputElement | null>(null)
+const filterSearch = ref('')
+const filterResults = ref<Array<{ id: number; name: string; student_code?: string; email?: string }>>([])
+const showFilterDropdown = ref(false)
+const searchingFilter = ref(false)
+let filterSearchTimeout: ReturnType<typeof setTimeout> | null = null
+
+const selectedStudentFilter = ref<{ id: number; name: string } | null>(null)
 
 const fetchParams = computed(() => {
-  if (auth.userRole === 'student' && auth.user?.id) {
-    return { student_id: auth.user.id }
+  // Backend auto-scopes students — no params needed for student role
+  const params: Record<string, unknown> = {}
+  // For tutor: send students.id when filtering by a specific student
+  if (selectedStudentFilter.value) {
+    params.student_id = selectedStudentFilter.value.id
   }
-  if (auth.userRole === 'tutor' && auth.user?.id) {
-    return { tutor_id: auth.user.id }
-  }
-  return {}
+  return params
 })
+
+async function onFilterSearchInput() {
+  if (filterSearchTimeout) clearTimeout(filterSearchTimeout)
+
+  if (filterSearch.value.length < 2) {
+    filterResults.value = []
+    showFilterDropdown.value = false
+    return
+  }
+
+  searchingFilter.value = true
+  filterSearchTimeout = setTimeout(async () => {
+    try {
+      const role = auth.userRole === 'admin' ? 'admin' : 'tutor'
+      const res = await api.get(`/${role}/students`, {
+        params: { search: filterSearch.value, per_page: 10 },
+      })
+      filterResults.value = Array.isArray(res.data.data) ? res.data.data : Array.isArray(res.data) ? res.data : []
+      showFilterDropdown.value = filterResults.value.length > 0
+    } catch {
+      filterResults.value = []
+      showFilterDropdown.value = false
+    } finally {
+      searchingFilter.value = false
+    }
+  }, 350)
+}
+
+function selectFilterStudent(s: { id: number; name: string }) {
+  selectedStudentFilter.value = { id: s.id, name: s.name }
+  filterSearch.value = s.name
+  showFilterDropdown.value = false
+  // Refetch with the filter
+  followupStore.fetchFollowups(fetchParams.value).catch(() => {})
+}
+
+function onFilterSearchBlur() {
+  setTimeout(() => {
+    showFilterDropdown.value = false
+  }, 200)
+}
+
+function clearFilterStudent() {
+  selectedStudentFilter.value = null
+  filterSearch.value = ''
+  filterResults.value = []
+  showFilterDropdown.value = false
+  // Refetch without filter
+  followupStore.fetchFollowups(fetchParams.value).catch(() => {})
+  nextTick(() => filterSearchInput.value?.focus())
+}
 
 function formatDate(dateStr: string): string {
   try {
@@ -416,7 +558,8 @@ function formatDateTime(dateStr: string): string {
 
 function studentLabel(f: Followup): string {
   if (!f.student_id) return '—'
-  if (isStudent.value && auth.user?.id === f.student_id) return 'Me'
+  // For students: backend scopes to the authenticated student, so all follow-ups are theirs
+  if (isStudent.value) return 'Me'
   if (f.student?.name) return f.student.name
   return `Student #${f.student_id}`
 }
@@ -560,5 +703,17 @@ onMounted(() => {
 .modal-scale-leave-to > div {
   transform: scale(0.97) translateY(8px);
   opacity: 0;
+}
+
+.dropdown-enter-active {
+  transition: all 0.2s ease-out;
+}
+.dropdown-leave-active {
+  transition: all 0.15s ease-in;
+}
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 </style>

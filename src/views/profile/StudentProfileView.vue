@@ -63,7 +63,7 @@
                 >
                   <img
                     v-if="photoPreview || displayPhoto"
-                    :src="photoPreview || displayPhoto"
+                    :src="photoPreview ?? displayPhoto ?? undefined"
                     :alt="store.profile.name"
                     class="h-full w-full rounded-full object-cover"
                   />

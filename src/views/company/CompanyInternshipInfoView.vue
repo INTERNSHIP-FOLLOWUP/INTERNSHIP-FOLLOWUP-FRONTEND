@@ -4,85 +4,77 @@
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 class="text-xl font-semibold text-gray-900">Internship Information</h1>
-          <p class="mt-1 text-sm text-gray-500">View internship details for students assigned to your company.</p>
+          <p class="mt-1 text-sm text-gray-500">Program and batch information for your company.</p>
         </div>
       </div>
 
-      <div v-if="loading" class="flex items-center justify-center py-12">
-        <svg class="h-6 w-6 animate-spin text-indigo-500" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-        </svg>
-        <span class="ml-3 text-sm text-gray-500">Loading internship information…</span>
-      </div>
-      <div
-        v-else-if="error"
-        class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3"
-      >
-        <p class="text-sm text-rose-600">{{ error }}</p>
-      </div>
+      <div class="max-w-xl space-y-5">
+        <label class="block space-y-1">
+          <span class="text-sm font-medium text-gray-700">Program Name</span>
+          <input
+            v-model="form.programName"
+            type="text"
+            class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            placeholder="e.g. Summer Internship"
+          />
+        </label>
 
-      <div v-else class="overflow-x-auto">
-        <table class="w-full text-left text-sm" v-if="internships.length">
-          <thead>
-            <tr
-              class="border-b border-gray-100 text-xs font-medium uppercase tracking-wider text-gray-400"
-            >
-              <th class="px-4 py-3 font-medium">Student Name</th>
-              <th class="px-4 py-3 font-medium">Tutor</th>
-              <th class="px-4 py-3 font-medium">Intern Position</th>
-              <th class="px-4 py-3 font-medium">Start Date</th>
-              <th class="px-4 py-3 font-medium">End Date</th>
-              <th class="px-4 py-3 font-medium">Status</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-50">
-            <tr
-              v-for="item in internships"
-              :key="item.id"
-              class="transition-colors hover:bg-gray-50/50"
-            >
-              <td class="px-4 py-3.5">
-                <span class="font-medium text-gray-900">{{ item.studentName }}</span>
-              </td>
-              <td class="px-4 py-3.5 text-gray-600">{{ item.tutorName }}</td>
-              <td class="px-4 py-3.5 text-gray-600">{{ item.position }}</td>
-              <td class="px-4 py-3.5 text-gray-600 whitespace-nowrap">{{ item.startDate }}</td>
-              <td class="px-4 py-3.5 text-gray-600 whitespace-nowrap">{{ item.endDate }}</td>
-              <td class="px-4 py-3.5">
-                <span
-                  class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                  :class="item.statusClass"
-                >
-                  {{ item.status }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <label class="block space-y-1">
+          <span class="text-sm font-medium text-gray-700">Batch</span>
+          <input
+            v-model="form.batch"
+            type="text"
+            class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            placeholder="e.g. Batch 2025/1"
+          />
+        </label>
 
-        <div v-else class="px-4 py-12 text-center">
-          <div class="flex flex-col items-center">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50">
-              <svg
-                class="h-6 w-6 text-gray-300"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 13.255A23.893 23.893 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
-            </div>
-            <h3 class="mt-3 text-sm font-semibold text-gray-700">No internship information found</h3>
-            <p class="mt-1 text-xs text-gray-400">
-              Internship details for students assigned to your company will appear here.
-            </p>
-          </div>
+        <label class="block space-y-1">
+          <span class="text-sm font-medium text-gray-700">Assigned Tutor</span>
+          <input
+            v-model="form.tutor"
+            type="text"
+            class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            placeholder="Tutor name"
+          />
+        </label>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <label class="block space-y-1">
+            <span class="text-sm font-medium text-gray-700">Start Date</span>
+            <input
+              v-model="form.startDate"
+              type="date"
+              class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            />
+          </label>
+
+          <label class="block space-y-1">
+            <span class="text-sm font-medium text-gray-700">End Date</span>
+            <input
+              v-model="form.endDate"
+              type="date"
+              class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            />
+          </label>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-1">
+          <button
+            type="button"
+            class="rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+            @click="reset"
+          >
+            Reset
+          </button>
+          <button
+            type="button"
+            class="rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 disabled:opacity-60"
+            :disabled="saving"
+            @click="save"
+          >
+            {{ saving ? 'Saving...' : 'Save Information' }}
+          </button>
         </div>
       </div>
     </div>
@@ -90,71 +82,28 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useCompanyStore } from '@/stores/company'
+import { reactive, ref } from 'vue'
 
-const store = useCompanyStore()
-
-const statusMap: Record<string, { text: string; class: string }> = {
-  'Assigned': { text: 'Assigned', class: 'bg-blue-50 text-blue-700' },
-  'In Progress': { text: 'In Progress', class: 'bg-amber-50 text-amber-700' },
-  'Completed': { text: 'Completed', class: 'bg-emerald-50 text-emerald-700' },
-  'Terminated': { text: 'Terminated', class: 'bg-red-50 text-red-700' },
-}
-
-interface InternshipRow {
-  id: number
-  studentName: string
-  tutorName: string
-  position: string
-  startDate: string
-  endDate: string
-  status: string
-  statusClass: string
-}
-
-const internships = ref<InternshipRow[]>([])
-const loading = ref(true)
-const error = ref('')
-
-function statusClassFor(rawItem: { status?: string }): string {
-  const statusKey = String(rawItem?.status ?? 'Assigned')
-  const matched = statusMap[statusKey] || statusMap['Assigned']
-  const matchedClass = matched?.class
-  return typeof matchedClass === 'string'
-    ? matchedClass
-    : 'bg-blue-50 text-blue-700'
-}
-
-function formatDate(dateStr: string | undefined | null): string {
-  if (!dateStr) return ''
-  try {
-    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-  } catch {
-    return dateStr
-  }
-}
-
-onMounted(async () => {
-  loading.value = true
-  error.value = ''
-  try {
-    const rawData = await store.fetchStudents()
-    internships.value = rawData.map((item) => ({
-      id: Number(item?.id ?? 0),
-      studentName: String(item?.student_name ?? ''),
-      tutorName: String(item?.tutor_name ?? ''),
-      position: String(item?.position ?? ''),
-      startDate: formatDate(item?.start_date),
-      endDate: formatDate(item?.end_date),
-      status: String(item?.status ?? 'Assigned'),
-      statusClass: statusClassFor(item),
-    }))
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Failed to load internship information.'
-    internships.value = []
-  } finally {
-    loading.value = false
-  }
+const form = reactive({
+  programName: '',
+  batch: '',
+  tutor: '',
+  startDate: '',
+  endDate: '',
 })
+const saving = ref(false)
+
+async function save() {
+  saving.value = true
+  await new Promise((resolve) => setTimeout(resolve, 400))
+  saving.value = false
+}
+
+function reset() {
+  form.programName = ''
+  form.batch = ''
+  form.tutor = ''
+  form.startDate = ''
+  form.endDate = ''
+}
 </script>

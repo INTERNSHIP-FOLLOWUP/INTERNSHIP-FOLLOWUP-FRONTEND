@@ -52,7 +52,7 @@
             <thead>
               <tr class="border-b border-slate-100 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 <th class="py-3 pr-4 font-medium">Name</th>
-                <th class="py-3 pr-4 font-medium">Code</th>
+                <th class="py-3 pr-4 font-medium">Student ID</th>
                 <th class="py-3 pr-4 font-medium">Batch</th>
                 <th class="py-3 pr-4 font-medium">Worklogs</th>
                 <th class="py-3 pr-4 font-medium">Issues</th>
@@ -64,7 +64,7 @@
               <template v-for="s in data.students" :key="s.id">
                 <tr @click="toggleStudent(s.id)" class="cursor-pointer hover:bg-slate-50/50">
                   <td class="py-3 pr-4 font-semibold text-slate-900">{{ s.name }}</td>
-                  <td class="py-3 pr-4 text-slate-500">{{ s.student_code }}</td>
+                  <td class="py-3 pr-4 text-slate-500">{{ formatStudentId(s.student_code, s.batch) }}</td>
                   <td class="py-3 pr-4 text-slate-500">{{ s.batch }}</td>
                   <td class="py-3 pr-4 text-slate-500">{{ s.worklogs_count }}</td>
                   <td class="py-3 pr-4 text-slate-500">{{ s.issues_count }}</td>
@@ -157,6 +157,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/services/api'
+import { formatStudentId } from '@/utils/studentUtils'
 
 const route = useRoute()
 const data = ref<any>(null)

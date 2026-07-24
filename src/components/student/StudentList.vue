@@ -61,7 +61,7 @@
         <p class="mt-1 text-2xl font-bold text-blue-600">{{ graduatedCount }}</p>
       </div>
       <div class="rounded-lg border border-slate-200/80 bg-white px-4 py-3 shadow-sm">
-        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Inactive</p>
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Deactivated</p>
         <p class="mt-1 text-2xl font-bold text-slate-600">{{ inactiveCount }}</p>
       </div>
     </div>
@@ -108,7 +108,7 @@
       >
         <option value="">All Statuses</option>
         <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
+        <option value="deactivated">Deactivated</option>
       </select>
 
       <select
@@ -252,7 +252,7 @@
                         Edit Student
                       </button>
 
-                      <button v-if="student.status !== 'inactive' && student.status !== 'deactivated'" type="button" @click.stop="openKebabId = null; toggleStudentStatus(student)"
+                      <button v-if="student.status !== 'inactive' && student.status !== 'deactivated'" type="button" @click.stop="openKebabId = null; confirmAction('deactivate', student)"
                         class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
                         <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
@@ -260,7 +260,7 @@
                         Deactivate
                       </button>
 
-                      <button v-else type="button" @click.stop="openKebabId = null; toggleStudentStatus(student)"
+                      <button v-else type="button" @click.stop="openKebabId = null; confirmAction('activate', student)"
                         class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors">
                         <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -270,7 +270,7 @@
 
                       <div class="my-1 h-px bg-slate-100" />
 
-                      <button type="button" @click.stop="openKebabId = null; confirmDelete(student)"
+                      <button type="button" @click.stop="openKebabId = null; confirmAction('delete', student)"
                         class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors">
                         <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -366,78 +366,18 @@
       </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <transition name="fade">
-      <div
-        v-if="deletingTarget"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-        role="dialog"
-        aria-modal="true"
-        @click="deletingTarget = null"
-      >
-        <div
-          class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl"
-          @click.stop
-        >
-          <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50">
-              <svg
-                class="h-5 w-5 text-rose-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold text-slate-900">Delete Student</h3>
-              <p class="mt-0.5 text-sm text-slate-500">
-                Are you sure you want to delete
-                <span class="font-semibold text-slate-700">{{ deletingTarget.name }}</span
-                >? This action cannot be undone.
-              </p>
-            </div>
-          </div>
-          <div class="mt-5 flex items-center justify-end gap-3">
-            <button
-              @click="deletingTarget = null"
-              :disabled="deleting"
-              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
-            >
-              Cancel
-            </button>
-            <button
-              @click="handleDelete"
-              :disabled="deleting"
-              class="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <svg v-if="deleting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle
-                  class="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                />
-                <path
-                  class="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                />
-              </svg>
-              {{ deleting ? 'Deleting...' : 'Delete' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
+    <!-- Confirm Dialog -->
+    <ConfirmDialog
+      :show="confirmShow"
+      :title="confirmTitle"
+      :message="confirmMessage"
+      :confirm-text="confirmButtonText"
+      cancel-text="Cancel"
+      :loading="confirmLoading"
+      :error="confirmError"
+      @confirm="handleConfirmAction"
+      @cancel="confirmCancel"
+    />
 
     <!-- Import Excel Modal -->
     <ImportStudentsModal :show="showImportModal" @close="handleImportClose" />
@@ -453,6 +393,9 @@ import type { Student } from '@/types/student'
 import api from '@/services/api'
 import ImportStudentsModal from '@/components/admin/ImportStudentsModal.vue'
 
+import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+
 const emit = defineEmits<{
   view: [id: number]
   edit: [id: number]
@@ -465,10 +408,15 @@ const emit = defineEmits<{
 }>()
 
 const toast = useToastStore()
+const { show: confirmShow, loading: confirmLoading, error: confirmError, open: confirmOpen, cancel: confirmCancel, confirmAsync: confirmAsyncFn } = useConfirmDialog()
+
 const showImportModal = ref(false)
-const deletingTarget = ref<Student | null>(null)
-const deleting = ref(false)
 const openKebabId = ref<number | null>(null)
+const confirmTitle = ref('')
+const confirmMessage = ref('')
+const confirmButtonText = ref('Confirm')
+type ActionType = 'delete' | 'deactivate' | 'activate'
+const pendingAction = ref<{ type: ActionType; student: Student } | null>(null)
 
 function openImportModal() {
   showImportModal.value = true
@@ -520,31 +468,47 @@ function handleWindowClick() {
   openKebabId.value = null
 }
 
-async function toggleStudentStatus(student: Student) {
-  try {
-    const isInactive = student.status === 'inactive' || student.status === 'deactivated'
-    const endpoint = isInactive ? `/admin/users/${student.user_id || student.id}/activate` : `/admin/users/${student.user_id || student.id}/deactivate`
-    await api.put(endpoint)
+async function confirmAction(type: ActionType, student: Student) {
+  pendingAction.value = { type, student }
+  const displayName = student.name || `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
+  if (type === 'delete') {
+    confirmTitle.value = 'Delete Student'
+    confirmMessage.value = `Are you sure you want to permanently delete ${displayName}?`
+    confirmButtonText.value = 'Delete'
+  } else if (type === 'deactivate') {
+    confirmTitle.value = 'Deactivate Student'
+    confirmMessage.value = `Are you sure you want to deactivate ${displayName}?`
+    confirmButtonText.value = 'Deactivate'
+  } else if (type === 'activate') {
+    confirmTitle.value = 'Activate Student'
+    confirmMessage.value = `Are you sure you want to activate ${displayName}?`
+    confirmButtonText.value = 'Activate'
+  }
+  const confirmed = await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value })
+  if (!confirmed) return
+  await handleConfirmAction()
+}
+
+async function handleConfirmAction() {
+  if (!pendingAction.value) return
+  const { type, student } = pendingAction.value
+  const targetId = student.user_id || student.id
+  const displayName = student.name || `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
+  await confirmAsyncFn(async () => {
+    if (type === 'delete') {
+      await store.deleteStudent(student.id)
+      toast.success(`Student "${displayName}" deleted.`)
+      emit('delete', student.id)
+    } else if (type === 'deactivate') {
+      await api.put(`/admin/users/${targetId}/deactivate`)
+      toast.success(`Student "${displayName}" deactivated successfully.`)
+    } else if (type === 'activate') {
+      await api.put(`/admin/users/${targetId}/activate`)
+      toast.success(`Student "${displayName}" activated successfully.`)
+    }
+    pendingAction.value = null
     fetchStudents()
-  } catch {
-    /* ignore */
-  }
-}
-
-function confirmDelete(student: Student): void {
-  deletingTarget.value = student
-}
-
-async function handleDelete(): Promise<void> {
-  if (!deletingTarget.value) return
-  deleting.value = true
-  try {
-    await store.deleteStudent(deletingTarget.value.id)
-    emit('delete', deletingTarget.value.id)
-    deletingTarget.value = null
-  } finally {
-    deleting.value = false
-  }
+  })
 }
 
 interface BatchOption { id: number; batch_name: string; name?: string }
@@ -640,6 +604,7 @@ function getInitials(name: string): string {
 
 function formatStatus(status?: string): string {
   if (!status) return 'Unknown'
+  if (status.toLowerCase() === 'inactive' || status.toLowerCase() === 'deactivated') return 'Deactivated'
   return status.charAt(0).toUpperCase() + status.slice(1)
 }
 
@@ -648,6 +613,7 @@ function statusBadgeClass(status?: string): string {
     case 'active':
       return 'bg-emerald-50 text-emerald-700'
     case 'inactive':
+    case 'deactivated':
       return 'bg-slate-100 text-slate-600'
     case 'graduated':
       return 'bg-blue-50 text-blue-700'
@@ -663,6 +629,7 @@ function statusDotClass(status?: string): string {
     case 'active':
       return 'bg-emerald-500'
     case 'inactive':
+    case 'deactivated':
       return 'bg-slate-400'
     case 'graduated':
       return 'bg-blue-500'

@@ -70,11 +70,11 @@
     </div>
 
     <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
-      <FormField label="Student Code" :error="errors.student_code" required>
+      <FormField label="Student ID" :error="errors.student_code" required>
         <input
           v-model="form.student_code"
           type="text"
-          placeholder="STU-001"
+          placeholder="PNC2026-001"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('student_code')"
           @input="clearFieldError('student_code')"
@@ -187,7 +187,6 @@
         >
           <option value="" disabled>Select status</option>
           <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
           <option value="deactivated">Deactivated</option>
         </select>
       </FormField>

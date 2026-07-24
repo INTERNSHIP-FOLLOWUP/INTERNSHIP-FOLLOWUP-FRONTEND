@@ -78,7 +78,7 @@
       >
         <option value="">All Statuses</option>
         <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
+        <option value="deactivated">Deactivated</option>
       </select>
 
       <select
@@ -168,10 +168,10 @@
               <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 <th class="px-6 py-3.5 font-medium">First Name</th>
                 <th class="px-6 py-3.5 font-medium">Last Name</th>
-                <th class="px-6 py-3.5 font-medium">Code</th>
+                <th class="px-6 py-3.5 font-medium">Student ID</th>
                 <th class="px-6 py-3.5 font-medium">Email</th>
                 <th class="px-6 py-3.5 font-medium">Batch</th>
-                <th class="px-6 py-3.5 font-medium">Tutor</th>
+                <th class="px-6 py-3.5 font-medium">Tutor Assigned</th>
                 <th class="px-6 py-3.5 font-medium">Status</th>
                 <th class="px-6 py-3.5 text-right font-medium">Actions</th>
               </tr>
@@ -187,7 +187,7 @@
                 <td
                   class="whitespace-nowrap px-6 py-4 font-mono text-xs font-medium text-slate-500"
                 >
-                  {{ student.student_code || '—' }}
+                  {{ formatStudentId(student.student_code, student.batch) }}
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-500">
                   {{ student.email }}
@@ -244,7 +244,7 @@
                           Edit Student
                         </button>
 
-                        <button v-if="student.status !== 'inactive' && student.status !== 'deactivated'" type="button" @click.stop="openKebabId = null; toggleStudentStatus(student)"
+                        <button v-if="student.status !== 'inactive' && student.status !== 'deactivated'" type="button" @click.stop="openKebabId = null; confirmAction('deactivate', student)"
                           class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
                           <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
@@ -252,7 +252,7 @@
                           Deactivate
                         </button>
 
-                        <button v-else type="button" @click.stop="openKebabId = null; toggleStudentStatus(student)"
+                        <button v-else type="button" @click.stop="openKebabId = null; confirmAction('activate', student)"
                           class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors">
                           <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -262,7 +262,7 @@
 
                         <div class="my-1 h-px bg-slate-100" />
 
-                        <button type="button" @click.stop="openKebabId = null; deleteStudent(student.id)"
+                        <button type="button" @click.stop="openKebabId = null; confirmAction('delete', student)"
                           class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors">
                           <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -378,6 +378,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import api from '@/services/api'
+import { formatStudentId } from '@/utils/studentUtils'
 import type { Student } from '@/types/student'
 
 
@@ -501,6 +502,7 @@ function getTutorDisplay(tutor: string | { name?: string } | undefined): string 
 
 function formatStatus(status?: string): string {
   if (!status) return 'Unknown'
+  if (status.toLowerCase() === 'inactive' || status.toLowerCase() === 'deactivated') return 'Deactivated'
   return status.charAt(0).toUpperCase() + status.slice(1)
 }
 
@@ -512,14 +514,12 @@ async function fetchPage({ page }: { page: number }): Promise<void> {
   if (statusFilter.value) params.status = statusFilter.value
   if (genderFilter.value) params.gender = genderFilter.value
   try {
-    await store.fetchStudents(params as { per_page?: number; page?: number; search?: string })
+    await store.fetchStudents(params)
   } catch {
-    // error is already set in store
   }
 }
 
-// Pagination should react to page + filters, but *not* directly on every search keystroke.
-// We’ll handle search updates manually to meet the UX requirements.
+
 const { setPage, resetPage } = usePagination(fetchPage, {
   batch: batchFilter,
   tutor: tutorFilter,
@@ -527,11 +527,6 @@ const { setPage, resetPage } = usePagination(fetchPage, {
   gender: genderFilter,
 })
 
-// Debounce search typing so results update instantly for the user (without a Search button).
-// Requirements:
-// - start after 2 characters
-// - clear input => show full list again
-// - <2 characters should not trigger “No students found"
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
 const isSearchActive = computed(() => searchQuery.value.trim().length >= 2)
@@ -544,13 +539,10 @@ if (searchTimeout) clearTimeout(searchTimeout)
     const q = searchQuery.value.trim()
 
     if (!q) {
-      // Show full list when cleared.
       resetPage()
       return
     }
 
-    // Start searching after 2 characters.
-    // For 1 character: do nothing (keep existing list).
     if (q.length >= 2) {
       resetPage()
     }
@@ -664,15 +656,52 @@ function handleWindowClick() {
   openKebabId.value = null
 }
 
-async function toggleStudentStatus(student: Student) {
-  try {
-    const isInactive = student.status === 'inactive' || student.status === 'deactivated'
-    const endpoint = isInactive ? `/admin/users/${student.user_id || student.id}/activate` : `/admin/users/${student.user_id || student.id}/deactivate`
-    await api.put(endpoint)
-    resetPage()
-  } catch {
-    /* ignore */
+const confirmTitle = ref('')
+const confirmMessage = ref('')
+const confirmButtonText = ref('Confirm')
+type ActionType = 'delete' | 'deactivate' | 'activate'
+const pendingAction = ref<{ type: ActionType; student: Student } | null>(null)
+
+async function confirmAction(type: ActionType, student: Student) {
+  pendingAction.value = { type, student }
+  const displayName = student.name || `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
+  if (type === 'delete') {
+    confirmTitle.value = 'Delete Student'
+    confirmMessage.value = `Are you sure you want to permanently delete ${displayName}?`
+    confirmButtonText.value = 'Delete'
+  } else if (type === 'deactivate') {
+    confirmTitle.value = 'Deactivate Student'
+    confirmMessage.value = `Are you sure you want to deactivate ${displayName}?`
+    confirmButtonText.value = 'Deactivate'
+  } else if (type === 'activate') {
+    confirmTitle.value = 'Activate Student'
+    confirmMessage.value = `Are you sure you want to activate ${displayName}?`
+    confirmButtonText.value = 'Activate'
   }
+  const confirmed = await dialog.open({ title: confirmTitle.value, message: confirmMessage.value })
+  if (!confirmed) return
+  await handleConfirmAction()
+}
+
+async function handleConfirmAction() {
+  if (!pendingAction.value) return
+  const { type, student } = pendingAction.value
+  const targetId = student.user_id || student.id
+  const displayName = student.name || `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
+  await dialog.confirmAsync(async () => {
+    if (type === 'delete') {
+      await store.deleteStudent(student.id)
+      toast.success(`Student "${displayName}" deleted.`)
+    } else if (type === 'deactivate') {
+      await api.put(`/admin/users/${targetId}/deactivate`)
+      toast.success(`Student "${displayName}" deactivated successfully.`)
+    } else if (type === 'activate') {
+      await api.put(`/admin/users/${targetId}/activate`)
+      toast.success(`Student "${displayName}" activated successfully.`)
+    }
+    pendingAction.value = null
+    resetPage()
+  })
 }
 
 onMounted(() => {

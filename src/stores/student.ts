@@ -21,6 +21,10 @@ export const useStudentStore = defineStore('student', () => {
     per_page?: number
     page?: number
     search?: string
+    batch_id?: string | number
+    tutor_id?: string | number
+    status?: string
+    gender?: string
   }): Promise<void> {
     loading.value = true
     error.value = null

@@ -68,12 +68,20 @@
         </option>
       </select>
 
+      <!-- Tutor Filter -->
+      <select v-model="tutorFilter" @change="onFilterChange"
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
+        <option value="">All Tutors</option>
+        <option v-for="t in tutors" :key="t.id" :value="t.id">
+          {{ t.name || ((t.first_name || '') + ' ' + (t.last_name || '')).trim() }}
+        </option>
+      </select>
+
       <!-- Status Filter -->
       <select v-model="statusFilter" @change="onFilterChange"
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
         <option value="">All Statuses</option>
         <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
         <option value="deactivated">Deactivated</option>
       </select>
 
@@ -130,9 +138,10 @@
                 </th>
                 <th class="px-6 py-3.5 font-medium">First Name</th>
                 <th class="px-6 py-3.5 font-medium">Last Name</th>
-                <th class="px-6 py-3.5 font-medium">Student Code</th>
+                <th class="px-6 py-3.5 font-medium">Student ID</th>
                 <th class="px-6 py-3.5 font-medium">Email</th>
                 <th class="px-6 py-3.5 font-medium">Batch</th>
+                <th class="px-6 py-3.5 font-medium">Tutor Assigned</th>
                 <th class="px-6 py-3.5 font-medium">Gender</th>
                 <th class="px-6 py-3.5 font-medium">Status</th>
                 <th class="px-6 py-3.5 text-right font-medium">Actions</th>
@@ -149,13 +158,16 @@
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.first_name }}</td>
                 <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.last_name }}</td>
-                <td class="whitespace-nowrap px-6 py-4 font-mono text-xs font-medium text-slate-500">{{ student.student_profile?.student_code || student.student_code || '—' }}</td>
+                <td class="whitespace-nowrap px-6 py-4 font-mono text-xs font-medium text-slate-500">{{ formatStudentId(student.student_profile?.student_code || student.student_code, getBatchName(student)) }}</td>
                 <td class="whitespace-nowrap px-6 py-4 text-slate-500">{{ student.email }}</td>
                 <td class="whitespace-nowrap px-6 py-4 text-slate-500">
                   <span v-if="getBatchName(student) !== '—'" class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
                     {{ getBatchName(student) }}
                   </span>
                   <span v-else class="text-slate-300">—</span>
+                </td>
+                <td class="whitespace-nowrap px-6 py-4 text-slate-600 font-medium">
+                  {{ getTutorName(student) }}
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 text-slate-500 capitalize">
                   {{ getGender(student) }}
@@ -362,6 +374,7 @@ import api from '@/services/api'
 import StudentForm from '@/components/student/StudentForm.vue'
 import ImportStudentsModal from '@/components/admin/ImportStudentsModal.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import { formatStudentId } from '@/utils/studentUtils'
 
 interface Role { id: number; name: string }
 interface Batch { id: number; batch_name: string; name?: string; year?: string }
@@ -372,6 +385,7 @@ interface StudentProfile {
   gender?: string | null
   status?: string | null
   batch?: Batch | null
+  tutor?: Tutor | { name?: string; first_name?: string; last_name?: string } | string | null
 }
 interface Student {
   id: number                    // This is the user ID
@@ -385,10 +399,13 @@ interface Student {
   status?: string | null
   role: Role | null
   batch: Batch | null
+  tutor?: Tutor | { name?: string; first_name?: string; last_name?: string } | string | null
   student_profile?: StudentProfile
   deleted_at: string | null
 }
 interface PaginationMeta { current_page: number; last_page: number; per_page: number; total: number; from: number; to: number }
+
+interface Tutor { id: number; user_id?: number | null; first_name?: string; last_name?: string; name?: string }
 
 const students = ref<Student[]>([])
 const loading = ref(false)
@@ -397,7 +414,9 @@ const sortOrder = ref('')
 const batchFilter = ref('')
 const statusFilter = ref('')
 const genderFilter = ref('')
+const tutorFilter = ref('')
 const batches = ref<Batch[]>([])
+const tutors = ref<Tutor[]>([])
 const totalStudents = ref(0)
 const currentPage = ref(1)
 const pagination = ref<PaginationMeta | null>(null)
@@ -430,7 +449,7 @@ const bulkDeleting = ref(false)
 const bulkError = ref('')
 
 const hasActiveFilters = computed(() =>
-  !!searchQuery.value || !!sortOrder.value || !!batchFilter.value || !!statusFilter.value || !!genderFilter.value
+  !!searchQuery.value || !!sortOrder.value || !!batchFilter.value || !!statusFilter.value || !!genderFilter.value || !!tutorFilter.value
 )
 
 function clearFilters() {
@@ -439,6 +458,7 @@ function clearFilters() {
   batchFilter.value = ''
   statusFilter.value = ''
   genderFilter.value = ''
+  tutorFilter.value = ''
   currentPage.value = 1
   fetchStudents()
 }
@@ -455,12 +475,30 @@ async function fetchBatches() {
   } catch { /* ignore */ }
 }
 
+async function fetchTutors() {
+  try {
+    const res = await api.get('/admin/tutors', { params: { per_page: 100 } })
+    tutors.value = res.data.data ?? res.data ?? []
+  } catch { /* ignore */ }
+}
+
 function getBatchName(student: Student): string {
   if (student.batch?.batch_name) return student.batch.batch_name
   if (student.batch?.name) return student.batch.name
   if (student.student_profile?.batch?.batch_name) return student.student_profile.batch.batch_name
   if (student.student_profile?.batch?.name) return student.student_profile.batch.name
   return '—'
+}
+
+function getTutorName(student: Student): string {
+  const t = student.tutor || student.student_profile?.tutor
+  if (!t) return '—'
+  if (typeof t === 'string') return t
+  if (t.name) return t.name
+  const fname = t.first_name || ''
+  const lname = t.last_name || ''
+  const full = `${fname} ${lname}`.trim()
+  return full || '—'
 }
 
 function getGender(student: Student): string {
@@ -471,6 +509,7 @@ function getGender(student: Student): string {
 function getStatusText(student: Student): string {
   if (student.deleted_at) return 'Deactivated'
   const st = student.status || student.student_profile?.status || 'active'
+  if (st.toLowerCase() === 'inactive' || st.toLowerCase() === 'deactivated') return 'Deactivated'
   return st.charAt(0).toUpperCase() + st.slice(1)
 }
 
@@ -606,7 +645,7 @@ async function confirmAction(type: ActionType, student: Student) {
     confirmButtonText.value = 'Delete'
   } else if (type === 'deactivate') {
     confirmTitle.value = 'Deactivate Student'
-    confirmMessage.value = `Are you sure you want to deactivate ${student.first_name} ${student.last_name}? They will be marked as inactive.`
+    confirmMessage.value = `Are you sure you want to deactivate ${student.first_name} ${student.last_name}?`
     confirmButtonText.value = 'Deactivate'
   } else if (type === 'activate') {
     confirmTitle.value = 'Activate Student'
@@ -682,10 +721,11 @@ async function fetchStudents() {
     if (searchQuery.value) params.search = searchQuery.value
     if (sortOrder.value) params.sort = sortOrder.value
     if (batchFilter.value) params.batch_id = batchFilter.value
+    if (tutorFilter.value) params.tutor_id = tutorFilter.value
     if (genderFilter.value) params.gender = genderFilter.value
     if (statusFilter.value) {
       if (statusFilter.value === 'deactivated') {
-        params.status = 'deactivated'
+        params.student_status = 'deactivated'
       } else {
         params.student_status = statusFilter.value
       }
@@ -719,10 +759,11 @@ watch(searchQuery, () => {
   if (timeout) clearTimeout(timeout)
   timeout = setTimeout(() => { currentPage.value = 1; fetchStudents() }, 300)
 })
-watch([sortOrder, batchFilter, statusFilter, genderFilter], () => { currentPage.value = 1; fetchStudents() })
+watch([sortOrder, batchFilter, tutorFilter, statusFilter, genderFilter], () => { currentPage.value = 1; fetchStudents() })
 
 onMounted(() => {
   fetchBatches()
+  fetchTutors()
   fetchStudents()
   window.addEventListener('click', handleWindowClick)
 })

@@ -35,7 +35,7 @@
                 <p>• <strong>Batches</strong> must match existing batch names (e.g., "PNC2026")</p>
                 <p>• <strong>Email</strong> must be unique - duplicates will be skipped</p>
                 <p>• Default password <strong>12345678</strong> will be set for all students</p>
-                <p>• Student codes will auto-generate as STU001, STU002, etc.</p>
+                <p>• Student IDs will auto-generate as PNC2026-001, PNC2026-002, etc.</p>
               </div>
               <a :href="templateUrl" class="mt-3 inline-flex items-center gap-1.5 font-semibold text-indigo-700 hover:text-indigo-900 underline">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

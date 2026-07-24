@@ -109,7 +109,7 @@
               <p v-if="photoUploadError" class="mt-2 text-xs text-red-500">{{ photoUploadError }}</p>
 
               <h2 class="mt-4 text-lg font-bold text-slate-900">{{ store.profile.name }}</h2>
-              <p class="text-sm text-slate-500">{{ store.profile.student_code || 'No student code' }}</p>
+              <p class="text-sm text-slate-500">{{ formatStudentId(store.profile.student_code, store.profile.batch) }}</p>
 
               <!-- Status Badge -->
               <span
@@ -379,6 +379,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
 import { parseApiError } from '@/utils/errorParser'
 import { mapValidationErrors } from '@/utils/mapValidationErrors'
+import { formatStudentId } from '@/utils/studentUtils'
 import type { StudentProfileUpdatePayload } from '@/types/studentProfile'
 
 const store = useStudentProfileStore()

@@ -15,6 +15,22 @@ const router = createRouter({
       redirect: '/login',
     },
     {
+      path: '/notifications',
+      name: 'NotificationsRedirect',
+      redirect: (to) => {
+        const store = useAuthStore()
+        const role = store.userRole
+        const routeMap: Record<string, string> = {
+          admin: '/admin/notifications',
+          tutor: '/tutor/notifications',
+          student: '/student/notifications',
+          company: '/company/notifications',
+        }
+        return routeMap[role || 'student'] || '/student/notifications'
+      },
+      meta: { requiresAuth: true } as AppRouteMeta,
+    },
+    {
       path: '/login',
       name: 'Login',
       component: () => import('@/views/auth/SignIn.vue'),
@@ -191,6 +207,12 @@ const router = createRouter({
           component: () => import('@/views/tutor/TutorFormView.vue'),
           meta: { adminOnly: true, title: 'Edit Tutor' } as AppRouteMeta,
         },
+        {
+          path: 'notifications',
+          name: 'AdminNotifications',
+          component: () => import('@/views/notification/NotificationView.vue'),
+          meta: { title: 'Notifications' } as AppRouteMeta,
+        },
       ],
     },
 
@@ -257,6 +279,12 @@ const router = createRouter({
           name: 'TutorSelfProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
           meta: { title: 'Profile' },
+        },
+        {
+          path: 'notifications',
+          name: 'TutorNotifications',
+          component: () => import('@/views/notification/NotificationView.vue'),
+          meta: { title: 'Notifications' },
         },
       ],
     },
@@ -325,6 +353,12 @@ const router = createRouter({
           component: () => import('@/views/profile/ProfileView.vue'),
           meta: { title: 'Profile' },
         },
+        {
+          path: 'notifications',
+          name: 'StudentNotifications',
+          component: () => import('@/views/notification/NotificationView.vue'),
+          meta: { title: 'Notifications' },
+        },
       ],
     },
 
@@ -378,7 +412,13 @@ const router = createRouter({
           path: 'profile',
           name: 'CompanyProfile',
           component: () => import('@/views/company/CompanyFormView.vue'),
-          meta: { title: 'Company Profile' },
+          meta: { title: 'Profile' },
+        },
+        {
+          path: 'notifications',
+          name: 'CompanyNotifications',
+          component: () => import('@/views/notification/NotificationView.vue'),
+          meta: { title: 'Notifications' },
         },
       ],
     },

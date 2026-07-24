@@ -281,7 +281,7 @@
           </button>
 
           <!-- Notification Bell -->
-          <div class="relative">
+          <NotificationBell>
             <button
               class="relative rounded-xl p-2.5 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600 focus:outline-none"
             >
@@ -304,7 +304,7 @@
                 />
               </span>
             </button>
-          </div>
+          </NotificationBell>
 
           <!-- Vertical Separator -->
           <div class="h-6 w-[1px] bg-slate-200" />
@@ -476,6 +476,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import { NAV_ITEMS, type NavItem } from '@/composables/useNavigation'
 import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
+import NotificationBell from '@/components/notifications/NotificationBell.vue'
 
 const SIDEBAR_COLLAPSED_KEY = 'admin-sidebar-collapsed'
 

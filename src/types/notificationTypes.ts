@@ -21,6 +21,13 @@ export type NotificationCategory =
   | 'followups'
   | 'reminders'
 
+export interface NotificationSender {
+  id: number
+  name: string
+  role: string
+  avatar?: string
+}
+
 export interface Notification {
   id: string
   title: string
@@ -30,8 +37,15 @@ export interface Notification {
   role: string
   isRead: boolean
   createdAt: string
+  updatedAt?: string
+  readAt?: string
+  actionUrl?: string
   actionLabel?: string
   actionRoute?: string
+  sender?: NotificationSender
+  entityType?: string
+  entityId?: string
+  priority?: string
 }
 
 export interface NotificationState {

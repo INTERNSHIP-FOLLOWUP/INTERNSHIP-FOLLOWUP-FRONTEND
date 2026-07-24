@@ -63,7 +63,7 @@
                 >
                   <img
                     v-if="photoPreview || displayPhoto"
-                    :src="photoPreview ?? displayPhoto ?? undefined"
+                    :src="photoPreview || displayPhoto"
                     :alt="store.profile.name"
                     class="h-full w-full rounded-full object-cover"
                   />
@@ -173,8 +173,12 @@
               <!-- View Mode -->
               <dl v-if="!editingProfile" class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Full Name</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ store.profile.name }}</dd>
+                  <dt class="text-xs font-medium text-slate-400">First Name</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ firstName }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium text-slate-400">Last Name</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ lastName }}</dd>
                 </div>
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Phone Number</dt>
@@ -193,14 +197,25 @@
               <!-- Edit Mode -->
               <form v-else @submit.prevent="saveProfile" class="space-y-4">
                 <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-                  <FormField label="Full Name" :error="formErrors.name" required>
+                  <FormField label="First Name" :error="formErrors.first_name" required>
                     <input
-                      v-model="editForm.name"
+                      v-model="editForm.first_name"
                       type="text"
-                      placeholder="Enter your full name"
+                      placeholder="Enter your first name"
                       class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
-                      :class="inputErrorClass('name')"
-                      @input="clearFieldError('name')"
+                      :class="inputErrorClass('first_name')"
+                      @input="clearFieldError('first_name')"
+                    />
+                  </FormField>
+
+                  <FormField label="Last Name" :error="formErrors.last_name" required>
+                    <input
+                      v-model="editForm.last_name"
+                      type="text"
+                      placeholder="Enter your last name"
+                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+                      :class="inputErrorClass('last_name')"
+                      @input="clearFieldError('last_name')"
                     />
                   </FormField>
 
@@ -397,6 +412,17 @@ const displayPhoto = computed(() => {
   return `${baseUrl}${cleanPath}`
 })
 
+const firstName = computed(() => {
+  const name = store.profile?.name || ''
+  return name.split(' ')[0] || '—'
+})
+
+const lastName = computed(() => {
+  const name = store.profile?.name || ''
+  const parts = name.split(' ')
+  return parts.slice(1).join(' ') || '—'
+})
+
 const initials = computed(() => {
   if (!store.profile?.name) return '?'
   return store.profile.name
@@ -456,14 +482,17 @@ const successMessage = ref('')
 // ── Profile Editing ──
 const editingProfile = ref(false)
 const editForm = reactive({
-  name: '',
+  first_name: '',
+  last_name: '',
   phone: '',
   gender: '',
 })
 const formErrors = reactive<Record<string, string>>({})
 
 function startEditing(): void {
-  editForm.name = store.profile?.name || ''
+  const parts = (store.profile?.name || '').split(' ')
+  editForm.first_name = parts[0] || ''
+  editForm.last_name = parts.slice(1).join(' ') || ''
   editForm.phone = store.profile?.phone || ''
   editForm.gender = store.profile?.gender || ''
   editingProfile.value = true
@@ -494,8 +523,13 @@ function validateProfileForm(): boolean {
   let valid = true
   clearAllFormErrors()
 
-  if (!editForm.name.trim()) {
-    formErrors.name = 'Name is required.'
+  if (!editForm.first_name.trim()) {
+    formErrors.first_name = 'First name is required.'
+    valid = false
+  }
+
+  if (!editForm.last_name.trim()) {
+    formErrors.last_name = 'Last name is required.'
     valid = false
   }
 
@@ -511,7 +545,8 @@ async function saveProfile(): Promise<void> {
   if (!validateProfileForm()) return
 
   const payload: StudentProfileUpdatePayload = {}
-  if (editForm.name !== store.profile?.name) payload.name = editForm.name
+  const fullName = `${editForm.first_name} ${editForm.last_name}`.trim()
+  if (fullName !== store.profile?.name) payload.name = fullName
   if (editForm.phone !== store.profile?.phone) payload.phone = editForm.phone || undefined
   if (editForm.gender !== store.profile?.gender) payload.gender = editForm.gender || undefined
 

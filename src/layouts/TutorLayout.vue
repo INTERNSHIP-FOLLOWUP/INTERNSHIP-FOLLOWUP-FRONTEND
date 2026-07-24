@@ -50,6 +50,70 @@
           </span>
           {{ item.label }}
         </router-link>
+
+        <!-- Messages submenu -->
+        <div>
+          <button
+            @click="toggleMessagesSubmenu"
+            class="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
+            :class="
+              messagesSubmenuOpen || isMessagesActive
+                ? 'bg-gradient-to-r from-indigo-500/15 to-purple-500/10 text-indigo-400 shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+            "
+          >
+            <span
+              class="flex h-5 w-5 items-center justify-center transition-transform duration-200"
+              :class="messagesSubmenuOpen || isMessagesActive ? 'scale-110' : 'group-hover:scale-110'"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
+              </svg>
+            </span>
+            <span class="flex-1 text-left">Messages</span>
+            <svg
+              class="h-4 w-4 transition-transform duration-200"
+              :class="{ 'rotate-180': messagesSubmenuOpen }"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <transition name="submenu">
+            <div v-if="messagesSubmenuOpen" class="mt-1 space-y-0.5 pl-10">
+              <router-link
+                v-for="sub in messagesSubItems"
+                :key="sub.name"
+                :to="sub.to"
+                @click="sidebarOpen = false"
+                class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200"
+                :class="
+                  route.query.type === sub.type || (!route.query.type && sub.type === 'company')
+                    ? 'bg-indigo-500/20 text-indigo-300'
+                    : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-300'
+                "
+              >
+                <span
+                  class="flex h-1.5 w-1.5 rounded-full transition-colors duration-200"
+                  :class="
+                    route.query.type === sub.type || (!route.query.type && sub.type === 'company')
+                      ? 'bg-indigo-400'
+                      : 'bg-slate-500'
+                  "
+                />
+                {{ sub.label }}
+              </router-link>
+            </div>
+          </transition>
+        </div>
       </nav>
 
       <!-- Bottom user card -->
@@ -257,7 +321,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, h, defineComponent } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, h, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import UserAvatar from '@/components/common/UserAvatar.vue'
@@ -293,6 +357,40 @@ const userInitials = computed(() => {
     .toUpperCase()
     .slice(0, 2)
 })
+
+const messagesSubmenuOpen = ref(false)
+
+function toggleMessagesSubmenu() {
+  messagesSubmenuOpen.value = !messagesSubmenuOpen.value
+}
+
+const isMessagesActive = computed(() => route.path.startsWith('/tutor/messages'))
+
+// Auto-open submenu when navigating to a messages page
+watch(
+  () => route.path,
+  (path) => {
+    if (path.startsWith('/tutor/messages')) {
+      messagesSubmenuOpen.value = true
+    }
+  },
+  { immediate: true }
+)
+
+const messagesSubItems = [
+  {
+    name: 'company-messages',
+    label: 'Company',
+    to: '/tutor/messages?type=company',
+    type: 'company',
+  },
+  {
+    name: 'student-messages',
+    label: 'Students',
+    to: '/tutor/messages?type=students',
+    type: 'students',
+  },
+]
 
 const pageTitle = computed(() => {
   const title = route.meta?.title
@@ -403,13 +501,14 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    name: 'messages',
-    label: 'Messages',
-    to: '/tutor/messages',
+    name: 'feedback',
+    label: 'Company Feedback',
+    to: '/tutor/feedback',
     icon: createIcon(
-      'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
+      'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z',
     ),
   },
+  // Messages is rendered separately as a submenu item below
   {
     name: 'profile',
     label: 'Profile',
@@ -420,6 +519,21 @@ const navItems: NavItem[] = [
 </script>
 
 <style scoped>
+.submenu-enter-active {
+  transition: all 0.2s ease-out;
+}
+.submenu-leave-active {
+  transition: all 0.15s ease-in;
+}
+.submenu-enter-from {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+.submenu-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

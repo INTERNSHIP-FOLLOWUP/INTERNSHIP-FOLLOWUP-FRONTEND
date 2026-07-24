@@ -124,6 +124,20 @@
           </p>
         </div>
         <div class="flex items-center gap-3">
+          <button
+            @click="openCreate"
+            class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            New Assignment
+          </button>
           <select
             v-model="statusFilter"
             @change="onFilterChange"
@@ -147,7 +161,7 @@
             v-model="searchQuery"
             type="text"
             placeholder="Search by student, company, or tutor..."
-            class="h-9 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:placeholder-slate-500"
+            class="h-10 w-60 rounded-xl border border-slate-200 bg-white pl-9 pr-3.5 text-sm text-slate-700 placeholder-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:placeholder-slate-500"
           />
         </div>
       </div>
@@ -432,7 +446,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAssignmentStore } from '@/stores/assignment'
 import { useAuthStore } from '@/stores/auth'
@@ -485,7 +499,8 @@ const filteredAssignments = computed(() => {
   return list
 })
 
-function getInitials(name: string): string {
+function getInitials(name: string | null | undefined): string {
+  if (!name) return ''
   return name
     .split(' ')
     .map((n) => n[0])
@@ -598,21 +613,23 @@ function clearFilters() {
 }
 
 function openCreate() {
-  router.push({ name: 'AdminAssignmentsCreate' })
+  editingId.value = undefined
+  showForm.value = true
 }
 
 function openEdit(assignment: Assignment) {
-  router.push({ name: 'AdminAssignmentsEdit', params: { id: assignment.id } })
+  editingId.value = assignment.id
+  showForm.value = true
 }
 
 function closeForm() {
   showForm.value = false
   editingId.value = undefined
-  router.push({ name: 'AdminAssignments' })
 }
 
-function onSaved() {
+async function onSaved() {
   closeForm()
+  await fetchPage({ page: store.pagination?.current_page ?? 1 })
   toast.success('Assignment saved successfully.')
 }
 
@@ -635,26 +652,6 @@ async function handleConfirmDelete() {
     }
   })
 }
-
-watch(
-  () => route.name,
-  (name) => {
-    if (name === 'AdminAssignmentsCreate') {
-      editingId.value = undefined
-      showForm.value = true
-    } else if (name === 'AdminAssignmentsEdit') {
-      const id = Number(route.params.id)
-      if (!isNaN(id)) {
-        editingId.value = id
-        showForm.value = true
-      }
-    } else {
-      showForm.value = false
-      editingId.value = undefined
-    }
-  },
-  { immediate: true },
-)
 
 async function fetchMyInternship() {
   internshipLoading.value = true

@@ -155,12 +155,7 @@ const router = createRouter({
           component: () => import('@/views/evaluation/AdminEvaluationView.vue'),
           meta: { title: 'Evaluations' } as AppRouteMeta,
         },
-        {
-          path: 'feedback',
-          name: 'AdminFeedback',
-          component: () => import('@/views/company/AdminCompanyFeedbackView.vue'),
-          meta: { title: 'Company Feedback' } as AppRouteMeta,
-        },
+
         {
           path: 'reports',
           name: 'AdminReports',
@@ -247,15 +242,21 @@ const router = createRouter({
           meta: { title: 'Issues' },
         },
         {
+          path: 'feedback',
+          name: 'TutorFeedback',
+          component: () => import('@/views/tutor/TutorCompanyFeedbackView.vue'),
+          meta: { title: 'Company Feedback' },
+        },
+        {
           path: 'messages',
           name: 'TutorMessages',
-          component: () => import('@/views/company/MessageView.vue'),
+          component: () => import('@/views/tutor/TutorMessagesView.vue'),
           meta: { title: 'Messages' },
         },
         {
           path: 'profile',
           name: 'TutorSelfProfile',
-          component: () => import('@/views/profile/ProfileView.vue'),
+          component: () => import('@/views/profile/TutorProfileView.vue'),
           meta: { title: 'Profile' },
         },
       ],
@@ -318,6 +319,12 @@ const router = createRouter({
           name: 'StudentIssues',
           component: () => import('@/views/issue/IssueTrackerView.vue'),
           meta: { title: 'Issues' },
+        },
+        {
+          path: 'messages',
+          name: 'StudentMessages',
+          component: () => import('@/views/student/StudentMessagesView.vue'),
+          meta: { title: 'Messages' },
         },
         {
           path: 'profile',

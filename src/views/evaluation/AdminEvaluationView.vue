@@ -96,11 +96,11 @@
                 <h3 class="text-sm font-semibold text-gray-900">{{ item.student?.name || 'Student #' + item.student_id }}</h3>
                 <div class="mt-0.5 flex items-center gap-1.5">
                   <div
-                    v-if="item.company?.company_image_url"
+                    v-if="item.company?.company_image_url || item.company?.company_profile_image_url"
                     class="h-5 w-5 shrink-0 overflow-hidden rounded border border-gray-200 bg-white"
                   >
                     <img
-                      :src="item.company.company_image_url"
+                      :src="item.company.company_image_url || item.company.company_profile_image_url || undefined"
                       :alt="item.company.company_name"
                       class="h-full w-full object-cover"
                     />
@@ -215,6 +215,7 @@ interface EvaluationItem {
     id: number
     company_name: string
     company_image_url?: string | null
+    company_profile_image_url?: string | null
   }
 }
 

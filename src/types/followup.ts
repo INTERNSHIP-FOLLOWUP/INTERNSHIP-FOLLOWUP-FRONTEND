@@ -1,5 +1,7 @@
 // src/types/followup.ts
-export type MeetingType = 'In-Person' | 'Online' | 'Phone' | 'Virtual'
+export type MeetingType = 'Monthly' | 'Quarterly' | 'Annual'
+
+export type FollowupStatus = 'Scheduled' | 'Completed' | 'Missed' | 'Cancelled'
 
 export interface FollowupUser {
   id: number
@@ -17,6 +19,7 @@ export interface Followup {
   notes: string
   action_items: string
   next_followup: string | null
+  status: FollowupStatus
   created_at: string
   updated_at: string
   student?: {
@@ -37,4 +40,5 @@ export interface FollowupPayload {
   notes: string
   action_items: string
   next_followup: string | null
+  status?: FollowupStatus
 }

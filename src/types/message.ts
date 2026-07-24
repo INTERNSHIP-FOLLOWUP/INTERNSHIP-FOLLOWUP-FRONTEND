@@ -47,3 +47,42 @@ export interface SendMessageResponse {
   data: MessageItem
   message: string
 }
+
+// ── Tutor-Student Messaging Types ──
+
+export interface TutorStudentConversation {
+  student: {
+    id: number
+    name: string
+    email: string | null
+    photo_url: string | null
+  }
+  last_message: {
+    id: number
+    message: string
+    sender_type: 'tutor' | 'student'
+    created_at: string
+  } | null
+  unread_count: number
+}
+
+export interface TutorStudentMessageItem {
+  id: number
+  message: string
+  sender_type: 'tutor' | 'student'
+  is_read: boolean
+  created_at: string
+  tutor_id?: number
+  student_id?: number
+  tutor_name?: string
+}
+
+export interface TutorStudentConversationsResponse {
+  data: TutorStudentConversation[]
+}
+
+export interface TutorStudentMessagesResponse {
+  data: TutorStudentMessageItem[]
+  tutor_name?: string | null
+  tutor_photo_url?: string | null
+}

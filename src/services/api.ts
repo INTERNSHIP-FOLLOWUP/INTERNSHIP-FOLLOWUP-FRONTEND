@@ -94,6 +94,11 @@ api.interceptors.request.use(
       config.headers['X-CSRF-TOKEN'] = csrfToken
     }
 
+    // Let the browser set Content-Type with boundary for FormData
+    if (config.data instanceof FormData && config.headers) {
+      delete config.headers['Content-Type']
+    }
+
     const requestKey = `${config.method}:${config.url}:${JSON.stringify(config.data || config.params)}`
     if (config.method?.toLowerCase() === 'get' && pendingRequests.has(requestKey)) {
       return Promise.reject({ cancelled: true, key: requestKey })
@@ -227,16 +232,6 @@ api.interceptors.response.use(
     if (status === 419) {
       clearCsrfToken()
       return Promise.reject(error)
-    }
-
-    // ── 422 Validation Error ──
-    if (status === 422) {
-      const { useToastStore } = await import('@/stores/toast')
-      const data = response.data as { message?: string }
-      useToastStore().warning(
-        data?.message || 'Validation failed. Please check your input.',
-        'Validation Error',
-      )
     }
 
     // ── 500+ Server Errors ──

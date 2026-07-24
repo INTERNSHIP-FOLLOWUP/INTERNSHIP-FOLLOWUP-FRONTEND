@@ -11,7 +11,7 @@ import type {
 function getMessagePrefix(): string {
   const auth = useAuthStore()
   const role = auth.userRole
-  if (role === 'company representative' || role === 'company') {
+  if (role === 'supervisor') {
     return '/company'
   }
   return '/tutor'

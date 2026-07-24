@@ -21,7 +21,7 @@ export const assignmentService = {
     page?: number
     per_page?: number
     status?: string
-    company_id?: number
+    company_supervisors_id?: number
   }): Promise<AssignmentListResponse> {
     const response = await api.get<BackendListResponse>('/admin/assignments', { params })
     return {

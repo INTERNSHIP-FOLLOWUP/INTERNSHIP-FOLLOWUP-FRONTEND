@@ -117,25 +117,6 @@
               Contact Details
             </h3>
 
-            <div v-if="company.contactPerson" class="flex items-start gap-3">
-              <div
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600"
-              >
-                <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <p class="text-xs font-medium text-slate-400">Contact Person</p>
-                <p class="text-sm font-semibold text-slate-900">{{ company.contactPerson }}</p>
-              </div>
-            </div>
-
             <div v-if="company.address" class="flex items-start gap-3">
               <div
                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600"
@@ -193,24 +174,7 @@
               </div>
             </div>
 
-            <div v-if="company.phone" class="flex items-start gap-3">
-              <div
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600"
-              >
-                <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <p class="text-xs font-medium text-slate-400">Phone</p>
-                <p class="text-sm font-semibold text-slate-900">{{ company.phone }}</p>
-              </div>
-            </div>
+
           </div>
         </div>
 

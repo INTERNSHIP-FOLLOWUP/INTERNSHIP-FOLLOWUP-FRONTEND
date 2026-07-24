@@ -13,8 +13,6 @@ interface BackendCompany {
   role: string | null
   address: string | null
   industry: string | null
-  contact_person: string | null
-  phone: string | null
   email: string | null
   website: string | null
   company_profile_image: string | null
@@ -42,11 +40,9 @@ function toFrontend(raw: BackendCompany): Company {
   return {
     id: raw.id,
     companyName: raw.company_name,
-    role: raw.role,
     address: raw.address,
     industry: raw.industry,
-    contactPerson: raw.contact_person,
-    phone: raw.phone,
+
     email: raw.email,
     website: raw.website,
     companyProfileImage: normalizeImageUrl(raw.company_profile_image),
@@ -68,7 +64,7 @@ function hasFileUpload(
   return (
     payload.companyImage instanceof File ||
     payload.companyProfileImage instanceof File ||
-    payload.avatar instanceof File
+    payload.companyProfileImage instanceof File
   )
 }
 
@@ -81,18 +77,11 @@ function toFormData(
   const fd = new FormData()
 
   appendIfSet(fd, 'company_name', payload.companyName)
-  appendIfSet(fd, 'role', payload.role)
   appendIfSet(fd, 'address', payload.address)
   appendIfSet(fd, 'industry', payload.industry)
-  appendIfSet(fd, 'contact_person', payload.contactPerson)
-  appendIfSet(fd, 'phone', payload.phone)
   appendIfSet(fd, 'email', payload.email)
   appendIfSet(fd, 'website', payload.website)
   appendIfSet(fd, 'telegram_link', payload.telegramLink)
-
-  if (payload.password) {
-    fd.append('password', payload.password)
-  }
 
   if (payload.companyImage instanceof File) {
     fd.append('company_image', payload.companyImage)
@@ -104,12 +93,6 @@ function toFormData(
     fd.append('company_profile_image', payload.companyProfileImage)
   } else if (payload.companyProfileImage && typeof payload.companyProfileImage === 'string') {
     fd.append('company_profile_image', payload.companyProfileImage)
-  }
-
-  if (payload.avatar instanceof File) {
-    fd.append('avatar', payload.avatar)
-  } else if (payload.avatar && typeof payload.avatar === 'string') {
-    fd.append('avatar', payload.avatar)
   }
 
   return fd
@@ -129,15 +112,11 @@ function toBackend(payload: CreateCompanyPayload | UpdateCompanyPayload): Record
 
   const body: Record<string, unknown> = {
     company_name: payload.companyName,
-    role: payload.role ?? null,
     address: payload.address ?? null,
     industry: payload.industry ?? null,
-    contact_person: payload.contactPerson ?? null,
-    phone: payload.phone ?? null,
     email: payload.email ?? null,
     website: payload.website ?? null,
     telegram_link: payload.telegramLink ?? null,
-    ...(payload.password ? { password: payload.password } : {}),
   }
 
   // Only include image fields if they are actually set and non-null (to avoid overwriting existing values)
@@ -147,10 +126,6 @@ function toBackend(payload: CreateCompanyPayload | UpdateCompanyPayload): Record
   if (payload.companyProfileImage != null) {
     body.company_profile_image = payload.companyProfileImage
   }
-  if (payload.avatar != null) {
-    body.avatar = payload.avatar
-  }
-
   return body
 }
 

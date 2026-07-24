@@ -22,15 +22,12 @@ export interface CompanySummary {
   email: string | null
   location: string | null
   industry: string | null
-  contactPerson: string | null
-  phone: string | null
   website: string | null
   companyProfileImage: string | null
   companyProfileImageUrl?: string | null
   companyImage?: string | null
   companyImageUrl?: string | null
   telegramLink: string | null
-  role?: string | null
 }
 
 export type CompanyUpdatePayload = Partial<CreateCompanyPayload>
@@ -40,13 +37,9 @@ export interface CompanyFormData {
   companyEmail: string
   location: string
   industry: string
-  contactPerson: string
-  contactPhone: string
   website: string
   companyImage: File | string | null
-  avatar: File | string | null
   telegramLink: string
-  password: string
 }
 
 function toSummary(c: Company): CompanySummary {
@@ -56,8 +49,6 @@ function toSummary(c: Company): CompanySummary {
     email: c.email,
     location: c.address,
     industry: c.industry,
-    contactPerson: c.contactPerson,
-    phone: c.phone,
     website: c.website,
     companyProfileImage: c.companyProfileImage,
     companyProfileImageUrl: c.companyProfileImageUrl,
@@ -73,13 +64,9 @@ function mapFromForm(form: CompanyFormData): CreateCompanyPayload {
     email: form.companyEmail || null,
     address: form.location || null,
     industry: form.industry || null,
-    contactPerson: form.contactPerson || null,
-    phone: form.contactPhone || null,
     website: form.website || null,
     companyImage: form.companyImage || null,
-    avatar: form.avatar || null,
     telegramLink: form.telegramLink || null,
-    ...(form.password ? { password: form.password } : {}),
   }
 }
 
@@ -211,12 +198,9 @@ export const useCompanyStore = defineStore('company', () => {
       if (raw?.id) {
         const summary = toSummary({
           id: raw.id,
-          role: raw.role ?? null,
           companyName: raw.company_name ?? raw.name ?? '',
           address: raw.address ?? null,
           industry: raw.industry ?? null,
-          contactPerson: raw.contact_person ?? raw.contactPerson ?? null,
-          phone: raw.phone ?? null,
           email: raw.email ?? null,
           website: raw.website ?? null,
           companyProfileImage: normalizeImageUrl(raw.company_profile_image) ?? null,
@@ -229,16 +213,6 @@ export const useCompanyStore = defineStore('company', () => {
         })
         companies.value = [summary, ...companies.value.filter((c) => c.id !== summary.id)]
         currentCompanyId.value = summary.id
-      }
-
-      const userData = res.data?.user
-      if (userData?.id) {
-        const { useAuthStore } = await import('@/stores/auth')
-        const authStore = useAuthStore()
-        authStore.updateUser({
-          avatar: normalizeImageUrl(userData.avatar) ?? null,
-          avatar_url: normalizeImageUrl(userData.avatar_url) ?? null,
-        })
       }
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -266,8 +240,6 @@ export const useCompanyStore = defineStore('company', () => {
         fd.append('company_name', payload.companyName ?? '')
         if (payload.address) fd.append('address', payload.address)
         if (payload.industry) fd.append('industry', payload.industry)
-        if (payload.contactPerson) fd.append('contact_person', payload.contactPerson)
-        if (payload.phone) fd.append('phone', payload.phone)
         if (payload.website) fd.append('website', payload.website)
         if (payload.telegramLink) fd.append('telegram_link', payload.telegramLink)
 
@@ -283,13 +255,6 @@ export const useCompanyStore = defineStore('company', () => {
           fd.append('company_image', payload.companyImage)
         }
 
-        const avatar = (payload as Record<string, unknown>).avatar
-        if (avatar instanceof File) {
-          fd.append('avatar', avatar)
-        } else if (avatar && typeof avatar === 'string') {
-          fd.append('avatar', avatar)
-        }
-
         const res = await api.post('/company/profile', fd, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
@@ -299,8 +264,6 @@ export const useCompanyStore = defineStore('company', () => {
           company_name: payload.companyName,
           address: payload.address ?? null,
           industry: payload.industry ?? null,
-          contact_person: payload.contactPerson ?? null,
-          phone: payload.phone ?? null,
           website: payload.website ?? null,
           telegram_link: payload.telegramLink ?? null,
         }
@@ -311,10 +274,6 @@ export const useCompanyStore = defineStore('company', () => {
         if (payload.companyProfileImage != null) {
           body.company_profile_image = payload.companyProfileImage
         }
-        const avatar = (payload as Record<string, unknown>).avatar
-        if (avatar != null) {
-          body.avatar = avatar
-        }
         const res = await api.put('/company/profile', body)
         resData = res.data
       }
@@ -323,12 +282,9 @@ export const useCompanyStore = defineStore('company', () => {
       if (raw?.id) {
         const summary = toSummary({
           id: raw.id,
-          role: raw.role ?? null,
           companyName: raw.company_name ?? raw.name ?? '',
           address: raw.address ?? null,
           industry: raw.industry ?? null,
-          contactPerson: raw.contact_person ?? raw.contactPerson ?? null,
-          phone: raw.phone ?? null,
           email: raw.email ?? null,
           website: raw.website ?? null,
           companyProfileImage: normalizeImageUrl(raw.company_profile_image) ?? null,
@@ -345,17 +301,7 @@ export const useCompanyStore = defineStore('company', () => {
         currentCompanyId.value = summary.id
       }
 
-      // Update auth store with user data (avatar)
-      const userData = resData?.user
-      if (userData?.id) {
-        const { useAuthStore } = await import('@/stores/auth')
-        const authStore = useAuthStore()
-        authStore.updateUser({
-          avatar: normalizeImageUrl(userData.avatar) ?? null,
-          avatar_url: normalizeImageUrl(userData.avatar_url) ?? null,
-        })
-      }
-    } catch (err: unknown) {
+      } catch (err: unknown) {
       const parsed = parseApiError(err)
       error.value = parsed.message
       throw err

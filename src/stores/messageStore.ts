@@ -77,7 +77,7 @@ export const useMessageStore = defineStore('message', () => {
     const role = auth.userRole
     if (!userId) return
 
-    const channelName = role === 'company representative' || role === 'company'
+    const channelName = role === 'supervisor'
       ? `company.${userId}`
       : `tutor.${userId}`
 
@@ -110,7 +110,7 @@ export const useMessageStore = defineStore('message', () => {
     const role = auth.userRole
     if (!userId) return
 
-    const channelName = role === 'company representative' || role === 'company'
+    const channelName = role === 'supervisor'
       ? `company.${userId}`
       : `tutor.${userId}`
 

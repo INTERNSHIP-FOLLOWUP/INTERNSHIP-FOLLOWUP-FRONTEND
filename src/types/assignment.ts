@@ -3,7 +3,7 @@ export type AssignmentStatus = 'Assigned' | 'In Progress' | 'Completed' | 'Termi
 export interface Assignment {
   id: number
   student_id: number
-  company_id: number
+  company_supervisors_id: number
   tutor_id: number
   student_name: string
   company_name: string
@@ -21,7 +21,7 @@ export interface Assignment {
 
 export interface CreateAssignmentPayload {
   student_id: number
-  company_id: number
+  company_supervisors_id: number
   tutor_id: number
   position: string
   start_date: string

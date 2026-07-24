@@ -186,6 +186,12 @@ const router = createRouter({
           component: () => import('@/views/tutor/TutorFormView.vue'),
           meta: { adminOnly: true, title: 'Edit Tutor' } as AppRouteMeta,
         },
+        {
+          path: 'supervisors',
+          name: 'AdminSupervisors',
+          component: () => import('@/views/user/AdminSupervisorsView.vue'),
+          meta: { title: 'Supervisors' } as AppRouteMeta,
+        },
       ],
     },
 
@@ -339,7 +345,7 @@ const router = createRouter({
     {
       path: '/company',
       component: () => import('@/layouts/CompanyLayout.vue'),
-      meta: { roles: ['company representative'] as UserRole[], title: 'Company' } as AppRouteMeta,
+      meta: { roles: ['supervisor'] as UserRole[], title: 'Company' } as AppRouteMeta,
       children: [
         {
           path: '',

@@ -14,8 +14,8 @@ export function useAuth() {
   const isAdmin = computed(() => store.userRole === 'admin')
   const isTutor = computed(() => store.userRole === 'tutor')
   const isStudent = computed(() => store.userRole === 'student')
-  const isCompany = computed(
-    () => store.userRole === 'company' || store.userRole === 'company representative',
+  const isSupervisor = computed(
+    () => store.userRole === 'supervisor',
   )
 
   /**
@@ -61,7 +61,7 @@ export function useAuth() {
     isAdmin,
     isTutor,
     isStudent,
-    isCompany,
+    isSupervisor,
 
     // Permission checks
     hasRole,

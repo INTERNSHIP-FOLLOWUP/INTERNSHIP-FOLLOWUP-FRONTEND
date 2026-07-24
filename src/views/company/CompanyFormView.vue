@@ -67,9 +67,7 @@ const initialData = ref<Partial<CompanyFormData>>({
   contactPhone: '',
   website: '',
   companyImage: null,
-  avatar: null,
   telegramLink: '',
-  password: '',
 })
 
 async function loadIfNeeded() {
@@ -84,11 +82,8 @@ async function loadIfNeeded() {
       companyEmail: c.email ?? '',
       location: c.location ?? '',
       industry: c.industry ?? '',
-      contactPerson: c.contactPerson ?? '',
-      contactPhone: c.phone ?? '',
       website: c.website ?? '',
       companyImage: c.companyImageUrl ?? c.companyImage ?? null,
-      avatar: authStore.userAvatar,
       telegramLink: c.telegramLink ?? '',
     }
     return
@@ -107,11 +102,8 @@ async function loadIfNeeded() {
     companyEmail: c.email ?? '',
     location: c.location ?? '',
     industry: c.industry ?? '',
-    contactPerson: c.contactPerson ?? '',
-    contactPhone: c.phone ?? '',
     website: c.website ?? '',
     companyImage: c.companyImageUrl ?? c.companyImage ?? null,
-    avatar: authStore.userAvatar,
     telegramLink: c.telegramLink ?? '',
   }
 }

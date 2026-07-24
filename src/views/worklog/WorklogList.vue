@@ -89,15 +89,28 @@
                   {{ w.tutor_review?.feedback?.slice(0, 42) || '—' }}{{ (w.tutor_review?.feedback?.length || 0) > 42 ? '…' : '' }}
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-right">
-                  <router-link
-                    :to="`/student/worklogs/${w.id}`"
-                    class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-all"
-                  >View</router-link>
-                  <router-link
-                    v-if="isEditable(w)"
-                    :to="`/student/worklogs/${w.id}/edit`"
-                    class="ml-2 rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-all"
-                  >Edit</router-link>
+                  <div class="inline-flex items-center gap-1.5">
+                    <router-link
+                      :to="`/student/worklogs/${w.id}`"
+                      class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-all"
+                    >View</router-link>
+                    <router-link
+                      v-if="isEditable(w)"
+                      :to="`/student/worklogs/${w.id}/edit`"
+                      class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-all"
+                    >Edit</router-link>
+                    <button
+                      v-if="isEditable(w)"
+                      type="button"
+                      class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-all"
+                      @click="promptDelete(w)"
+                    >
+                      <svg class="mr-0.5 inline-block h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -129,6 +142,14 @@
                 :to="`/student/worklogs/${w.id}/edit`"
                 class="inline-flex flex-1 items-center justify-center rounded-xl bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700 hover:bg-amber-100"
               >Edit</router-link>
+              <button
+                v-if="isEditable(w)"
+                type="button"
+                class="inline-flex flex-1 items-center justify-center rounded-xl bg-red-50 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-100"
+                @click="promptDelete(w)"
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>
@@ -145,23 +166,72 @@
         </div>
       </div>
     </div>
+    <!-- Delete Confirmation Dialog -->
+    <ConfirmDialog
+      :show="confirmDelete"
+      title="Delete Worklog"
+      :message="`Are you sure you want to delete Week ${worklogToDelete?.week_number} worklog? This action cannot be undone.`"
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      :loading="deleting"
+      :error="deleteError"
+      @confirm="handleDelete"
+      @cancel="cancelDelete"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useWorklogStore } from '@/stores/worklogStore'
+import { useToastStore } from '@/stores/toast'
 import { usePagination } from '@/composables/usePagination'
 import Pagination from '@/components/ui/BasePagination.vue'
 import WorklogStatusBadge from '@/components/worklog/WorklogStatusBadge.vue'
-import type { WorklogStatus } from '@/types/worklog'
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import type { Worklog, WorklogStatus } from '@/types/worklog'
 
 const store = useWorklogStore()
+const toast = useToastStore()
 
 const weeks = Array.from({ length: 52 }, (_, i) => i + 1)
 
 const weekFilter = ref<string>('')
 const statusFilter = ref<string>('')
+
+// ── Delete state ──
+const worklogToDelete = ref<Worklog | null>(null)
+const confirmDelete = ref(false)
+const deleting = ref(false)
+const deleteError = ref<string | null>(null)
+
+function promptDelete(w: Worklog) {
+  worklogToDelete.value = w
+  confirmDelete.value = true
+  deleteError.value = null
+}
+
+function cancelDelete() {
+  confirmDelete.value = false
+  worklogToDelete.value = null
+  deleteError.value = null
+}
+
+async function handleDelete() {
+  if (!worklogToDelete.value) return
+  deleting.value = true
+  deleteError.value = null
+  try {
+    await store.deleteWorklog(worklogToDelete.value.id)
+    toast.success(`Week ${worklogToDelete.value.week_number} worklog deleted.`, 'Deleted')
+    confirmDelete.value = false
+    worklogToDelete.value = null
+  } catch (err: unknown) {
+    deleteError.value = (err as any)?.response?.data?.message || 'Failed to delete worklog. Please try again.'
+  } finally {
+    deleting.value = false
+  }
+}
 
 function fetchPage({ page }: { page: number }) {
   store.fetchWorklogs({

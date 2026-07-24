@@ -6,16 +6,27 @@
         <p class="text-sm text-slate-500 dark:text-slate-400">View full student submission.</p>
       </div>
       <div class="flex items-center gap-2">
+        <button
+          v-if="worklog && isEditable(worklog)"
+          type="button"
+          class="rounded-xl bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-100 transition-colors"
+          @click="confirmDelete = true"
+        >
+          <svg class="-ml-0.5 mr-1.5 inline-block h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          Delete
+        </button>
         <router-link
           :to="`/student/worklogs/${worklog?.id}/edit`"
           v-if="worklog && isEditable(worklog)"
-          class="rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700 hover:bg-amber-100"
+          class="rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700 hover:bg-amber-100 transition-colors"
         >
           Edit
         </router-link>
         <router-link
           to="/student/worklogs"
-          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
         >
           Back
         </router-link>
@@ -130,23 +141,44 @@
         </div>
       </section>
     </div>
+
+    <!-- Delete Confirmation Dialog -->
+    <ConfirmDialog
+      :show="confirmDelete"
+      title="Delete Worklog"
+      :message="`Are you sure you want to delete Week ${worklog?.week_number} worklog? This action cannot be undone.`"
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      :loading="deleting"
+      :error="deleteError"
+      @confirm="handleDelete"
+      @cancel="confirmDelete = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useWorklogStore } from '@/stores/worklogStore'
+import { useToastStore } from '@/stores/toast'
 import WorklogStatusBadge from '@/components/worklog/WorklogStatusBadge.vue'
 import AttachmentList from '@/components/worklog/AttachmentList.vue'
+import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import type { Worklog } from '@/types/worklog'
 
 const route = useRoute()
+const router = useRouter()
 const store = useWorklogStore()
+const toast = useToastStore()
 
 const worklogId = computed(() => Number(route.params.id))
 
 const worklog = computed(() => store.worklog)
+
+const confirmDelete = ref(false)
+const deleting = ref(false)
+const deleteError = ref<string | null>(null)
 
 onMounted(async () => {
   const id = worklogId.value
@@ -161,9 +193,21 @@ function formatDate(date?: string): string {
 }
 
 function isEditable(w: Worklog): boolean {
-  // If backend provides a flag, use it (optional)
   if (typeof (w as any).can_edit === 'boolean') return (w as any).can_edit
   return w.status === 'Pending' || w.status === 'Reviewed'
 }
-</script>
 
+async function handleDelete() {
+  deleting.value = true
+  deleteError.value = null
+  try {
+    await store.deleteWorklog(worklogId.value)
+    toast.success('Worklog deleted successfully.', 'Deleted')
+    router.push('/student/worklogs')
+  } catch (err: unknown) {
+    deleteError.value = (err as any)?.response?.data?.message || 'Failed to delete worklog. Please try again.'
+  } finally {
+    deleting.value = false
+  }
+}
+</script>

@@ -35,7 +35,7 @@ export const useWorklogStore = defineStore('worklog', () => {
       pagination.value = res.data?.meta?.pagination ?? res.data?.meta ?? null
     } catch (err: unknown) {
       const parsed = parseApiError(err)
-      errors.value = parsed.fields ?? {}
+      errors.value = (parsed.fields ?? { message: parsed.message }) as Record<string, string>
       throw err
     } finally {
       loading.value = false
@@ -51,7 +51,7 @@ export const useWorklogStore = defineStore('worklog', () => {
       worklog.value = w
     } catch (err: unknown) {
       const parsed = parseApiError(err)
-      errors.value = parsed.fields ?? {}
+      errors.value = (parsed.fields ?? { message: parsed.message }) as Record<string, string>
       throw err
     } finally {
       loading.value = false
@@ -68,7 +68,7 @@ export const useWorklogStore = defineStore('worklog', () => {
       return created
     } catch (err: unknown) {
       const parsed = parseApiError(err)
-      errors.value = parsed.fields ?? {}
+      errors.value = (parsed.fields ?? { message: parsed.message }) as Record<string, string>
       throw err
     } finally {
       loading.value = false
@@ -91,7 +91,7 @@ export const useWorklogStore = defineStore('worklog', () => {
       return updated
     } catch (err: unknown) {
       const parsed = parseApiError(err)
-      errors.value = parsed.fields ?? {}
+      errors.value = (parsed.fields ?? { message: parsed.message }) as Record<string, string>
       throw err
     } finally {
       loading.value = false
@@ -107,7 +107,7 @@ export const useWorklogStore = defineStore('worklog', () => {
       if (worklog.value?.id === id) worklog.value = null
     } catch (err: unknown) {
       const parsed = parseApiError(err)
-      errors.value = parsed.fields ?? {}
+      errors.value = (parsed.fields ?? { message: parsed.message }) as Record<string, string>
       throw err
     } finally {
       loading.value = false
@@ -136,7 +136,7 @@ export const useWorklogStore = defineStore('worklog', () => {
       tutorPagination.value = res.data?.meta?.pagination ?? res.data?.meta ?? null
     } catch (err: unknown) {
       const parsed = parseApiError(err)
-      errors.value = parsed.fields ?? {}
+      errors.value = (parsed.fields ?? { message: parsed.message }) as Record<string, string>
       throw err
     } finally {
       loading.value = false
@@ -152,7 +152,7 @@ export const useWorklogStore = defineStore('worklog', () => {
       tutorWorklog.value = w
     } catch (err: unknown) {
       const parsed = parseApiError(err)
-      errors.value = parsed.fields ?? {}
+      errors.value = (parsed.fields ?? { message: parsed.message }) as Record<string, string>
       throw err
     } finally {
       loading.value = false
@@ -179,7 +179,7 @@ export const useWorklogStore = defineStore('worklog', () => {
       return updated
     } catch (err: unknown) {
       const parsed = parseApiError(err)
-      errors.value = parsed.fields ?? {}
+      errors.value = (parsed.fields ?? { message: parsed.message }) as Record<string, string>
       throw err
     } finally {
       loading.value = false

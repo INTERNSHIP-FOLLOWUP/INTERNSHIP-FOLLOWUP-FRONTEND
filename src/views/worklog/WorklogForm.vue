@@ -22,7 +22,8 @@
           <select
             v-model="form.week_number"
             required
-            class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="mt-2 h-11 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200"
+            :class="errors.week_number ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20'"
           >
             <option disabled value="">Select a week</option>
             <option v-for="w in weeks" :key="w" :value="w">Week {{ w }}</option>
@@ -37,7 +38,8 @@
             required
             rows="4"
             placeholder="What did you work on this week?"
-            class="mt-2 w-full resize-none rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200"
+            :class="errors.description ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20'"
           />
           <p v-if="errors.description" class="mt-1 text-xs font-semibold text-red-500">{{ errors.description }}</p>
         </div>
@@ -48,14 +50,15 @@
             v-model="form.challenges"
             rows="3"
             placeholder="What difficulties did you face?"
-            class="mt-2 w-full resize-none rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200"
+            :class="errors.challenges ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20'"
           />
           <p v-if="errors.challenges" class="mt-1 text-xs font-semibold text-red-500">{{ errors.challenges }}</p>
         </div>
 
         <div>
           <label class="text-sm font-semibold text-slate-700">Attachments</label>
-          <div class="mt-2">
+          <div class="mt-2 rounded-xl transition-all duration-200" :class="errors.attachments ? 'border-2 border-red-400 ring-2 ring-red-500/20' : ''">
             <FileUpload v-model="files" />
           </div>
           <p v-if="errors.attachments" class="mt-1 text-xs font-semibold text-red-500">{{ errors.attachments }}</p>
@@ -154,8 +157,7 @@ async function onSubmit() {
     fd.append('week_number', String(form.week_number))
     fd.append('description', form.description)
     if (form.challenges?.trim()) fd.append('challenges', form.challenges)
-
-    for (const f of files.value) fd.append('attachments', f)
+    for (const f of files.value) fd.append('attachments[]', f)
 
     if (isEdit.value) {
       const id = Number(route.params.id)

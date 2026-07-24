@@ -256,7 +256,7 @@ const router = createRouter({
         {
           path: 'profile',
           name: 'TutorSelfProfile',
-          component: () => import('@/views/profile/ProfileView.vue'),
+          component: () => import('@/views/profile/TutorProfileView.vue'),
           meta: { title: 'Profile' },
         },
       ],

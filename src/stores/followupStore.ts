@@ -15,7 +15,16 @@ interface ApiErrorResponse {
 }
 
 interface PaginatedResponse<T> {
+  success: boolean
   data: T[]
+  meta?: {
+    total: number
+    per_page: number
+    current_page: number
+    last_page: number
+    from?: number | null
+    to?: number | null
+  }
 }
 
 export const useFollowupStore = defineStore('followup', {
@@ -30,11 +39,10 @@ export const useFollowupStore = defineStore('followup', {
       this.loading = true
       this.error = null
       try {
-        const res = await api.get<PaginatedResponse<Followup> | Followup[]>('/tutor/followups', {
+        const res = await api.get<PaginatedResponse<Followup>>('/tutor/followups', {
           params,
         })
-        const payload = res.data
-        this.followups = Array.isArray(payload) ? payload : payload.data
+        this.followups = res.data.data ?? []
       } catch (err) {
         const axiosErr = err as AxiosError<ApiErrorResponse>
         this.error = axiosErr.response?.data?.message ?? 'Failed to load follow-ups'
@@ -46,9 +54,10 @@ export const useFollowupStore = defineStore('followup', {
     async createFollowup(payload: FollowupPayload): Promise<Followup> {
       this.error = null
       try {
-        const res = await api.post<Followup>('/tutor/followups', payload)
-        this.followups.unshift(res.data)
-        return res.data
+        const res = await api.post<{ data: Followup }>('/tutor/followups', payload)
+        const created = res.data.data ?? (res.data as unknown as Followup)
+        this.followups.unshift(created)
+        return created
       } catch (err) {
         const axiosErr = err as AxiosError<ApiErrorResponse>
         this.error = axiosErr.response?.data?.message ?? 'Failed to create follow-up'
@@ -59,10 +68,11 @@ export const useFollowupStore = defineStore('followup', {
     async updateFollowup(id: number, payload: FollowupPayload): Promise<Followup> {
       this.error = null
       try {
-        const res = await api.put<Followup>(`/tutor/followups/${id}`, payload)
+        const res = await api.put<{ data: Followup }>(`/tutor/followups/${id}`, payload)
+        const updated = res.data.data ?? (res.data as unknown as Followup)
         const idx = this.followups.findIndex((f) => f.id === id)
-        if (idx !== -1) this.followups[idx] = res.data
-        return res.data
+        if (idx !== -1) this.followups[idx] = updated
+        return updated
       } catch (err) {
         const axiosErr = err as AxiosError<ApiErrorResponse>
         this.error = axiosErr.response?.data?.message ?? 'Failed to update follow-up'
@@ -73,7 +83,7 @@ export const useFollowupStore = defineStore('followup', {
     async deleteFollowup(id: number): Promise<void> {
       this.error = null
       try {
-        await api.delete(`/followups/${id}`)
+        await api.delete(`/tutor/followups/${id}`)
         this.followups = this.followups.filter((f) => f.id !== id)
       } catch (err) {
         const axiosErr = err as AxiosError<ApiErrorResponse>

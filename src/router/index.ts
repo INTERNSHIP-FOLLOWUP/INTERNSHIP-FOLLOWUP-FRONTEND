@@ -225,6 +225,12 @@ const router = createRouter({
           meta: { title: 'Issues' },
         },
         {
+          path: 'messages',
+          name: 'TutorMessages',
+          component: () => import('@/views/tutor/TutorMessagesView.vue'),
+          meta: { title: 'Messages' },
+        },
+        {
           path: 'profile',
           name: 'TutorProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
@@ -292,6 +298,12 @@ const router = createRouter({
           meta: { title: 'Issues' },
         },
         {
+          path: 'messages',
+          name: 'StudentMessages',
+          component: () => import('@/views/student/StudentMessagesView.vue'),
+          meta: { title: 'Messages' },
+        },
+        {
           path: 'profile',
           name: 'StudentProfile',
           component: () => import('@/views/profile/StudentProfileView.vue'),
@@ -345,6 +357,12 @@ const router = createRouter({
           name: 'CompanyProfile',
           component: () => import('@/views/company/CompanyFormView.vue'),
           meta: { title: 'Company Profile' },
+        },
+        {
+          path: 'messages',
+          name: 'CompanyMessages',
+          component: () => import('@/views/company/MessageView.vue'),
+          meta: { title: 'Messages' },
         },
       ],
     },

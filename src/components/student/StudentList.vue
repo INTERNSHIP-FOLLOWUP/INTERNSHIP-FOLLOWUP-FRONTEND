@@ -9,26 +9,26 @@
         </p>
       </div>
       <div class="flex items-center gap-2">
-        <button @click="$emit('import')"
+        <button @click="openImportModal"
           class="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-indigo-200 hover:bg-slate-50">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="h-4 w-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
-          Import
+          Import Excel
         </button>
-        <button @click="$emit('export-pdf')"
-          class="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-indigo-200 hover:bg-slate-50">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button @click="handleExportPdf"
+          class="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-red-200 hover:bg-red-50">
+          <svg class="h-4 w-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
-          PDF
+          Export PDF
         </button>
-        <button @click="$emit('export-excel')"
+        <button @click="handleExportExcel"
           class="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-emerald-200 hover:bg-emerald-50">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="h-4 w-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Excel
+          Export Excel
         </button>
         <button type="button" @click="$emit('cancel')"
           class="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50">
@@ -91,6 +91,17 @@
       </div>
 
       <select
+        v-model="batchFilter"
+        @change="fetchStudents"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
+      >
+        <option value="">All Batches</option>
+        <option v-for="b in batches" :key="b.id" :value="b.id">
+          {{ b.batch_name || b.name }}
+        </option>
+      </select>
+
+      <select
         v-model="statusFilter"
         @change="fetchStudents"
         class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
@@ -98,8 +109,16 @@
         <option value="">All Statuses</option>
         <option value="active">Active</option>
         <option value="inactive">Inactive</option>
-        <option value="graduated">Graduated</option>
-        <option value="suspended">Suspended</option>
+      </select>
+
+      <select
+        v-model="genderFilter"
+        @change="fetchStudents"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
+      >
+        <option value="">All Genders</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
       </select>
 
       <button
@@ -186,7 +205,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
-            <tr v-for="student in store.students" :key="student.id" class="transition-colors hover:bg-slate-50/50">
+            <tr v-for="(student, index) in store.students" :key="student.id" class="transition-colors hover:bg-slate-50/50">
               <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.first_name }}</td>
               <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.last_name }}</td>
               <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-500">{{ student.email }}</td>
@@ -203,26 +222,63 @@
                 </span>
               </td>
               <td class="whitespace-nowrap px-6 py-4 text-right">
-                <div class="flex items-center justify-end gap-1">
-                  <router-link v-if="student.user_id" :to="`/admin/student-profile/${student.user_id}`" title="View Profile"
-                    class="flex h-8 w-8 items-center justify-center rounded-lg text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-700">
-                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  </router-link>
-                  <button @click="$emit('view', student.id)" title="Edit Student"
-                    class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900">
-                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                <div class="relative inline-block text-left">
+                  <button type="button" @click.stop="toggleKebab(student.id)" title="Actions"
+                    class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                     </svg>
                   </button>
-                  <button @click="confirmDelete(student)" title="Delete Student"
-                    class="flex h-8 w-8 items-center justify-center rounded-lg text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-700">
-                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
+
+                  <!-- Kebab Dropdown Menu (Smart positioning: Top rows pop DOWN, Bottom rows pop UP) -->
+                  <transition name="fade">
+                    <div v-if="openKebabId === student.id"
+                      class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none"
+                      :class="index < 2 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'">
+                      <router-link v-if="student.user_id" :to="`/admin/student-profile/${student.user_id}`" @click.stop="openKebabId = null"
+                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                        <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        View Profile
+                      </router-link>
+
+                      <button type="button" @click.stop="openKebabId = null; $emit('edit', student.id)"
+                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                        <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Edit Student
+                      </button>
+
+                      <button v-if="student.status !== 'inactive' && student.status !== 'deactivated'" type="button" @click.stop="openKebabId = null; toggleStudentStatus(student)"
+                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
+                        <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                        </svg>
+                        Deactivate
+                      </button>
+
+                      <button v-else type="button" @click.stop="openKebabId = null; toggleStudentStatus(student)"
+                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors">
+                        <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Activate
+                      </button>
+
+                      <div class="my-1 h-px bg-slate-100" />
+
+                      <button type="button" @click.stop="openKebabId = null; confirmDelete(student)"
+                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors">
+                        <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Delete Student
+                      </button>
+                    </div>
+                  </transition>
                 </div>
               </td>
             </tr>
@@ -382,16 +438,24 @@
         </div>
       </div>
     </transition>
+
+    <!-- Import Excel Modal -->
+    <ImportStudentsModal :show="showImportModal" @close="handleImportClose" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useStudentStore } from '@/stores/student'
+import { useToastStore } from '@/stores/toast'
+import { studentService } from '@/services/student'
 import type { Student } from '@/types/student'
+import api from '@/services/api'
+import ImportStudentsModal from '@/components/admin/ImportStudentsModal.vue'
 
 const emit = defineEmits<{
   view: [id: number]
+  edit: [id: number]
   add: []
   cancel: []
   delete: [id: number]
@@ -400,8 +464,72 @@ const emit = defineEmits<{
   'export-excel': []
 }>()
 
+const toast = useToastStore()
+const showImportModal = ref(false)
 const deletingTarget = ref<Student | null>(null)
 const deleting = ref(false)
+const openKebabId = ref<number | null>(null)
+
+function openImportModal() {
+  showImportModal.value = true
+  emit('import')
+}
+
+function handleImportClose() {
+  showImportModal.value = false
+  fetchStudents()
+}
+
+async function handleExportPdf() {
+  emit('export-pdf')
+  try {
+    const blob = await studentService.exportPdf()
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `students-${new Date().toISOString().slice(0, 10)}.pdf`
+    a.click()
+    window.URL.revokeObjectURL(url)
+    toast.success('PDF exported successfully.')
+  } catch {
+    toast.error('Failed to export PDF.')
+  }
+}
+
+async function handleExportExcel() {
+  emit('export-excel')
+  try {
+    const blob = await studentService.exportExcel()
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `students-${new Date().toISOString().slice(0, 10)}.xlsx`
+    a.click()
+    window.URL.revokeObjectURL(url)
+    toast.success('Excel exported successfully.')
+  } catch {
+    toast.error('Failed to export Excel.')
+  }
+}
+
+function toggleKebab(id: number) {
+  openKebabId.value = openKebabId.value === id ? null : id
+}
+
+function handleWindowClick() {
+  openKebabId.value = null
+}
+
+async function toggleStudentStatus(student: Student) {
+  try {
+    const isInactive = student.status === 'inactive' || student.status === 'deactivated'
+    const endpoint = isInactive ? `/admin/users/${student.user_id || student.id}/activate` : `/admin/users/${student.user_id || student.id}/deactivate`
+    await api.put(endpoint)
+    fetchStudents()
+  } catch {
+    /* ignore */
+  }
+}
 
 function confirmDelete(student: Student): void {
   deletingTarget.value = student
@@ -419,14 +547,26 @@ async function handleDelete(): Promise<void> {
   }
 }
 
+interface BatchOption { id: number; batch_name: string; name?: string }
+
 const store = useStudentStore()
 
 const localError = ref('')
 const searchQuery = ref('')
 const statusFilter = ref('')
+const batchFilter = ref('')
+const genderFilter = ref('')
+const batches = ref<BatchOption[]>([])
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
-const hasActiveFilters = computed(() => !!searchQuery.value || !!statusFilter.value)
+const hasActiveFilters = computed(() => !!searchQuery.value || !!statusFilter.value || !!batchFilter.value || !!genderFilter.value)
+
+async function fetchBatches(): Promise<void> {
+  try {
+    const res = await api.get('/admin/batches')
+    batches.value = res.data.data ?? res.data ?? []
+  } catch { /* ignore */ }
+}
 
 const filteredStudents = computed(() => {
   let list = store.students
@@ -438,6 +578,12 @@ const filteredStudents = computed(() => {
   }
   if (statusFilter.value) {
     list = list.filter((s: Student) => s.status === statusFilter.value)
+  }
+  if (batchFilter.value) {
+    list = list.filter((s: Student) => String(s.batch_id || (typeof s.batch === 'object' && s.batch ? (s.batch as { id?: number }).id : '')) === String(batchFilter.value))
+  }
+  if (genderFilter.value) {
+    list = list.filter((s: Student) => (s.gender || '').toLowerCase() === genderFilter.value.toLowerCase())
   }
   return list
 })
@@ -538,12 +684,16 @@ function goToPage(page: number): void {
 function clearFilters(): void {
   searchQuery.value = ''
   statusFilter.value = ''
+  batchFilter.value = ''
+  genderFilter.value = ''
 }
 
 function fetchStudents(): void {
   localError.value = ''
-  const params: { per_page: number; search?: string; status?: string } = { per_page: 15 }
+  const params: { per_page: number; search?: string; status?: string; batch_id?: string; gender?: string } = { per_page: 15 }
   if (statusFilter.value) params.status = statusFilter.value
+  if (batchFilter.value) params.batch_id = batchFilter.value
+  if (genderFilter.value) params.gender = genderFilter.value
   store.fetchStudents(params).catch((err: unknown) => {
     localError.value = err instanceof Error ? err.message : 'Failed to load students.'
   })
@@ -557,7 +707,13 @@ watch(searchQuery, () => {
 })
 
 onMounted(() => {
+  fetchBatches()
   fetchStudents()
+  window.addEventListener('click', handleWindowClick)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleWindowClick)
 })
 </script>
 

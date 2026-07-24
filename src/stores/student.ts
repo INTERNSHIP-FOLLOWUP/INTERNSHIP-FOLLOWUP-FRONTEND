@@ -14,7 +14,7 @@ export const useStudentStore = defineStore('student', () => {
   const studentCount = computed(() => pagination.value?.total ?? students.value.length)
 
   function getStudentById(id: number): Student | null {
-    return students.value.find((s) => s.id === id) ?? null
+    return students.value.find((s) => s.id === id || s.user_id === id) ?? null
   }
 
   async function fetchStudents(params?: {

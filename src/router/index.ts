@@ -70,6 +70,7 @@ const router = createRouter({
         {
           path: 'users',
           name: 'AdminUsers',
+          alias: ['all-users'],
           component: () => import('@/views/user/AdminAllUsersView.vue'),
           meta: { title: 'Users' } as AppRouteMeta,
         },
@@ -82,8 +83,21 @@ const router = createRouter({
         {
           path: 'users/:id',
           name: 'AdminUsersEdit',
+          alias: ['users/:id/edit'],
           component: () => import('@/views/user/AdminAllUsersView.vue'),
           meta: { adminOnly: true, title: 'Edit Student' } as AppRouteMeta,
+        },
+        {
+          path: 'student-profile/:id',
+          name: 'AdminStudentProfileDetail',
+          component: () => import('@/views/student_profile/StudentProfileView.vue'),
+          meta: { title: 'Student Profile' } as AppRouteMeta,
+        },
+        {
+          path: 'tutor-profile/:id',
+          name: 'AdminTutorProfileDetail',
+          component: () => import('@/views/student_profile/TutorProfileView.vue'),
+          meta: { title: 'Tutor Profile' } as AppRouteMeta,
         },
         {
           path: 'students',

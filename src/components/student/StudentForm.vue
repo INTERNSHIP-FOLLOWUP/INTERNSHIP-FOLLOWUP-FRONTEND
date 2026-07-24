@@ -188,8 +188,7 @@
           <option value="" disabled>Select status</option>
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
-          <option value="graduated">Graduated</option>
-          <option value="suspended">Suspended</option>
+          <option value="deactivated">Deactivated</option>
         </select>
       </FormField>
     </div>
@@ -241,6 +240,7 @@ import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStudentStore } from '@/stores/student'
 import { useBatchStore } from '@/stores/batchStore'
 import { useTutorStore } from '@/stores/tutorStore'
+import api from '@/services/api'
 import FormField from '@/components/ui/FormField.vue'
 import type { StudentFormData, StudentStatus } from '@/types/student'
 
@@ -412,6 +412,14 @@ async function handleSubmit(): Promise<void> {
       delete basePayload.photo
     }
 
+    if (isEdit.value && props.studentId) {
+      if (form.status === 'deactivated') {
+        await api.put(`/admin/users/${props.studentId}/deactivate`).catch(() => {})
+      } else {
+        await api.put(`/admin/users/${props.studentId}/activate`).catch(() => {})
+      }
+    }
+
     const result = isEdit.value
       ? await studentStore.updateStudent(props.studentId!, omitPassword(basePayload))
       : await studentStore.createStudent(basePayload)
@@ -440,24 +448,47 @@ async function handleSubmit(): Promise<void> {
   }
 }
 
-function populateForm(): void {
-  const s = studentStore.currentStudent
+function populateForm(data?: unknown): void {
+  const s = (data || studentStore.currentStudent || (props.studentId ? studentStore.getStudentById(props.studentId) : null)) as Record<string, any> | null
   if (!s) return
 
-  form.student_code = s.student_code || ''
-  form.first_name = s.first_name || ''
-  form.last_name = s.last_name || ''
+  const profile = s.student_profile || {}
+  form.student_code = s.student_code || profile.student_code || ''
+  form.first_name = s.first_name || (s.name ? s.name.split(' ')[0] : '')
+  form.last_name = s.last_name || (s.name ? s.name.split(' ').slice(1).join(' ') : '')
   form.email = s.email || ''
-  form.gender = s.gender || ''
+  form.gender = s.gender || profile.gender || ''
   form.phone = s.phone || ''
-  form.batch_id = s.batch_id ?? null
-  form.tutor_id = s.tutor_id ?? null
-  form.status = (s.status || '') as StudentStatus | ''
+  form.batch_id = s.batch_id ?? s.batch?.id ?? profile.batch_id ?? null
+  form.tutor_id = s.tutor_id ?? s.tutor?.id ?? profile.tutor_id ?? null
+  if (s.deleted_at) {
+    form.status = 'deactivated'
+  } else {
+    form.status = (s.status || profile.status || 'active') as StudentStatus | ''
+  }
   form.password = ''
   form.password_confirmation = ''
   form.photo = null
-  originalPhoto.value = s.avatar
-  photoPreview.value = s.avatar
+  originalPhoto.value = s.avatar || null
+  photoPreview.value = s.avatar || null
+}
+
+function resetForm(): void {
+  form.student_code = ''
+  form.first_name = ''
+  form.last_name = ''
+  form.email = ''
+  form.gender = ''
+  form.phone = ''
+  form.batch_id = null
+  form.tutor_id = null
+  form.status = 'active'
+  form.password = '12345678'
+  form.password_confirmation = '12345678'
+  form.photo = null
+  originalPhoto.value = null
+  if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
+  photoPreview.value = null
 }
 
 function omitPassword(payload: StudentFormData & Record<string, unknown>): Record<string, unknown> {
@@ -465,27 +496,58 @@ function omitPassword(payload: StudentFormData & Record<string, unknown>): Recor
   return rest
 }
 
-onMounted(async () => {
-    const promises: Promise<unknown>[] = [
-        batchStore.fetchBatches(),
-        tutorStore.fetchTutors(),
-    ]
-    if (props.studentId) {
-        promises.push(studentStore.fetchStudent(props.studentId).then(populateForm))
-    }
-    await Promise.all(promises)
+async function initData(): Promise<void> {
+  // 1. FAST: Instantly populate from local store cache if available
+  if (props.studentId) {
+    const cached = studentStore.getStudentById(props.studentId)
+    if (cached) populateForm(cached)
+  }
+
+  // 2. CLEAN: Fetch batches/tutors only if not already loaded in memory
+  const tasks: Promise<unknown>[] = []
+  if (batchStore.batches.length === 0) {
+    tasks.push(batchStore.fetchBatches().catch(() => {}))
+  }
+  if (tutorStore.tutors.length === 0) {
+    tasks.push(tutorStore.fetchTutors().catch(() => {}))
+  }
+
+  // 3. Refresh detailed student record in background if needed
+  if (props.studentId) {
+    tasks.push(
+      studentStore.fetchStudent(props.studentId)
+        .then(() => populateForm(studentStore.currentStudent))
+        .catch(() => {})
+    )
+  }
+
+  await Promise.all(tasks)
+}
+
+onMounted(() => {
+  initData()
+})
+
+watch(() => props.studentId, (newId) => {
+  if (newId) {
+    const cached = studentStore.getStudentById(newId)
+    if (cached) populateForm(cached)
+    studentStore.fetchStudent(newId).then(() => populateForm(studentStore.currentStudent)).catch(() => {})
+  } else {
+    resetForm()
+  }
 })
 
 watch(() => props.apiErrors, (vals) => {
-    if (vals) {
-        formError.value = ''
-        for (const [key, msg] of Object.entries(vals)) {
-            ;(errors as Record<string, string>)[key] = msg
-        }
+  if (vals) {
+    formError.value = ''
+    for (const [key, msg] of Object.entries(vals)) {
+      ;(errors as Record<string, string>)[key] = msg
     }
+  }
 }, { immediate: true })
 
 onUnmounted(() => {
-    if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
+  if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
 })
 </script>

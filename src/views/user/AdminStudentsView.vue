@@ -58,6 +58,33 @@
         <input v-model="searchQuery" type="text" placeholder="Search students..."
           class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100" />
       </div>
+
+      <!-- Batch Filter -->
+      <select v-model="batchFilter" @change="onFilterChange"
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
+        <option value="">All Batches</option>
+        <option v-for="b in batches" :key="b.id" :value="b.id">
+          {{ b.batch_name || b.name }}
+        </option>
+      </select>
+
+      <!-- Status Filter -->
+      <select v-model="statusFilter" @change="onFilterChange"
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
+        <option value="">All Statuses</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+        <option value="deactivated">Deactivated</option>
+      </select>
+
+      <!-- Gender Filter -->
+      <select v-model="genderFilter" @change="onFilterChange"
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
+        <option value="">All Genders</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+
       <select v-model="sortOrder"
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
         <option value="">Newest</option>
@@ -65,6 +92,14 @@
         <option value="name_desc">Name Z-A</option>
         <option value="oldest">Oldest</option>
       </select>
+
+      <button v-if="hasActiveFilters" @click="clearFilters"
+        class="flex h-10 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700">
+        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Clear
+      </button>
     </div>
 
     <div class="rounded-xl border border-slate-200/80 bg-white shadow-sm">
@@ -97,12 +132,14 @@
                 <th class="px-6 py-3.5 font-medium">Last Name</th>
                 <th class="px-6 py-3.5 font-medium">Student Code</th>
                 <th class="px-6 py-3.5 font-medium">Email</th>
+                <th class="px-6 py-3.5 font-medium">Batch</th>
+                <th class="px-6 py-3.5 font-medium">Gender</th>
                 <th class="px-6 py-3.5 font-medium">Status</th>
                 <th class="px-6 py-3.5 text-right font-medium">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
-              <tr v-for="student in students" :key="student.id"
+              <tr v-for="(student, index) in students" :key="student.id"
                 class="transition-colors hover:bg-slate-50/50"
                 :class="{ 'bg-rose-50/40': selectedIds.has(student.id) }">
                 <td v-if="selectMode" class="px-4 py-4 w-10">
@@ -114,34 +151,80 @@
                 <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.last_name }}</td>
                 <td class="whitespace-nowrap px-6 py-4 font-mono text-xs font-medium text-slate-500">{{ student.student_profile?.student_code || student.student_code || '—' }}</td>
                 <td class="whitespace-nowrap px-6 py-4 text-slate-500">{{ student.email }}</td>
+                <td class="whitespace-nowrap px-6 py-4 text-slate-500">
+                  <span v-if="getBatchName(student) !== '—'" class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
+                    {{ getBatchName(student) }}
+                  </span>
+                  <span v-else class="text-slate-300">—</span>
+                </td>
+                <td class="whitespace-nowrap px-6 py-4 text-slate-500 capitalize">
+                  {{ getGender(student) }}
+                </td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
-                    :class="student.deleted_at ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700'">
-                    <span class="h-1.5 w-1.5 rounded-full" :class="student.deleted_at ? 'bg-rose-500' : 'bg-emerald-500'" />
-                    {{ student.deleted_at ? 'Deactivated' : 'Active' }}
+                    :class="getStatusBadgeClass(student)">
+                    <span class="h-1.5 w-1.5 rounded-full" :class="getStatusDotClass(student)" />
+                    {{ getStatusText(student) }}
                   </span>
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 text-right">
-                  <div class="flex items-center justify-end gap-1">
-                    <button type="button" @click.stop="goToProfile(student.id)" title="View Profile"
-                      class="flex h-8 w-8 items-center justify-center rounded-lg text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-700">
-                      <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  <div class="relative inline-block text-left">
+                    <button type="button" @click.stop="toggleKebab(student.id)" title="Actions"
+                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95">
+                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                       </svg>
                     </button>
-                    <button type="button" @click.stop="editStudent(student.id)" title="Edit Student"
-                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900">
-                      <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button type="button" @click.stop="deleteStudent(student)" title="Delete Student"
-                      class="flex h-8 w-8 items-center justify-center rounded-lg text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-700">
-                      <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
+
+                    <!-- Kebab Dropdown Menu (Smart positioning: Top rows pop DOWN, Bottom rows pop UP) -->
+                    <transition name="fade">
+                      <div v-if="openKebabId === student.id"
+                        class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none"
+                        :class="index < 2 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'">
+                        <button type="button" @click.stop="openKebabId = null; goToProfile(student.id)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          View Profile
+                        </button>
+
+                        <button type="button" @click.stop="openKebabId = null; editStudent(student.id)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          Edit Student
+                        </button>
+
+                        <button v-if="!student.deleted_at" type="button" @click.stop="openKebabId = null; confirmAction('deactivate', student)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
+                          <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                          </svg>
+                          Deactivate
+                        </button>
+
+                        <button v-else type="button" @click.stop="openKebabId = null; confirmAction('activate', student)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors">
+                          <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Activate
+                        </button>
+
+                        <div class="my-1 h-px bg-slate-100" />
+
+                        <button type="button" @click.stop="openKebabId = null; confirmAction('delete', student)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors">
+                          <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          Delete Student
+                        </button>
+                      </div>
+                    </transition>
                   </div>
                 </td>
               </tr>
@@ -270,7 +353,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
@@ -281,11 +364,14 @@ import ImportStudentsModal from '@/components/admin/ImportStudentsModal.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
 interface Role { id: number; name: string }
-interface Batch { id: number; batch_name: string; year: string }
+interface Batch { id: number; batch_name: string; name?: string; year?: string }
 interface StudentProfile {
   id: number
   student_code: string | null
   batch_id: number | null
+  gender?: string | null
+  status?: string | null
+  batch?: Batch | null
 }
 interface Student {
   id: number                    // This is the user ID
@@ -295,6 +381,8 @@ interface Student {
   name: string
   email: string
   student_code: string | null
+  gender?: string | null
+  status?: string | null
   role: Role | null
   batch: Batch | null
   student_profile?: StudentProfile
@@ -306,20 +394,33 @@ const students = ref<Student[]>([])
 const loading = ref(false)
 const searchQuery = ref('')
 const sortOrder = ref('')
+const batchFilter = ref('')
+const statusFilter = ref('')
+const genderFilter = ref('')
+const batches = ref<Batch[]>([])
 const totalStudents = ref(0)
 const currentPage = ref(1)
 const pagination = ref<PaginationMeta | null>(null)
 const showImportModal = ref(false)
 const showFormModal = ref(false)
 const editingStudentId = ref<number | undefined>(undefined)
+const openKebabId = ref<number | null>(null)
 const router = useRouter()
 const toast = useToastStore()
 const { show: confirmShow, loading: confirmLoading, error: confirmError, open: confirmOpen, cancel: confirmCancel, confirmAsync: confirmAsyncFn } = useConfirmDialog()
 const confirmTitle = ref('')
 const confirmMessage = ref('')
 const confirmButtonText = ref('Confirm')
-type ActionType = 'delete'
+type ActionType = 'delete' | 'deactivate' | 'activate'
 const pendingAction = ref<{ type: ActionType; student: Student } | null>(null)
+
+function toggleKebab(id: number) {
+  openKebabId.value = openKebabId.value === id ? null : id
+}
+
+function handleWindowClick() {
+  openKebabId.value = null
+}
 
 // ── Bulk select state ──
 const selectMode = ref(false)
@@ -327,6 +428,75 @@ const selectedIds = ref<Set<number>>(new Set())
 const showBulkConfirm = ref(false)
 const bulkDeleting = ref(false)
 const bulkError = ref('')
+
+const hasActiveFilters = computed(() =>
+  !!searchQuery.value || !!sortOrder.value || !!batchFilter.value || !!statusFilter.value || !!genderFilter.value
+)
+
+function clearFilters() {
+  searchQuery.value = ''
+  sortOrder.value = ''
+  batchFilter.value = ''
+  statusFilter.value = ''
+  genderFilter.value = ''
+  currentPage.value = 1
+  fetchStudents()
+}
+
+function onFilterChange() {
+  currentPage.value = 1
+  fetchStudents()
+}
+
+async function fetchBatches() {
+  try {
+    const res = await api.get('/admin/batches')
+    batches.value = res.data.data ?? res.data ?? []
+  } catch { /* ignore */ }
+}
+
+function getBatchName(student: Student): string {
+  if (student.batch?.batch_name) return student.batch.batch_name
+  if (student.batch?.name) return student.batch.name
+  if (student.student_profile?.batch?.batch_name) return student.student_profile.batch.batch_name
+  if (student.student_profile?.batch?.name) return student.student_profile.batch.name
+  return '—'
+}
+
+function getGender(student: Student): string {
+  const g = student.gender || student.student_profile?.gender
+  return g ? g : '—'
+}
+
+function getStatusText(student: Student): string {
+  if (student.deleted_at) return 'Deactivated'
+  const st = student.status || student.student_profile?.status || 'active'
+  return st.charAt(0).toUpperCase() + st.slice(1)
+}
+
+function getStatusBadgeClass(student: Student): string {
+  if (student.deleted_at) return 'bg-rose-50 text-rose-700'
+  const st = (student.status || student.student_profile?.status || 'active').toLowerCase()
+  switch (st) {
+    case 'active': return 'bg-emerald-50 text-emerald-700'
+    case 'inactive': return 'bg-slate-100 text-slate-600'
+    case 'graduated': return 'bg-blue-50 text-blue-700'
+    case 'suspended': return 'bg-rose-50 text-rose-700'
+    default: return 'bg-emerald-50 text-emerald-700'
+  }
+}
+
+function getStatusDotClass(student: Student): string {
+  if (student.deleted_at) return 'bg-rose-500'
+  const st = (student.status || student.student_profile?.status || 'active').toLowerCase()
+  switch (st) {
+    case 'active': return 'bg-emerald-500'
+    case 'inactive': return 'bg-slate-400'
+    case 'graduated': return 'bg-blue-500'
+    case 'suspended': return 'bg-rose-500'
+    default: return 'bg-emerald-500'
+  }
+}
 
 function enterSelectMode() {
   selectMode.value = true
@@ -434,6 +604,14 @@ async function confirmAction(type: ActionType, student: Student) {
     confirmTitle.value = 'Delete Student'
     confirmMessage.value = `Are you sure you want to permanently delete ${student.first_name} ${student.last_name}?`
     confirmButtonText.value = 'Delete'
+  } else if (type === 'deactivate') {
+    confirmTitle.value = 'Deactivate Student'
+    confirmMessage.value = `Are you sure you want to deactivate ${student.first_name} ${student.last_name}? They will be marked as inactive.`
+    confirmButtonText.value = 'Deactivate'
+  } else if (type === 'activate') {
+    confirmTitle.value = 'Activate Student'
+    confirmMessage.value = `Are you sure you want to activate ${student.first_name} ${student.last_name}?`
+    confirmButtonText.value = 'Activate'
   }
   const confirmed = await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value })
   if (!confirmed) return
@@ -443,10 +621,17 @@ async function confirmAction(type: ActionType, student: Student) {
 async function handleConfirmAction() {
   if (!pendingAction.value) return
   const { type, student } = pendingAction.value
+  const targetId = student.user_id ?? student.id
   await confirmAsyncFn(async () => {
     if (type === 'delete') {
-      await api.delete(`/admin/users/${student.id}`)
+      await api.delete(`/admin/users/${targetId}`)
       toast.success(`Student "${student.first_name} ${student.last_name}" deleted.`)
+    } else if (type === 'deactivate') {
+      await api.put(`/admin/users/${targetId}/deactivate`)
+      toast.success(`Student "${student.first_name} ${student.last_name}" deactivated successfully.`)
+    } else if (type === 'activate') {
+      await api.put(`/admin/users/${targetId}/activate`)
+      toast.success(`Student "${student.first_name} ${student.last_name}" activated successfully.`)
     }
     pendingAction.value = null
     fetchStudents()
@@ -496,10 +681,35 @@ async function fetchStudents() {
     const params: Record<string, string | number> = { role: 'student', per_page: 10, page: currentPage.value }
     if (searchQuery.value) params.search = searchQuery.value
     if (sortOrder.value) params.sort = sortOrder.value
+    if (batchFilter.value) params.batch_id = batchFilter.value
+    if (genderFilter.value) params.gender = genderFilter.value
+    if (statusFilter.value) {
+      if (statusFilter.value === 'deactivated') {
+        params.status = 'deactivated'
+      } else {
+        params.student_status = statusFilter.value
+      }
+    }
     const res = await api.get('/admin/users', { params })
-    students.value = res.data.data ?? []
+    let list: Student[] = res.data.data ?? []
+
+    if (batchFilter.value) {
+      list = list.filter(s => String(s.batch?.id || s.student_profile?.batch_id || '') === String(batchFilter.value))
+    }
+    if (genderFilter.value) {
+      list = list.filter(s => (s.gender || s.student_profile?.gender || '').toLowerCase() === genderFilter.value.toLowerCase())
+    }
+    if (statusFilter.value) {
+      if (statusFilter.value === 'deactivated') {
+        list = list.filter(s => !!s.deleted_at)
+      } else {
+        list = list.filter(s => (s.status || s.student_profile?.status || 'active').toLowerCase() === statusFilter.value.toLowerCase())
+      }
+    }
+
+    students.value = list
     pagination.value = res.data.meta ?? null
-    totalStudents.value = res.data.meta?.total ?? 0
+    totalStudents.value = res.data.meta?.total ?? list.length
   } catch { /* ignore */ }
   finally { loading.value = false }
 }
@@ -509,9 +719,17 @@ watch(searchQuery, () => {
   if (timeout) clearTimeout(timeout)
   timeout = setTimeout(() => { currentPage.value = 1; fetchStudents() }, 300)
 })
-watch(sortOrder, () => { currentPage.value = 1; fetchStudents() })
+watch([sortOrder, batchFilter, statusFilter, genderFilter], () => { currentPage.value = 1; fetchStudents() })
 
-onMounted(fetchStudents)
+onMounted(() => {
+  fetchBatches()
+  fetchStudents()
+  window.addEventListener('click', handleWindowClick)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleWindowClick)
+})
 </script>
 
 <style scoped>

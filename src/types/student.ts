@@ -13,8 +13,8 @@ export interface Student {
   phone?: string
   batch_id?: number | null
   tutor_id?: number | null
-  batch?: string | { batch_name?: string; name?: string }
-  tutor?: string | { name?: string }
+  batch?: string | { id?: number; batch_name?: string; name?: string }
+  tutor?: string | { id?: number; name?: string }
   status?: string
   photo_url?: string | null
   students_count?: number
@@ -27,7 +27,7 @@ export interface Student {
   deleted_at?: string | null
 }
 
-export type StudentStatus = 'active' | 'inactive' | 'graduated' | 'suspended'
+export type StudentStatus = 'active' | 'inactive' | 'deactivated'
 
 export interface StudentFormData {
   student_code: string

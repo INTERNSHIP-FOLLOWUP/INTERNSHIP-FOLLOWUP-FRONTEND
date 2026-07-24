@@ -80,8 +80,6 @@
 </template>
 
 <script setup lang="ts">
-<<<<<<< HEAD
-=======
 import { fileIconBgClass, formatFileSize, fileTypeLabel, fileTypeBadgeClass } from '@/utils/fileIcons'
 import type { Attachment } from '@/types/worklog'
 

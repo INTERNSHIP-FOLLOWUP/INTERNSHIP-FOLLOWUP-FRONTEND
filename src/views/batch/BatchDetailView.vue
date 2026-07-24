@@ -95,8 +95,6 @@
             <option value="">All Statuses</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
-            <option value="graduated">Graduated</option>
-            <option value="suspended">Suspended</option>
           </select>
           <button v-if="hasActiveFilters" @click="clearFilters"
             class="flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">

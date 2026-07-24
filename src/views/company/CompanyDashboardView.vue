@@ -88,30 +88,6 @@
       </StatCard>
     </div>
 
-    <!-- Quick Actions Module -->
-    <div :class="panelClass">
-      <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">Quick Actions</h3>
-      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <button
-          v-for="action in quickActions"
-          :key="action.label"
-          @click="handleQuickAction(action.route)"
-          class="group flex min-h-28 flex-col items-center justify-center rounded-lg border border-slate-200/70 bg-slate-50/60 p-4 text-center transition-all duration-200 hover:border-primary-200 hover:bg-primary-50/50 hover:shadow-sm"
-        >
-          <div
-            class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 transition-all duration-200 group-hover:scale-105 group-hover:bg-white group-hover:text-primary-600 group-hover:shadow-sm"
-            :class="action.bgColor"
-          >
-            <component :is="action.icon" class="h-5 w-5" />
-          </div>
-          <span
-            class="text-xs font-semibold leading-snug text-slate-700 group-hover:text-slate-900"
-            >{{ action.label }}</span
-          >
-        </button>
-      </div>
-    </div>
-
     <!-- Multi-Column Layout -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <!-- Assigned Students -->
@@ -236,7 +212,7 @@
                 </svg>
               </div>
               <div>
-                <h4 class="text-xs font-bold text-slate-900">Student #{{ evalItem.student_id }}</h4>
+                <h4 class="text-xs font-bold text-slate-900">{{ evaluationStudentName(evalItem) }}</h4>
                 <p class="text-[10px] font-semibold text-slate-400">
                   Rating: {{ evalItem.rating }}/5
                 </p>
@@ -331,12 +307,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, h, defineComponent } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
 import { useCompanyStore } from '@/stores/company'
 import StatCard from '@/components/dashboard/StatCard.vue'
 
-const router = useRouter()
 const store = useCompanyStore()
 
 const loading = ref(false)
@@ -364,63 +338,6 @@ const stats = ref({
 
 const assignedStudents = ref<any[]>([])
 const recentEvaluations = ref<any[]>([])
-
-const createActionIcon = (path: string) => {
-  return defineComponent({
-    setup() {
-      return () =>
-        h('svg', { class: 'h-5 w-5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
-          h('path', {
-            'stroke-linecap': 'round',
-            'stroke-linejoin': 'round',
-            'stroke-width': 2,
-            d: path,
-          }),
-        ])
-    },
-  })
-}
-
-const quickActions = [
-  {
-    label: 'View Students',
-    route: '/company/students',
-    bgColor: 'bg-primary-50/80',
-    icon: createActionIcon(
-      'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',
-    ),
-  },
-  {
-    label: 'Submit Evaluation',
-    route: '/company/evaluations',
-    bgColor: 'bg-purple-50/50',
-    icon: createActionIcon('M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'),
-  },
-  {
-    label: 'Provide Feedback',
-    route: '/company/feedback',
-    bgColor: 'bg-indigo-50/50',
-    icon: createActionIcon(
-      'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z',
-    ),
-  },
-  {
-    label: 'Internships',
-    route: '/company/internships',
-    bgColor: 'bg-emerald-50/50',
-    icon: createActionIcon(
-      'M21 13.255A23.893 23.893 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
-    ),
-  },
-  {
-    label: 'Edit Profile',
-    route: '/company/profile',
-    bgColor: 'bg-amber-50/50',
-    icon: createActionIcon(
-      'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z',
-    ),
-  },
-]
 
 function getInitials(name: string) {
   return name
@@ -458,8 +375,37 @@ function formatDate(dateStr?: string) {
   }
 }
 
-function handleQuickAction(action: string) {
-  router.push(action)
+function studentDisplayName(item: unknown) {
+  const raw = item as Record<string, unknown> | null
+  if (!raw) return 'Student'
+
+  const nestedStudent = raw.student as Record<string, unknown> | undefined
+  const firstName = String(raw.first_name ?? nestedStudent?.first_name ?? '').trim()
+  const lastName = String(raw.last_name ?? nestedStudent?.last_name ?? '').trim()
+  const fullName = `${firstName} ${lastName}`.trim()
+
+  return (
+    String(nestedStudent?.name ?? '').trim() ||
+    String(raw.student_name ?? '').trim() ||
+    String(raw.name ?? '').trim() ||
+    fullName ||
+    'Student'
+  )
+}
+
+function studentRecordId(item: unknown) {
+  const raw = item as Record<string, unknown> | null
+  return Number(raw?.student_id ?? raw?.id ?? 0)
+}
+
+function evaluationStudentName(evalItem: unknown) {
+  const raw = evalItem as Record<string, unknown>
+  const directName = studentDisplayName(raw)
+  if (directName !== 'Student') return directName
+
+  const studentId = Number(raw.student_id ?? 0)
+  const student = assignedStudents.value.find((item) => studentRecordId(item) === studentId)
+  return student ? studentDisplayName(student) : 'Student'
 }
 
 async function load() {

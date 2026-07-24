@@ -97,32 +97,6 @@
       </StatCard>
     </div>
 
-    <!-- Quick Actions Module -->
-    <div :class="panelClass">
-      <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">
-        Quick Administrative Actions
-      </h3>
-      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <button
-          v-for="action in quickActions"
-          :key="action.label"
-          @click="handleQuickAction(action.route)"
-          class="group flex min-h-28 flex-col items-center justify-center rounded-lg border border-slate-200/70 bg-slate-50/60 p-4 text-center transition-all duration-200 hover:border-primary-200 hover:bg-primary-50/50 hover:shadow-sm"
-        >
-          <div
-            class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 transition-all duration-200 group-hover:scale-105 group-hover:bg-white group-hover:text-primary-600 group-hover:shadow-sm"
-            :class="action.bgColor"
-          >
-            <component :is="action.icon" class="h-5 w-5" />
-          </div>
-          <span
-            class="text-xs font-semibold leading-snug text-slate-700 group-hover:text-slate-900"
-            >{{ action.label }}</span
-          >
-        </button>
-      </div>
-    </div>
-
     <!-- Multi-Column Layout for Reports & Visuals -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <!-- Placement Distribution (Students per Company) -->
@@ -417,7 +391,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, h, defineComponent } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import StatCard from '@/components/dashboard/StatCard.vue'
@@ -427,85 +401,6 @@ const router = useRouter()
 const loading = ref(false)
 const panelClass =
   'rounded-lg border border-slate-200/80 bg-white p-5 shadow-sm ring-1 ring-white/70 transition-shadow duration-200 hover:shadow-md'
-
-// Dynamic quick actions icons
-const createActionIcon = (path: string) => {
-  return defineComponent({
-    setup() {
-      return () =>
-        h(
-          'svg',
-          {
-            class: 'h-5 w-5',
-            fill: 'none',
-            stroke: 'currentColor',
-            viewBox: '0 0 24 24',
-          },
-          [
-            h('path', {
-              'stroke-linecap': 'round',
-              'stroke-linejoin': 'round',
-              'stroke-width': 2,
-              d: path,
-            }),
-          ],
-        )
-    },
-  })
-}
-
-const quickActions = [
-  {
-    label: 'Add Company',
-    route: '/admin/companies/create',
-    bgColor: 'bg-primary-50/80',
-    icon: createActionIcon('M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z'),
-  },
-  {
-    label: 'Add Student',
-    route: '/admin/users/create',
-    bgColor: 'bg-purple-50/50',
-    icon: createActionIcon(
-      'M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z',
-    ),
-  },
-  {
-    label: 'Manage Students',
-    route: '/admin/students',
-    bgColor: 'bg-indigo-50/50',
-    icon: createActionIcon(
-      'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',
-    ),
-  },
-  {
-    label: 'Create Batch',
-    route: '/admin/batches',
-    bgColor: 'bg-emerald-50/50',
-    icon: createActionIcon(
-      'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
-    ),
-  },
-  {
-    label: 'Assignments',
-    route: '/admin/assignments',
-    bgColor: 'bg-amber-50/50',
-    icon: createActionIcon('M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4'),
-  },
-  {
-    label: 'Export Reports',
-    route: '/admin/reports',
-    bgColor: 'bg-rose-50/50',
-    icon: createActionIcon('M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'),
-  },
-  {
-    label: 'Manage Users',
-    route: '/admin/users',
-    bgColor: 'bg-sky-50/50',
-    icon: createActionIcon(
-      'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z',
-    ),
-  },
-]
 
 interface DashboardData {
   totalStudents: number

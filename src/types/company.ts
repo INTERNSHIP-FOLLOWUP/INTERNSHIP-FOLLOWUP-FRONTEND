@@ -51,6 +51,7 @@ export interface CompanyListResponse {
 
 export interface CompanyStudentItem {
   id: number
+  student_id?: number
   name: string
   email?: string
   student_name?: string

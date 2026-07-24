@@ -147,7 +147,7 @@
           <div class="mb-2 flex items-start justify-between gap-3">
             <div>
               <h3 class="text-sm font-semibold text-gray-900">
-                {{ item.student?.name || 'Student #' + item.student_id }}
+                {{ studentName(item) }}
               </h3>
               <p class="mt-0.5 text-xs text-gray-500">{{ formatDate(item.created_at) }}</p>
             </div>
@@ -192,7 +192,7 @@ import type { CompanyEvaluationPayload, CompanyEvaluationItem } from '@/types/co
 
 const store = useCompanyStore()
 
-const students = ref<{ id: number; name: string }[]>([])
+const students = ref<{ id: number; studentId: number; name: string }[]>([])
 const submittedEvaluations = ref<CompanyEvaluationItem[]>([])
 const submitting = ref(false)
 const loading = ref(false)
@@ -216,7 +216,8 @@ async function loadStudents() {
     const source = Array.isArray(items) ? items : []
     students.value = source.map((item) => ({
       id: Number(item?.id ?? 0),
-      name: String(item?.name ?? item?.student_name ?? 'Student'),
+      studentId: Number(item?.student_id ?? item?.id ?? 0),
+      name: studentDisplayName(item),
     }))
   } catch {
     formError.value = 'Failed to load students'
@@ -281,6 +282,34 @@ function resetForm() {
   form.attendance = 0
   form.feedback = ''
   formError.value = null
+}
+
+function studentDisplayName(item: unknown) {
+  const raw = item as Record<string, unknown> | null
+  if (!raw) return 'Student'
+
+  const nestedStudent = raw.student as Record<string, unknown> | undefined
+  const firstName = String(raw.first_name ?? nestedStudent?.first_name ?? '').trim()
+  const lastName = String(raw.last_name ?? nestedStudent?.last_name ?? '').trim()
+  const fullName = `${firstName} ${lastName}`.trim()
+
+  return (
+    String(nestedStudent?.name ?? '').trim() ||
+    String(raw.student_name ?? '').trim() ||
+    String(raw.name ?? '').trim() ||
+    fullName ||
+    'Student'
+  )
+}
+
+function studentName(evalItem: CompanyEvaluationItem) {
+  const directName = studentDisplayName(evalItem)
+  if (directName !== 'Student') return directName
+
+  const s = students.value.find(
+    (student) => student.studentId === evalItem.student_id || student.id === evalItem.student_id,
+  )
+  return s?.name || 'Student'
 }
 
 function formatDate(dateStr?: string) {

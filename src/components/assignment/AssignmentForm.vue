@@ -94,6 +94,39 @@
         </p>
       </div>
 
+      <!-- Supervisor -->
+      <div class="space-y-1">
+        <label
+          for="company_supervisors_id"
+          class="block text-xs font-semibold text-slate-600 dark:text-slate-400"
+        >
+          Supervisor <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="company_supervisors_id"
+          v-model.number="form.company_supervisors_id"
+          :aria-invalid="!!errors.company_supervisors_id"
+          :aria-describedby="errors.company_supervisors_id ? 'company_supervisors_id-error' : undefined"
+          class="h-10 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-800 dark:text-slate-200"
+          :class="inputClass('company_supervisors_id')"
+          :disabled="!form.company_id || supervisorsLoading"
+          @change="clearFieldError('company_supervisors_id')"
+        >
+          <option :value="null" disabled>
+            {{ supervisorsLoading ? 'Loading...' : 'Select supervisor' }}
+          </option>
+          <option v-for="s in filteredSupervisors" :key="s.id" :value="s.id">
+            {{ s.name }}
+          </option>
+        </select>
+        <p v-if="!form.company_id && !supervisorsLoading" class="text-xs font-medium text-slate-400">
+          Please select a company first.
+        </p>
+        <p v-if="errors.company_supervisors_id" id="company_supervisors_id-error" class="text-xs font-medium text-red-500">
+          {{ errors.company_supervisors_id }}
+        </p>
+      </div>
+
       <!-- Tutor -->
       <div class="space-y-1">
         <label
@@ -278,11 +311,19 @@ interface OptionItem {
   id: number
   name?: string
   company_name?: string
+  company_id?: number
+}
+
+interface SupervisorOption {
+  id: number
+  name: string
+  company_id: number
 }
 
 interface AssignmentFormData {
   student_id: number | null
   company_id: number | null
+  company_supervisors_id: number | null
   tutor_id: number | null
   position: string
   start_date: string
@@ -326,12 +367,20 @@ const isEdit = computed(() => !!props.assignmentId)
 
 const students = ref<OptionItem[]>([])
 const companies = ref<OptionItem[]>([])
+const supervisors = ref<SupervisorOption[]>([])
 const studentsLoading = ref(false)
 const companiesLoading = ref(false)
+const supervisorsLoading = ref(false)
+
+const filteredSupervisors = computed(() => {
+  if (!form.company_id) return []
+  return supervisors.value.filter((s) => s.company_id === form.company_id)
+})
 
 const form = reactive<AssignmentFormData>({
   student_id: null,
   company_id: null,
+  company_supervisors_id: null,
   tutor_id: null,
   position: '',
   start_date: '',
@@ -354,7 +403,7 @@ const submitting = ref(false)
 
 const requiredFields = [
   'student_id',
-  'company_id',
+  'company_supervisors_id',
   'tutor_id',
   'position',
   'start_date',
@@ -415,7 +464,7 @@ async function handleSubmit(): Promise<void> {
   try {
     const payload = {
       student_id: form.student_id!,
-      company_id: form.company_id!,
+      company_supervisors_id: form.company_supervisors_id!,
       tutor_id: form.tutor_id!,
       position: form.position,
       start_date: form.start_date,
@@ -455,6 +504,7 @@ async function handleSubmit(): Promise<void> {
 function resetForm(): void {
   form.student_id = null
   form.company_id = null
+  form.company_supervisors_id = null
   form.tutor_id = null
   form.position = ''
   form.start_date = ''
@@ -466,12 +516,17 @@ function resetForm(): void {
 
 function populateForm(data: Assignment): void {
   form.student_id = data.student_id
-  form.company_id = data.company_id
+  form.company_supervisors_id = data.company_supervisors_id
   form.tutor_id = data.tutor_id
   form.position = data.position
   form.start_date = data.start_date
   form.end_date = data.end_date
   form.status = data.status
+  // Pre-select company from supervisor data
+  const matchedSupervisor = supervisors.value.find((s) => s.id === data.company_supervisors_id)
+  if (matchedSupervisor) {
+    form.company_id = matchedSupervisor.company_id
+  }
   Object.keys(errors).forEach((key) => delete errors[key])
   formError.value = ''
 }
@@ -479,19 +534,32 @@ function populateForm(data: Assignment): void {
 async function loadDropdownData(): Promise<void> {
   studentsLoading.value = true
   companiesLoading.value = true
+  supervisorsLoading.value = true
 
   try {
-    const [studentsRes, companiesRes] = await Promise.all([
+    const [studentsRes, companiesRes, supervisorsRes] = await Promise.all([
       api.get('/admin/students', { params: { per_page: 100 } }),
       api.get('/admin/companies', { params: { per_page: 200 } }),
+      api.get('/admin/users', { params: { role: 'supervisor', per_page: 200 } }),
     ])
     students.value = studentsRes.data.data ?? studentsRes.data
     companies.value = companiesRes.data.data ?? companiesRes.data
+
+    // Map supervisors from user data
+    const rawSupervisors = supervisorsRes.data.data ?? supervisorsRes.data
+    supervisors.value = (Array.isArray(rawSupervisors) ? rawSupervisors : [])
+      .filter((u: any) => u.supervisor_profile?.company_id)
+      .map((u: any) => ({
+        id: u.supervisor_profile.id,
+        name: u.name,
+        company_id: u.supervisor_profile.company_id,
+      }))
   } catch {
     formError.value = 'Failed to load dropdown data.'
   } finally {
     studentsLoading.value = false
     companiesLoading.value = false
+    supervisorsLoading.value = false
   }
 }
 
@@ -537,6 +605,11 @@ watch(
     }
   },
 )
+
+// Reset supervisor selection when company changes
+watch(() => form.company_id, () => {
+  form.company_supervisors_id = null
+})
 
 watch(
   () => props.apiErrors,

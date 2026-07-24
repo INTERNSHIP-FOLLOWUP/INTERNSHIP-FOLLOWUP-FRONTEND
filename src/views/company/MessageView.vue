@@ -447,13 +447,13 @@ const filteredConversations = computed(() => {
  */
 function isOwnMessage(msg: MessageItem | { sender_type: string }): boolean {
   const role = auth.userRole
-  if (role === 'company representative' || role === 'company') {
+  if (role === 'supervisor') {
     return msg.sender_type === 'company'
   }
   if (role === 'tutor') {
     return msg.sender_type === 'tutor'
   }
-  // Fallback: treat 'company' as the current user
+  // Fallback
   return msg.sender_type === 'company'
 }
 

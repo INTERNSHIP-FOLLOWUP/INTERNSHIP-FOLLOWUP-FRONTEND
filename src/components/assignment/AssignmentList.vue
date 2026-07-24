@@ -565,7 +565,7 @@ watch(
 onMounted(() => {
   companies.value = []
   api
-    .get('/admin/users', { params: { role: 'company', per_page: 200 } })
+    .get('/admin/users', { params: { role: 'supervisor', per_page: 200 } })
     .then((r) => {
       companies.value = r.data.data ?? r.data
     })

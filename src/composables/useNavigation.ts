@@ -63,6 +63,7 @@ export const NAV_ITEMS: NavItem[] = [
       { name: 'all-users', label: 'All Users', to: '/admin/users' },
       { name: 'students', label: 'Students', to: '/admin/students' },
       { name: 'tutors', label: 'Tutors', to: '/admin/tutors' },
+      { name: 'supervisors', label: 'Supervisors', to: '/admin/supervisors' },
     ],
   },
   {

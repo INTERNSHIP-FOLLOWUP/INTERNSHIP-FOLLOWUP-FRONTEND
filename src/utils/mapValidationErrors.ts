@@ -1,8 +1,6 @@
 const SNAKE_TO_CAMEL: Record<string, string> = {
   company_name: 'companyName',
   company_email: 'companyEmail',
-  contact_person: 'contactPerson',
-  contact_phone: 'contactPhone',
   student_code: 'studentCode',
   batch_id: 'batchId',
   tutor_id: 'tutorId',

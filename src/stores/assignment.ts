@@ -22,7 +22,7 @@ export const useAssignmentStore = defineStore('assignment', () => {
     page?: number
     per_page?: number
     status?: string
-    company_id?: number
+    company_supervisors_id?: number
   }): Promise<void> {
     loading.value = true
     error.value = null

@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'tutor' | 'student' | 'company' | 'company representative'
+export type UserRole = 'admin' | 'tutor' | 'student' | 'supervisor'
 
 export interface User {
   id: number
@@ -52,8 +52,7 @@ export const ROLE_ROUTES: Record<UserRole, string> = {
   admin: '/admin/dashboard',
   tutor: '/tutor/dashboard',
   student: '/student/dashboard',
-  company: '/company/dashboard',
-  'company representative': '/company/dashboard',
+  supervisor: '/company/dashboard',
 }
 
 export const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/403', '/404']

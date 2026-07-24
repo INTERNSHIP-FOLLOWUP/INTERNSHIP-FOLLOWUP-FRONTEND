@@ -278,16 +278,6 @@
           <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Industry</p>
           <p class="text-sm font-semibold text-slate-900">{{ companyProfile.industry || 'N/A' }}</p>
         </div>
-        <div class="space-y-1">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Contact Person</p>
-          <p class="text-sm font-semibold text-slate-900">
-            {{ companyProfile.contactPerson || 'N/A' }}
-          </p>
-        </div>
-        <div class="space-y-1">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Phone</p>
-          <p class="text-sm font-semibold text-slate-900">{{ companyProfile.phone || 'N/A' }}</p>
-        </div>
       </div>
 
       <!-- Company Logo Section -->
@@ -322,8 +312,6 @@ const displayName = ref('Company')
 const companyProfile = ref({
   name: '',
   industry: '',
-  contactPerson: '',
-  phone: '',
   logoUrl: '',
 })
 
@@ -428,8 +416,6 @@ async function load() {
       companyProfile.value = {
         name: raw.name || '',
         industry: raw.industry || '',
-        contactPerson: raw.contactPerson || '',
-        phone: raw.phone || '',
         logoUrl: '',
       }
     }

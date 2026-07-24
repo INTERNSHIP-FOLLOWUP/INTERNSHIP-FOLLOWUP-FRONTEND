@@ -132,57 +132,10 @@
               :error="errors.location"
               autocomplete="address-level2"
             />
-            <InputField
-              v-if="mode === 'create'"
-              v-model="form.password"
-              label="Account Password"
-              type="password"
-              placeholder="Min. 8 characters"
-              required
-              :error="errors.password"
-              autocomplete="new-password"
-            />
           </div>
         </div>
 
-        <div class="border-t border-slate-100" />
-
-        <!-- Section 2: Primary Contact -->
-        <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
-          <div class="lg:pt-1">
-            <h3
-              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
-            >
-              <span class="h-1 w-1 rounded-full bg-sky-400"></span>
-              Primary Liaison
-            </h3>
-            <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">
-              Main operational anchor point for standard administrative routing.
-            </p>
-          </div>
-          <div
-            class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6"
-          >
-            <InputField
-              v-model="form.contactPerson"
-              label="Contact Person Name"
-              placeholder="e.g. John Doe"
-              :error="errors.contactPerson"
-              autocomplete="name"
-            />
-            <InputField
-              v-model="form.contactPhone"
-              label="Direct Phone Line"
-              placeholder="e.g. +250 788 000 000"
-              :error="errors.contactPhone"
-              autocomplete="tel"
-            />
-          </div>
-        </div>
-
-        <div class="border-t border-slate-100" />
-
-        <!-- Section 3: Digital Presence -->
+        <!-- Section 2: Digital Presence -->
         <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
           <div class="lg:pt-1">
             <h3
@@ -296,72 +249,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- User Avatar Upload -->
-            <div class="space-y-1.5">
-              <label class="flex items-center gap-1 text-sm font-medium text-slate-700">
-                Your Avatar
-                <span class="text-xs font-normal text-slate-400">(PNG, JPG, max 2MB)</span>
-              </label>
-
-              <div
-                class="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 transition-all duration-200"
-                :class="{
-                  'border-indigo-300 bg-indigo-50/40': isAvatarDragOver,
-                  'border-slate-200 bg-slate-50/50 hover:border-indigo-200 hover:bg-indigo-50/20': !isAvatarDragOver,
-                  'border-red-300 bg-red-50': errors.avatar,
-                }"
-                @dragover.prevent="isAvatarDragOver = true"
-                @dragleave.prevent="isAvatarDragOver = false"
-                @drop.prevent="onAvatarDrop"
-                @click="avatarFileInput?.click()"
-              >
-                <template v-if="avatarPreview">
-                  <div class="relative mb-3">
-                    <img
-                      :src="avatarPreview"
-                      alt="Avatar preview"
-                      class="h-24 w-24 rounded-full object-cover shadow-sm ring-2 ring-indigo-100"
-                    />
-                    <button
-                      type="button"
-                      class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm transition-colors hover:bg-red-600"
-                      @click.stop="removeAvatar"
-                    >
-                      <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                  <p class="text-xs font-medium text-indigo-600">
-                    {{ isFile(form.avatar) ? form.avatar.name : 'Avatar uploaded' }}
-                  </p>
-                  <p class="mt-0.5 text-[10px] text-slate-400">Tap to replace</p>
-                </template>
-
-                <template v-else>
-                  <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
-                    <svg class="h-7 w-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                  <p class="text-xs font-medium text-slate-500">
-                    Drop your photo here or <span class="text-indigo-600 underline underline-offset-2">browse</span>
-                  </p>
-                  <p class="mt-0.5 text-[10px] text-slate-400">Supported: JPEG, PNG</p>
-                </template>
-
-                <input
-                  ref="avatarFileInput"
-                  type="file"
-                  accept="image/jpeg,image/png,image/jpg"
-                  class="hidden"
-                  @change="onAvatarFileSelected"
-                />
-              </div>
-              <p v-if="errors.avatar" class="text-xs font-medium text-red-500">{{ errors.avatar }}</p>
-            </div>
-
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <InputField
                 v-model="form.website"
@@ -445,13 +332,9 @@ export type CompanyFormData = {
   companyEmail: string
   location: string
   industry: string
-  contactPerson: string
-  contactPhone: string
   website: string
   companyImage: File | string | null
-  avatar: File | string | null
   telegramLink: string
-  password: string
 }
 
 type CompanyFormErrors = Partial<Record<keyof CompanyFormData, string>>
@@ -481,13 +364,9 @@ const BACKEND_FIELD_MAP: Record<string, keyof CompanyFormData> = {
   email: 'companyEmail',
   location: 'location',
   industry: 'industry',
-  contact_person: 'contactPerson',
-  phone: 'contactPhone',
   website: 'website',
   company_image: 'companyImage',
-  avatar: 'avatar',
   telegram_link: 'telegramLink',
-  password: 'password',
 }
 
 const submitting = ref(false)
@@ -498,13 +377,9 @@ const initialForm: CompanyFormData = {
   companyEmail: '',
   location: '',
   industry: '',
-  contactPerson: '',
-  contactPhone: '',
   website: '',
   companyImage: null,
-  avatar: null,
   telegramLink: '',
-  password: '',
 }
 
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -520,19 +395,6 @@ const companyImagePreview = computed<string | undefined>(() => {
     return URL.createObjectURL(form.companyImage)
   }
   return (form.companyImage as string) || undefined
-})
-
-const avatarFileInput = ref<HTMLInputElement | null>(null)
-const isAvatarDragOver = ref(false)
-
-const avatarPreview = computed(() => {
-  if (form.avatar instanceof File) {
-    return URL.createObjectURL(form.avatar)
-  }
-  if (typeof form.avatar === 'string') {
-    return form.avatar
-  }
-  return ''
 })
 
 const form = reactive<CompanyFormData>({ ...initialForm })
@@ -581,26 +443,9 @@ function validate(): boolean {
     ok = false
   }
 
-  if (form.contactPhone.trim()) {
-    if (!/^[+]?([0-9][\s-]*){7,}$/.test(form.contactPhone.trim())) {
-      errors.contactPhone = 'Please enter a valid phone number.'
-      ok = false
-    }
-  }
-
   if (form.website.trim() && !validateUrl(form.website)) {
     errors.website = 'Please enter a valid website URL.'
     ok = false
-  }
-
-  if (props.mode === 'create') {
-    if (!form.password) {
-      errors.password = 'Password is required.'
-      ok = false
-    } else if (form.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters.'
-      ok = false
-    }
   }
 
   return ok
@@ -660,46 +505,6 @@ function onLogoUrlInput() {
 function clearLogoUrl() {
   companyLogoUrlInput.value = ''
   form.companyImage = null
-}
-
-function onAvatarFileSelected(event: Event) {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-  if (!file) return
-  if (file.size > 2 * 1024 * 1024) {
-    errors.avatar = 'File size must be less than 2MB'
-    return
-  }
-  if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-    errors.avatar = 'Only JPEG and PNG files are allowed'
-    return
-  }
-  errors.avatar = ''
-  form.avatar = file
-  isAvatarDragOver.value = false
-}
-
-function onAvatarDrop(event: DragEvent) {
-  isAvatarDragOver.value = false
-  const file = event.dataTransfer?.files?.[0]
-  if (!file) return
-  if (file.size > 2 * 1024 * 1024) {
-    errors.avatar = 'File size must be less than 2MB'
-    return
-  }
-  if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-    errors.avatar = 'Only JPEG and PNG files are allowed'
-    return
-  }
-  errors.avatar = ''
-  form.avatar = file
-}
-
-function removeAvatar() {
-  form.avatar = null
-  if (avatarFileInput.value) {
-    avatarFileInput.value.value = ''
-  }
 }
 
 function reset() {

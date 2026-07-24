@@ -59,7 +59,7 @@
         <option value="admin">Admin</option>
         <option value="tutor">Tutor</option>
         <option value="student">Student</option>
-        <option value="company">Company</option>
+        <option value="supervisor">Supervisor</option>
       </select>
       <select v-model="statusFilter"
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100">
@@ -357,13 +357,13 @@ interface PaginationMeta {
   current_page: number; last_page: number; per_page: number
   total: number; from: number; to: number
 }
-interface RoleCounts { admin: number; tutor: number; student: number; company: number }
+interface RoleCounts { admin: number; tutor: number; student: number; supervisor: number }
 
 const users = ref<User[]>([])
 const loading = ref(false)
 const error = ref('')
 const pagination = ref<PaginationMeta | null>(null)
-const roleStats = ref<RoleCounts>({ admin: 0, tutor: 0, student: 0, company: 0 })
+const roleStats = ref<RoleCounts>({ admin: 0, tutor: 0, student: 0, supervisor: 0 })
 const currentPage = ref(1)
 const showImportModal = ref(false)
 const searchQuery = ref('')
@@ -441,7 +441,7 @@ async function confirmBulkDelete() {
 
 const totalUsers = computed(() => {
   if (pagination.value) return pagination.value.total
-  return roleStats.value.admin + roleStats.value.tutor + roleStats.value.student + roleStats.value.company
+  return roleStats.value.admin + roleStats.value.tutor + roleStats.value.student + roleStats.value.supervisor
 })
 
 const visiblePages = computed(() => {
@@ -591,7 +591,7 @@ function roleAvatarClass(role?: string): string {
     case 'admin':   return 'bg-purple-100 text-purple-700'
     case 'tutor':   return 'bg-blue-100 text-blue-700'
     case 'student': return 'bg-emerald-100 text-emerald-700'
-    case 'company': return 'bg-amber-100 text-amber-700'
+    case 'supervisor': return 'bg-amber-100 text-amber-700'
     default:        return 'bg-slate-100 text-slate-600'
   }
 }
@@ -600,7 +600,7 @@ function roleBadgeClass(role?: string): string {
     case 'admin':   return 'bg-purple-50 text-purple-700'
     case 'tutor':   return 'bg-blue-50 text-blue-700'
     case 'student': return 'bg-emerald-50 text-emerald-700'
-    case 'company': return 'bg-amber-50 text-amber-700'
+    case 'supervisor': return 'bg-amber-50 text-amber-700'
     default:        return 'bg-slate-50 text-slate-600'
   }
 }
@@ -609,7 +609,7 @@ function roleDotClass(role?: string): string {
     case 'admin':   return 'bg-purple-500'
     case 'tutor':   return 'bg-blue-500'
     case 'student': return 'bg-emerald-500'
-    case 'company': return 'bg-amber-500'
+    case 'supervisor': return 'bg-amber-500'
     default:        return 'bg-slate-400'
   }
 }

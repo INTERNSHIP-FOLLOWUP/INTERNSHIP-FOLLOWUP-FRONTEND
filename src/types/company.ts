@@ -82,6 +82,8 @@ export interface CompanyFeedbackItem {
   id: number
   company_id: number
   student_id?: number
+  student_name?: string
+  name?: string
   title?: string | null
   message: string
   strengths?: string[]

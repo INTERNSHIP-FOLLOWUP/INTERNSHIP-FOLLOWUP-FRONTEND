@@ -146,11 +146,11 @@
               <div class="flex items-center gap-3">
                 <UserAvatar
                   :avatar="item.student?.photo_url || item.student?.photo"
-                  :name="item.student?.name"
+                  :name="feedbackStudentName(item)"
                   size="md"
                 />
                 <div>
-                  <p class="text-sm font-semibold text-gray-900">{{ item.student?.name || 'Student' }}</p>
+                  <p class="text-sm font-semibold text-gray-900">{{ feedbackStudentName(item) }}</p>
                   <p class="text-xs text-gray-400">{{ formatDate(item.created_at) }}</p>
                 </div>
               </div>
@@ -338,6 +338,37 @@ function formatDate(dateStr?: string) {
   } catch {
     return dateStr.slice(0, 10)
   }
+}
+
+function studentDisplayName(item: unknown) {
+  const raw = item as Record<string, unknown> | null
+  if (!raw) return 'Student'
+
+  const nestedStudent = raw.student as Record<string, unknown> | undefined
+  const firstName = String(raw.first_name ?? nestedStudent?.first_name ?? '').trim()
+  const lastName = String(raw.last_name ?? nestedStudent?.last_name ?? '').trim()
+  const fullName = `${firstName} ${lastName}`.trim()
+
+  return (
+    String(nestedStudent?.name ?? '').trim() ||
+    String(raw.student_name ?? '').trim() ||
+    String(raw.name ?? '').trim() ||
+    fullName ||
+    'Student'
+  )
+}
+
+function studentRecordId(item: CompanyStudentItem) {
+  return Number(item.student_id ?? item.id ?? 0)
+}
+
+function feedbackStudentName(item: CompanyFeedbackItem) {
+  const directName = studentDisplayName(item)
+  if (directName !== 'Student') return directName
+
+  const studentId = Number(item.student_id ?? 0)
+  const student = students.value.find((s) => studentRecordId(s) === studentId)
+  return student ? studentDisplayName(student) : 'Student'
 }
 
 onMounted(() => {

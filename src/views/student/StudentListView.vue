@@ -204,13 +204,13 @@
                 <td class="whitespace-nowrap px-6 py-4">
                   <span
                     class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
-                    :class="statusClass(student.status)"
+                    :class="statusClass(student.user?.status || student.status)"
                   >
                     <span
                       class="h-1.5 w-1.5 rounded-full"
-                      :class="statusDotClass(student.status)"
+                      :class="statusDotClass(student.user?.status || student.status)"
                     />
-                    {{ formatStatus(student.status) }}
+                    {{ formatStatus(student.user?.status || student.status) }}
                   </span>
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 text-right">
@@ -244,7 +244,7 @@
                           Edit Student
                         </button>
 
-                        <button v-if="student.status !== 'inactive' && student.status !== 'deactivated'" type="button" @click.stop="openKebabId = null; confirmAction('deactivate', student)"
+                        <button v-if="(student.user?.status || student.status) !== 'inactive' && (student.user?.status || student.status) !== 'deactivated'" type="button" @click.stop="openKebabId = null; confirmAction('deactivate', student)"
                           class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
                           <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />

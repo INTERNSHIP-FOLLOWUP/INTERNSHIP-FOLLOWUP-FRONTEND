@@ -13,16 +13,36 @@
     </div>
 
     <template v-else-if="data">
-      <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-        <div class="flex items-start gap-5">
-          <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-xl font-bold text-blue-600">
+      <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex items-center gap-5">
+          <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary-100 to-blue-100 text-xl font-bold text-primary-700 shadow-xs">
             {{ initials }}
           </div>
           <div class="flex-1 min-w-0">
-            <h1 class="text-xl font-bold text-slate-900">{{ data.tutor.name }}</h1>
-            <p class="text-sm text-slate-500">{{ data.tutor.email }}</p>
+            <div class="flex items-center gap-2">
+              <h1 class="text-xl font-bold text-slate-900">{{ data.tutor.name }}</h1>
+              <span
+                class="rounded-full px-2.5 py-0.5 text-xs font-bold"
+                :class="(data.tutor.user?.status || data.tutor.status) === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'"
+              >
+                {{ data.tutor.user?.status || data.tutor.status || 'active' }}
+              </span>
+            </div>
+            <p class="text-sm text-slate-500">{{ data.tutor.email }} &middot; {{ data.tutor.phone || data.tutor.user?.phone || 'No phone' }}</p>
             <p class="mt-1 text-sm font-semibold text-primary-600">{{ data.tutor.students_count }} assigned student{{ data.tutor.students_count !== 1 ? 's' : '' }}</p>
           </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <router-link
+            :to="`/admin/tutors/${data.tutor.id}/edit`"
+            class="inline-flex items-center gap-1.5 rounded-xl border border-primary-200 bg-primary-50 px-4 py-2 text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-100"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit Tutor Profile
+          </router-link>
         </div>
       </div>
 
@@ -70,8 +90,8 @@
                   <td class="py-3 pr-4 text-slate-500">{{ s.issues_count }}</td>
                   <td class="py-3 pr-4">
                     <span class="rounded-full px-2.5 py-0.5 text-xs font-bold"
-                      :class="s.status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'">
-                      {{ s.status }}
+                      :class="(s.user?.status || s.status) === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'">
+                      {{ s.user?.status || s.status }}
                     </span>
                   </td>
                   <td class="py-3 text-right">

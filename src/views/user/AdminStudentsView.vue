@@ -401,6 +401,18 @@ interface Student {
   batch: Batch | null
   tutor?: Tutor | { name?: string; first_name?: string; last_name?: string } | string | null
   student_profile?: StudentProfile
+  user?: {
+    id?: number
+    first_name?: string
+    last_name?: string
+    name?: string
+    email?: string
+    phone?: string
+    gender?: string
+    status?: string
+    avatar?: string | null
+    deleted_at?: string | null
+  } | null
   deleted_at: string | null
 }
 interface PaginationMeta { current_page: number; last_page: number; per_page: number; total: number; from: number; to: number }
@@ -502,20 +514,20 @@ function getTutorName(student: Student): string {
 }
 
 function getGender(student: Student): string {
-  const g = student.gender || student.student_profile?.gender
+  const g = student.user?.gender || student.gender || student.student_profile?.gender
   return g ? g : '—'
 }
 
 function getStatusText(student: Student): string {
-  if (student.deleted_at) return 'Deactivated'
-  const st = student.status || student.student_profile?.status || 'active'
+  if (student.deleted_at || student.user?.deleted_at) return 'Deactivated'
+  const st = student.user?.status || student.status || student.student_profile?.status || 'active'
   if (st.toLowerCase() === 'inactive' || st.toLowerCase() === 'deactivated') return 'Deactivated'
   return st.charAt(0).toUpperCase() + st.slice(1)
 }
 
 function getStatusBadgeClass(student: Student): string {
-  if (student.deleted_at) return 'bg-rose-50 text-rose-700'
-  const st = (student.status || student.student_profile?.status || 'active').toLowerCase()
+  if (student.deleted_at || student.user?.deleted_at) return 'bg-rose-50 text-rose-700'
+  const st = (student.user?.status || student.status || student.student_profile?.status || 'active').toLowerCase()
   switch (st) {
     case 'active': return 'bg-emerald-50 text-emerald-700'
     case 'inactive': return 'bg-slate-100 text-slate-600'
@@ -737,13 +749,13 @@ async function fetchStudents() {
       list = list.filter(s => String(s.batch?.id || s.student_profile?.batch_id || '') === String(batchFilter.value))
     }
     if (genderFilter.value) {
-      list = list.filter(s => (s.gender || s.student_profile?.gender || '').toLowerCase() === genderFilter.value.toLowerCase())
+      list = list.filter(s => (s.user?.gender || s.gender || s.student_profile?.gender || '').toLowerCase() === genderFilter.value.toLowerCase())
     }
     if (statusFilter.value) {
       if (statusFilter.value === 'deactivated') {
-        list = list.filter(s => !!s.deleted_at)
+        list = list.filter(s => !!s.deleted_at || !!s.user?.deleted_at)
       } else {
-        list = list.filter(s => (s.status || s.student_profile?.status || 'active').toLowerCase() === statusFilter.value.toLowerCase())
+        list = list.filter(s => (s.user?.status || s.status || s.student_profile?.status || 'active').toLowerCase() === statusFilter.value.toLowerCase())
       }
     }
 

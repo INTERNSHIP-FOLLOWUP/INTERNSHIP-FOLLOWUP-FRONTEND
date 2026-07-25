@@ -186,7 +186,7 @@
                 </div>
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Gender</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ store.profile.gender || '—' }}</dd>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ store.profile.user?.gender || store.profile.gender || '—' }}</dd>
                 </div>
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Last Updated</dt>
@@ -494,8 +494,8 @@ function startEditing(): void {
   const parts = (store.profile?.name || '').split(' ')
   editForm.first_name = parts[0] || ''
   editForm.last_name = parts.slice(1).join(' ') || ''
-  editForm.phone = store.profile?.phone || ''
-  editForm.gender = store.profile?.gender || ''
+  editForm.phone = store.profile?.user?.phone || store.profile?.phone || ''
+  editForm.gender = store.profile?.user?.gender || store.profile?.gender || ''
   editingProfile.value = true
 }
 
@@ -548,8 +548,8 @@ async function saveProfile(): Promise<void> {
   const payload: StudentProfileUpdatePayload = {}
   const fullName = `${editForm.first_name} ${editForm.last_name}`.trim()
   if (fullName !== store.profile?.name) payload.name = fullName
-  if (editForm.phone !== store.profile?.phone) payload.phone = editForm.phone || undefined
-  if (editForm.gender !== store.profile?.gender) payload.gender = editForm.gender || undefined
+  if (editForm.phone !== (store.profile?.user?.phone || store.profile?.phone)) payload.phone = editForm.phone || undefined
+  if (editForm.gender !== (store.profile?.user?.gender || store.profile?.gender)) payload.gender = editForm.gender || undefined
 
   // Only send if something changed
   if (Object.keys(payload).length === 0) {

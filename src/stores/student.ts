@@ -35,8 +35,11 @@ export const useStudentStore = defineStore('student', () => {
       students.value = Array.isArray(payload) ? payload : []
       pagination.value = response.meta
     } catch (err: unknown) {
+      if ((err as { cancelled?: boolean })?.cancelled) return
       const parsed = parseApiError(err)
-      error.value = parsed.message
+      if (parsed.message) {
+        error.value = parsed.message
+      }
       throw err
     } finally {
       loading.value = false

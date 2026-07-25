@@ -42,7 +42,7 @@ export const profileService = {
   },
 
   async updateProfile(payload: UpdateProfilePayload): Promise<{ message: string; user: Partial<ProfileResponse> }> {
-    const { data } = await api.put<{ message: string; user: Partial<ProfileResponse> }>('/profile', payload)
+    const { data } = await api.put<{ message: string; user: Partial<ProfileResponse> }>('/profile/update', payload)
     return data
   },
 

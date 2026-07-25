@@ -23,6 +23,9 @@ export const worklogService = {
 
   async updateWorklog(id: number, payload: FormData | Record<string, unknown>): Promise<Worklog> {
     const isFormData = payload instanceof FormData
+    if (isFormData) {
+      payload.append('_method', 'PUT')
+    }
     const response = await api.post(`/worklogs/${id}`, payload, {
       headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
     })

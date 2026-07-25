@@ -56,7 +56,7 @@
                 >
                   <img
                     v-if="photoPreview || displayPhoto"
-                    :src="photoPreview || displayPhoto"
+                    :src="photoPreview || displayPhoto || undefined"
                     :alt="fullName"
                     class="h-full w-full rounded-full object-cover"
                   />
@@ -182,7 +182,7 @@
                 </div>
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Last Updated</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ formatDate(user?.updated_at) }}</dd>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ formatDate((user as any)?.updated_at) }}</dd>
                 </div>
               </dl>
 

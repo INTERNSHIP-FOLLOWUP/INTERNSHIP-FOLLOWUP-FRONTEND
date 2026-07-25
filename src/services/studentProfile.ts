@@ -13,42 +13,44 @@ import type {
 
 export const studentProfileService = {
   /**
-   * GET /api/student/profile
-   * Returns the authenticated student's full profile.
+   * GET /api/profile
+   * Returns the authenticated user's profile.
    */
   async fetchProfile(): Promise<StudentProfile> {
-    const response = await api.get<StudentProfileResponse>('/student/profile')
-    return response.data.data
+    const response = await api.get<{ data?: StudentProfile } | StudentProfile>('/profile')
+    const data = (response.data as { data?: StudentProfile }).data ?? response.data
+    return data as StudentProfile
   },
 
   /**
-   * PUT /api/student/profile
-   * Update the authenticated student's profile (name, phone, gender).
+   * PUT /api/profile/update
+   * Update the authenticated user's profile.
    */
   async updateProfile(payload: StudentProfileUpdatePayload): Promise<StudentProfile> {
-    const response = await api.put<StudentProfileResponse>('/student/profile', payload)
-    return response.data.data
+    const response = await api.put<{ user?: StudentProfile; data?: StudentProfile }>('/profile/update', payload)
+    const data = response.data.user ?? response.data.data ?? (response.data as unknown as StudentProfile)
+    return data
   },
 
   /**
-   * POST /api/student/profile/photo
-   * Upload a new profile photo.
+   * POST /api/profile/avatar
+   * Upload a new profile avatar photo.
    */
   async uploadPhoto(file: File): Promise<PhotoUploadResponse> {
     const fd = new FormData()
-    fd.append('photo', file)
-    const response = await api.post<PhotoUploadResponse>('/student/profile/photo', fd, {
+    fd.append('avatar', file)
+    const response = await api.post<PhotoUploadResponse>('/profile/avatar', fd, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
     return response.data
   },
 
   /**
-   * PUT /api/student/profile/password
-   * Change the authenticated student's password.
+   * PUT /api/profile/password
+   * Change the authenticated user's password.
    */
   async changePassword(payload: PasswordChangePayload): Promise<{ message: string }> {
-    const response = await api.put<{ message: string }>('/student/profile/password', payload)
+    const response = await api.put<{ message: string }>('/profile/password', payload)
     return response.data
   },
 }

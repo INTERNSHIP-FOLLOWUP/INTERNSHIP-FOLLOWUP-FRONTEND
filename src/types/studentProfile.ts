@@ -19,6 +19,17 @@ export interface StudentProfile {
   name: string
   email: string
   student_code: string | null
+  user?: {
+    id?: number
+    first_name?: string
+    last_name?: string
+    name?: string
+    email?: string
+    phone?: string
+    gender?: string
+    status?: string
+    avatar?: string | null
+  } | null
   gender: string | null
   phone: string | null
   /** Relative path like "students/abc.jpg" or null — construct full URL for display */

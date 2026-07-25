@@ -4,6 +4,8 @@ export interface Assignment {
   id: number
   student_id: number
   company_supervisors_id: number
+  company_supervisor_id?: number
+  company_id?: number
   tutor_id: number
   student_name: string
   company_name: string

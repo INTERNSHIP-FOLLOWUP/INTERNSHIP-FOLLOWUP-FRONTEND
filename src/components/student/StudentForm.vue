@@ -451,19 +451,20 @@ function populateForm(data?: unknown): void {
   const s = (data || studentStore.currentStudent || (props.studentId ? studentStore.getStudentById(props.studentId) : null)) as Record<string, any> | null
   if (!s) return
 
+  const user = s.user || {}
   const profile = s.student_profile || {}
   form.student_code = s.student_code || profile.student_code || ''
-  form.first_name = s.first_name || (s.name ? s.name.split(' ')[0] : '')
-  form.last_name = s.last_name || (s.name ? s.name.split(' ').slice(1).join(' ') : '')
-  form.email = s.email || ''
-  form.gender = s.gender || profile.gender || ''
-  form.phone = s.phone || ''
+  form.first_name = user.first_name || s.first_name || (s.name ? s.name.split(' ')[0] : '')
+  form.last_name = user.last_name || s.last_name || (s.name ? s.name.split(' ').slice(1).join(' ') : '')
+  form.email = user.email || s.email || ''
+  form.gender = user.gender || s.gender || profile.gender || ''
+  form.phone = user.phone || s.phone || ''
   form.batch_id = s.batch_id ?? s.batch?.id ?? profile.batch_id ?? null
   form.tutor_id = s.tutor_id ?? s.tutor?.id ?? profile.tutor_id ?? null
-  if (s.deleted_at) {
+  if (s.deleted_at || user.deleted_at) {
     form.status = 'deactivated'
   } else {
-    form.status = (s.status || profile.status || 'active') as StudentStatus | ''
+    form.status = (user.status || s.status || profile.status || 'active') as StudentStatus | ''
   }
   form.password = ''
   form.password_confirmation = ''

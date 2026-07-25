@@ -51,7 +51,9 @@ export const useTutorStore = defineStore('tutor', {
         this.loaded = true
       } catch (err) {
         const parsed = parseApiError(err)
-        this.error = parsed.message
+        if (parsed.message) {
+          this.error = parsed.message
+        }
       } finally {
         this.loading = false
       }

@@ -339,6 +339,9 @@ const studentDisplayName = computed(() => {
   return auth.user?.name || 'You'
 })
 
+const notesLength = computed(() => form.notes ? form.notes.length : 0)
+const actionItemsLength = computed(() => form.action_items ? form.action_items.length : 0)
+
 const form = reactive<FollowupPayload>({
   student_id: props.followup?.student_id ?? (isEdit.value ? (null as unknown as number) : (profileStore.profile?.id ?? (null as unknown as number))),
   meeting_type: props.followup?.meeting_type ?? ('' as MeetingType),

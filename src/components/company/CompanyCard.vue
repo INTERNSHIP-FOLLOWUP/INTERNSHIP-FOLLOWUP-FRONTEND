@@ -6,16 +6,17 @@
     <div class="flex items-start gap-4">
       <!-- Company Avatar / Fallback Placeholder -->
       <img
-        v-if="companyLogoUrl"
+        v-if="companyLogoUrl && !companyImageError"
         :src="companyLogoUrl"
         alt=""
+        @error="companyImageError = true"
         class="h-12 w-12 shrink-0 rounded-xl object-cover ring-4 ring-gray-50 transition-transform group-hover:scale-[1.02]"
       />
       <div
         v-else
-        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 text-base font-bold text-gray-600 ring-4 ring-gray-50 select-none"
+        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-blue-100 text-base font-bold text-primary-700 ring-4 ring-gray-50 select-none shadow-xs"
       >
-        {{ company.name.charAt(0).toUpperCase() }}
+        {{ company.name ? company.name.charAt(0).toUpperCase() : 'C' }}
       </div>
 
       <!-- Main Text Details -->
@@ -170,8 +171,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import type { CompanySummary } from '@/stores/company'
+
+const companyImageError = ref(false)
 
 type Props = {
   company: CompanySummary
@@ -203,12 +206,14 @@ const companyLogoUrl = computed(() => {
 })
 
 const roleBadgeClass = computed(() => {
-  if (props.company.role === 'active') return 'bg-emerald-50 text-emerald-700'
+  const status = (props.company as any).role || (props.company as any).status || 'active'
+  if (status === 'active') return 'bg-emerald-50 text-emerald-700'
   return 'bg-slate-100 text-slate-500'
 })
 
 const roleDotClass = computed(() => {
-  if (props.company.role === 'active') return 'bg-emerald-500'
+  const status = (props.company as any).role || (props.company as any).status || 'active'
+  if (status === 'active') return 'bg-emerald-500'
   return 'bg-slate-400'
 })
 </script>

@@ -64,7 +64,6 @@ const initialData = ref<Partial<CompanyFormData>>({
   companyName: '',
   companyEmail: '',
   location: '',
-  contactPhone: '',
   website: '',
   companyImage: null,
   telegramLink: '',

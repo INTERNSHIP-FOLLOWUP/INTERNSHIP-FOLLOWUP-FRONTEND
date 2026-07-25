@@ -56,28 +56,29 @@
           <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <!-- Avatar Section -->
             <div class="flex flex-col items-center text-center">
-              <div class="relative group">
+              <div class="relative group cursor-pointer" @click="triggerFileInput" title="Click to change profile picture">
                 <div
-                  class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-shadow duration-200 group-hover:shadow-xl"
+                  class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-all duration-200 group-hover:shadow-xl ring-4 ring-slate-100/80"
                   :class="photoUploadError ? 'border-red-300' : 'border-slate-100'"
                 >
                   <img
-                    v-if="photoPreview || displayPhoto"
+                    v-if="(photoPreview || displayPhoto) && !photoError"
                     :src="photoPreview ?? displayPhoto ?? undefined"
                     :alt="store.profile.name"
+                    @error="photoError = true"
                     class="h-full w-full rounded-full object-cover"
                   />
                   <div
                     v-else
-                    class="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-400 to-teal-500 text-3xl font-bold text-white"
+                    class="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-500 to-teal-600 text-3xl font-bold text-white shadow-inner"
                   >
                     {{ initials }}
                   </div>
                 </div>
 
-                <!-- Upload overlay -->
-                <label
-                  class="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                <!-- Hover overlay -->
+                <div
+                  class="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
                   :class="{ 'opacity-100': uploadingPhoto }"
                 >
                   <svg
@@ -96,14 +97,25 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   <LoadingSpinner v-else size="sm" color="white" />
-                  <input
-                    ref="fileInput"
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    class="hidden"
-                    @change="handlePhotoUpload"
-                  />
-                </label>
+                </div>
+
+                <!-- Camera badge button -->
+                <div
+                  class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 text-white shadow-md transition-all hover:bg-primary-700 hover:scale-110 active:scale-95 ring-2 ring-white"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+
+                <input
+                  ref="fileInput"
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg,image/webp"
+                  class="hidden"
+                  @change="handlePhotoUpload"
+                />
               </div>
 
               <p v-if="photoUploadError" class="mt-2 text-xs text-red-500">{{ photoUploadError }}</p>
@@ -127,7 +139,7 @@
               <dl class="mt-3 space-y-3">
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Email</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ store.profile.email }}</dd>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800 truncate max-w-[250px]">{{ store.profile.email }}</dd>
                 </div>
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Batch</dt>
@@ -396,18 +408,32 @@ onMounted(async () => {
 })
 
 // ── Helpers ──
+const photoError = ref(false)
+
+function triggerFileInput(): void {
+  if (fileInput.value) {
+    fileInput.value.click()
+  }
+}
 
 /**
- * Construct a displayable photo URL from the relative path returned by the API.
- * Backend returns relative paths like "/storage/students/abc.jpg" — we prepend
- * the API base URL to make a full URL the browser can load.
+ * Construct a displayable photo URL from the profile object.
  */
 const displayPhoto = computed(() => {
-  const photo = store.profile?.photo
+  if (photoError.value) return null
+  const photo =
+    (store.profile as any)?.photo_url ||
+    (store.profile as any)?.photo ||
+    (store.profile as any)?.avatar_url ||
+    (store.profile as any)?.avatar ||
+    (store.profile as any)?.user?.avatar_url ||
+    (store.profile as any)?.user?.avatar ||
+    authStore.user?.avatar_url ||
+    authStore.user?.avatar ||
+    null
+
   if (!photo) return null
-  // Backend now returns full URLs directly (e.g. "http://localhost:8000/storage/...")
   if (photo.startsWith('http://') || photo.startsWith('https://')) return photo
-  // Defensive fallback: prepend base URL for any relative path
   const baseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '')
   const cleanPath = photo.startsWith('/') ? photo : `/storage/${photo}`
   return `${baseUrl}${cleanPath}`
@@ -597,12 +623,13 @@ async function handlePhotoUpload(event: Event): Promise<void> {
   if (!file) return
 
   // Validate
-  if (!['image/jpeg', 'image/png'].includes(file.type)) {
-    photoUploadError.value = 'Only JPG and PNG files are allowed.'
+  if (!['image/jpeg', 'image/png', 'image/jpg', 'image/webp'].includes(file.type)) {
+    photoUploadError.value = 'Only JPG, PNG, and WEBP files are allowed.'
     return
   }
 
   photoUploadError.value = ''
+  photoError.value = false
   uploadingPhoto.value = true
 
   // Show local preview immediately

@@ -136,6 +136,7 @@
                     @change="toggleSelectAll"
                     class="h-4 w-4 rounded border-slate-300 cursor-pointer accent-rose-600" />
                 </th>
+                <th class="px-6 py-3.5 font-medium">Photo</th>
                 <th class="px-6 py-3.5 font-medium">First Name</th>
                 <th class="px-6 py-3.5 font-medium">Last Name</th>
                 <th class="px-6 py-3.5 font-medium">Student ID</th>
@@ -156,10 +157,25 @@
                     @change="toggleSelect(student.id)"
                     class="h-4 w-4 rounded border-slate-300 cursor-pointer accent-rose-600" />
                 </td>
+                <td class="whitespace-nowrap px-6 py-4">
+                  <img
+                    v-if="getStudentPhoto(student) && !failedStudentPhotos.has(student.id)"
+                    :src="getStudentPhoto(student)!"
+                    :alt="student.first_name + ' ' + student.last_name"
+                    @error="failedStudentPhotos.add(student.id)"
+                    class="h-9 w-9 rounded-full object-cover ring-2 ring-white shadow-xs"
+                  />
+                  <div
+                    v-else
+                    class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-emerald-100 to-teal-50 text-xs font-bold text-emerald-700 ring-2 ring-white shadow-xs"
+                  >
+                    {{ getInitials((student.first_name || '') + ' ' + (student.last_name || '')) }}
+                  </div>
+                </td>
                 <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.first_name }}</td>
                 <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.last_name }}</td>
                 <td class="whitespace-nowrap px-6 py-4 font-mono text-xs font-medium text-slate-500">{{ formatStudentId(student.student_profile?.student_code || student.student_code, getBatchName(student)) }}</td>
-                <td class="whitespace-nowrap px-6 py-4 text-slate-500">{{ student.email }}</td>
+                <td class="whitespace-nowrap px-6 py-4 text-slate-500 max-w-[200px] truncate">{{ student.email }}</td>
                 <td class="whitespace-nowrap px-6 py-4 text-slate-500">
                   <span v-if="getBatchName(student) !== '—'" class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
                     {{ getBatchName(student) }}
@@ -492,6 +508,27 @@ async function fetchTutors() {
     const res = await api.get('/admin/tutors', { params: { per_page: 100 } })
     tutors.value = res.data.data ?? res.data ?? []
   } catch { /* ignore */ }
+}
+
+const failedStudentPhotos = ref<Set<number>>(new Set())
+
+function getStudentPhoto(student: any): string | null {
+  if (!student) return null
+  return student.photo_url || student.photo || student.avatar_url || student.avatar || student.user?.photo_url || student.user?.avatar_url || student.user?.avatar || student.student_profile?.photo || null
+}
+
+function getInitials(name?: string): string {
+  if (!name || typeof name !== 'string') return 'ST'
+  return (
+    name
+      .trim()
+      .split(' ')
+      .map((n) => n[0])
+      .filter(Boolean)
+      .join('')
+      .toUpperCase()
+      .slice(0, 2) || 'ST'
+  )
 }
 
 function getBatchName(student: Student): string {

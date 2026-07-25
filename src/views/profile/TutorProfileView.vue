@@ -102,7 +102,7 @@
               <p v-if="photoUploadError" class="mt-2 text-xs text-red-500">{{ photoUploadError }}</p>
 
               <h2 class="mt-4 text-lg font-bold text-slate-900">{{ fullName }}</h2>
-              <p class="text-sm text-slate-500">{{ user?.email }}</p>
+              <p class="text-sm text-slate-500 truncate max-w-[250px]">{{ user?.email }}</p>
 
               <!-- Role Badge -->
               <span
@@ -119,7 +119,7 @@
               <dl class="mt-3 space-y-3">
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Email</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ user?.email }}</dd>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800 truncate max-w-[250px]">{{ user?.email }}</dd>
                 </div>
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Role</dt>
@@ -178,7 +178,7 @@
                 </div>
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Email</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ user?.email || '—' }}</dd>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800 truncate max-w-[250px]">{{ user?.email || '—' }}</dd>
                 </div>
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Last Updated</dt>

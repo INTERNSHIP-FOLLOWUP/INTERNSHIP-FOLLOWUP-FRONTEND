@@ -166,6 +166,7 @@
           <table class="w-full text-left text-sm">
             <thead>
               <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <th class="px-6 py-3.5 font-medium">Photo</th>
                 <th class="px-6 py-3.5 font-medium">First Name</th>
                 <th class="px-6 py-3.5 font-medium">Last Name</th>
                 <th class="px-6 py-3.5 font-medium">Student ID</th>
@@ -178,6 +179,21 @@
             </thead>
             <tbody class="divide-y divide-slate-50">
               <tr v-for="(student, index) in store.students" :key="student.id" class="transition-colors hover:bg-slate-50/50">
+                <td class="whitespace-nowrap px-6 py-4">
+                  <img
+                    v-if="getStudentPhoto(student) && !failedStudentPhotos.has(student.id)"
+                    :src="getStudentPhoto(student)!"
+                    :alt="student.name"
+                    @error="failedStudentPhotos.add(student.id)"
+                    class="h-9 w-9 rounded-full object-cover ring-2 ring-white shadow-xs"
+                  />
+                  <div
+                    v-else
+                    class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-emerald-100 to-teal-50 text-xs font-bold text-emerald-700 ring-2 ring-white shadow-xs"
+                  >
+                    {{ getInitials(student.name) }}
+                  </div>
+                </td>
                 <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">
                   {{ firstName(student.name) }}
                 </td>
@@ -189,7 +205,7 @@
                 >
                   {{ formatStudentId(student.student_code, student.batch) }}
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-500">
+                <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-500 max-w-[200px] truncate">
                   {{ student.email }}
                 </td>
                 <td class="whitespace-nowrap px-6 py-4">
@@ -293,9 +309,9 @@
               >
                 {{ getInitials(student.name) }}
               </div>
-              <div>
-                <p class="font-semibold text-slate-900">{{ firstName(student.name) }} {{ lastName(student.name) }}</p>
-                <p class="mt-0.5 text-xs text-slate-500">{{ student.email }}</p>
+              <div class="min-w-0">
+                <p class="font-semibold text-slate-900 truncate">{{ firstName(student.name) }} {{ lastName(student.name) }}</p>
+                <p class="mt-0.5 text-xs text-slate-500 truncate max-w-[200px]">{{ student.email }}</p>
               </div>
             </div>
             <span
@@ -449,6 +465,13 @@ function firstName(name: string): string {
 function lastName(name: string): string {
   const parts = (name || '').split(' ')
   return parts.slice(1).join(' ') || ''
+}
+
+const failedStudentPhotos = ref<Set<number>>(new Set())
+
+function getStudentPhoto(student: any): string | null {
+  if (!student) return null
+  return student.photo_url || student.photo || student.avatar_url || student.avatar || student.user?.photo_url || student.user?.avatar_url || student.user?.avatar || student.student_profile?.photo || null
 }
 
 function getInitials(name: string): string {
@@ -614,6 +637,8 @@ function closeFormModal() {
 function onStudentSaved() {
   closeFormModal()
   toast.success(editingStudentId.value ? 'Student updated successfully.' : 'Student created successfully.')
+  // Force-refresh tutor counts — student's tutor assignment may have changed
+  tutorStore.fetchTutors({}, true)
 }
 
 async function exportPdf() {
@@ -701,6 +726,8 @@ async function handleConfirmAction() {
     }
     pendingAction.value = null
     resetPage()
+    // Refresh tutor counts after any student status/assignment change
+    tutorStore.fetchTutors({}, true)
   })
 }
 

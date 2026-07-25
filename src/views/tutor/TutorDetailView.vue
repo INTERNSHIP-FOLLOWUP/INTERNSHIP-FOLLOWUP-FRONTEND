@@ -28,7 +28,7 @@
                 {{ data.tutor.user?.status || data.tutor.status || 'active' }}
               </span>
             </div>
-            <p class="text-sm text-slate-500">{{ data.tutor.email }} &middot; {{ data.tutor.phone || data.tutor.user?.phone || 'No phone' }}</p>
+            <p class="text-sm text-slate-500"><span class="truncate max-w-[200px] inline-block align-bottom">{{ data.tutor.email }}</span> &middot; {{ data.tutor.phone || data.tutor.user?.phone || 'No phone' }}</p>
             <p class="mt-1 text-sm font-semibold text-primary-600">{{ data.tutor.students_count }} assigned student{{ data.tutor.students_count !== 1 ? 's' : '' }}</p>
           </div>
         </div>

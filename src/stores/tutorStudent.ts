@@ -43,13 +43,16 @@ export const useTutorStudentStore = defineStore('tutorStudent', () => {
       })
       const payload = (response as any)?.data ?? response
       students.value = Array.isArray(payload) ? payload : []
-      pagination.value = {
-        total: response.meta.total,
-        per_page: response.meta.per_page,
-        current_page: response.meta.current_page,
-        last_page: response.meta.last_page,
-        from: response.meta.from,
-        to: response.meta.to,
+      if (response && (response as any).meta) {
+        const meta = (response as any).meta
+        pagination.value = {
+          total: meta.total ?? 0,
+          per_page: meta.per_page ?? 15,
+          current_page: meta.current_page ?? 1,
+          last_page: meta.last_page ?? 1,
+          from: meta.from ?? null,
+          to: meta.to ?? null,
+        }
       }
     } catch (err: unknown) {
       const parsed = err as { message?: string }

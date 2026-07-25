@@ -21,7 +21,7 @@
           </div>
           <div class="flex-1 min-w-0">
             <h1 class="text-xl font-bold text-slate-900">{{ profile.tutor.name }}</h1>
-            <p class="text-sm text-slate-500">{{ profile.tutor.email }}</p>
+            <p class="text-sm text-slate-500 truncate max-w-[250px]">{{ profile.tutor.email }}</p>
             <p class="mt-1 text-sm font-semibold text-primary-600">{{ profile.tutor.students_count }} assigned student{{ profile.tutor.students_count !== 1 ? 's' : '' }}</p>
           </div>
         </div>

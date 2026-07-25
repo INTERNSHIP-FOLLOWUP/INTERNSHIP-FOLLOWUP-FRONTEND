@@ -50,16 +50,19 @@ export const useIssueStore = defineStore('issue', () => {
     ]
   })
 
-  const isEmpty = computed(() => !loading.value && issues.value.length === 0)
+  const isEmpty = computed(() => !loading.value && filteredIssues.value.length === 0)
 
   async function fetchIssues(): Promise<void> {
     loading.value = true
     error.value = null
     try {
-      const response = await issueService.getIssues(filters.value)
+      const response = await issueService.getIssues({ ...filters.value, per_page: 100 } as any)
       issues.value = response.data || []
-      pagination.value.totalItems = response.meta?.totalItems ?? response.data?.length ?? 0
-      pagination.value.totalPages = response.meta?.totalPages ?? 1
+      pagination.value.totalItems = filteredIssues.value.length
+      pagination.value.totalPages = Math.max(1, Math.ceil(filteredIssues.value.length / perPage))
+      if (pagination.value.page > pagination.value.totalPages) {
+        pagination.value.page = 1
+      }
     } catch (err: unknown) {
       const parsed = err as { message?: string }
       error.value = parsed?.message || 'Failed to load issues.'

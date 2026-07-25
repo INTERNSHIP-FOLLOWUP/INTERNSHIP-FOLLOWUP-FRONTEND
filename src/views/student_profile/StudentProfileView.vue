@@ -45,7 +45,7 @@
             <div class="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ profile.student.name }}</h1>
-                <p class="mt-0.5 text-sm text-slate-400">{{ profile.student.email }}</p>
+                <p class="mt-0.5 text-sm text-slate-400 truncate max-w-[250px]">{{ profile.student.email }}</p>
               </div>
               <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ring-1"
                 :class="profile.student.status === 'active'

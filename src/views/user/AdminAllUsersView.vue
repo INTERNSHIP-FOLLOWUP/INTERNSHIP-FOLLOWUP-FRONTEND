@@ -127,13 +127,24 @@
                 </td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <div class="flex items-center gap-3">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold" :class="roleAvatarClass(user.role?.name)">
+                    <img
+                      v-if="getUserPhoto(user) && !failedUserPhotos.has(user.id)"
+                      :src="getUserPhoto(user)!"
+                      :alt="user.name"
+                      @error="failedUserPhotos.add(user.id)"
+                      class="h-9 w-9 rounded-full object-cover ring-2 ring-white shadow-xs"
+                    />
+                    <div
+                      v-else
+                      class="flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold ring-2 ring-white shadow-xs"
+                      :class="roleAvatarClass(user.role?.name)"
+                    >
                       {{ getInitials(user.name) }}
                     </div>
                     <span class="font-semibold text-slate-900">{{ user.name }}</span>
                   </div>
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">{{ user.email }}</td>
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500 max-w-[200px] truncate">{{ user.email }}</td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold" :class="roleBadgeClass(user.role?.name)">
                     <span class="h-1.5 w-1.5 rounded-full" :class="roleDotClass(user.role?.name)" />
@@ -367,6 +378,12 @@ const roleStats = ref<RoleCounts>({ admin: 0, tutor: 0, student: 0, supervisor: 
 const currentPage = ref(1)
 const showImportModal = ref(false)
 const searchQuery = ref('')
+const failedUserPhotos = ref<Set<number>>(new Set())
+
+function getUserPhoto(user: any): string | null {
+  if (!user) return null
+  return user.avatar_url || user.avatar || user.photo_url || user.photo || user.student_profile?.photo || null
+}
 const roleFilter = ref('')
 const statusFilter = ref('')
 const confirmTitle = ref('')

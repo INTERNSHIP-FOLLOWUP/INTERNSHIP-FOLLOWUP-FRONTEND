@@ -132,7 +132,7 @@
                   </div>
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 font-mono text-xs font-medium text-slate-500">{{ formatStudentId(student.student_code, stats?.batch_name) }}</td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400">{{ student.email }}</td>
+                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400 max-w-[200px] truncate">{{ student.email }}</td>
                 <td class="whitespace-nowrap px-5 py-4">
                   <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold" :class="statusClass(student.status)">
                     <span class="h-1.5 w-1.5 rounded-full" :class="statusDotClass(student.status)" />

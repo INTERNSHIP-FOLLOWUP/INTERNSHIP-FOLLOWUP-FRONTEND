@@ -142,7 +142,8 @@
               <tr
                 class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400"
               >
-                <th class="px-6 py-3.5 font-medium">Tutor</th>
+                <th class="px-6 py-3.5 font-medium">Photo</th>
+                <th class="px-6 py-3.5 font-medium">Full name</th>
                 <th class="px-6 py-3.5 font-medium">Contact</th>
                 <th class="px-6 py-3.5 font-medium">Gender</th>
                 <th class="px-6 py-3.5 font-medium">Status</th>
@@ -152,26 +153,34 @@
             </thead>
             <tbody class="divide-y divide-slate-50">
               <tr
-                v-for="tutor in filteredTutors"
+                v-for="(tutor, index) in filteredTutors"
                 :key="tutor.id"
                 class="group transition-colors hover:bg-slate-50/50"
               >
                 <td class="whitespace-nowrap px-6 py-4">
-                  <div class="flex items-center gap-3">
-                    <div
-                      class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-primary-100 to-blue-50 text-xs font-bold text-primary-700 ring-2 ring-white shadow-xs"
+                  <img
+                    v-if="getTutorPhoto(tutor) && !failedPhotos.has(tutor.id)"
+                    :src="getTutorPhoto(tutor)!"
+                    :alt="tutor.name"
+                    @error="failedPhotos.add(tutor.id)"
+                    class="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-xs"
+                  />
+                  <div
+                    v-else
+                    class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-primary-100 to-blue-50 text-xs font-bold text-primary-700 ring-2 ring-white shadow-xs"
+                  >
+                    {{ getInitials(tutor.name) }}
+                  </div>
+                </td>
+                <td class="whitespace-nowrap px-6 py-4">
+                  <div>
+                    <router-link
+                      :to="`/admin/tutors/${tutor.id}`"
+                      class="font-semibold text-slate-900 hover:text-primary-600 transition-colors"
                     >
-                      {{ getInitials(tutor.name) }}
-                    </div>
-                    <div>
-                      <router-link
-                        :to="`/admin/tutors/${tutor.id}`"
-                        class="font-semibold text-slate-900 hover:text-primary-600 transition-colors"
-                      >
-                        {{ tutor.name }}
-                      </router-link>
-                      <p class="text-xs text-slate-500">{{ tutor.email }}</p>
-                    </div>
+                      {{ tutor.name }}
+                    </router-link>
+                    <p class="text-xs text-slate-500 truncate max-w-[200px]">{{ tutor.email }}</p>
                   </div>
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-600">
@@ -218,43 +227,62 @@
                   </span>
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 text-right">
-                  <div class="flex items-center justify-end gap-1.5">
-                    <!-- View Details -->
-                    <router-link
-                      :to="`/admin/tutors/${tutor.id}`"
-                      class="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:bg-slate-50 hover:text-slate-900"
-                      title="View Tutor Details"
-                    >
-                      <svg class="h-3.5 w-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      Details
-                    </router-link>
-
-                    <!-- Edit -->
-                    <router-link
-                      :to="`/admin/tutors/${tutor.id}/edit`"
-                      class="inline-flex items-center gap-1 rounded-lg border border-primary-200 bg-primary-50/50 px-2.5 py-1.5 text-xs font-semibold text-primary-700 transition-all hover:bg-primary-100 hover:text-primary-900"
-                      title="Edit Tutor"
-                    >
-                      <svg class="h-3.5 w-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                      Edit
-                    </router-link>
-
-                    <!-- Delete -->
+                  <div class="relative inline-block text-left">
                     <button
-                      @click="onDelete(tutor.id)"
-                      class="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50/50 px-2.5 py-1.5 text-xs font-semibold text-rose-700 transition-all hover:bg-rose-100 hover:text-rose-900"
-                      title="Delete Tutor"
+                      type="button"
+                      @click.stop="toggleKebab(tutor.id)"
+                      title="Actions"
+                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95"
                     >
-                      <svg class="h-3.5 w-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                       </svg>
-                      Delete
                     </button>
+
+                    <!-- Kebab Dropdown Menu -->
+                    <transition name="fade">
+                      <div
+                        v-if="openKebabId === tutor.id"
+                        class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none"
+                        :class="index < 2 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'"
+                      >
+                        <router-link
+                          :to="`/admin/tutors/${tutor.id}`"
+                          @click.stop="openKebabId = null"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors"
+                        >
+                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          View Details
+                        </router-link>
+
+                        <router-link
+                          :to="`/admin/tutors/${tutor.id}/edit`"
+                          @click.stop="openKebabId = null"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors"
+                        >
+                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          Edit Tutor
+                        </router-link>
+
+                        <div class="my-1 h-px bg-slate-100" />
+
+                        <button
+                          type="button"
+                          @click.stop="openKebabId = null; onDelete(tutor.id)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
+                        >
+                          <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          Delete Tutor
+                        </button>
+                      </div>
+                    </transition>
                   </div>
                 </td>
               </tr>
@@ -272,7 +300,15 @@
         >
           <div class="flex items-start justify-between">
             <div class="flex items-center gap-3">
+              <img
+                v-if="getTutorPhoto(tutor) && !failedPhotos.has(tutor.id)"
+                :src="getTutorPhoto(tutor)!"
+                :alt="tutor.name"
+                @error="failedPhotos.add(tutor.id)"
+                class="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-xs"
+              />
               <div
+                v-else
                 class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50 text-sm font-bold text-primary-600"
               >
                 {{ getInitials(tutor.name) }}
@@ -284,7 +320,7 @@
                 >
                   {{ tutor.name }}
                 </router-link>
-                <p class="text-xs text-slate-500">{{ tutor.email }}</p>
+                <p class="text-xs text-slate-500 truncate max-w-[200px]">{{ tutor.email }}</p>
               </div>
             </div>
             <span
@@ -368,9 +404,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useTutorStore } from '@/stores/tutorStore'
-import { useStudentStore } from '@/stores/student'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
@@ -379,13 +414,27 @@ import ActiveFilters from '@/components/ui/ActiveFilters.vue'
 import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
 const store = useTutorStore()
-const studentStore = useStudentStore()
 const dialog = useConfirmDialog()
 const toast = useToastStore()
 
 const searchQuery = ref('')
 const selectedStatus = ref('')
+const openKebabId = ref<number | null>(null)
+const failedPhotos = ref<Set<number>>(new Set())
 let deleteTargetId: number | null = null
+
+function getTutorPhoto(tutor: any): string | null {
+  if (!tutor) return null
+  return tutor.photo_url || tutor.photo || tutor.user?.avatar_url || tutor.user?.avatar || tutor.user?.photo_url || null
+}
+
+function toggleKebab(id: number) {
+  openKebabId.value = openKebabId.value === id ? null : id
+}
+
+function handleWindowClick() {
+  openKebabId.value = null
+}
 
 const tutors = computed(() => store.tutors)
 
@@ -396,7 +445,7 @@ const activeTutorsCount = computed(() => {
 })
 
 const totalStudentsAssigned = computed(() => {
-  return studentStore.students.filter((s: any) => s.tutor_id || (typeof s.tutor === 'object' && s.tutor !== null && 'id' in s.tutor)).length
+  return store.tutors.reduce((sum: number, t: any) => sum + (t.students_count ?? 0), 0)
 })
 
 const filteredTutors = computed(() => {
@@ -423,24 +472,10 @@ function getInitials(name?: string): string {
   )
 }
 
-const studentCounts = computed(() => {
-  const counts: Record<number, number> = {}
-  for (const student of studentStore.students) {
-    const tutorId =
-      typeof student.tutor_id === 'number'
-        ? student.tutor_id
-        : typeof student.tutor === 'object' && student.tutor !== null
-          ? (student.tutor as { id?: number }).id
-          : undefined
-    if (typeof tutorId === 'number' && Number.isFinite(tutorId)) {
-      counts[tutorId] = (counts[tutorId] || 0) + 1
-    }
-  }
-  return counts
-})
-
 function getTutorStudentCount(tutorId: number): number {
-  return studentCounts.value[tutorId] || 0
+  // Use students_count from backend (via withCount) if available; otherwise fall back to 0
+  const tutor = store.tutors.find((t: any) => t.id === tutorId)
+  return tutor?.students_count ?? 0
 }
 
 const hasActiveFilters = computed(() => !!searchQuery.value || !!selectedStatus.value)
@@ -453,7 +488,11 @@ const activeFilterList = computed<ActiveFilter[]>(() => {
 
 onMounted(() => {
   store.fetchTutors()
-  studentStore.fetchStudents({ per_page: 100 })
+  window.addEventListener('click', handleWindowClick)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleWindowClick)
 })
 
 function onSearch(): void {

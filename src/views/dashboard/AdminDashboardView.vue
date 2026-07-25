@@ -277,7 +277,7 @@
                   {{ tutor.name }}
                 </div>
               </td>
-              <td class="whitespace-nowrap px-4 py-3 text-slate-500 font-medium">
+              <td class="whitespace-nowrap px-4 py-3 text-slate-500 font-medium max-w-[200px] truncate">
                 {{ tutor.email }}
               </td>
               <td class="whitespace-nowrap px-4 py-3">

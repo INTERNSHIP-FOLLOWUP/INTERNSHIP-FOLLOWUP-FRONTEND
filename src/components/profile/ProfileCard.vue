@@ -5,7 +5,7 @@
         <UserAvatar :avatar="profile.avatar" :name="profile.name" size="lg" />
         <div>
           <h2 class="text-xl font-bold text-gray-900">{{ profile.name || 'User' }}</h2>
-          <p class="text-sm text-slate-500">{{ profile.email }}</p>
+          <p class="text-sm text-slate-500 truncate max-w-[250px]">{{ profile.email }}</p>
           <span class="mt-1 inline-flex rounded-full bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-700">
             {{ profile.role || 'Tutor' }}
           </span>

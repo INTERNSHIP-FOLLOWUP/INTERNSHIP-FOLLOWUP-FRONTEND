@@ -82,7 +82,7 @@
                   </td>
                   <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ user.first_name }}</td>
                   <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ user.last_name }}</td>
-                  <td class="whitespace-nowrap px-6 py-4 text-slate-500">{{ user.email }}</td>
+                  <td class="whitespace-nowrap px-6 py-4 text-slate-500 max-w-[200px] truncate">{{ user.email }}</td>
                   <td class="whitespace-nowrap px-6 py-4 text-slate-500">{{ user.students_count ?? '—' }}</td>
                   <td class="whitespace-nowrap px-6 py-4">
                     <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"

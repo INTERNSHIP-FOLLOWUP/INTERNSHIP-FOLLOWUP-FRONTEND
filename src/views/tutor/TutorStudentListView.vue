@@ -169,7 +169,7 @@
                   </div>
                   <div>
                     <p class="font-semibold text-slate-900">{{ student.name }}</p>
-                    <p class="text-xs text-slate-500">{{ student.email }}</p>
+                    <p class="text-xs text-slate-500 truncate max-w-[200px]">{{ student.email }}</p>
                   </div>
                 </div>
               </td>

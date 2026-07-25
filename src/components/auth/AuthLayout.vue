@@ -53,10 +53,9 @@
         </div>
 
         <div class="mt-8 text-center text-white">
-          <h2 class="text-2xl font-semibold">Track Your Internship Journey</h2>
+          <h2 class="text-2xl font-semibold">{{ $t('auth.authLayout.heroTitle') }}</h2>
           <p class="mt-2 text-primary-100 text-sm max-w-md mx-auto">
-            Connect students with companies, manage internships, and monitor progress all in one
-            place.
+            {{ $t('auth.authLayout.heroSubtitle') }}
           </p>
         </div>
       </div>

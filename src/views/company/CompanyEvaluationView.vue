@@ -3,14 +3,14 @@
     <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 class="text-xl font-semibold text-gray-900">Submit Student Evaluation</h1>
-          <p class="mt-1 text-sm text-gray-500">Evaluate student performance after internship.</p>
+          <h1 class="text-xl font-semibold text-gray-900">{{ $t('companies.submitEvaluation') }}</h1>
+          <p class="mt-1 text-sm text-gray-500">{{ $t('companies.evaluationSubtitle') }}</p>
         </div>
       </div>
 
       <div v-if="loading" class="py-12">
         <div class="flex items-center justify-center">
-          <div class="text-sm text-gray-600">Loading...</div>
+          <div class="text-sm text-gray-600">{{ $t('common.loading') }}</div>
         </div>
       </div>
       <div v-else>
@@ -24,13 +24,13 @@
         <form class="max-w-xl space-y-5" @submit.prevent="submit">
           <label class="block space-y-1">
             <span class="text-sm font-medium text-gray-700"
-              >Student <span class="text-rose-500">*</span></span
+              >{{ $t('common.student') }} <span class="text-rose-500">*</span></span
             >
             <select
               v-model="form.student_id"
               class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
             >
-              <option value="0" disabled>Select student</option>
+              <option value="0" disabled>{{ $t('companies.selectStudent') }}</option>
               <option v-for="student in students" :key="student.id" :value="student.id">
                 {{ student.name }}
               </option>
@@ -40,7 +40,7 @@
           <div class="grid grid-cols-2 gap-4">
             <label class="block space-y-1">
               <span class="text-sm font-medium text-gray-700"
-                >Technical Skill <span class="text-rose-500">*</span></span
+                >{{ $t('companies.technicalSkill') }} <span class="text-rose-500">*</span></span
               >
               <input
                 v-model.number="form.technical_skill"
@@ -53,7 +53,7 @@
             </label>
             <label class="block space-y-1">
               <span class="text-sm font-medium text-gray-700"
-                >Communication <span class="text-rose-500">*</span></span
+                >{{ $t('companies.communicationField') }} <span class="text-rose-500">*</span></span
               >
               <input
                 v-model.number="form.communication"
@@ -66,7 +66,7 @@
             </label>
             <label class="block space-y-1">
               <span class="text-sm font-medium text-gray-700"
-                >Professionalism <span class="text-rose-500">*</span></span
+                >{{ $t('companies.professionalismField') }} <span class="text-rose-500">*</span></span
               >
               <input
                 v-model.number="form.professionalism"
@@ -79,7 +79,7 @@
             </label>
             <label class="block space-y-1">
               <span class="text-sm font-medium text-gray-700"
-                >Attendance <span class="text-rose-500">*</span></span
+                >{{ $t('companies.attendanceField') }} <span class="text-rose-500">*</span></span
               >
               <input
                 v-model.number="form.attendance"
@@ -93,12 +93,12 @@
           </div>
 
           <label class="block space-y-1">
-            <span class="text-sm font-medium text-gray-700">Feedback</span>
+            <span class="text-sm font-medium text-gray-700">{{ $t('companies.feedback') }}</span>
             <textarea
               v-model="form.feedback"
               rows="4"
               class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
-              placeholder="Provide constructive feedback about the student's performance..."
+              :placeholder="$t('companies.feedbackPlaceholder')"
             />
           </label>
 
@@ -108,14 +108,14 @@
               class="rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
               @click="resetForm"
             >
-              Reset
+              {{ $t('companies.reset') }}
             </button>
             <button
               type="submit"
               class="rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 disabled:opacity-60"
               :disabled="submitting"
             >
-              {{ submitting ? 'Submitting...' : 'Submit Evaluation' }}
+              {{ submitting ? $t('companies.submitting') : $t('companies.submitEval') }}
             </button>
           </div>
         </form>
@@ -125,17 +125,17 @@
     <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h2 class="text-lg font-semibold text-gray-900">Submitted Evaluations</h2>
-          <p class="mt-1 text-sm text-gray-500">Evaluations you have submitted.</p>
+          <h2 class="text-lg font-semibold text-gray-900">{{ $t('companies.submittedEvalTitle') }}</h2>
+          <p class="mt-1 text-sm text-gray-500">{{ $t('companies.submittedEvalSub') }}</p>
         </div>
       </div>
 
       <div v-if="loadingEvaluations" class="flex items-center justify-center py-8">
-        <div class="text-sm text-gray-600">Loading...</div>
+        <div class="text-sm text-gray-600">{{ $t('common.loading') }}</div>
       </div>
 
       <div v-else-if="!submittedEvaluations.length" class="py-8 text-center text-sm text-gray-500">
-        No evaluations submitted yet.
+        {{ $t('companies.noEvalYet') }}
       </div>
 
       <div v-else class="space-y-3">
@@ -160,19 +160,19 @@
           </div>
           <div class="grid grid-cols-4 gap-2">
             <div class="text-center">
-              <p class="text-[10px] text-gray-400">Technical</p>
+              <p class="text-[10px] text-gray-400">{{ $t('companies.technical') }}</p>
               <p class="text-xs font-semibold text-gray-800">{{ item.technical_skill }}</p>
             </div>
             <div class="text-center">
-              <p class="text-[10px] text-gray-400">Communication</p>
+              <p class="text-[10px] text-gray-400">{{ $t('companies.communicationField') }}</p>
               <p class="text-xs font-semibold text-gray-800">{{ item.communication }}</p>
             </div>
             <div class="text-center">
-              <p class="text-[10px] text-gray-400">Professionalism</p>
+              <p class="text-[10px] text-gray-400">{{ $t('companies.professionalismField') }}</p>
               <p class="text-xs font-semibold text-gray-800">{{ item.professionalism }}</p>
             </div>
             <div class="text-center">
-              <p class="text-[10px] text-gray-400">Attendance</p>
+              <p class="text-[10px] text-gray-400">{{ $t('companies.attendanceField') }}</p>
               <p class="text-xs font-semibold text-gray-800">{{ item.attendance }}</p>
             </div>
           </div>
@@ -187,8 +187,11 @@
 
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCompanyStore } from '@/stores/company'
 import type { CompanyEvaluationPayload, CompanyEvaluationItem } from '@/types/company'
+
+const { t: $t_script } = useI18n()
 
 const store = useCompanyStore()
 
@@ -220,7 +223,7 @@ async function loadStudents() {
       name: studentDisplayName(item),
     }))
   } catch {
-    formError.value = 'Failed to load students'
+    formError.value = $t_script('companies.evaluationFormError')
   } finally {
     loading.value = false
   }
@@ -239,11 +242,11 @@ async function loadEvaluations() {
 }
 
 function validate(): string | null {
-  if (!form.student_id) return 'Please select a student'
-  if (form.technical_skill < 1 || form.technical_skill > 100) return 'Technical Skill must be between 1 and 100'
-  if (form.communication < 1 || form.communication > 100) return 'Communication must be between 1 and 100'
-  if (form.professionalism < 1 || form.professionalism > 100) return 'Professionalism must be between 1 and 100'
-  if (form.attendance < 1 || form.attendance > 100) return 'Attendance must be between 1 and 100'
+  if (!form.student_id) return $t_script('companies.validateSelectStudent')
+  if (form.technical_skill < 1 || form.technical_skill > 100) return $t_script('companies.validateSkillRange')
+  if (form.communication < 1 || form.communication > 100) return $t_script('companies.validateCommRange')
+  if (form.professionalism < 1 || form.professionalism > 100) return $t_script('companies.validateProfRange')
+  if (form.attendance < 1 || form.attendance > 100) return $t_script('companies.validateAttendRange')
   return null
 }
 
@@ -268,7 +271,7 @@ async function submit() {
     resetForm()
     await loadEvaluations()
   } catch (e: any) {
-    formError.value = e?.response?.data?.message || e?.message || 'Failed to submit evaluation'
+    formError.value = e?.response?.data?.message || e?.message || $t_script('companies.evalFailed')
   } finally {
     submitting.value = false
   }
@@ -298,13 +301,13 @@ function studentDisplayName(item: unknown) {
     String(raw.student_name ?? '').trim() ||
     String(raw.name ?? '').trim() ||
     fullName ||
-    'Student'
+    $t_script('common.student')
   )
 }
 
 function studentName(evalItem: CompanyEvaluationItem) {
   const directName = studentDisplayName(evalItem)
-  if (directName !== 'Student') return directName
+  if (directName !== $t_script('common.student')) return directName
 
   const s = students.value.find(
     (student) => student.studentId === evalItem.student_id || student.id === evalItem.student_id,

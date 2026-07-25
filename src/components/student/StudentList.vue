@@ -14,21 +14,21 @@
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
-          Import
+          {{ $t('common.import') }}
         </button>
         <button @click="$emit('export-pdf')"
           class="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-indigo-200 hover:bg-slate-50">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
-          PDF
+          {{ $t('common.export') }} PDF
         </button>
         <button @click="$emit('export-excel')"
           class="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-emerald-200 hover:bg-emerald-50">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Excel
+          {{ $t('common.export') }} Excel
         </button>
         <button type="button" @click="$emit('cancel')"
           class="rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50">
@@ -41,7 +41,7 @@
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
           </svg>
-          Add Student
+          {{ $t('users.addStudent') }}
         </button>
       </div>
     </div>
@@ -85,7 +85,7 @@
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Search by name or email..."
+          :placeholder="$t('common.searchByNameEmail')"
           class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
         />
       </div>
@@ -204,20 +204,20 @@
               </td>
               <td class="whitespace-nowrap px-6 py-4 text-right">
                 <div class="flex items-center justify-end gap-1">
-                  <router-link v-if="student.user_id" :to="`/admin/student-profile/${student.user_id}`" title="View Profile"
+                  <router-link v-if="student.user_id" :to="`/admin/student-profile/${student.user_id}`" :title="$t('common.viewProfile')"
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-700">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
                   </router-link>
-                  <button @click="$emit('view', student.id)" title="Edit Student"
+                  <button @click="$emit('view', student.id)" :title="$t('common.editStudent')"
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                   </button>
-                  <button @click="confirmDelete(student)" title="Delete Student"
+                  <button @click="confirmDelete(student)" :title="$t('common.deleteStudent')"
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-700">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -354,7 +354,7 @@
               :disabled="deleting"
               class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
             >
-              Cancel
+              {{ $t('common.cancel') }}
             </button>
             <button
               @click="handleDelete"
@@ -376,7 +376,7 @@
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 />
               </svg>
-              {{ deleting ? 'Deleting...' : 'Delete' }}
+              {{ deleting ? $t('common.deleting') : $t('common.delete') }}
             </button>
           </div>
         </div>
@@ -387,8 +387,11 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useStudentStore } from '@/stores/student'
 import type { Student } from '@/types/student'
+
+const { t: $t_script } = useI18n()
 
 const emit = defineEmits<{
   view: [id: number]
@@ -493,7 +496,7 @@ function getInitials(name: string): string {
 }
 
 function formatStatus(status?: string): string {
-  if (!status) return 'Unknown'
+  if (!status) return $t_script('tutorStudent.unknown')
   return status.charAt(0).toUpperCase() + status.slice(1)
 }
 
@@ -531,7 +534,7 @@ function goToPage(page: number): void {
   if (page < 1 || page > (store.pagination?.last_page ?? 1)) return
   localError.value = ''
   store.fetchStudents({ page, per_page: 15 }).catch((err: unknown) => {
-    localError.value = err instanceof Error ? err.message : 'Failed to load students.'
+    localError.value = err instanceof Error ? err.message : $t_script('common.failedLoadStudents')
   })
 }
 
@@ -545,7 +548,7 @@ function fetchStudents(): void {
   const params: { per_page: number; search?: string; status?: string } = { per_page: 15 }
   if (statusFilter.value) params.status = statusFilter.value
   store.fetchStudents(params).catch((err: unknown) => {
-    localError.value = err instanceof Error ? err.message : 'Failed to load students.'
+    localError.value = err instanceof Error ? err.message : $t_script('common.failedLoadStudents')
   })
 }
 

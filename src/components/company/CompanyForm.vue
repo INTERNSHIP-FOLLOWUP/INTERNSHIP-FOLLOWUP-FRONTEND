@@ -17,7 +17,7 @@
           <img
             v-if="companyImagePreview"
             :src="companyImagePreview"
-            alt="Company logo preview"
+            :alt="$t('common.companyLogoPreview')"
             class="h-full w-full object-cover"
           />
           <span v-else class="text-3xl font-bold text-indigo-600 select-none">
@@ -104,7 +104,7 @@
             <InputField
               v-model="form.companyName"
               label="Company Name"
-              placeholder="e.g. Acme Technologies"
+              :placeholder="$t('forms.companyNamePlaceholder')"
               required
               :error="errors.companyName"
               autocomplete="organization"
@@ -113,7 +113,7 @@
               v-model="form.companyEmail"
               label="Company Email"
               type="email"
-              placeholder="e.g. hr@acme.com"
+              :placeholder="$t('forms.companyEmailPlaceholder')"
               required
               :error="errors.companyEmail"
               autocomplete="email"
@@ -121,14 +121,14 @@
             <InputField
               v-model="form.industry"
               label="Industry"
-              placeholder="e.g. Banking, Telecom"
+              :placeholder="$t('forms.industryPlaceholder')"
               :error="errors.industry"
               autocomplete="organization-title"
             />
             <InputField
               v-model="form.location"
               label="Location"
-              placeholder="e.g. Kigali, Rwanda"
+              :placeholder="$t('forms.addressPlaceholder')"
               :error="errors.location"
               autocomplete="address-level2"
             />
@@ -137,7 +137,7 @@
               v-model="form.password"
               label="Account Password"
               type="password"
-              placeholder="Min. 8 characters"
+              :placeholder="$t('forms.minPassword')"
               required
               :error="errors.password"
               autocomplete="new-password"
@@ -166,14 +166,14 @@
             <InputField
               v-model="form.contactPerson"
               label="Contact Person Name"
-              placeholder="e.g. John Doe"
+              :placeholder="$t('forms.contactPersonPlaceholder')"
               :error="errors.contactPerson"
               autocomplete="name"
             />
             <InputField
               v-model="form.contactPhone"
               label="Direct Phone Line"
-              placeholder="e.g. +250 788 000 000"
+              :placeholder="$t('forms.phonePlaceholder')"
               :error="errors.contactPhone"
               autocomplete="tel"
             />
@@ -222,7 +222,7 @@
                   <div class="relative mb-3">
                     <img
                       :src="companyImagePreview"
-                      alt="Company logo preview"
+                      :alt="$t('common.companyLogoPreview')"
                       class="h-24 w-24 rounded-xl object-cover shadow-sm ring-2 ring-indigo-100"
                     />
                     <button
@@ -279,7 +279,7 @@
                   <input
                     v-model="companyLogoUrlInput"
                     type="url"
-                    placeholder="Or paste an image URL..."
+                    :placeholder="$t('forms.imageUrlPlaceholder')"
                     class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 transition-colors focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                     @input="onLogoUrlInput"
                   />
@@ -320,7 +320,7 @@
                   <div class="relative mb-3">
                     <img
                       :src="avatarPreview"
-                      alt="Avatar preview"
+                      :alt="$t('common.avatarPreview')"
                       class="h-24 w-24 rounded-full object-cover shadow-sm ring-2 ring-indigo-100"
                     />
                     <button
@@ -366,14 +366,14 @@
               <InputField
                 v-model="form.website"
                 label="Website URL"
-                placeholder="e.g. https://acme.com"
+                :placeholder="$t('forms.websitePlaceholder')"
                 :error="errors.website"
                 autocomplete="url"
               />
               <InputField
                 v-model="form.telegramLink"
                 label="Telegram Channel Link"
-                placeholder="e.g. https://t.me/company"
+                :placeholder="$t('forms.telegramPlaceholder')"
                 :error="errors.telegramLink"
                 autocomplete="url"
               />
@@ -421,10 +421,10 @@
               submitting
                 ? mode === 'create'
                   ? 'Creating...'
-                  : 'Saving...'
+                  : $t('common.saving')
                 : mode === 'create'
                   ? 'Create Profile'
-                  : 'Save Changes'
+                  : $t('common.saveChanges')
             }}
           </PrimaryButton>
         </div>
@@ -435,6 +435,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import InputField from '@/components/ui/InputField.vue'
 import PrimaryButton from '@/components/ui/PrimaryButton.vue'
 
@@ -468,6 +469,7 @@ type Emits = {
   cancel: []
 }
 
+const { t: $t_script } = useI18n()
 const props = withDefaults(defineProps<Props>(), {
   initialData: () => ({}),
   showCancel: false,
@@ -577,28 +579,28 @@ function validate(): boolean {
     errors.companyEmail = 'Company email is required.'
     ok = false
   } else if (!validateEmail(form.companyEmail)) {
-    errors.companyEmail = 'Please enter a valid email address.'
+    errors.companyEmail = $t_script('validation.email')
     ok = false
   }
 
   if (form.contactPhone.trim()) {
     if (!/^[+]?([0-9][\s-]*){7,}$/.test(form.contactPhone.trim())) {
-      errors.contactPhone = 'Please enter a valid phone number.'
+      errors.contactPhone = $t_script('validation.invalidPhone')
       ok = false
     }
   }
 
   if (form.website.trim() && !validateUrl(form.website)) {
-    errors.website = 'Please enter a valid website URL.'
+    errors.website = $t_script('validation.invalidUrl')
     ok = false
   }
 
   if (props.mode === 'create') {
     if (!form.password) {
-      errors.password = 'Password is required.'
+      errors.password = $t_script('validation.passwordRequired')
       ok = false
     } else if (form.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters.'
+      errors.password = $t_script('validation.minLength', { n: 8 })
       ok = false
     }
   }
@@ -750,7 +752,7 @@ async function handleSubmit() {
   try {
     await props.onSubmit?.({ ...form })
   } catch (e: unknown) {
-    formError.value = e instanceof Error ? e.message : 'Failed to submit. Please try again.'
+    formError.value = e instanceof Error ? e.message : $t_script('validation.submitFailed')
   } finally {
     submitting.value = false
   }

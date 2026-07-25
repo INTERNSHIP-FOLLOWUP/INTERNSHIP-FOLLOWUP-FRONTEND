@@ -15,9 +15,9 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
         </svg>
       </div>
-      <h3 class="mt-4 text-lg font-bold text-gray-800">No tutor assigned yet</h3>
+      <h3 class="mt-4 text-lg font-bold text-gray-800">{{ $t('studentMessages.noTutorTitle') }}</h3>
       <p class="mt-1 max-w-sm text-sm text-gray-500">
-        You'll be able to message your tutor once an admin assigns one to you.
+        {{ $t('studentMessages.noTutorDesc') }}
       </p>
     </div>
 
@@ -30,7 +30,7 @@
         </div>
         <div class="min-w-0 flex-1">
           <h3 class="truncate text-sm font-bold text-gray-900">{{ tutorName }}</h3>
-          <p class="text-xs text-gray-500">Your Tutor</p>
+          <p class="text-xs text-gray-500">{{ $t('studentMessages.yourTutor') }}</p>
         </div>
       </div>
 
@@ -40,8 +40,8 @@
           <svg class="h-10 w-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
-          <h4 class="mt-3 text-sm font-bold text-gray-600">No messages yet</h4>
-          <p class="mt-1 text-xs text-gray-400">Send a message to your tutor to start the conversation.</p>
+          <h4 class="mt-3 text-sm font-bold text-gray-600">{{ $t('messages.messages.noMessages') }}</h4>
+          <p class="mt-1 text-xs text-gray-400">{{ $t('studentMessages.noMessagesDesc') }}</p>
         </div>
 
         <template v-else>
@@ -81,7 +81,7 @@
           <div class="relative flex-1">
             <textarea
               v-model="newMessage"
-              placeholder="Type your message..."
+              :placeholder="$t('messages.messages.typeMessage')"
               rows="1"
               class="block w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
               @keydown.enter.exact="handleSend"

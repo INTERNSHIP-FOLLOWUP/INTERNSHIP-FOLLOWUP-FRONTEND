@@ -2,8 +2,8 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Tutors</h1>
-        <p class="mt-1 text-sm text-slate-500">{{ totalUsers }} registered tutor{{ totalUsers !== 1 ? 's' : '' }}</p>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ $t('users.tutorsTitle') }}</h1>
+        <p class="mt-1 text-sm text-slate-500">{{ totalUsers }} {{ $t('users.registeredTutors') }}</p>
       </div>
       <div class="flex items-center gap-2">
         <button @click="selectMode ? clearSelection() : enterSelectMode()"
@@ -17,14 +17,14 @@
           <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-          {{ selectMode ? 'Cancel' : 'Select All' }}
+          {{ selectMode ? $t('common.cancel') : $t('common.selectAll') }}
         </button>
         <router-link to="/admin/users/create"
           class="flex h-10 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white shadow-md shadow-indigo-200 transition-all hover:bg-indigo-700">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
-          Add Tutor
+          {{ $t('users.addTutor') }}
         </router-link>
       </div>
     </div>
@@ -34,7 +34,7 @@
         <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <input v-model="searchQuery" type="text" placeholder="Search tutors..."
+        <input v-model="searchQuery" type="text" :placeholder="$t('users.searchTutors')"
           class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
       </div>
     </div>
@@ -63,12 +63,12 @@
                     @change="toggleSelectAll"
                     class="h-4 w-4 rounded border-slate-300 cursor-pointer accent-rose-600" />
                 </th>
-                <th class="px-6 py-3.5 font-medium">First Name</th>
-                <th class="px-6 py-3.5 font-medium">Last Name</th>
-                <th class="px-6 py-3.5 font-medium">Email</th>
-                <th class="px-6 py-3.5 font-medium">Students</th>
-                <th class="px-6 py-3.5 font-medium">Status</th>
-                <th class="px-6 py-3.5 text-right font-medium">Actions</th>
+                <th class="px-6 py-3.5 font-medium">{{ $t('users.firstNameCol') }}</th>
+                <th class="px-6 py-3.5 font-medium">{{ $t('users.lastNameCol') }}</th>
+                <th class="px-6 py-3.5 font-medium">{{ $t('common.email') }}</th>
+                <th class="px-6 py-3.5 font-medium">{{ $t('users.studentsCol') }}</th>
+                <th class="px-6 py-3.5 font-medium">{{ $t('common.status') }}</th>
+                <th class="px-6 py-3.5 text-right font-medium">{{ $t('common.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -88,31 +88,31 @@
                     <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
                       :class="user.deleted_at ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700'">
                       <span class="h-1.5 w-1.5 rounded-full" :class="user.deleted_at ? 'bg-rose-500' : 'bg-emerald-500'" />
-                      {{ user.deleted_at ? 'Deactivated' : 'Active' }}
-                    </span>
-                  </td>
-                  <td class="whitespace-nowrap px-6 py-4 text-right" @click.stop>
+                    {{ user.deleted_at ? $t('users.deactivated') : $t('common.active') }}
+                  </span>
+                </td>
+                <td class="whitespace-nowrap px-6 py-4 text-right" @click.stop>
                     <div class="flex items-center justify-end gap-1">
-                      <button type="button" @click.stop="goToProfile(user.id)" title="View Profile"
+                      <button type="button" @click.stop="goToProfile(user.id)" :title="$t('users.viewProfile')"
                         class="flex h-8 w-8 items-center justify-center rounded-lg text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-700">
                         <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
                       </button>
-                      <button type="button" @click.stop="editTutor(user.id)" title="Edit Tutor"
+                      <button type="button" @click.stop="editTutor(user.id)" :title="$t('users.editTutorBtn')"
                         class="flex h-8 w-8 items-center justify-center rounded-lg text-blue-600 transition-all hover:bg-blue-50 hover:text-blue-700">
                         <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                       </button>
-                      <button type="button" @click.stop="deleteUser(user)" title="Delete Tutor"
+                      <button type="button" @click.stop="deleteUser(user)" :title="$t('users.deleteTutorBtn')"
                         class="flex h-8 w-8 items-center justify-center rounded-lg text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-700">
                         <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                       </button>
-                      <button type="button" @click.stop="toggleTutor(user.id)" title="Toggle Activity"
+                      <button type="button" @click.stop="toggleTutor(user.id)" :title="$t('users.toggleActivity')"
                         class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
                         :class="{ 'bg-slate-100 text-slate-900': expandedTutorId === user.id }">
                         <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,8 +134,8 @@
       </div>
 
       <div v-else class="flex flex-col items-center justify-center px-6 py-16 text-center">
-        <h3 class="text-base font-bold text-slate-900">No tutors found</h3>
-        <p class="mt-1 text-sm text-slate-500">No registered tutors yet.</p>
+        <h3 class="text-base font-bold text-slate-900">{{ $t('users.noTutorsFound') }}</h3>
+        <p class="mt-1 text-sm text-slate-500">{{ $t('users.noRegisteredTutorsYet') }}</p>
       </div>
     </div>
     <!-- ── Floating Bulk Action Bar ── -->
@@ -147,7 +147,7 @@
             {{ selectedIds.size }}
           </span>
           <span class="text-sm font-semibold text-slate-700">
-            tutor{{ selectedIds.size !== 1 ? 's' : '' }} selected
+            {{ selectedIds.size }} {{ $t('users.tutorsSelected') }}
           </span>
           <div class="mx-1 h-5 w-px bg-slate-200" />
           <button @click="bulkDelete" :disabled="bulkDeleting"
@@ -159,7 +159,7 @@
             <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
-            {{ bulkDeleting ? 'Deleting...' : 'Delete Selected' }}
+            {{ bulkDeleting ? $t('users.deleting') : $t('users.deleteSelected') }}
           </button>
           <button @click="clearSelection"
             class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 active:scale-95">
@@ -183,15 +183,15 @@
               </svg>
             </div>
             <div>
-              <h3 class="text-base font-semibold text-slate-900">Delete {{ selectedIds.size }} Tutor{{ selectedIds.size !== 1 ? 's' : '' }}</h3>
-              <p class="mt-0.5 text-sm text-slate-500">This action is permanent and cannot be undone.</p>
+              <h3 class="text-base font-semibold text-slate-900">{{ $t('users.bulkDeleteTitle', { count: selectedIds.size }) }}</h3>
+              <p class="mt-0.5 text-sm text-slate-500">{{ $t('users.bulkDeleteMessage') }}</p>
             </div>
           </div>
           <div v-if="bulkError" class="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">{{ bulkError }}</div>
           <div class="mt-5 flex items-center justify-end gap-3">
             <button @click="showBulkConfirm = false" :disabled="bulkDeleting"
               class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
-              Cancel
+              {{ $t('common.cancel') }}
             </button>
             <button @click="confirmBulkDelete" :disabled="bulkDeleting"
               class="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-rose-700 disabled:opacity-60">
@@ -199,7 +199,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
-              {{ bulkDeleting ? 'Deleting...' : `Delete ${selectedIds.size}` }}
+              {{ bulkDeleting ? $t('users.deleting') : $t('common.delete') + ' ' + selectedIds.size }}
             </button>
           </div>
         </div>
@@ -211,7 +211,7 @@
       :title="confirmTitle"
       :message="confirmMessage"
       :confirm-text="confirmButtonText"
-      cancel-text="Cancel"
+      :cancel-text="$t('common.cancel')"
       :loading="confirmLoading"
       :error="confirmError"
       @confirm="handleConfirmAction"
@@ -251,7 +251,9 @@ const toast = useToastStore()
 const { show: confirmShow, loading: confirmLoading, error: confirmError, open: confirmOpen, cancel: confirmCancel, confirmAsync: confirmAsyncFn } = useConfirmDialog()
 const confirmTitle = ref('')
 const confirmMessage = ref('')
-const confirmButtonText = ref('Confirm')
+import { useI18n } from 'vue-i18n'
+const { t: $t_script } = useI18n()
+const confirmButtonText = ref($t_script('common.confirm'))
 type ActionType = 'delete'
 const pendingAction = ref<{ type: ActionType; user: User } | null>(null)
 const users = ref<User[]>([])
@@ -314,7 +316,7 @@ async function confirmBulkDelete() {
   try {
     const ids = Array.from(selectedIds.value)
     await api.post('/admin/users/bulk-delete', { ids })
-    toast.success(`Deleted ${ids.length} tutor${ids.length !== 1 ? 's' : ''} successfully.`)
+    toast.success($t_script('users.tutorsBulkDeleted', { count: ids.length }))
     showBulkConfirm.value = false
     clearSelection()
     fetchUsers()
@@ -351,7 +353,7 @@ async function handleConfirmAction() {
   await confirmAsyncFn(async () => {
     if (type === 'delete') {
       await api.delete(`/admin/users/${user.id}`)
-      toast.success(`Tutor "${user.first_name} ${user.last_name}" deleted.`)
+      toast.success($t_script('users.tutorDeletedNameToast', { name: `${user.first_name} ${user.last_name}` }))
     }
     pendingAction.value = null
     fetchUsers()

@@ -3,28 +3,28 @@
     <div class="flex items-start justify-between gap-4">
       <div>
         <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-          {{ isEdit ? 'Edit Worklog' : 'Create Worklog' }}
+          {{ isEdit ? $t('worklogs.editWorklog') : $t('worklogs.createWorklog') }}
         </h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">Weekly student submission.</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400">{{ isEdit ? $t('worklogs.editWorklog') : $t('worklogs.createWorklog') }}</p>
       </div>
       <router-link
         to="/student/worklogs"
         class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
       >
-        Back
+        {{ $t('worklogs.back') }}
       </router-link>
     </div>
 
     <div class="mt-6 max-w-3xl">
       <form @submit.prevent="onSubmit" class="space-y-5">
         <div>
-          <label class="text-sm font-semibold text-slate-700">Week Number</label>
+          <label class="text-sm font-semibold text-slate-700">{{ $t('worklogs.weekNumber') }}</label>
           <select
             v-model="form.week_number"
             required
             class="mt-2 h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
-            <option disabled value="">Select a week</option>
+            <option disabled value="">{{ $t('worklogs.selectWeek') }}</option>
             <option v-for="w in weeks" :key="w" :value="w">Week {{ w }}</option>
           </select>
           <p v-if="errors.week_number" class="mt-1 text-xs font-semibold text-red-500">
@@ -33,12 +33,12 @@
         </div>
 
         <div>
-          <label class="text-sm font-semibold text-slate-700">Description</label>
+          <label class="text-sm font-semibold text-slate-700">{{ $t('worklogs.description') }}</label>
           <textarea
             v-model="form.description"
             required
             rows="4"
-            placeholder="What did you work on this week?"
+            :placeholder="$t('worklogs.descriptionPlaceholder')"
             class="mt-2 w-full resize-none rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
           <p v-if="errors.description" class="mt-1 text-xs font-semibold text-red-500">
@@ -47,11 +47,11 @@
         </div>
 
         <div>
-          <label class="text-sm font-semibold text-slate-700">Challenges</label>
+          <label class="text-sm font-semibold text-slate-700">{{ $t('worklogs.challenges') }}</label>
           <textarea
             v-model="form.challenges"
             rows="3"
-            placeholder="What difficulties did you face?"
+            :placeholder="$t('worklogs.challengesPlaceholder')"
             class="mt-2 w-full resize-none rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
           <p v-if="errors.challenges" class="mt-1 text-xs font-semibold text-red-500">
@@ -60,7 +60,7 @@
         </div>
 
         <div>
-          <label class="text-sm font-semibold text-slate-700">Attachments</label>
+          <label class="text-sm font-semibold text-slate-700">{{ $t('worklogs.attachments') }}</label>
           <div class="mt-2">
             <FileUpload v-model="files" />
           </div>
@@ -91,9 +91,9 @@
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 />
               </svg>
-              Saving...
+              {{ $t('worklogs.saving') }}
             </span>
-            <span v-else>{{ isEdit ? 'Update' : 'Submit' }}</span>
+            <span v-else>{{ isEdit ? $t('worklogs.update') : $t('worklogs.submit') }}</span>
           </button>
 
           <button
@@ -102,7 +102,7 @@
             @click="cancel"
             class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
           >
-            Cancel
+            {{ $t('worklogs.cancel') }}
           </button>
         </div>
 

@@ -27,7 +27,7 @@
             v-model.number="filters.week"
             type="number"
             min="1"
-            placeholder="Week #"
+            :placeholder="$t('common.weekPlaceholder')"
             class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
         </div>

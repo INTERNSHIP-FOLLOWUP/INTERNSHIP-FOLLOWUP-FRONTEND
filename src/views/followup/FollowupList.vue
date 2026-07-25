@@ -3,13 +3,9 @@
     <!-- Header -->
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Follow-up Records</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ $t('followups.listTitle') }}</h1>
         <p class="text-sm text-slate-500">
-          {{
-            isStudent
-              ? 'Your follow-up meetings, notes, and next actions.'
-              : 'Tutor follow-up meetings, notes, and next actions for your students.'
-          }}
+          {{ isStudent ? $t('followups.listSubtitleStudent') : $t('followups.listSubtitleTutor') }}
         </p>
       </div>
       <button
@@ -25,7 +21,7 @@
             d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        New Follow-up
+        {{ $t('followups.newFollowup') }}
       </button>
     </div>
 
@@ -37,7 +33,7 @@
       <input
         v-model="search"
         class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-colors focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20 sm:flex-1"
-        placeholder="Search follow-ups..."
+        :placeholder="$t('followups.searchPlaceholder')"
         @input="onSearchInput"
       />
       <div class="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:gap-2">
@@ -45,13 +41,13 @@
           class="w-full rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 sm:w-auto"
           @click="applySearch"
         >
-          Search
+          {{ $t('followups.search') }}
         </button>
         <button
           class="w-full rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 sm:w-auto"
           @click="resetSearch"
         >
-          Reset
+          {{ $t('followups.reset') }}
         </button>
       </div>
     </div>
@@ -110,7 +106,7 @@
                     d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
                   />
                 </svg>
-                <span>Edit</span>
+                {{ $t('followups.edit') }}
               </button>
               <button
                 @click="deleteFollowup(f)"
@@ -124,16 +120,16 @@
                     d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916"
                   />
                 </svg>
-                <span>Delete</span>
+                {{ $t('followups.delete') }}
               </button>
             </div>
           </div>
           <div class="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-600">
             <div>
-              <span class="font-medium text-slate-500">Date:</span> {{ formatDate(f.meeting_date) }}
+              <span class="font-medium text-slate-500">{{ $t('followups.dateLabel') }}</span> {{ formatDate(f.meeting_date) }}
             </div>
             <div>
-              <span class="font-medium text-slate-500">Next:</span>
+              <span class="font-medium text-slate-500">{{ $t('followups.nextLabel') }}</span>
               {{ f.next_followup ? formatDate(f.next_followup) : '—' }}
             </div>
           </div>
@@ -146,12 +142,12 @@
               <tr
                 class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
               >
-                <th class="px-4 py-3 sm:px-5 sm:py-3.5">Student</th>
-                <th class="px-4 py-3 sm:px-5 sm:py-3.5">Meeting Type</th>
-                <th class="px-4 py-3 sm:px-5 sm:py-3.5">Meeting Date</th>
-                <th class="px-4 py-3 sm:px-5 sm:py-3.5">Status</th>
-                <th class="hidden px-4 py-3 sm:px-5 sm:py-3.5 md:table-cell">Next Follow-up</th>
-                <th class="px-4 py-3 sm:px-5 sm:py-3.5 text-right">Actions</th>
+                <th class="px-4 py-3 sm:px-5 sm:py-3.5">{{ $t('followups.student') }}</th>
+                <th class="px-4 py-3 sm:px-5 sm:py-3.5">{{ $t('followups.meetingType') }}</th>
+                <th class="px-4 py-3 sm:px-5 sm:py-3.5">{{ $t('followups.meetingDate') }}</th>
+                <th class="px-4 py-3 sm:px-5 sm:py-3.5">{{ $t('followups.statusLabel') }}</th>
+                <th class="hidden px-4 py-3 sm:px-5 sm:py-3.5 md:table-cell">{{ $t('followups.nextFollowup') }}</th>
+                <th class="px-4 py-3 sm:px-5 sm:py-3.5 text-right">{{ $t('followups.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -202,7 +198,7 @@
                           d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
                         />
                       </svg>
-                      <span class="hidden sm:inline">Edit</span>
+                      <span class="hidden sm:inline">{{ $t('followups.edit') }}</span>
                     </button>
                     <button
                       @click="deleteFollowup(f)"
@@ -221,14 +217,14 @@
                           d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916"
                         />
                       </svg>
-                      <span class="hidden sm:inline">Delete</span>
+                      <span class="hidden sm:inline">{{ $t('followups.delete') }}</span>
                     </button>
                   </div>
                 </td>
               </tr>
               <tr v-if="followupStore.followups.length === 0">
                 <td colspan="5" class="px-4 py-10 text-center text-sm text-slate-500 sm:px-5">
-                  No follow-up records found.
+                  {{ $t('followups.noFollowups') }}
                 </td>
               </tr>
             </tbody>
@@ -250,10 +246,9 @@
           d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
         />
       </svg>
-      <h3 class="mt-4 text-lg font-semibold text-gray-900">No Follow-up Records Found</h3>
+      <h3 class="mt-4 text-lg font-semibold text-gray-900">{{ $t('followups.noRecords') }}</h3>
       <p class="mt-2 max-w-md text-sm text-slate-500">
-        There are currently no follow-up records. Click the button below to create the first
-        follow-up.
+        {{ $t('followups.noRecordsHint') }}
       </p>
       <button
         class="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600"
@@ -267,7 +262,7 @@
             d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        New Follow-up
+        {{ $t('followups.newFollowup') }}
       </button>
     </div>
 
@@ -304,8 +299,8 @@
                 </svg>
               </div>
               <div>
-                <h2 class="text-lg font-semibold text-white">Follow-up Details</h2>
-                <p class="text-xs text-indigo-200">Record #{{ viewingFollowup.id }}</p>
+                <h2 class="text-lg font-semibold text-white">{{ $t('followups.detailTitle') }}</h2>
+                <p class="text-xs text-indigo-200">{{ $t('followups.recordId', { id: viewingFollowup.id }) }}</p>
               </div>
             </div>
             <button
@@ -345,7 +340,7 @@
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                     />
                   </svg>
-                  Student
+                  {{ $t('followups.student') }}
                 </div>
                 <p class="text-sm font-medium text-slate-800">
                   {{ studentLabel(viewingFollowup) }}
@@ -370,13 +365,13 @@
                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
                   </svg>
-                  Company
+                  {{ $t('followups.company') }}
                 </div>
                 <p
                   class="text-sm font-medium"
                   :class="viewingFollowup.company?.name ? 'text-slate-800' : 'text-slate-400'"
                 >
-                  {{ viewingFollowup.company?.name || 'Auto-assigned' }}
+                  {{ viewingFollowup.company?.name || $t('followups.autoAssigned') }}
                 </p>
               </div>
             </div>
@@ -402,7 +397,7 @@
                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
                   </svg>
-                  Meeting Type
+                  {{ $t('followups.meetingType') }}
                 </div>
                 <span
                   class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
@@ -434,7 +429,7 @@
                       d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  Status
+                  {{ $t('followups.statusLabel') }}
                 </div>
                 <span
                   class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
@@ -470,7 +465,7 @@
                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
                   </svg>
-                  Meeting Date
+                  {{ $t('followups.meetingDate') }}
                 </div>
                 <p class="text-sm font-medium text-slate-800">
                   {{ formatDate(viewingFollowup.meeting_date) }}
@@ -495,7 +490,7 @@
                       d="M13 10V3L4 14h7v7l9-11h-7z"
                     />
                   </svg>
-                  Next Follow-up
+                  {{ $t('followups.nextFollowup') }}
                 </div>
                 <p
                   class="text-sm font-medium"
@@ -504,7 +499,7 @@
                   {{
                     viewingFollowup.next_followup
                       ? formatDate(viewingFollowup.next_followup)
-                      : 'Not scheduled'
+                      : $t('followups.notScheduled')
                   }}
                 </p>
               </div>
@@ -530,7 +525,7 @@
                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                   />
                 </svg>
-                Notes
+                {{ $t('followups.notes') }}
               </div>
               <p class="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
                 {{ viewingFollowup.notes || '—' }}
@@ -558,7 +553,7 @@
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
                   />
                 </svg>
-                Action Items
+                {{ $t('followups.actionItems') }}
               </div>
               <p class="text-sm text-amber-800 whitespace-pre-wrap leading-relaxed">
                 {{ viewingFollowup.action_items }}
@@ -570,9 +565,9 @@
               class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-4 border-t border-slate-100"
             >
               <div class="flex gap-4 text-xs text-slate-400">
-                <span>Created {{ formatDateTime(viewingFollowup.created_at) }}</span>
+                <span>{{ $t('followups.created', { date: formatDateTime(viewingFollowup.created_at) }) }}</span>
                 <span class="text-slate-300">·</span>
-                <span>Updated {{ formatDateTime(viewingFollowup.updated_at) }}</span>
+                <span>{{ $t('followups.updated', { date: formatDateTime(viewingFollowup.updated_at) }) }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <button
@@ -587,13 +582,13 @@
                       d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
                     />
                   </svg>
-                  Edit Record
+                  {{ $t('followups.editRecord') }}
                 </button>
                 <button
                   @click="viewingFollowup = null"
                   class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
                 >
-                  Close
+                  {{ $t('followups.close') }}
                 </button>
               </div>
             </div>
@@ -613,10 +608,10 @@
     <!-- Delete Confirmation -->
     <ConfirmDialog
       :show="showDeleteConfirm"
-      title="Delete Follow-up"
-      :message="`Are you sure you want to delete this follow-up record? This action cannot be undone.`"
-      confirm-text="Delete"
-      cancel-text="Cancel"
+      :title="$t('followups.deleteConfirm')"
+      :message="$t('followups.deleteMessage')"
+      :confirm-text="$t('followups.delete')"
+      :cancel-text="$t('followups.cancel')"
       :loading="deleting"
       :error="deleteError"
       @confirm="handleDelete"
@@ -627,9 +622,12 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useFollowupStore } from '@/stores/followupStore'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
+
+const { t: $t_script } = useI18n()
 import type { Followup } from '@/types/followup'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
@@ -786,11 +784,11 @@ async function handleDelete() {
   deleteError.value = null
   try {
     await followupStore.deleteFollowup(deletingFollowup.value.id)
-    toast.success('Follow-up record deleted successfully.', 'Deleted')
+    toast.success($t_script('followups.deletedToast'))
     showDeleteConfirm.value = false
     deletingFollowup.value = null
   } catch (err) {
-    deleteError.value = followupStore.error || 'Failed to delete follow-up.'
+    deleteError.value = followupStore.error || $t_script('common.failedDeleteFollowup')
   } finally {
     deleting.value = false
   }
@@ -818,7 +816,7 @@ async function deleteFollowup(followup: Followup) {
   if (!confirm(`Delete follow-up #${followup.id}? This action cannot be undone.`)) return
   try {
     await followupStore.deleteFollowup(followup.id)
-    toast.success('Follow-up deleted successfully.', 'Deleted')
+    toast.success($t_script('followups.deletedToast'))
   } catch {
     // error already in store
   }

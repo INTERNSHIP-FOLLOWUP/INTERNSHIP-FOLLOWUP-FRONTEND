@@ -10,13 +10,13 @@
       <div class="flex items-center justify-between">
       <div>
         <h2 class="text-xl font-bold text-slate-900">
-          {{ isEdit ? 'Edit Assignment' : 'New Assignment' }}
+          {{ isEdit ? $t('assignmentForm.editTitle') : $t('assignmentForm.createTitle') }}
         </h2>
         <p class="mt-1 text-sm text-slate-500">
           {{
             isEdit
-              ? 'Update the internship assignment below.'
-              : 'Assign a student to a company with a tutor.'
+              ? $t('assignmentForm.editSubtitle')
+              : $t('assignmentForm.createSubtitle')
           }}
         </p>
       </div>
@@ -24,7 +24,7 @@
         type="button"
         class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors dark:hover:bg-slate-800"
         @click="$emit('close')"
-        aria-label="Close"
+        :aria-label="$t('common.close')"
       >
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -55,8 +55,8 @@
           :class="inputClass('student_id')"
           @change="clearFieldError('student_id')"
         >
-          <option :value="null" disabled>Select student</option>
-          <option v-if="studentsLoading" disabled>Loading...</option>
+          <option :value="null" disabled>{{ $t('assignmentForm.selectStudent') }}</option>
+          <option v-if="studentsLoading" disabled>{{ $t('assignmentForm.loading') }}</option>
           <option v-for="s in students" :key="s.id" :value="s.id">
             {{ s.name }}
           </option>
@@ -83,8 +83,8 @@
           :class="inputClass('company_id')"
           @change="clearFieldError('company_id')"
         >
-          <option :value="null" disabled>Select company</option>
-          <option v-if="companiesLoading" disabled>Loading...</option>
+          <option :value="null" disabled>{{ $t('assignmentForm.selectCompany') }}</option>
+          <option v-if="companiesLoading" disabled>{{ $t('assignmentForm.loading') }}</option>
           <option v-for="c in companies" :key="c.id" :value="c.id">
             {{ c.company_name || c.name }}
           </option>
@@ -112,8 +112,8 @@
           :disabled="isTutorDisabled"
           @change="clearFieldError('tutor_id')"
         >
-          <option :value="null" disabled>Select tutor</option>
-          <option v-if="tutorStore.loading" disabled>Loading...</option>
+          <option :value="null" disabled>{{ $t('assignmentForm.selectTutor') }}</option>
+          <option v-if="tutorStore.loading" disabled>{{ $t('assignmentForm.loading') }}</option>
           <option v-for="t in tutorStore.tutorOptions" :key="t.value" :value="t.value">
             {{ t.label }}
           </option>
@@ -135,7 +135,7 @@
           id="position"
           v-model="form.position"
           type="text"
-          placeholder="e.g. Software Engineer Intern"
+          :placeholder="$t('forms.positionPlaceholder')"
           maxlength="255"
           :aria-invalid="!!errors.position"
           :aria-describedby="errors.position ? 'position-error' : undefined"
@@ -208,7 +208,7 @@
           :class="inputClass('status')"
           @change="clearFieldError('status')"
         >
-          <option value="" disabled>Select status</option>
+          <option value="" disabled>{{ $t('assignmentForm.selectStatus') }}</option>
           <option v-for="s in allowedStatuses" :key="s.value" :value="s.value">
             {{ s.label }}
           </option>
@@ -258,7 +258,7 @@
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
               />
             </svg>
-            {{ submitting ? 'Saving...' : isEdit ? 'Update Assignment' : 'Create Assignment' }}
+            {{ submitting ? $t('assignmentForm.saving') : isEdit ? $t('assignmentForm.updateBtn') : $t('assignmentForm.createBtn') }}
           </button>
         </div>
       </form>
@@ -268,6 +268,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAssignmentStore } from '@/stores/assignment'
 import { useTutorStore } from '@/stores/tutorStore'
 import { assignmentService } from '@/services/assignment'
@@ -291,10 +292,10 @@ interface AssignmentFormData {
 }
 
 const STATUS_LABELS: Record<AssignmentStatus, string> = {
-  Assigned: 'Assigned',
-  'In Progress': 'In Progress',
-  Completed: 'Completed',
-  Terminated: 'Terminated',
+  Assigned: 'messages.assignments.assignedStatus',
+  'In Progress': 'messages.assignments.inProgressStatus',
+  Completed: 'messages.assignments.completedStatus',
+  Terminated: 'messages.assignments.terminatedStatus',
 }
 
 const VALID_TRANSITIONS: Record<AssignmentStatus, AssignmentStatus[]> = {
@@ -313,6 +314,8 @@ const emit = defineEmits<{
   saved: [assignment: Assignment]
   close: []
 }>()
+
+const { t: $t_script } = useI18n()
 
 const assignmentStore = useAssignmentStore()
 const tutorStore = useTutorStore()
@@ -342,10 +345,10 @@ const form = reactive<AssignmentFormData>({
 const allowedStatuses = computed(() => {
   const current = form.status as AssignmentStatus
   if (!isEdit.value || !current) {
-    return Object.entries(STATUS_LABELS).map(([value, label]) => ({ value, label }))
+    return Object.entries(STATUS_LABELS).map(([value, key]) => ({ value, label: $t_script(key) }))
   }
   const allowed = VALID_TRANSITIONS[current] ?? []
-  return allowed.map((value) => ({ value, label: STATUS_LABELS[value] }))
+  return allowed.map((value) => ({ value, label: $t_script(STATUS_LABELS[value]) }))
 })
 
 const errors = reactive<Record<string, string>>({})
@@ -376,17 +379,17 @@ function validateField(field: string): boolean {
   const value = (form as Record<string, unknown>)[field]
 
   if (requiredFields.includes(field as (typeof requiredFields)[number]) && !value) {
-    errors[field] = 'This field is required.'
+    errors[field] = $t_script('validation.required')
     return false
   }
 
   if (field === 'start_date' && form.end_date && value && value > form.end_date) {
-    errors[field] = 'Start date must be before end date.'
+    errors[field] = $t_script('validation.startBeforeEnd')
     return false
   }
 
   if (field === 'end_date' && form.start_date && value && value < form.start_date) {
-    errors[field] = 'End date must be after start date.'
+    errors[field] = $t_script('validation.endAfterStart')
     return false
   }
 
@@ -400,7 +403,7 @@ function validateAll(): boolean {
     if (!validateField(field)) valid = false
   }
   if (isEdit.value && !form.status) {
-    errors.status = 'This field is required.'
+    errors.status = $t_script('validation.required')
     valid = false
   }
   return valid
@@ -445,7 +448,7 @@ async function handleSubmit(): Promise<void> {
         }
       }
     } else {
-      formError.value = err instanceof Error ? err.message : 'Failed to save assignment.'
+      formError.value = err instanceof Error ? err.message : $t_script('validation.saveAssignmentFailed')
     }
   } finally {
     submitting.value = false
@@ -488,7 +491,7 @@ async function loadDropdownData(): Promise<void> {
     students.value = studentsRes.data.data ?? studentsRes.data
     companies.value = companiesRes.data.data ?? companiesRes.data
   } catch {
-    formError.value = 'Failed to load dropdown data.'
+    formError.value = $t_script('validation.loadFailed')
   } finally {
     studentsLoading.value = false
     companiesLoading.value = false
@@ -500,7 +503,7 @@ async function loadAssignmentDetails(id: number): Promise<void> {
     const data = await assignmentService.get(id)
     populateForm(data)
   } catch {
-    formError.value = 'Failed to load assignment details.'
+    formError.value = $t_script('validation.loadDetailsFailed')
   }
 }
 

@@ -20,7 +20,7 @@
             d="M12 4v16m8-8H4"
           />
         </svg>
-        New Assignment
+        {{ $t('common.create') }} Assignment
       </button>
     </div>
 
@@ -64,7 +64,7 @@
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Search by student, company, or tutor..."
+          :placeholder="$t('common.searchStudentCompanyTutor')"
           class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
         />
       </div>
@@ -250,13 +250,13 @@
                     @click="$emit('edit', assignment.id)"
                     class="rounded-lg px-3 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800"
                   >
-                    Edit
+                    {{ $t('common.edit') }}
                   </button>
                   <button
                     @click="confirmDelete(assignment)"
                     class="rounded-lg px-3 py-1.5 text-xs font-bold text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-800"
                   >
-                    Delete
+                    {{ $t('common.delete') }}
                   </button>
                 </div>
               </td>
@@ -396,7 +396,7 @@
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 />
               </svg>
-              {{ deleting ? 'Deleting...' : 'Delete' }}
+              {{ deleting ? $t('common.deleting') : $t('common.delete') }}
             </button>
           </div>
         </div>
@@ -407,10 +407,13 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAssignmentStore } from '@/stores/assignment'
 import api from '@/services/api'
 import type { Assignment } from '@/types/assignment'
 import type { User } from '@/types/auth'
+
+const { t: $t_script } = useI18n()
 
 defineEmits<{
   edit: [id: number]
@@ -538,7 +541,7 @@ function goToPage(page: number): void {
   if (page < 1 || page > (store.pagination?.last_page ?? 1)) return
   localError.value = ''
   store.fetchAssignments({ page, per_page: 15 }).catch((err: unknown) => {
-    localError.value = err instanceof Error ? err.message : 'Failed to load assignments.'
+    localError.value = err instanceof Error ? err.message : $t_script('common.failedLoadAssignments')
   })
 }
 
@@ -550,7 +553,7 @@ function clearFilters(): void {
 function fetchAssignments(): void {
   localError.value = ''
   store.fetchAssignments({ per_page: 15 }).catch((err: unknown) => {
-    localError.value = err instanceof Error ? err.message : 'Failed to load assignments.'
+    localError.value = err instanceof Error ? err.message : $t_script('common.failedLoadAssignments')
   })
 }
 

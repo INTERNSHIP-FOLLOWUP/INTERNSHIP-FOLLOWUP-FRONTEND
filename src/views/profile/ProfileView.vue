@@ -7,8 +7,8 @@
         </svg>
       </button>
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Profile</h1>
-        <p class="mt-1 text-sm text-slate-500">Manage your account settings and password.</p>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ $t('profile.title') }}</h1>
+        <p class="mt-1 text-sm text-slate-500">{{ $t('profile.accountInfo') }}</p>
       </div>
     </div>
 
@@ -38,21 +38,21 @@
     </div>
 
     <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-      <h2 class="text-base font-bold text-slate-900 mb-5">Edit Profile</h2>
+      <h2 class="text-base font-bold text-slate-900 mb-5">{{ $t('profile.personalInfo') }}</h2>
       <form @submit.prevent="handleUpdateProfile" class="space-y-5">
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <FormField label="First Name" :error="profileErrors.first_name">
+          <FormField :label="$t('profile.firstName')" :error="profileErrors.first_name">
             <input v-model="profileForm.first_name" type="text"
               class="block w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
               :class="profileErrors.first_name ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
           </FormField>
-          <FormField label="Last Name" :error="profileErrors.last_name">
+          <FormField :label="$t('profile.lastName')" :error="profileErrors.last_name">
             <input v-model="profileForm.last_name" type="text"
               class="block w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
               :class="profileErrors.last_name ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
           </FormField>
         </div>
-        <FormField label="Email" :error="profileErrors.email">
+        <FormField :label="$t('profile.email')" :error="profileErrors.email">
           <input v-model="profileForm.email" type="email"
             class="block w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
             :class="profileErrors.email ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
@@ -66,27 +66,27 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            Save Changes
+            {{ $t('profile.saveChanges') }}
           </button>
         </div>
       </form>
     </div>
 
     <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-      <h2 class="text-base font-bold text-slate-900 mb-5">Change Password</h2>
+      <h2 class="text-base font-bold text-slate-900 mb-5">{{ $t('profile.changePassword') }}</h2>
       <form @submit.prevent="handleChangePassword" class="space-y-5">
-        <FormField label="Current Password" :error="passwordErrors.current_password">
+        <FormField :label="$t('profile.currentPassword')" :error="passwordErrors.current_password">
           <input v-model="passwordForm.current_password" type="password"
             class="block w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
             :class="passwordErrors.current_password ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
         </FormField>
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <FormField label="New Password" :error="passwordErrors.password">
+          <FormField :label="$t('profile.newPassword')" :error="passwordErrors.password">
             <input v-model="passwordForm.password" type="password"
               class="block w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
               :class="passwordErrors.password ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
           </FormField>
-          <FormField label="Confirm New Password" :error="passwordErrors.password_confirmation">
+          <FormField :label="$t('profile.confirmPassword')" :error="passwordErrors.password_confirmation">
             <input v-model="passwordForm.password_confirmation" type="password"
               class="block w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
               :class="passwordErrors.password_confirmation ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
@@ -101,7 +101,7 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            Update Password
+            {{ $t('profile.changePassword') }}
           </button>
         </div>
       </form>
@@ -111,10 +111,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { authService } from '@/services/auth'
 import FormField from '@/components/ui/FormField.vue'
 
+const { t: $t_script } = useI18n()
 const authStore = useAuthStore()
 
 const user = computed(() => authStore.user)
@@ -181,7 +183,7 @@ async function handleUpdateProfile(): Promise<void> {
 
     const updated = await authService.updateProfile(fd)
     authStore.user = updated
-    profileMessage.value = 'Profile updated successfully.'
+    profileMessage.value = $t_script('profile.profileUpdated')
     setTimeout(() => { profileMessage.value = '' }, 3000)
   } catch (err: unknown) {
     const axiosErr = err as { response?: { data?: { errors?: Record<string, string[]>; message?: string } } }
@@ -190,7 +192,7 @@ async function handleUpdateProfile(): Promise<void> {
         profileErrors[key] = msgs[0] ?? ''
       }
     } else {
-      profileFormError.value = (err as Error).message || 'Failed to update profile.'
+      profileFormError.value = (err as Error).message || $t_script('profile.failedUpdate')
     }
   } finally {
     profileSubmitting.value = false
@@ -203,7 +205,7 @@ async function handleChangePassword(): Promise<void> {
   for (const k of Object.keys(passwordErrors)) delete passwordErrors[k]
 
   if (passwordForm.password !== passwordForm.password_confirmation) {
-    passwordErrors.password_confirmation = 'Passwords do not match.'
+    passwordErrors.password_confirmation = $t_script('validation.passwordMatch')
     return
   }
 
@@ -214,7 +216,7 @@ async function handleChangePassword(): Promise<void> {
       password: passwordForm.password,
       password_confirmation: passwordForm.password_confirmation,
     })
-    passwordMessage.value = res.message || 'Password changed successfully.'
+    passwordMessage.value = res.message || $t_script('profile.passwordChanged')
     passwordForm.current_password = ''
     passwordForm.password = ''
     passwordForm.password_confirmation = ''
@@ -226,7 +228,7 @@ async function handleChangePassword(): Promise<void> {
         passwordErrors[key] = msgs[0] ?? ''
       }
     } else {
-      passwordFormError.value = (axiosErr.response?.data?.message as string) || 'Failed to change password.'
+      passwordFormError.value = (axiosErr.response?.data?.message as string) || $t_script('profile.failedPassword')
     }
   } finally {
     passwordSubmitting.value = false

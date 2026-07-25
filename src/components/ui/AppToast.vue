@@ -24,7 +24,7 @@
         <button
           @click="store.remove(toast.id)"
           class="-mr-1 -mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
-          aria-label="Dismiss notification"
+          :aria-label="$t('common.dismissNotification')"
         >
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path

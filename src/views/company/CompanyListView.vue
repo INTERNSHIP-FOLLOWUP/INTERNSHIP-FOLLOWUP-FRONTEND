@@ -2,9 +2,9 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Companies</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{{ $t('companies.title') }}</h1>
         <p class="text-sm text-slate-500 dark:text-slate-400">
-          Manage partner companies and their details.
+          {{ $t('companies.listSubtitle') }}
         </p>
       </div>
       <router-link
@@ -19,14 +19,14 @@
             d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        Add Company
+        {{ $t('companies.addCompany') }}
       </router-link>
     </div>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
       <DebouncedInput
         v-model="searchQuery"
-        placeholder="Search by name or industry..."
+        :placeholder="$t('companies.searchByNameIndustry')"
         class="flex-1 max-w-xs"
         clearable
         @change="onSearch"
@@ -37,8 +37,8 @@
         @change="onFilterChange"
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
       >
-        <option value="">All Industries</option>
-        <option v-for="ind in industries" :key="ind" :value="ind">{{ ind }}</option>
+        <option value="">{{ $t('companies.allIndustries') }}</option>
+        <option v-for="ind in industries" :key="ind" :value="ind">{{ $t('companies.industries.' + ind.toLowerCase()) }}</option>
       </select>
     </div>
 
@@ -105,8 +105,8 @@
         <p class="mt-3 text-sm font-semibold text-slate-400">
           {{
             searchQuery || industryFilter
-              ? 'No companies match your filters.'
-              : 'No companies registered yet.'
+              ? $t('companies.noMatchFilters')
+              : $t('companies.noCompaniesYet')
           }}
         </p>
       </div>
@@ -131,6 +131,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useCompanyStore } from '@/stores/company'
 import { useToastStore } from '@/stores/toast'
 import { usePagination } from '@/composables/usePagination'
@@ -139,6 +140,8 @@ import CompanyCard from '@/components/company/CompanyCard.vue'
 import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import DebouncedInput from '@/components/ui/DebouncedInput.vue'
+
+const { t: $t_script } = useI18n()
 
 
 const store = useCompanyStore()
@@ -188,8 +191,8 @@ function onClearSearch() {
 async function deleteCompany(id: number) {
   deleteTargetId = id
   const confirmed = await dialog.open({
-    title: 'Delete Company',
-    message: 'Are you sure you want to delete this company? This action cannot be undone.',
+    title: $t_script('companies.confirmDelete'),
+    message: $t_script('companies.deleteConfirmMessage'),
   })
   if (!confirmed) return
   await handleConfirm()
@@ -199,7 +202,7 @@ async function handleConfirm() {
   if (deleteTargetId === null) return
   await dialog.confirmAsync(async () => {
     await store.deleteCompany(deleteTargetId!)
-    toast.success('Company deleted successfully.')
+    toast.success($t_script('companies.deletedSuccess'))
   })
 }
 </script>

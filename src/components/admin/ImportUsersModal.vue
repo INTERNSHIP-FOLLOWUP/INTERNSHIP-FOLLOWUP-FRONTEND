@@ -54,11 +54,11 @@
 
         <div class="mt-5 flex justify-end gap-2">
           <button @click="$emit('close')" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
-            Cancel
+            {{ $t('common.cancel') }}
           </button>
           <button @click="upload" :disabled="!file || uploading"
             class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed">
-            {{ uploading ? 'Uploading...' : 'Import' }}
+            {{ uploading ? $t('common.uploading') : $t('common.import') }}
           </button>
         </div>
       </div>
@@ -68,11 +68,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import api from '@/services/api'
 
 defineProps<{ show: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
+const { t: $t_script } = useI18n()
 const templateUrl = `${api.defaults.baseURL}/admin/users/import/template`
 const fileInput = ref<HTMLInputElement | null>(null)
 const file = ref<File | null>(null)
@@ -89,7 +91,7 @@ function handleDrop(e: DragEvent) {
     uploadError.value = ''
     result.value = null
   } else {
-    uploadError.value = 'Please select a valid .xlsx, .xls, or .csv file.'
+    uploadError.value = $t_script('validation.invalidImportFile')
   }
 }
 

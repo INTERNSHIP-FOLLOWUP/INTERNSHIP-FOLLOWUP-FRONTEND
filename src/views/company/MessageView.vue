@@ -7,7 +7,7 @@
     >
       <div class="border-b border-slate-100 px-5 py-4">
         <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold text-slate-900">Messages</h2>
+          <h2 class="text-lg font-bold text-slate-900">{{ $t('messages.title') }}</h2>
           <span
             v-if="store.totalUnreadCount > 0"
             class="inline-flex items-center justify-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-bold text-indigo-700"
@@ -16,7 +16,7 @@
           </span>
         </div>
         <p class="mt-0.5 text-xs text-slate-500">
-          Communicate with your assigned tutors
+          {{ $t('messages.companySubtitle') }}
         </p>
       </div>
 
@@ -39,7 +39,7 @@
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Search conversations..."
+            :placeholder="$t('messages.searchContact')"
             class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
         </div>
@@ -92,10 +92,11 @@
             />
           </svg>
           <p class="mt-3 text-sm font-semibold text-slate-400">
-            {{ searchQuery ? 'No conversations match your search.' : 'No conversations yet.' }}
+            {{ searchQuery              ? $t('messages.noMatches')
+              : $t('messages.noConversations') }}
           </p>
           <p v-if="!searchQuery" class="mt-1 text-xs text-slate-400">
-            Start a conversation by sending a message to a tutor.
+            {{ $t('messages.startHint') }}
           </p>
         </div>
 
@@ -154,11 +155,11 @@
                 class="mt-0.5 truncate text-xs"
                 :class="conv.unread_count > 0 ? 'font-medium text-slate-700' : 'text-slate-400'"
               >
-                {{ isOwnMessage(conv.last_message) ? 'You: ' : '' }}
+                {{ isOwnMessage(conv.last_message) ? $t('messages.youPrefix') : '' }}
                 {{ conv.last_message.message }}
               </p>
               <p v-else class="mt-0.5 text-xs text-slate-400 italic">
-                No messages yet
+                {{ $t('messages.noMessages') }}
               </p>
 
               <!-- Badge for participant type -->
@@ -168,7 +169,7 @@
                   ? 'bg-purple-50 text-purple-700'
                   : 'bg-emerald-50 text-emerald-700'"
               >
-                {{ conv.user ? 'Tutor' : 'Company' }}
+                {{ conv.user ? $t('common.tutor') : $t('common.company') }}
               </span>
             </div>
           </button>
@@ -201,9 +202,9 @@
             />
           </svg>
         </div>
-        <h3 class="mt-4 text-lg font-bold text-slate-800">Your Messages</h3>
+        <h3 class="mt-4 text-lg font-bold text-slate-800">{{ $t('messages.yourMessages') }}</h3>
         <p class="mt-1 max-w-xs text-sm text-slate-500">
-          Select a conversation from the left to start chatting with a tutor.
+          {{ $t('messages.selectPrompt') }}
         </p>
       </div>
 
@@ -248,7 +249,7 @@
               {{ getConversationName(activeConversation) }}
             </h3>
             <p class="text-xs text-slate-500">
-              {{ activeConversation.user ? 'Tutor' : 'Company Representative' }}
+              {{ activeConversation.user ? $t('common.tutor') : $t('messages.companyRep') }}
             </p>
           </div>
         </div>
@@ -299,9 +300,9 @@
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
               />
             </svg>
-            <h4 class="mt-3 text-sm font-bold text-slate-600">No messages yet</h4>
+            <h4 class="mt-3 text-sm font-bold text-slate-600">{{ $t('messages.noMessages') }}</h4>
             <p class="mt-1 text-xs text-slate-400">
-              Send a message to start the conversation.
+              {{ $t('messages.sendHint') }}
             </p>
           </div>
 
@@ -362,7 +363,7 @@
             <div class="relative flex-1">
               <textarea
                 v-model="newMessage"
-                placeholder="Type your message..."
+                :placeholder="$t('messages.typeMessage')"
                 rows="1"
                 class="block w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 @keydown.enter.exact="handleSend"
@@ -418,8 +419,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useMessageStore } from '@/stores/messageStore'
+
+const { t: $t_script } = useI18n()
 import type { MessageConversation, MessageItem } from '@/types/message'
 
 const auth = useAuthStore()
@@ -478,8 +482,7 @@ function formatTime(dateStr: string): string {
 
   if (diffDays === 0) {
     return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-  }
-  if (diffDays === 1) return 'Yesterday'
+  }      if (diffDays === 1) return $t_script('messages.yesterday')
   if (diffDays < 7) {
     return date.toLocaleDateString('en-US', { weekday: 'short' })
   }

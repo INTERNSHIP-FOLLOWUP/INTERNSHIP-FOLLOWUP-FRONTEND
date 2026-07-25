@@ -4,11 +4,10 @@
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
         <h1 class="text-2xl font-bold tracking-tight text-slate-900">
-          Welcome back, {{ displayName }}!
+          {{ $t('dashboard.company.welcome') }} {{ displayName }}!
         </h1>
         <p class="text-sm text-slate-500">
-          Manage your assigned interns, submit evaluations, and track internship progress in
-          real-time.
+          {{ $t('dashboard.company.subtitle') }}
         </p>
       </div>
     </div>
@@ -16,9 +15,9 @@
     <!-- Overview Statistics Cards -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <StatCard
-        label="Active Internships"
+        :label="$t('dashboard.company.activeInternships')"
         :value="stats.activeInternships"
-        description="Currently running program slots"
+        :description="$t('dashboard.company.activeInternshipsDesc')"
         color-class="bg-gradient-to-br from-primary-500 to-primary-600 shadow-primary-500/20"
       >
         <template #icon>
@@ -34,9 +33,9 @@
       </StatCard>
 
       <StatCard
-        label="Assigned Students"
+        :label="$t('dashboard.company.assignedStudents')"
         :value="stats.assignedStudents"
-        description="Across all active batches"
+        :description="$t('dashboard.company.assignedStudentsDesc')"
         color-class="bg-gradient-to-br from-purple-500 to-purple-600 shadow-purple-500/20"
       >
         <template #icon>
@@ -52,9 +51,9 @@
       </StatCard>
 
       <StatCard
-        label="Evaluations Submitted"
+        :label="$t('dashboard.company.evaluationsSubmitted')"
         :value="stats.evaluationsSubmitted"
-        description="Total evaluations recorded"
+        :description="$t('dashboard.company.evaluationsDesc')"
         color-class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-emerald-500/20"
       >
         <template #icon>
@@ -70,9 +69,9 @@
       </StatCard>
 
       <StatCard
-        label="Pending Reviews"
+        :label="$t('dashboard.company.pendingReviews')"
         :value="stats.pendingReviews"
-        description="Awaiting evaluation action"
+        :description="$t('dashboard.company.pendingReviewsDesc')"
         color-class="bg-gradient-to-br from-rose-500 to-rose-600 shadow-rose-500/20"
       >
         <template #icon>
@@ -94,14 +93,14 @@
       <div :class="[panelClass, 'lg:col-span-2']">
         <div class="mb-5 flex items-center justify-between">
           <div>
-            <h3 class="text-base font-bold text-slate-950">Assigned Students</h3>
-            <p class="text-xs text-slate-500">Interns currently assigned to your company</p>
+            <h3 class="text-base font-bold text-slate-950">{{ $t('dashboard.company.assignedStudentsTable') }}</h3>
+            <p class="text-xs text-slate-500">{{ $t('dashboard.company.assignedStudentsTableSub') }}</p>
           </div>
           <router-link
             to="/company/students"
             class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800"
           >
-            View All &rarr;
+            {{ $t('dashboard.company.viewAll') }}
           </router-link>
         </div>
 
@@ -111,10 +110,10 @@
               <tr
                 class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
               >
-                <th class="px-4 py-3">Student Name</th>
-                <th class="px-4 py-3">Program</th>
-                <th class="px-4 py-3">Status</th>
-                <th class="px-4 py-3 text-right">Actions</th>
+                <th class="px-4 py-3">{{ $t('dashboard.company.studentName') }}</th>
+                <th class="px-4 py-3">{{ $t('dashboard.company.program') }}</th>
+                <th class="px-4 py-3">{{ $t('dashboard.company.status') }}</th>
+                <th class="px-4 py-3 text-right">{{ $t('dashboard.company.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -134,14 +133,14 @@
                   </div>
                 </td>
                 <td class="whitespace-nowrap px-4 py-3 text-slate-500 font-medium">
-                  {{ student.batch || student.program || 'N/A' }}
+                  {{ student.batch || student.program || $t('common.na') }}
                 </td>
                 <td class="whitespace-nowrap px-4 py-3">
                   <span
                     class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold"
                     :class="getStatusClass(student.status)"
                   >
-                    {{ student.status || 'Assigned' }}
+                    {{ $t('internships.status' + (student.status || 'Assigned').replace(/ /g, '')) }}
                   </span>
                 </td>
                 <td class="whitespace-nowrap px-4 py-3 text-right">
@@ -149,7 +148,7 @@
                     :to="'/company/evaluations'"
                     class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800"
                   >
-                    Evaluate
+                    {{ $t('dashboard.company.evaluate') }}
                   </router-link>
                 </td>
               </tr>
@@ -173,7 +172,7 @@
               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-          <p class="mt-2 text-xs font-semibold text-slate-500">No students assigned yet.</p>
+          <p class="mt-2 text-xs font-semibold text-slate-500">{{ $t('dashboard.company.noStudents') }}</p>
         </div>
       </div>
 
@@ -181,14 +180,14 @@
       <div :class="panelClass">
         <div class="mb-5 flex items-center justify-between">
           <div>
-            <h3 class="text-base font-bold text-slate-950">Recent Evaluations</h3>
-            <p class="text-xs text-slate-500">Latest submitted evaluation records</p>
+            <h3 class="text-base font-bold text-slate-950">{{ $t('dashboard.company.recentEvaluations') }}</h3>
+            <p class="text-xs text-slate-500">{{ $t('dashboard.company.recentEvalSub') }}</p>
           </div>
           <router-link
             to="/company/evaluations"
             class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800"
           >
-            View All &rarr;
+            {{ $t('dashboard.company.viewAll') }}
           </router-link>
         </div>
 
@@ -213,8 +212,7 @@
               </div>
               <div>
                 <h4 class="text-xs font-bold text-slate-900">{{ evaluationStudentName(evalItem) }}</h4>
-                <p class="text-[10px] font-semibold text-slate-400">
-                  Rating: {{ evalItem.rating }}/5
+                <p class="text-[10px] font-semibold text-slate-400">                    {{ $t('dashboard.company.rating') }}: {{ evalItem.rating }}/5
                 </p>
               </div>
             </div>
@@ -241,7 +239,7 @@
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <p class="mt-2 text-xs font-semibold text-slate-400">No evaluations submitted yet.</p>
+          <p class="mt-2 text-xs font-semibold text-slate-400">{{ $t('dashboard.company.noEvaluations') }}</p>
         </div>
       </div>
     </div>
@@ -250,8 +248,8 @@
     <div :class="panelClass">
       <div class="mb-5 flex items-center justify-between">
         <div>
-          <h3 class="text-base font-bold text-slate-950">Company Profile</h3>
-          <p class="text-xs text-slate-500">Your registered company information</p>
+          <h3 class="text-base font-bold text-slate-950">{{ $t('dashboard.company.companyProfile') }}</h3>
+          <p class="text-xs text-slate-500">{{ $t('dashboard.company.companyProfileSub') }}</p>
         </div>
         <router-link
           to="/company/profile"
@@ -265,28 +263,28 @@
               d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
             />
           </svg>
-          Edit Profile
+          {{ $t('dashboard.company.editProfile') }}
         </router-link>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div class="space-y-1">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Company Name</p>
-          <p class="text-sm font-semibold text-slate-900">{{ companyProfile.name || 'N/A' }}</p>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ $t('dashboard.company.companyName') }}</p>
+          <p class="text-sm font-semibold text-slate-900">{{ companyProfile.name || $t('common.na') }}</p>
         </div>
         <div class="space-y-1">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Industry</p>
-          <p class="text-sm font-semibold text-slate-900">{{ companyProfile.industry || 'N/A' }}</p>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ $t('dashboard.company.industry') }}</p>
+          <p class="text-sm font-semibold text-slate-900">{{ companyProfile.industry || $t('common.na') }}</p>
         </div>
         <div class="space-y-1">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Contact Person</p>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ $t('dashboard.company.contactPerson') }}</p>
           <p class="text-sm font-semibold text-slate-900">
-            {{ companyProfile.contactPerson || 'N/A' }}
+            {{ companyProfile.contactPerson || $t('common.na') }}
           </p>
         </div>
         <div class="space-y-1">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Phone</p>
-          <p class="text-sm font-semibold text-slate-900">{{ companyProfile.phone || 'N/A' }}</p>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ $t('dashboard.company.phone') }}</p>
+          <p class="text-sm font-semibold text-slate-900">{{ companyProfile.phone || $t('common.na') }}</p>
         </div>
       </div>
 
@@ -294,12 +292,12 @@
       <div v-if="companyLogoUrl" class="mt-4 flex items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-4">
         <img
           :src="companyLogoUrl"
-          alt="Company Logo"
+          :alt="$t('common.companyLogo')"
           class="h-16 w-16 rounded-xl object-cover shadow-sm ring-2 ring-white"
         />
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Company Logo</p>
-          <p class="text-sm font-medium text-slate-700">Uploaded brand logo</p>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ $t('dashboard.company.companyLogo') }}</p>
+          <p class="text-sm font-medium text-slate-700">{{ $t('dashboard.company.uploadedLogo') }}</p>
         </div>
       </div>
     </div>
@@ -308,8 +306,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCompanyStore } from '@/stores/company'
 import StatCard from '@/components/dashboard/StatCard.vue'
+
+const { t: $t_script } = useI18n()
 
 const store = useCompanyStore()
 
@@ -317,7 +318,7 @@ const loading = ref(false)
 const panelClass =
   'rounded-lg border border-slate-200/80 bg-white p-5 shadow-sm ring-1 ring-white/70 transition-shadow duration-200 hover:shadow-md'
 
-const displayName = ref('Company')
+const displayName = ref($t_script('common.company'))
 
 const companyProfile = ref({
   name: '',
@@ -366,7 +367,7 @@ function getStatusClass(status?: string) {
 }
 
 function formatDate(dateStr?: string) {
-  if (!dateStr) return 'N/A'
+  if (!dateStr) return $t_script('common.na')
   try {
     const d = new Date(dateStr)
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -377,7 +378,7 @@ function formatDate(dateStr?: string) {
 
 function studentDisplayName(item: unknown) {
   const raw = item as Record<string, unknown> | null
-  if (!raw) return 'Student'
+  if (!raw) return $t_script('common.student')
 
   const nestedStudent = raw.student as Record<string, unknown> | undefined
   const firstName = String(raw.first_name ?? nestedStudent?.first_name ?? '').trim()
@@ -389,7 +390,7 @@ function studentDisplayName(item: unknown) {
     String(raw.student_name ?? '').trim() ||
     String(raw.name ?? '').trim() ||
     fullName ||
-    'Student'
+    $t_script('common.student')
   )
 }
 
@@ -405,7 +406,7 @@ function evaluationStudentName(evalItem: unknown) {
 
   const studentId = Number(raw.student_id ?? 0)
   const student = assignedStudents.value.find((item) => studentRecordId(item) === studentId)
-  return student ? studentDisplayName(student) : 'Student'
+  return student ? studentDisplayName(student) : $t_script('common.student')
 }
 
 async function load() {
@@ -424,7 +425,7 @@ async function load() {
 
     const raw = store.currentCompany
     if (raw) {
-      displayName.value = raw.name || 'Company'
+      displayName.value = raw.name || $t_script('common.company')
       companyProfile.value = {
         name: raw.name || '',
         industry: raw.industry || '',

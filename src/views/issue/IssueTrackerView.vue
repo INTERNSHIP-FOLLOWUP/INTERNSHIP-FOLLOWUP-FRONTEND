@@ -3,9 +3,9 @@
     <!-- Header -->
     <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Issue Management</h1>
+        <h1 class="text-2xl font-bold text-gray-900">{{ $t('issues.managementTitle') }}</h1>
         <p class="mt-1 text-sm text-slate-500">
-          Track, assign, update, and resolve internship project issues.
+          {{ $t('issues.managementSub') }}
         </p>
       </div>
       <button
@@ -21,7 +21,7 @@
             d="M12 4v16m8-8H4"
           />
         </svg>
-        Report New Issue
+        {{ $t('issues.reportNew') }}
       </button>
     </div>
 
@@ -64,7 +64,7 @@
         class="self-start rounded-xl border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100"
         @click="retry"
       >
-        Retry
+        {{ $t('issues.retry') }}
       </button>
     </div>
 
@@ -72,37 +72,37 @@
     <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
         <div class="lg:col-span-2">
-          <label class="mb-1 block text-xs font-semibold text-slate-500">Search</label>
+          <label class="mb-1 block text-xs font-semibold text-slate-500">{{ $t('issues.search') }}</label>
           <input
             v-model="localSearch"
             class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-colors focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
-            placeholder="Search by title..."
+            :placeholder="$t('issues.searchByTitle')"
           />
         </div>
         <div>
-          <label class="mb-1 block text-xs font-semibold text-slate-500">Status</label>
+          <label class="mb-1 block text-xs font-semibold text-slate-500">{{ $t('issues.status') }}</label>
           <select
             v-model="localStatus"
             class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-colors focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
           >
-            <option value="">All</option>
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Closed">Closed</option>
+            <option value="">{{ $t('issues.all') }}</option>
+            <option value="Open">{{ $t('issues.open') }}</option>
+            <option value="In Progress">{{ $t('issues.inProgress') }}</option>
+            <option value="Resolved">{{ $t('issues.resolved') }}</option>
+            <option value="Closed">{{ $t('issues.closed') }}</option>
           </select>
         </div>
         <div>
-          <label class="mb-1 block text-xs font-semibold text-slate-500">Priority</label>
+          <label class="mb-1 block text-xs font-semibold text-slate-500">{{ $t('issues.priority') }}</label>
           <select
             v-model="localPriority"
             class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-colors focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
           >
-            <option value="">All</option>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-            <option value="Critical">Critical</option>
+            <option value="">{{ $t('issues.all') }}</option>
+            <option value="Low">{{ $t('issues.low') }}</option>
+            <option value="Medium">{{ $t('issues.medium') }}</option>
+            <option value="High">{{ $t('issues.high') }}</option>
+            <option value="Critical">{{ $t('issues.critical') }}</option>
           </select>
         </div>
         <div class="flex items-end gap-2">
@@ -111,13 +111,13 @@
             :disabled="issueStore.loading"
             @click="applyFilters"
           >
-            Search
+            {{ $t('issues.search') }}
           </button>
           <button
             class="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50"
             @click="resetFilters"
           >
-            Reset
+            {{ $t('issues.reset') }}
           </button>
         </div>
       </div>
@@ -158,7 +158,7 @@
             class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold"
             :class="statusBadgeClasses(issue.status)"
           >
-            {{ issue.status }}
+            {{ issueStatusLabel(issue.status) }}
           </span>
         </div>
 
@@ -241,13 +241,13 @@
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
-            Updated {{ format(issue.updatedAt) }}
+            {{ $t('issues.updated') }} {{ format(issue.updatedAt) }}
           </span>
           <span
             class="inline-flex items-center rounded-lg px-2 py-0.5 text-[11px] font-semibold"
             :class="priorityBadgeClasses(issue.priority)"
           >
-            {{ issue.priority }}
+            {{ issuePriorityLabel(issue.priority) }}
           </span>
         </div>
 
@@ -268,7 +268,7 @@
               d="M15.172 7l-6.586 6.586a2 2 0 000 2.828 2 2 0 002.828 0L18 10m0 0h-6m6 0v6"
             />
           </svg>
-          {{ issue.attachments }} attachment{{ issue.attachments === 1 ? '' : 's' }}
+          {{ issue.attachments }} {{ $t(issue.attachments === 1 ? 'issues.attachment' : 'issues.attachments') }}
         </div>
 
         <div class="mt-5 grid grid-cols-4 gap-2">
@@ -276,37 +276,21 @@
             class="rounded-xl border border-gray-200 px-2.5 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-gray-50"
             @click="openDetail(issue)"
           >
-            View
-          </button>
-          <button
-            v-if="context === 'tutor'"
-            class="rounded-xl bg-[#2563EB] px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
-            :disabled="closedOnlyView(issue)"
-            @click="openEditModal(issue)"
-          >
-            Edit
-          </button>
-          <button
-            v-else
-            class="rounded-xl bg-[#2563EB] px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
-            :disabled="closedOnlyView(issue)"
-            @click="openUpdateModal(issue)"
-          >
-            Update
+            {{ $t('issues.view') }}
           </button>
           <button
             class="rounded-xl bg-[#7C3AED] px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#6a2fd9] disabled:opacity-70"
             :disabled="closedOnlyView(issue)"
             @click="openAssignModal(issue)"
           >
-            Assign
+            {{ $t('issues.assign') }}
           </button>
           <button
             class="rounded-xl bg-[#22C55E] px-2.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#16a34a] disabled:opacity-70"
             :disabled="closedOnlyView(issue)"
             @click="resolveIssue(issue)"
           >
-            Resolve
+            {{ $t('issues.resolve') }}
           </button>
         </div>
       </div>
@@ -325,9 +309,9 @@
           d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
         />
       </svg>
-      <h3 class="mt-4 text-lg font-semibold text-gray-900">No Issues Found</h3>
+      <h3 class="mt-4 text-lg font-semibold text-gray-900">{{ $t('issues.noIssuesFound') }}</h3>
       <p class="mt-2 max-w-md text-sm text-slate-500">
-        There are currently no reported issues. Click the button below to create the first issue.
+        {{ $t('issues.noIssuesHint') }}
       </p>
       <button
         v-if="canCreateIssue"
@@ -342,7 +326,7 @@
             d="M12 4v16m8-8H4"
           />
         </svg>
-        Report New Issue
+        {{ $t('issues.reportNew') }}
       </button>
     </div>
 
@@ -352,11 +336,11 @@
       class="flex flex-col items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3 sm:flex-row sm:px-6"
     >
       <p class="text-xs text-slate-500">
-        Showing
+        {{ $t('issues.showing') }}
         <span class="font-semibold text-gray-700">{{ displayRange }}</span>
-        of
+        {{ $t('issues.of') }}
         <span class="font-semibold text-gray-700">{{ issueStore.pagination.totalItems }}</span>
-        issues
+        {{ $t('issues.issues') }}
       </p>
       <div class="flex items-center gap-2">
         <button
@@ -364,7 +348,7 @@
           :disabled="issueStore.pagination.page === 1"
           @click="issueStore.setPage(issueStore.pagination.page - 1)"
         >
-          Previous
+          {{ $t('issues.previous') }}
         </button>
         <div class="flex items-center gap-1">
           <button
@@ -386,7 +370,7 @@
           :disabled="issueStore.pagination.page === issueStore.pagination.totalPages"
           @click="issueStore.setPage(issueStore.pagination.page + 1)"
         >
-          Next
+          {{ $t('issues.next') }}
         </button>
       </div>
     </div>
@@ -399,55 +383,47 @@
       <div class="w-[92%] max-w-[480px] rounded-2xl bg-white shadow-2xl">
         <div class="border-b border-gray-100 px-4 py-3">
           <h2 class="text-base font-bold text-gray-900">
-            {{ formModal.mode === 'create' ? 'New Issue' : 'Update Issue' }}
+            {{ formModal.mode === 'create' ? $t('issues.newIssue') : $t('issues.updateIssue') }}
           </h2>
           <p class="mt-0.5 text-xs text-slate-500">
-            Fill in the issue details below to keep shared progress clear.
+            {{ $t('issues.formSubtitle') }}
           </p>
         </div>
         <div class="max-h-[calc(100dvh-120px)] space-y-3 overflow-y-auto px-4 py-4">
-          <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500"
-              >Issue Title <span class="text-red-500">*</span></label
+          <div>              <label class="mb-1 block text-xs font-semibold text-slate-500">{{ $t('issues.issueTitle') }} <span class="text-red-500">*</span></label
             >
             <input
               v-model="formModal.form.title"
               class="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="closedOnlyView(formModal.item!)"
-              placeholder="Enter issue title"
+              :placeholder="$t('issues.enterTitle')"
             />
           </div>
-          <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-500"
-              >Description <span class="text-red-500">*</span></label
+          <div>              <label class="mb-1 block text-xs font-semibold text-slate-500">{{ $t('issues.description') }} <span class="text-red-500">*</span></label
             >
             <textarea
               v-model="formModal.form.description"
               class="h-20 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="closedOnlyView(formModal.item!)"
-              placeholder="What's the issue?"
+              :placeholder="$t('issues.whatsIssue')"
             />
           </div>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div>
-              <label class="mb-0.5 block text-xs font-semibold text-slate-500"
-                >Priority <span class="text-red-500">*</span></label
+            <div>                <label class="mb-0.5 block text-xs font-semibold text-slate-500">{{ $t('issues.priority') }} <span class="text-red-500">*</span></label
               >
               <select
                 v-model="formModal.form.priority"
                 class="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
                 :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
               >
-                <option value="">Select priority</option>
+                <option value="">{{ $t('issues.selectPriority') }}</option>
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
                 <option value="Critical">Critical</option>
               </select>
             </div>
-            <div>
-              <label class="mb-0.5 block text-xs font-semibold text-slate-500"
-                >Status <span class="text-red-500">*</span></label
+            <div>                <label class="mb-0.5 block text-xs font-semibold text-slate-500">{{ $t('issues.status') }} <span class="text-red-500">*</span></label
               >
               <select
                 v-model="formModal.form.status"
@@ -460,7 +436,7 @@
                   (formModal.mode === 'update' && closedOnlyView(formModal.item!))
                 "
               >
-                <option value="">Select status</option>
+                <option value="">{{ $t('issues.selectStatus') }}</option>
                 <option v-for="status in allowedEditableStatuses" :key="status" :value="status">
                   {{ status }}
                 </option>
@@ -468,9 +444,7 @@
             </div>
           </div>
           <!-- Student selector - shown for tutor and admin contexts -->
-          <div v-if="context === 'tutor'">
-            <label class="mb-0.5 block text-xs font-semibold text-slate-500"
-              >Assign To Student <span class="text-red-500">*</span></label
+          <div v-if="context === 'tutor'">              <label class="mb-0.5 block text-xs font-semibold text-slate-500">{{ $t('issues.assignToStudent') }} <span class="text-red-500">*</span></label
             >
             <select
               v-model="formModal.form.studentId"
@@ -487,8 +461,7 @@
             </select>
           </div>
           <div v-else-if="context === 'admin'">
-            <label class="mb-0.5 block text-xs font-semibold text-slate-500"
-              >Student <span class="text-red-500">*</span></label
+            <label class="mb-0.5 block text-xs font-semibold text-slate-500">{{ $t('common.student') }} <span class="text-red-500">*</span></label
             >
             <select
               v-model="formModal.form.studentId"
@@ -505,20 +478,20 @@
             </select>
           </div>
           <div v-else>
-            <label class="mb-0.5 block text-xs font-semibold text-slate-500">Assign To</label>
+            <label class="mb-0.5 block text-xs font-semibold text-slate-500">{{ $t('issues.assignTo') }}</label>
             <select
               v-model="formModal.form.assignedUserId"
               class="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 disabled:cursor-not-allowed disabled:opacity-60"
               :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
             >
-              <option value="">Assign an available contact</option>
+              <option value="">{{ $t('issues.assignContact') }}</option>
               <option v-for="user in formUsers" :key="user.id" :value="user.id">
                 {{ user.name }} · {{ user.role }}
               </option>
             </select>
           </div>
           <div>
-            <label class="mb-0.5 block text-xs font-semibold text-slate-500">Due Date</label>
+            <label class="mb-0.5 block text-xs font-semibold text-slate-500">{{ $t('issues.dueDate') }}</label>
             <input
               v-model="formModal.form.dueDate"
               type="date"
@@ -527,9 +500,7 @@
             />
           </div>
           <!-- Existing attachments display (tutor edit mode) -->
-          <div v-if="context === 'tutor' && formModal.mode === 'update' && existingAttachments.length">
-            <label class="mb-0.5 block text-xs font-semibold text-slate-500"
-              >Current Attachments</label
+          <div v-if="context === 'tutor' && formModal.mode === 'update' && existingAttachments.length">              <label class="mb-0.5 block text-xs font-semibold text-slate-500">{{ $t('issues.currentAttachments') }}</label
             >
             <ul class="rounded-xl border border-gray-200 divide-y divide-gray-100">
               <li
@@ -566,7 +537,7 @@
             </ul>
           </div>
           <div>
-            <label class="mb-0.5 block text-xs font-semibold text-slate-500">Attachments</label>
+            <label class="mb-0.5 block text-xs font-semibold text-slate-500">{{ $t('issues.attachments') }}</label>
             <button
               type="button"
               class="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 px-5 py-4 text-center text-xs text-slate-500 transition-colors hover:border-[#2563EB] hover:text-[#2563EB] disabled:cursor-not-allowed disabled:opacity-70"
@@ -586,8 +557,8 @@
                   d="M15.172 7l-6.586 6.586a2 2 0 000 2.828 2 2 0 002.828 0L18 10m0 0h-6m6 0v6"
                 />
               </svg>
-              <p class="mt-1.5 font-semibold">Drag & drop files here</p>
-              <p class="mt-0.5">PDF, DOCX, PNG, ZIP</p>
+              <p class="mt-1.5 font-semibold">{{ $t('issues.dragDropFiles') }}</p>
+              <p class="mt-0.5">{{ $t('issues.acceptedFormats') }}</p>
             </button>
             <input
               ref="fileInputRef"
@@ -598,7 +569,7 @@
               @change="handleFiles"
             />
             <div v-if="formModal.form.files.length" class="mt-2 text-left text-xs text-slate-600">
-              <span class="font-semibold">Attached:</span>
+              <span class="font-semibold">{{ $t('issues.attached') }}</span>
               {{ formModal.form.files.map((file: File) => file.name).join(', ') }}
             </div>
           </div>
@@ -607,7 +578,7 @@
             v-if="validationErrors.length"
             class="rounded-lg border border-red-200 bg-red-50 p-2.5"
           >
-            <p class="text-xs font-semibold text-red-700">Please fix the following errors:</p>
+            <p class="text-xs font-semibold text-red-700">{{ $t('issues.fixErrors') }}</p>
             <ul class="mt-1 list-inside list-disc text-xs text-red-600">
               <li v-for="err in validationErrors" :key="err">{{ err }}</li>
             </ul>
@@ -618,14 +589,14 @@
             class="rounded-lg border border-gray-200 px-3.5 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50"
             @click="closeFormModal"
           >
-            Cancel
+            {{ $t('issues.cancel') }}
           </button>
           <button
             class="rounded-lg bg-[#2563EB] px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2258e0] disabled:opacity-70"
             :disabled="submitDisabled || issueStore.loading"
             @click="submitForm"
           >
-            {{ formModal.mode === 'create' ? 'Save Issue' : 'Update Issue' }}
+            {{ formModal.mode === 'create' ? $t('issues.saveIssue') : $t('issues.updateIssue') }}
           </button>
         </div>
       </div>
@@ -663,34 +634,32 @@
           <p class="text-sm leading-relaxed text-slate-600">{{ detailModal.item.description }}</p>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Reporter</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ $t('issues.reporter') }}</p>
               <p class="mt-1 text-sm font-semibold text-gray-900">
                 {{ detailModal.item.reporter }}
               </p>
             </div>
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                Assigned To
-              </p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ $t('issues.assignedTo') }}</p>
               <p class="mt-1 text-sm font-semibold text-gray-900">
                 {{ detailModal.item.assignedTo }}
               </p>
             </div>
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Created</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ $t('issues.created') }}</p>
               <p class="mt-1 text-sm font-semibold text-gray-900">
                 {{ detailModal.item.createdAt }}
               </p>
             </div>
             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Updated</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ $t('issues.updated') }}</p>
               <p class="mt-1 text-sm font-semibold text-gray-900">
                 {{ detailModal.item.updatedAt }}
               </p>
             </div>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-gray-900">Activity Timeline</h3>
+            <h3 class="text-sm font-semibold text-gray-900">{{ $t('issues.activityTimeline') }}</h3>
             <ol class="mt-3 space-y-4">
               <li
                 v-for="event in detailModal.item.history || []"
@@ -727,7 +696,7 @@
             class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50"
             @click="detailModal.open = false"
           >
-            Close
+            {{ $t('issues.close') }}
           </button>
         </div>
       </div>
@@ -737,6 +706,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { useIssueStore } from '@/stores/issueStore'
@@ -744,6 +714,7 @@ import { useTutorStudentStore } from '@/stores/tutorStudent'
 import { useStudentStore } from '@/stores/student'
 import type { Issue, FormModalState, Attachment } from '@/types/issue'
 
+const { t: $t_script } = useI18n()
 const route = useRoute()
 const issueStore = useIssueStore()
 const toast = useToastStore()
@@ -786,16 +757,16 @@ const allStudents = computed(() => {
 const validationErrors = computed(() => {
   const errs: string[] = []
   if (context.value === 'tutor') {
-    if (!formModal.form.title?.trim()) errs.push('Title is required.')
-    if (!formModal.form.description?.trim()) errs.push('Description is required.')
-    if (!formModal.form.priority) errs.push('Priority is required.')
-    if (!formModal.form.status) errs.push('Status is required.')
-    if (!formModal.form.studentId) errs.push('Please select a student to assign the issue to.')
+    if (!formModal.form.title?.trim()) errs.push($t_script('issues.validateTitle'))
+    if (!formModal.form.description?.trim()) errs.push($t_script('issues.validateDescription'))
+    if (!formModal.form.priority) errs.push($t_script('issues.validatePriority'))
+    if (!formModal.form.status) errs.push($t_script('issues.validateStatus'))
+    if (!formModal.form.studentId) errs.push($t_script('issues.validateSelectStudent'))
   } else if (context.value === 'admin') {
-    if (!formModal.form.title?.trim()) errs.push('Title is required.')
-    if (!formModal.form.description?.trim()) errs.push('Description is required.')
-    if (!formModal.form.priority) errs.push('Priority is required.')
-    if (!formModal.form.studentId) errs.push('Please select a student for the issue.')
+    if (!formModal.form.title?.trim()) errs.push($t_script('issues.validateTitle'))
+    if (!formModal.form.description?.trim()) errs.push($t_script('issues.validateDescription'))
+    if (!formModal.form.priority) errs.push($t_script('issues.validatePriority'))
+    if (!formModal.form.studentId) errs.push($t_script('issues.validateSelectStudentAdmin'))
   }
   return errs
 })
@@ -969,7 +940,7 @@ async function submitForm() {
     formModal.form.status = (formModal.form.status || 'Open') as Issue['status']
     const created = await issueStore.createIssue({ form: formModal.form })
     if (created) {
-      toast.success('Issue created successfully.', 'Created')
+      toast.success($t_script('issues.createdSuccess'), $t_script('issues.created'))
       closeFormModal()
     }
   } else if (formModal.item) {
@@ -991,7 +962,7 @@ async function submitForm() {
     } else {
       const updated = await issueStore.updateIssue({ id: formModal.item.id, form: formModal.form })
       if (updated) {
-        toast.success('Issue updated successfully.', 'Updated')
+        toast.success($t_script('issues.updatedSuccess'), $t_script('issues.updated'))
         closeFormModal()
       }
     }
@@ -1001,7 +972,7 @@ async function submitForm() {
 async function resolveIssue(issue: Issue) {
   const updated = await issueStore.resolveIssue(issue.id)
   if (updated) {
-    toast.success('Issue updated successfully.', 'Resolved')
+    toast.success($t_script('issues.updatedSuccess'), $t_script('issues.resolved'))
   }
 }
 
@@ -1055,6 +1026,26 @@ function statusBadgeClasses(status: string) {
     Closed: 'bg-gray-100 text-gray-700',
   }
   return map[status] || 'bg-gray-100 text-gray-700'
+}
+
+function issueStatusLabel(status: string): string {
+  const map: Record<string, string> = {
+    Open: 'issues.open',
+    'In Progress': 'issues.inProgress',
+    Resolved: 'issues.resolved',
+    Closed: 'issues.closed',
+  }
+  return $t_script(map[status] || 'common.noData')
+}
+
+function issuePriorityLabel(priority: string): string {
+  const map: Record<string, string> = {
+    Critical: 'issues.critical',
+    High: 'issues.high',
+    Medium: 'issues.medium',
+    Low: 'issues.low',
+  }
+  return $t_script(map[priority] || 'common.noData')
 }
 
 function priorityBadgeClasses(priority: string) {

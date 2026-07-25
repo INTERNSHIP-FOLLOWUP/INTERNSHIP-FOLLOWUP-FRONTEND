@@ -114,7 +114,7 @@
           <input
             v-model="search"
             type="text"
-            placeholder="Search student..."
+            :placeholder="$t('common.searchStudent')"
             class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
         </div>
@@ -682,10 +682,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useWorklogStore } from '@/stores/worklogStore'
 import WorklogStatusBadge from '@/components/worklog/WorklogStatusBadge.vue'
 import AttachmentList from '@/components/worklog/AttachmentList.vue'
 import SkeletonGrid from '@/components/worklog/SkeletonGrid.vue'
+
+const { t: $t_script } = useI18n()
 import type { Worklog, WorklogStatus } from '@/types/worklog'
 import { usePagination } from '@/composables/usePagination'
 import { exportWorklogPDF, exportWorklogWord, exportWorklogExcel } from '@/utils/exportWorklog'
@@ -826,7 +829,7 @@ function exportAs(format: 'pdf' | 'word' | 'excel') {
     else if (format === 'word') exportWorklogWord(detailsWorklog.value)
     else exportWorklogExcel(detailsWorklog.value)
   } catch {
-    detailsServerError.value = `Failed to export as ${format.toUpperCase()}.`
+    detailsServerError.value = $t_script('common.failedExportAs', { format: format.toUpperCase() })
   }
   showExport.value = false
 }
@@ -843,7 +846,7 @@ async function submitStatus(status: WorklogStatus) {
     closeDetails()
     onFilterChange()
   } catch {
-    detailsServerError.value = 'Failed to submit review.'
+    detailsServerError.value = $t_script('common.failedSubmitReview')
   } finally {
     submitting.value = false
     reviewingStatus.value = null
@@ -860,7 +863,7 @@ async function quickReview(id: number, status: WorklogStatus) {
     })
     onFilterChange()
   } catch {
-    detailsServerError.value = 'Failed to submit review.'
+    detailsServerError.value = $t_script('common.failedSubmitReview')
   } finally {
     submitting.value = false
     reviewingStatus.value = null

@@ -10,7 +10,7 @@
       <button
         @click="$emit('remove', f.key)"
         class="inline-flex items-center justify-center rounded-full p-0.5 transition-colors hover:bg-indigo-100"
-        :aria-label="`Remove ${f.label} filter`"
+        :aria-label="$t('common.removeFilter', { name: f.label })"
       >
         <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path

@@ -29,7 +29,7 @@
       <button
         type="button"
         class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none focus:text-primary-600"
-        :aria-label="showPassword ? 'Hide password' : 'Show password'"
+        :aria-label="showPassword ? $t('common.hidePassword') : $t('common.showPassword')"
         @click="togglePasswordVisibility"
       >
         <svg

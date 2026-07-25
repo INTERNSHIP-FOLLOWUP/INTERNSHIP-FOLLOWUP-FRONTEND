@@ -3,9 +3,9 @@
     <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 class="text-xl font-semibold text-gray-900">Student Performance Feedback</h1>
+          <h1 class="text-xl font-semibold text-gray-900">{{ $t('companies.feedbackTitle') }}</h1>
           <p class="mt-1 text-sm text-gray-500">
-            Evaluate the performance of your assigned internship students.
+            {{ $t('companies.feedbackSubtitle') }}
           </p>
         </div>
       </div>
@@ -14,20 +14,20 @@
         <!-- Student Selection -->
         <div class="space-y-1.5">
           <label class="text-sm font-medium text-gray-700">
-            Student <span class="text-rose-500">*</span>
+            {{ $t('common.student') }} <span class="text-rose-500">*</span>
           </label>
           <div class="relative">
             <select
               v-model="form.student_id"
               class="w-full appearance-none rounded-xl border border-gray-200 bg-white px-4 py-3 pr-10 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
             >
-              <option value="" disabled>Select a student...</option>
+              <option value="" disabled>{{ $t('companies.selectStudentPlaceholder') }}</option>
               <option
                 v-for="s in students"
                 :key="s.id"
                 :value="s.id"
               >
-                {{ s.student_name || s.name || `Student #${s.id}` }}
+                {{ s.student_name || s.name || $t('common.student') + ' #' + s.id }}
               </option>
             </select>
             <svg class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,12 +39,12 @@
         <!-- Strengths -->
         <div class="space-y-1.5">
           <label class="text-sm font-medium text-gray-700">
-            Strengths <span class="text-rose-500">*</span>
+            {{ $t('companies.strengths') }} <span class="text-rose-500">*</span>
           </label>
-          <p class="text-xs text-gray-500">Select all that apply</p>
+          <p class="text-xs text-gray-500">{{ $t('companies.selectAllApply') }}</p>
           <div class="flex flex-wrap gap-2">
             <button
-              v-for="s in STRENGTH_OPTIONS"
+              v-for="s in strengthOptions"
               :key="s"
               type="button"
               class="rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-150"
@@ -62,12 +62,12 @@
         <!-- Improvement Areas -->
         <div class="space-y-1.5">
           <label class="text-sm font-medium text-gray-700">
-            Areas for Improvement <span class="text-rose-500">*</span>
+            {{ $t('companies.improvementAreas') }} <span class="text-rose-500">*</span>
           </label>
-          <p class="text-xs text-gray-500">Select all that apply</p>
+          <p class="text-xs text-gray-500">{{ $t('companies.selectAllApply') }}</p>
           <div class="flex flex-wrap gap-2">
             <button
-              v-for="area in IMPROVEMENT_OPTIONS"
+              v-for="area in improvementOptions"
               :key="area"
               type="button"
               class="rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-150"
@@ -85,13 +85,13 @@
         <!-- Comment -->
         <div class="space-y-1.5">
           <label class="text-sm font-medium text-gray-700">
-            Comment <span class="text-rose-500">*</span>
+            {{ $t('companies.comment') }} <span class="text-rose-500">*</span>
           </label>
           <textarea
             v-model="form.message"
             rows="4"
             class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
-            placeholder="Share your detailed feedback about this student's performance..."
+            :placeholder="$t('companies.commentPlaceholder')"
           />
         </div>
 
@@ -104,15 +104,14 @@
             type="button"
             class="rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
             @click="resetForm"
-          >
-            Reset
-          </button>
-          <button
-            type="submit"
-            class="rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 disabled:opacity-60"
-            :disabled="submitting"
-          >
-            {{ submitting ? 'Submitting...' : 'Submit Feedback' }}
+          >              {{ $t('companies.reset') }}
+            </button>
+            <button
+              type="submit"
+              class="rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700 disabled:opacity-60"
+              :disabled="submitting"
+            >
+              {{ submitting ? $t('companies.submitting') : $t('companies.submitFeedback') }}
           </button>
         </div>
       </form>
@@ -120,20 +119,20 @@
       <!-- Submitted Feedback History -->
       <div class="mt-12">
         <div class="mb-4 flex items-center justify-between">
-          <h2 class="text-base font-semibold text-gray-900">Submitted Feedback</h2>
-          <span class="text-xs text-gray-400">{{ feedback.length }} entries</span>
+          <h2 class="text-base font-semibold text-gray-900">{{ $t('companies.submittedFeedback') }}</h2>
+          <span class="text-xs text-gray-400">{{ feedback.length }} {{ $t('companies.entries') }}</span>
         </div>
 
         <div v-if="loadingFeedback" class="py-8 text-center text-sm text-gray-500">
-          Loading feedback...
+          {{ $t('companies.loadingFeedback') }}
         </div>
 
         <div v-else-if="!feedback.length" class="rounded-xl border border-dashed border-gray-200 py-12 text-center">
           <svg class="mx-auto mb-3 h-12 w-12 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p class="text-sm font-medium text-gray-500">No feedback submitted yet.</p>
-          <p class="mt-1 text-xs text-gray-400">Complete the form above to submit your first evaluation.</p>
+          <p class="text-sm font-medium text-gray-500">{{ $t('companies.noFeedbackYet') }}</p>
+          <p class="mt-1 text-xs text-gray-400">{{ $t('companies.noFeedbackHint') }}</p>
         </div>
 
         <div v-else class="space-y-4">
@@ -150,7 +149,7 @@
                   size="md"
                 />
                 <div>
-                  <p class="text-sm font-semibold text-gray-900">{{ item.student?.name || 'Student' }}</p>
+                  <p class="text-sm font-semibold text-gray-900">{{ item.student?.name || $t('common.student') }}</p>
                   <p class="text-xs text-gray-400">{{ formatDate(item.created_at) }}</p>
                 </div>
               </div>
@@ -158,7 +157,7 @@
 
             <!-- Strengths badges -->
             <div v-if="item.strengths?.length" class="mb-2">
-              <p class="mb-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Strengths</p>
+              <p class="mb-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ $t('companies.strengths') }}</p>
               <div class="flex flex-wrap gap-1.5">
                 <span
                   v-for="s in item.strengths"
@@ -172,7 +171,7 @@
 
             <!-- Improvement areas badges -->
             <div v-if="item.improvement_areas?.length" class="mb-2">
-              <p class="mb-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Areas for Improvement</p>
+              <p class="mb-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ $t('companies.improvementAreas') }}</p>
               <div class="flex flex-wrap gap-1.5">
                 <span
                   v-for="a in item.improvement_areas"
@@ -196,40 +195,43 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCompanyStore } from '@/stores/company'
 import type { CompanyFeedbackItem, CompanyFeedbackPayload, CompanyStudentItem } from '@/types/company'
 import UserAvatar from '@/components/common/UserAvatar.vue'
 
-const STRENGTH_OPTIONS = [
-  'Good Communication',
-  'Strong Teamwork',
-  'Quick Learner',
-  'Responsible',
-  'Punctual',
-  'Good Problem-Solving',
-  'Good Technical Skills',
-  'Positive Attitude',
-  'Takes Initiative',
-  'Adapts Quickly',
-  'Follows Instructions Well',
-  'Professional Behavior',
-]
+const { t: $t_script } = useI18n()
 
-const IMPROVEMENT_OPTIONS = [
-  'Communication Skills',
-  'Teamwork',
-  'Technical Skills',
-  'Time Management',
-  'Problem-Solving',
-  'Confidence',
-  'Responsibility',
-  'Attendance',
-  'Work Quality',
-  'Attention to Detail',
-  'Initiative',
-  'Adaptability',
-]
+const strengthOptions = computed(() => [
+  $t_script('companies.strength_good_communication'),
+  $t_script('companies.strength_strong_teamwork'),
+  $t_script('companies.strength_quick_learner'),
+  $t_script('companies.strength_responsible'),
+  $t_script('companies.strength_punctual'),
+  $t_script('companies.strength_good_problem_solving'),
+  $t_script('companies.strength_good_technical'),
+  $t_script('companies.strength_positive_attitude'),
+  $t_script('companies.strength_takes_initiative'),
+  $t_script('companies.strength_adapts_quickly'),
+  $t_script('companies.strength_follows_instructions'),
+  $t_script('companies.strength_professional'),
+])
+
+const improvementOptions = computed(() => [
+  $t_script('companies.improvement_communication'),
+  $t_script('companies.improvement_teamwork'),
+  $t_script('companies.improvement_technical'),
+  $t_script('companies.improvement_time_management'),
+  $t_script('companies.improvement_problem_solving'),
+  $t_script('companies.improvement_confidence'),
+  $t_script('companies.improvement_responsibility'),
+  $t_script('companies.improvement_attendance'),
+  $t_script('companies.improvement_work_quality'),
+  $t_script('companies.improvement_attention_detail'),
+  $t_script('companies.improvement_initiative'),
+  $t_script('companies.improvement_adaptability'),
+])
 
 const store = useCompanyStore()
 const students = ref<CompanyStudentItem[]>([])
@@ -265,10 +267,10 @@ function toggleImprovement(area: string) {
 }
 
 function validate(): string | null {
-  if (!form.student_id) return 'Please select a student'
-  if (!form.strengths.length) return 'Please select at least one strength'
-  if (!form.improvement_areas.length) return 'Please select at least one area for improvement'
-  if (!form.message.trim()) return 'Please enter a comment'
+  if (!form.student_id) return $t_script('companies.feedbackStudentRequired')
+  if (!form.strengths.length) return $t_script('companies.feedbackStrengthRequired')
+  if (!form.improvement_areas.length) return $t_script('companies.feedbackImprovementRequired')
+  if (!form.message.trim()) return $t_script('companies.feedbackCommentRequired')
   return null
 }
 
@@ -291,7 +293,7 @@ async function submit() {
     resetForm()
     await loadFeedback()
   } catch (e: any) {
-    error.value = e?.response?.data?.message || e?.message || 'Failed to submit feedback'
+    error.value = e?.response?.data?.message || e?.message || $t_script('companies.feedbackFailedSubmit')
   } finally {
     submitting.value = false
   }

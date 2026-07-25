@@ -14,11 +14,11 @@
             d="M10 19l-7-7m0 0l7-7m-7 7h18"
           />
         </svg>
-        Back to Companies
+        {{ $t('companies.backToList') }}
       </button>
       <span class="text-sm text-slate-300">/</span>
       <span class="text-sm font-medium text-slate-900">
-        {{ isProfileMode ? 'Company Profile' : mode === 'create' ? 'New Company' : 'Edit Company' }}
+        {{ isProfileMode ? $t('companies.companyProfile') : mode === 'create' ? $t('companies.newCompany') : $t('companies.editCompany') }}
       </span>
     </div>
 
@@ -36,7 +36,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import CompanyForm from '@/components/company/CompanyForm.vue'
+
+const { t: $t_script } = useI18n()
 import type { CompanyFormData } from '@/components/company/CompanyForm.vue'
 import type { CompanyFormData as StoreCompanyFormData } from '@/stores/company'
 import { useCompanyStore } from '@/stores/company'
@@ -136,17 +139,17 @@ async function onSubmit(formData: CompanyFormData) {
     if (isProfileMode.value) {
       await store.updateProfile(payload)
       await store.fetchProfile()
-      toast.success('Profile updated successfully.')
+      toast.success($t_script('companies.profileUpdated'))
     } else if (mode.value === 'create') {
       await store.createCompany(payload)
       await store.fetchCompanies()
-      toast.success('Company created successfully.')
+      toast.success($t_script('companies.createdSuccess'))
     } else {
       const id = getCompanyId()
       if (!Number.isFinite(id)) return
       await store.updateCompany(id, payload)
       await store.fetchCompanies()
-      toast.success('Company updated successfully.')
+      toast.success($t_script('companies.updatedSuccess'))
     }
     await store.fetchCompanies()
     goBack()
@@ -156,13 +159,13 @@ async function onSubmit(formData: CompanyFormData) {
     }
     if (axiosErr.response?.status === 422) {
       apiErrors.value = mapValidationErrors(axiosErr.response.data?.errors)
-      toast.error('Please fix the highlighted errors.', 'Validation Error')
+      toast.error($t_script('companies.validationError'), $t_script('common.validationErrorTitle'))
     } else if (axiosErr.response?.status && axiosErr.response.status >= 500) {
       const parsed = parseApiError(err)
-      toast.error(parsed.message, 'Server Error')
+      toast.error(parsed.message, $t_script('common.serverErrorTitle'))
       throw new Error(parsed.message)
     } else {
-      toast.error('Failed to save. Please try again.', 'Error')
+      toast.error($t_script('companies.serverError'), $t_script('common.errorTitle'))
       throw err
     }
   }

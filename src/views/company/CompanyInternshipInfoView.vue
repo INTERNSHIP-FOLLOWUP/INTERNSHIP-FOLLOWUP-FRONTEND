@@ -3,8 +3,8 @@
     <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 class="text-xl font-semibold text-gray-900">Internship Information</h1>
-          <p class="mt-1 text-sm text-gray-500">View internship details for students assigned to your company.</p>
+          <h1 class="text-xl font-semibold text-gray-900">{{ $t('companies.internshipInfoTitle') }}</h1>
+          <p class="mt-1 text-sm text-gray-500">{{ $t('companies.internshipInfoSub') }}</p>
         </div>
       </div>
 
@@ -13,7 +13,7 @@
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
-        <span class="ml-3 text-sm text-gray-500">Loading internship information…</span>
+        <span class="ml-3 text-sm text-gray-500">{{ $t('companies.loadingInternshipInfo') }}</span>
       </div>
       <div
         v-else-if="error"
@@ -28,12 +28,12 @@
             <tr
               class="border-b border-gray-100 text-xs font-medium uppercase tracking-wider text-gray-400"
             >
-              <th class="px-4 py-3 font-medium">Student Name</th>
-              <th class="px-4 py-3 font-medium">Tutor</th>
-              <th class="px-4 py-3 font-medium">Intern Position</th>
-              <th class="px-4 py-3 font-medium">Start Date</th>
-              <th class="px-4 py-3 font-medium">End Date</th>
-              <th class="px-4 py-3 font-medium">Status</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.studentName') }}</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.tutor') }}</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.internPosition') }}</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.startDate') }}</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.endDate') }}</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.status') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
@@ -54,7 +54,7 @@
                   class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
                   :class="item.statusClass"
                 >
-                  {{ item.status }}
+                  {{ $t('internships.status' + item.status.replace(/ /g, '')) }}
                 </span>
               </td>
             </tr>
@@ -78,9 +78,9 @@
                 />
               </svg>
             </div>
-            <h3 class="mt-3 text-sm font-semibold text-gray-700">No internship information found</h3>
+            <h3 class="mt-3 text-sm font-semibold text-gray-700">{{ $t('companies.noInternshipInfo') }}</h3>
             <p class="mt-1 text-xs text-gray-400">
-              Internship details for students assigned to your company will appear here.
+              {{ $t('companies.noInternshipHint') }}
             </p>
           </div>
         </div>
@@ -91,7 +91,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCompanyStore } from '@/stores/company'
+
+const { t: $t_script } = useI18n()
 
 const store = useCompanyStore()
 
@@ -151,7 +154,7 @@ onMounted(async () => {
       statusClass: statusClassFor(item),
     }))
   } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Failed to load internship information.'
+    error.value = err instanceof Error ? err.message : $t_script('companies.failedLoadInternship')
     internships.value = []
   } finally {
     loading.value = false

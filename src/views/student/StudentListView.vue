@@ -45,7 +45,7 @@
       <input
         v-model="searchQuery"
         type="text"
-        placeholder="Search by name, code or email..."
+        :placeholder="$t('common.searchByNameCodeEmail')"
         class="h-10 w-full min-w-0 flex-1 basis-[200px] rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-700 placeholder-slate-400 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
       />
 
@@ -328,6 +328,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 
 
 
+import { useI18n } from 'vue-i18n'
 import { useStudentStore } from '@/stores/student'
 import { useBatchStore } from '@/stores/batchStore'
 import { useTutorStore } from '@/stores/tutorStore'
@@ -343,6 +344,7 @@ import StudentForm from '@/components/student/StudentForm.vue'
 import ImportStudentsModal from '@/components/admin/ImportStudentsModal.vue'
 import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
+const { t: $t_script } = useI18n()
 const store = useStudentStore()
 const batchStore = useBatchStore()
 const tutorStore = useTutorStore()
@@ -541,7 +543,7 @@ async function handleConfirm(): Promise<void> {
   if (deleteTargetId === null) return
   await dialog.confirmAsync(async () => {
     await store.deleteStudent(deleteTargetId!)
-    toast.success('Student deleted successfully.')
+    toast.success($t_script('users.studentDeletedToast'))
   })
 }
 
@@ -556,7 +558,7 @@ function closeFormModal() {
 
 function onStudentSaved() {
   closeFormModal()
-  toast.success(editingStudentId.value ? 'Student updated successfully.' : 'Student created successfully.')
+  toast.success(editingStudentId.value ? $t_script('users.studentUpdatedToast') : $t_script('users.studentCreatedToast'))
 }
 
 async function exportPdf() {
@@ -568,9 +570,9 @@ async function exportPdf() {
     a.download = `students-${new Date().toISOString().slice(0, 10)}.pdf`
     a.click()
     window.URL.revokeObjectURL(url)
-    toast.success('PDF exported successfully.')
+    toast.success($t_script('common.pdfExported'))
   } catch {
-    toast.error('Failed to export PDF.')
+    toast.error($t_script('common.pdfExportFailed'))
   }
 }
 
@@ -583,9 +585,9 @@ async function exportExcel() {
     a.download = `students-${new Date().toISOString().slice(0, 10)}.xlsx`
     a.click()
     window.URL.revokeObjectURL(url)
-    toast.success('Excel exported successfully.')
+    toast.success($t_script('common.excelExported'))
   } catch {
-    toast.error('Failed to export Excel.')
+    toast.error($t_script('common.excelExportFailed'))
   }
 }
 

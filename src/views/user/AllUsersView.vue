@@ -24,8 +24,7 @@
         </svg>
         <input
           v-model="searchQuery"
-          type="text"
-          placeholder="Search by name or email..."
+          type="text"           :placeholder="$t('common.searchByNameEmail')"
           class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
         />
       </div>
@@ -150,7 +149,10 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import api from '@/services/api'
+
+const { t: $t_script } = useI18n()
 
 interface Role {
   id: number
@@ -198,7 +200,7 @@ async function fetchUsers(): Promise<void> {
     else pagination.value = null
   } catch (err: unknown) {
     const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-    error.value = msg || 'Failed to load users.'
+    error.value = msg || $t_script('common.failedLoadUsers')
   } finally {
     loading.value = false
   }

@@ -1,7 +1,12 @@
 <template>
   <div class="animate-fade-in">
     <AuthLayout>
-      <div class="rounded-[20px] p-8 transition-all duration-300">
+      <div class="relative rounded-[20px] p-8 transition-all duration-300">
+        <!-- Language Switcher -->
+        <div class="absolute right-6 top-6">
+          <LanguageSwitcher variant="standalone" />
+        </div>
+
         <div class="text-center mb-6">
           <div
             class="mx-auto w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-500 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20 mb-4"
@@ -16,10 +21,10 @@
             </svg>
           </div>
           <h1 class="text-[22px] sm:text-[24px] font-bold text-slate-900 leading-tight">
-            Forgot Password
+            {{ $t('auth.forgotPassword.title') }}
           </h1>
           <p class="mt-1.5 text-[14px] text-slate-500">
-            Enter your email address and we'll send you a link to reset your password.
+            {{ $t('auth.forgotPassword.subtitle') }}
           </p>
         </div>
 
@@ -27,9 +32,9 @@
           <div class="space-y-4">
             <InputField
               v-model="form.email"
-              label="Email Address"
+              :label="$t('auth.forgotPassword.emailLabel')"
               type="email"
-              placeholder="Enter your email"
+              :placeholder="$t('auth.forgotPassword.emailPlaceholder')"
               required
               :error="errors.email"
               autocomplete="email"
@@ -98,7 +103,7 @@
 
           <div class="mt-6">
             <PrimaryButton type="submit" :loading="loading" :disabled="loading || sent">
-              {{ sent ? 'Email Sent' : 'Send Reset Link' }}
+              {{ sent ? $t('auth.forgotPassword.emailSent') : $t('auth.forgotPassword.sendButton') }}
             </PrimaryButton>
           </div>
         </form>
@@ -117,7 +122,7 @@
                   d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
               </svg>
-              Back to Sign In
+              {{ $t('auth.forgotPassword.backToSignIn') }}
             </span>
           </router-link>
         </div>
@@ -128,11 +133,15 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AuthLayout from '@/components/auth/AuthLayout.vue'
 import InputField from '@/components/ui/InputField.vue'
 import PrimaryButton from '@/components/ui/PrimaryButton.vue'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 import { authService } from '@/services/auth'
 import { parseApiError } from '@/utils/errorParser'
+
+const i18n = useI18n()
 
 const form = reactive({
   email: '',
@@ -152,10 +161,10 @@ function validateField(field: 'email'): boolean {
 
   if (field === 'email') {
     if (!form.email.trim()) {
-      errors.email = 'Please enter your email address.'
+      errors.email = i18n.t('auth.forgotPassword.errors.emailRequired')
       valid = false
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      errors.email = 'Please enter a valid email address.'
+      errors.email = i18n.t('auth.forgotPassword.errors.emailInvalid')
       valid = false
     } else {
       errors.email = ''
@@ -181,7 +190,7 @@ async function handleSubmit() {
     sent.value = true
     successMessage.value =
       response.message ||
-      'If that email is registered, you will receive a password reset link shortly.'
+      'If that email is registered, you will receive a password reset link shortly.' // TODO: translate
   } catch (err: unknown) {
     const parsed = parseApiError(err)
     if (parsed.fields?.email) {

@@ -18,7 +18,7 @@
             d="M12 4v16m8-8H4"
           />
         </svg>
-        Add Tutor
+        {{ $t('users.addTutor') }}
       </button>
     </div>
 
@@ -132,7 +132,7 @@
               </td>
               <td class="whitespace-nowrap px-6 py-4 text-right">
                 <div class="flex items-center justify-end gap-1">
-                  <router-link v-if="tutor.user_id" :to="`/admin/tutor-profile/${tutor.user_id}`" title="View Profile"
+                  <router-link v-if="tutor.user_id" :to="`/admin/tutor-profile/${tutor.user_id}`" :title="$t('common.viewProfile')"
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-700">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -140,7 +140,7 @@
                     </svg>
                   </router-link>
                   <button
-                    @click="$emit('view', tutor.id)" title="Edit Tutor"
+                    @click="$emit('view', tutor.id)" :title="$t('common.editTutor')"
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
                   >
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,7 +148,7 @@
                     </svg>
                   </button>
                   <button
-                    @click="confirmDelete(tutor)" title="Delete Tutor"
+                    @click="confirmDelete(tutor)" :title="$t('common.deleteTutor')"
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-700"
                   >
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -207,7 +207,7 @@
               :disabled="deleting"
               class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
             >
-              Cancel
+              {{ $t('common.cancel') }}
             </button>
             <button
               @click="handleDelete"
@@ -229,7 +229,7 @@
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 />
               </svg>
-              {{ deleting ? 'Deleting...' : 'Delete' }}
+              {{ deleting ? $t('common.deleting') : $t('common.delete') }}
             </button>
           </div>
         </div>

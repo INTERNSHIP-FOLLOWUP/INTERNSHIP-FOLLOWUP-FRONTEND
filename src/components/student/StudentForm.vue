@@ -29,7 +29,7 @@
           <img
             v-if="photoPreview"
             :src="photoPreview"
-            alt="Preview"
+            :alt="$t('common.preview')"
             class="h-full w-full rounded-full object-cover"
           />
           <svg v-else class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,7 +74,7 @@
         <input
           v-model="form.student_code"
           type="text"
-          placeholder="STU-001"
+          :placeholder="$t('forms.studentCodePlaceholder')"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('student_code')"
           @input="clearFieldError('student_code')"
@@ -86,7 +86,7 @@
         <input
           v-model="form.first_name"
           type="text"
-          placeholder="Enter first name"
+          :placeholder="$t('forms.firstNamePlaceholder')"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('first_name')"
           @input="clearFieldError('first_name')"
@@ -98,7 +98,7 @@
         <input
           v-model="form.last_name"
           type="text"
-          placeholder="Enter last name"
+          :placeholder="$t('forms.lastNamePlaceholder')"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('last_name')"
           @input="clearFieldError('last_name')"
@@ -110,7 +110,7 @@
         <input
           v-model="form.email"
           type="email"
-          placeholder="Enter email address"
+          :placeholder="$t('forms.emailPlaceholder')"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('email')"
           @input="clearFieldError('email')"
@@ -122,7 +122,7 @@
         <input
           v-model="form.phone"
           type="tel"
-          placeholder="Enter phone number"
+          :placeholder="$t('forms.phoneNumberPlaceholder')"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('phone')"
           @input="clearFieldError('phone')"
@@ -238,6 +238,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useStudentStore } from '@/stores/student'
 import { useBatchStore } from '@/stores/batchStore'
 import { useTutorStore } from '@/stores/tutorStore'
@@ -257,6 +258,7 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
+const { t: $t_script } = useI18n()
 const studentStore = useStudentStore()
 const batchStore = useBatchStore()
 const tutorStore = useTutorStore()
@@ -305,7 +307,7 @@ function validateField(field: string): boolean {
 
   if (field === 'password_confirmation') {
     if (form.password !== form.password_confirmation) {
-      errors[field] = 'Passwords do not match.'
+      errors[field] = $t_script('validation.passwordMatch')
       return false
     }
     delete errors[field]
@@ -314,11 +316,11 @@ function validateField(field: string): boolean {
 
   if (field === 'password') {
     if (value && (value as string).length < 8) {
-      errors[field] = 'Password must be at least 8 characters.'
+      errors[field] = $t_script('validation.minLength', { n: 8 })
       return false
     }
     if (!value && !isEdit.value) {
-      errors[field] = 'Password is required.'
+      errors[field] = $t_script('validation.passwordRequired')
       return false
     }
     delete errors[field]
@@ -327,7 +329,7 @@ function validateField(field: string): boolean {
 
   if (field === 'phone' && value) {
     if (!PHONE_RE.test(value as string)) {
-      errors[field] = 'Please enter a valid phone number.'
+      errors[field] = $t_script('validation.invalidPhone')
       return false
     }
     delete errors[field]
@@ -336,12 +338,12 @@ function validateField(field: string): boolean {
 
   if (!value || (typeof value === 'string' && !value.trim())) {
     if (field === 'phone') return true
-    errors[field] = 'This field is required.'
+    errors[field] = $t_script('validation.required')
     return false
   }
 
   if (field === 'email' && !EMAIL_RE.test(value as string)) {
-    errors[field] = 'Please enter a valid email address.'
+    errors[field] = $t_script('validation.email')
     return false
   }
 
@@ -433,7 +435,7 @@ async function handleSubmit(): Promise<void> {
     } else {
       formError.value =
         axiosErr.response?.data?.message ||
-        (err instanceof Error ? err.message : 'Failed to save student.')
+        (err instanceof Error ? err.message : $t_script('validation.saveStudentFailed'))
     }
   } finally {
     submitting.value = false

@@ -39,7 +39,7 @@
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Search students..."
+            :placeholder="$t('common.searchStudents')"
             class="h-9 w-full rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-3 text-sm text-gray-700 placeholder-gray-400 transition-all focus:border-indigo-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
         </div>
@@ -243,7 +243,7 @@
             <div class="relative flex-1">
               <textarea
                 v-model="newMessage"
-                placeholder="Type your message..."
+                :placeholder="$t('messages.messages.typeMessage')"
                 rows="1"
                 class="block w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 transition-all focus:border-indigo-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 @keydown.enter.exact="handleSend"

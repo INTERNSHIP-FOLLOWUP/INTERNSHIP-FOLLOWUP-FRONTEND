@@ -36,7 +36,7 @@
           >
             {{ companyName }}
           </h1>
-          <p class="text-xs" :style="{ color: 'var(--sidebar-subheading)' }">Internship System</p>
+          <p class="text-xs" :style="{ color: 'var(--sidebar-subheading)' }">{{ $t('layouts.company.subtitle') }}</p>
         </div>
       </div>
 
@@ -45,7 +45,7 @@
           class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider"
           :style="{ color: 'var(--sidebar-section-title)' }"
         >
-          Menu
+          {{ $t('layouts.company.menuTitle') }}
         </p>
         <router-link
           v-for="item in navItems"
@@ -88,7 +88,7 @@
               {{ user?.name }}
             </p>
             <p class="truncate text-xs" :style="{ color: 'var(--sidebar-user-role)' }">
-              Company Representative
+              {{ $t('layouts.company.role') }}
             </p>
           </div>
         </div>
@@ -103,7 +103,7 @@
           <button
             class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden"
             @click="sidebarOpen = !sidebarOpen"
-            aria-label="Toggle navigation"
+            :aria-label="$t('common.toggleNavigation')"
           >
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -126,6 +126,9 @@
         </div>
 
         <div class="flex items-center gap-2">
+          <!-- Language Switcher -->
+          <LanguageSwitcher variant="header" />
+
           <!-- Theme Settings Button -->
           <button
             @click.stop="themeSettingsOpen = !themeSettingsOpen"
@@ -192,7 +195,7 @@
                 <p class="text-sm font-medium leading-tight text-gray-700">
                   {{ user?.name }}
                 </p>
-                <p class="text-xs leading-tight text-gray-400">Company Representative</p>
+                <p class="text-xs leading-tight text-gray-400">{{ $t('layouts.company.role') }}</p>
               </div>
               <svg
                 class="h-4 w-4 text-gray-400 transition-transform"
@@ -243,7 +246,7 @@
                       d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                     />
                   </svg>
-                  Profile Settings
+                  {{ $t('layouts.company.profile') }}
                 </router-link>
                 <hr class="my-1 border-gray-100" />
                 <button
@@ -263,7 +266,7 @@
                       d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                     />
                   </svg>
-                  Log Out
+                  {{ $t('layouts.company.logout') }}
                 </button>
               </div>
             </transition>
@@ -293,9 +296,9 @@
           @click.stop
         >
           <h3 id="logout-modal-title" class="text-base font-semibold text-gray-900">
-            Are you sure you want to log out?
+            {{ $t('layouts.company.logoutModalTitle') }}
           </h3>
-          <p class="mt-1 text-sm text-gray-600">You can cancel if you changed your mind.</p>
+          <p class="mt-1 text-sm text-gray-600">{{ $t('layouts.company.logoutModalDescription') }}</p>
 
           <div class="mt-5 flex items-center justify-end gap-3">
             <button
@@ -303,14 +306,14 @@
               @click="closeLogoutModal"
               :disabled="loggingOut"
             >
-              Cancel
+              {{ $t('layouts.company.cancel') }}
             </button>
             <button
               class="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
               @click="confirmLogout"
               :disabled="loggingOut"
             >
-              Logout
+              {{ $t('layouts.company.logoutConfirm') }}
             </button>
           </div>
         </div>
@@ -377,7 +380,7 @@
                 <button
                   type="button"
                   class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none"
-                  :aria-label="showCurrentPassword ? 'Hide current password' : 'Show current password'"
+                  :aria-label="showCurrentPassword ? $t('common.hideCurrentPassword') : $t('common.showCurrentPassword')"
                   @click="showCurrentPassword = !showCurrentPassword"
                 >
                   <svg v-if="!showCurrentPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -407,7 +410,7 @@
                 <button
                   type="button"
                   class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none"
-                  :aria-label="showNewPassword ? 'Hide new password' : 'Show new password'"
+                  :aria-label="showNewPassword ? $t('common.hideNewPassword') : $t('common.showNewPassword')"
                   @click="showNewPassword = !showNewPassword"
                 >
                   <svg v-if="!showNewPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -437,7 +440,7 @@
                 <button
                   type="button"
                   class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none"
-                  :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
+                  :aria-label="showConfirmPassword ? $t('common.hideConfirmPassword') : $t('common.showConfirmPassword')"
                   @click="showConfirmPassword = !showConfirmPassword"
                 >
                   <svg v-if="!showConfirmPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -489,11 +492,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, h, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useCompanyStore } from '@/stores/company'
 import { useThemeStore } from '@/stores/theme'
 import { authService } from '@/services/auth'
 import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
+
+const { t: $t } = useI18n()
 
 const route = useRoute()
 const auth = useAuthStore()
@@ -663,7 +670,7 @@ async function submitRequiredPasswordChange() {
         Object.entries(fields).map(([key, messages]) => [key, messages[0] ?? '']),
       )
     } else {
-      passwordFormError.value = axiosErr.response?.data?.message || 'Failed to update password.'
+      passwordFormError.value = axiosErr.response?.data?.message || $t('common.failedUpdatePassword')
     }
   } finally {
     passwordSubmitting.value = false
@@ -702,10 +709,10 @@ interface NavItem {
   icon: ReturnType<typeof defineComponent>
 }
 
-const navItems: NavItem[] = [
+const navItems = computed((): NavItem[] => [
   {
     name: 'dashboard',
-    label: 'Dashboard',
+    label: $t('nav.company.dashboard'),
     to: '/company',
     icon: createIcon(
       'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
@@ -713,7 +720,7 @@ const navItems: NavItem[] = [
   },
   {
     name: 'students',
-    label: 'View Assigned Students',
+    label: $t('nav.company.assignedStudents'),
     to: '/company/students',
     icon: createIcon(
       'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
@@ -721,7 +728,7 @@ const navItems: NavItem[] = [
   },
   {
     name: 'evaluations',
-    label: 'Submit Student Evaluation',
+    label: $t('nav.company.evaluations'),
     to: '/company/evaluations',
     icon: createIcon(
       'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
@@ -729,7 +736,7 @@ const navItems: NavItem[] = [
   },
   {
     name: 'feedback',
-    label: 'Provide Company Feedback',
+    label: $t('nav.company.feedback'),
     to: '/company/feedback',
     icon: createIcon(
       'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z',
@@ -737,7 +744,7 @@ const navItems: NavItem[] = [
   },
   {
     name: 'internships',
-    label: 'Internship Information',
+    label: $t('nav.company.internshipInfo'),
     to: '/company/internships',
     icon: createIcon(
       'M21 13.255A23.893 23.893 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 002 2v10a2 2 0 002 2z',
@@ -745,13 +752,13 @@ const navItems: NavItem[] = [
   },
   {
     name: 'messages',
-    label: 'Messages',
+    label: $t('nav.company.messages'),
     to: '/company/messages',
     icon: createIcon(
       'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
     ),
   },
-]
+])
 </script>
 
 <style scoped>

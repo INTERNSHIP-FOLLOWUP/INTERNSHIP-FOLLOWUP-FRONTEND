@@ -2,14 +2,14 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-slate-900">Student Details</h1>
-        <p class="text-sm text-slate-500">{{ student?.name || 'Loading...' }}</p>
+        <h1 class="text-3xl font-bold text-slate-900">{{ $t('tutorStudent.title') }}</h1>
+        <p class="text-sm text-slate-500">{{ student?.name || $t('common.loading') }}</p>
       </div>
       <div class="flex items-center gap-2">
         <router-link
           to="/tutor/students"
           class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
-          >Back</router-link
+          >{{ $t('common.back') }}</router-link
         >
       </div>
     </div>
@@ -28,14 +28,14 @@
             : 'text-slate-500 hover:text-slate-700'
         "
       >
-        {{ tab.label }}
+        {{ $t(tab.labelKey) }}
       </button>
     </div>
 
     <!-- Overview -->
     <div v-if="active === 'overview'" class="space-y-6">
       <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-        <h3 class="text-sm font-bold text-slate-900">Internship Status</h3>
+        <h3 class="text-sm font-bold text-slate-900">{{ $t('tutorStudent.internshipStatus') }}</h3>
         <div class="mt-4 flex flex-wrap items-center gap-3">
           <span
             class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold"
@@ -46,7 +46,7 @@
             v-model="nextStatus"
             class="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
-            <option v-for="opt in statusOptions" :key="opt" :value="opt">{{ opt }}</option>
+            <option v-for="opt in statusOptions" :key="opt" :value="opt">{{ $t('internships.status' + opt.replace(/ /g, '')) }}</option>
           </select>
           <button
             type="button"
@@ -54,44 +54,44 @@
             :disabled="!nextStatus || nextStatus === student?.assignment_status"
             class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700 disabled:opacity-50 transition"
           >
-            Update Status
+            {{ $t('tutorStudent.updateStatus') }}
           </button>
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-          <h3 class="text-sm font-bold text-slate-900">Student</h3>
+          <h3 class="text-sm font-bold text-slate-900">{{ $t('tutorStudent.studentSection') }}</h3>
           <div class="mt-3 space-y-2 text-sm text-slate-700">
             <p>
-              <span class="text-xs font-semibold text-slate-500">Name:</span> {{ student?.name }}
+              <span class="text-xs font-semibold text-slate-500">{{ $t('tutorStudent.fieldName') }}</span> {{ student?.name }}
             </p>
             <p>
-              <span class="text-xs font-semibold text-slate-500">Email:</span> {{ student?.email }}
+              <span class="text-xs font-semibold text-slate-500">{{ $t('tutorStudent.fieldEmail') }}</span> {{ student?.email }}
             </p>
             <p>
-              <span class="text-xs font-semibold text-slate-500">Phone:</span>
+              <span class="text-xs font-semibold text-slate-500">{{ $t('tutorStudent.fieldPhone') }}</span>
               {{ student?.phone || '—' }}
             </p>
             <p>
-              <span class="text-xs font-semibold text-slate-500">Code:</span>
+              <span class="text-xs font-semibold text-slate-500">{{ $t('tutorStudent.fieldCode') }}</span>
               {{ student?.student_code || '—' }}
             </p>
           </div>
         </div>
         <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-          <h3 class="text-sm font-bold text-slate-900">Internship</h3>
+          <h3 class="text-sm font-bold text-slate-900">{{ $t('tutorStudent.internshipSection') }}</h3>
           <div class="mt-3 space-y-2 text-sm text-slate-700">
             <p>
-              <span class="text-xs font-semibold text-slate-500">Company:</span>
+              <span class="text-xs font-semibold text-slate-500">{{ $t('tutorStudent.fieldCompany') }}</span>
               {{ student?.company_name || '—' }}
             </p>
             <p>
-              <span class="text-xs font-semibold text-slate-500">Position:</span>
+              <span class="text-xs font-semibold text-slate-500">{{ $t('tutorStudent.fieldPosition') }}</span>
               {{ student?.position || '—' }}
             </p>
             <p>
-              <span class="text-xs font-semibold text-slate-500">Batch:</span>
+              <span class="text-xs font-semibold text-slate-500">{{ $t('tutorStudent.fieldBatch') }}</span>
               {{ student?.batch?.batch_name || student?.batch?.name || '—' }}
             </p>
           </div>
@@ -105,7 +105,7 @@
       class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm"
     >
       <p class="text-sm text-slate-500">
-        This tab will be lazy-loaded from the backend in the next phase.
+        {{ $t('tutorStudent.placeholderTab') }}
       </p>
     </div>
   </div>
@@ -113,9 +113,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { useTutorStudentStore } from '@/stores/tutorStudent'
 import { useToastStore } from '@/stores/toast'
+
+const { t: $t_script } = useI18n()
 
 const route = useRoute()
 const store = useTutorStudentStore()
@@ -128,10 +131,10 @@ const confirmed = ref(false)
 const statusText = ref('')
 
 const tabs = [
-  { key: 'overview', label: 'Overview' },
-  { key: 'worklogs', label: 'Worklogs' },
-  { key: 'followups', label: 'Follow-ups' },
-  { key: 'issues', label: 'Issues' },
+  { key: 'overview', labelKey: 'tutorStudent.tabOverview' },
+  { key: 'worklogs', labelKey: 'tutorStudent.tabWorklogs' },
+  { key: 'followups', labelKey: 'tutorStudent.tabFollowUps' },
+  { key: 'issues', labelKey: 'tutorStudent.tabIssues' },
 ]
 
 const statusOptions = ['Assigned', 'In Progress', 'Completed', 'Terminated']
@@ -152,8 +155,8 @@ function statusColor(status?: string) {
 }
 
 function formatStatus(status?: string) {
-  if (!status) return 'Unknown'
-  return String(status)
+  if (!status) return $t_script('tutorStudent.unknown')
+  return $t_script('internships.status' + status.replace(/\s+/g, '')) || String(status)
 }
 
 async function load() {
@@ -167,7 +170,7 @@ async function load() {
 function confirmStatus() {
   if (!nextStatus.value) return
   confirmed.value = true
-  statusText.value = `Update status to "${nextStatus.value}"?`
+  statusText.value = $t_script('tutorStudent.updateStatusTo', { status: nextStatus.value })
 }
 
 async function applyStatus() {

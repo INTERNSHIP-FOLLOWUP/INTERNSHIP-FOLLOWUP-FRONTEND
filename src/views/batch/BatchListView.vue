@@ -2,10 +2,8 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Batches</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">
-          Manage cohort batches and student enrollment.
-        </p>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{{ $t('batches.title') }}</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('batches.manageBatches') }}</p>
       </div>
       <div class="flex items-center gap-2">
         <button @click="exportPdf(selectedBatch)"
@@ -14,7 +12,7 @@
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
-          Export PDF
+          {{ $t('batches.exportPdf') }}
         </button>
         <button @click="exportExcel(selectedBatch)"
           :disabled="!selectedBatch"
@@ -22,7 +20,7 @@
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Export Excel
+          {{ $t('batches.exportExcel') }}
         </button>
         <button
           @click="openCreate"
@@ -31,7 +29,7 @@
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          Create Batch
+          {{ $t('batches.createBatch') }}
         </button>
       </div>
     </div>
@@ -57,7 +55,7 @@
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Search batches..."
+            :placeholder="$t('batches.searchBatches')"
             class="h-9 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:placeholder-slate-500"
           />
         </div>
@@ -98,7 +96,7 @@
           @click="fetchBatches"
           class="mt-3 rounded-lg bg-indigo-50 px-3.5 py-2 text-xs font-semibold text-indigo-600 hover:bg-indigo-100 transition-colors"
         >
-          Try Again
+          {{ $t('batches.retry') }}
         </button>
       </div>
 
@@ -120,14 +118,13 @@
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
-          <p class="mt-3 text-sm font-semibold text-slate-400">
-            No batches match "{{ searchQuery }}".
+          <p class="mt-3 text-sm font-semibold text-slate-400">                  {{ $t('batches.noMatch', { query: searchQuery }) }}
           </p>
           <button
             @click="searchQuery = ''"
             class="mt-2 text-xs font-medium text-indigo-500 hover:text-indigo-600 transition-colors"
           >
-            Clear search
+            {{ $t('batches.clearSearch') }}
           </button>
         </div>
         <div v-else class="flex flex-col items-center justify-center py-16 text-center px-4">
@@ -144,8 +141,8 @@
               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v12a2 2 0 002 2z"
             />
           </svg>
-          <p class="mt-4 text-sm font-semibold text-slate-400">No batches created yet.</p>
-          <p class="mt-1 text-xs text-slate-400">Get started by creating your first batch.</p>
+          <p class="mt-4 text-sm font-semibold text-slate-400">{{ $t('batches.noBatches') }}</p>
+          <p class="mt-1 text-xs text-slate-400">{{ $t('batches.noBatchesHint') }}</p>
           <button
             @click="openCreate"
             class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 active:scale-95"
@@ -158,7 +155,7 @@
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            Create Batch
+            {{ $t('batches.createBatch') }}
           </button>
         </div>
       </div>
@@ -170,10 +167,10 @@
               <tr
                 class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400 dark:border-slate-800 dark:bg-slate-800/50"
               >
-                <th class="px-5 py-3.5">Batch Name</th>
-                <th class="px-5 py-3.5">Year</th>
-                <th class="px-5 py-3.5">Students</th>
-                <th class="px-5 py-3.5 text-right">Actions</th>
+                <th class="px-5 py-3.5">{{ $t('batches.batchName') }}</th>
+                <th class="px-5 py-3.5">{{ $t('batches.year') }}</th>
+                <th class="px-5 py-3.5">{{ $t('batches.students') }}</th>
+                <th class="px-5 py-3.5 text-right">{{ $t('common.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
@@ -208,8 +205,7 @@
                       class="h-1.5 w-1.5 rounded-full"
                       :class="countDotClass(batch.students_count)"
                     />
-                    {{ batch.students_count ?? 0 }}
-                    {{ batch.students_count === 1 ? 'student' : 'students' }}
+                    {{ batch.students_count ?? 0 }}                      {{ $t(batch.students_count === 1 ? 'batches.student' : 'batches.students') }}
                   </span>
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-right">
@@ -217,13 +213,13 @@
                     @click="openEdit(batch)"
                     class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-all dark:text-indigo-400 dark:hover:bg-indigo-900/30"
                   >
-                    Edit
+                    {{ $t('common.edit') }}
                   </button>
                   <button
                     @click="deleteBatch(batch.id)"
                     class="ml-1 rounded-lg px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-all dark:text-red-400 dark:hover:bg-red-900/30"
                   >
-                    Delete
+                    {{ $t('common.delete') }}
                   </button>
                 </td>
               </tr>
@@ -287,10 +283,10 @@
 
     <ConfirmDialog
       :show="confirm.show.value"
-      title="Delete Batch"
+      :title="$t('batches.confirmDelete')"
       :message="confirmMessage"
-      confirm-text="Delete"
-      cancel-text="Cancel"
+      :confirm-text="$t('common.delete')"
+      :cancel-text="$t('common.cancel')"
       :loading="confirm.loading.value"
       :error="confirm.error.value"
       @confirm="handleConfirmDelete"
@@ -301,6 +297,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useBatchStore } from '@/stores/batchStore'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
@@ -308,6 +305,7 @@ import { batchService, type Batch } from '@/services/batch'
 import BatchForm from './BatchForm.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
+const { t: $t_script } = useI18n()
 const store = useBatchStore()
 const toast = useToastStore()
 const confirm = useConfirmDialog()
@@ -318,7 +316,7 @@ const editingBatch = ref<Batch | null>(null)
 const selectedBatch = ref<Batch | null>(null)
 
 const confirmMessage = computed(
-  () => `Are you sure you want to delete "${confirm.title.value}"? This action cannot be undone.`,
+  () => $t_script('batches.confirmDeleteMessage', { name: confirm.title.value }),
 )
 
 const storeBatches = computed(() => store.batches as unknown as Batch[])
@@ -396,7 +394,7 @@ async function handleConfirmDelete() {
   await confirm.confirmAsync(async () => {
     await store.deleteBatch(deleteTarget!.id)
     if (!store.error) {
-      toast.success(`Batch "${deleteTarget!.batch_name}" deleted successfully.`)
+      toast.success($t_script('batches.deletedToast', { name: deleteTarget!.batch_name }))
     }
   })
 }
@@ -411,9 +409,9 @@ async function exportPdf(batch: Batch | null) {
     a.download = `batch-${batch.batch_name}-students.pdf`
     a.click()
     window.URL.revokeObjectURL(url)
-    toast.success('PDF exported successfully.')
+    toast.success($t_script('common.pdfExported'))
   } catch {
-    toast.error('Failed to export PDF.')
+    toast.error($t_script('common.pdfExportFailed'))
   }
 }
 
@@ -427,9 +425,9 @@ async function exportExcel(batch: Batch | null) {
     a.download = `batch-${batch.batch_name}-students.xlsx`
     a.click()
     window.URL.revokeObjectURL(url)
-    toast.success('Excel exported successfully.')
+    toast.success($t_script('common.excelExported'))
   } catch {
-    toast.error('Failed to export Excel.')
+    toast.error($t_script('common.excelExportFailed'))
   }
 }
 

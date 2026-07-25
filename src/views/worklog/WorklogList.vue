@@ -2,8 +2,8 @@
   <div class="p-6 space-y-6">
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Worklogs</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">Student worklog history.</p>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{{ $t('worklogs.title') }}</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('worklogs.studentHistory') }}</p>
       </div>
 
       <router-link
@@ -18,7 +18,7 @@
             d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        Create Worklog
+        {{ $t('worklogs.createWorklog') }}
       </router-link>
     </div>
 
@@ -28,7 +28,7 @@
         @change="onFilterChange"
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
       >
-        <option value="">All Weeks</option>
+        <option value="">{{ $t('worklogs.allWeeks') }}</option>
         <option v-for="w in weeks" :key="w" :value="w">Week {{ w }}</option>
       </select>
 
@@ -37,11 +37,11 @@
         @change="onFilterChange"
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
       >
-        <option value="">All Statuses</option>
-        <option value="Pending">Pending</option>
-        <option value="Reviewed">Reviewed</option>
-        <option value="Approved">Approved</option>
-        <option value="Rejected">Rejected</option>
+        <option value="">{{ $t('worklogs.allStatuses') }}</option>
+        <option value="Pending">{{ $t('worklogs.pending') }}</option>
+        <option value="Reviewed">{{ $t('worklogs.reviewed') }}</option>
+        <option value="Approved">{{ $t('worklogs.approved') }}</option>
+        <option value="Rejected">{{ $t('worklogs.rejected') }}</option>
       </select>
     </div>
 
@@ -89,12 +89,12 @@
               <tr
                 class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
               >
-                <th class="px-5 py-3.5">Week</th>
-                <th class="px-5 py-3.5">Description</th>
-                <th class="px-5 py-3.5">Status</th>
-                <th class="px-5 py-3.5">Submitted Date</th>
-                <th class="px-5 py-3.5">Tutor Feedback</th>
-                <th class="px-5 py-3.5 text-right">Actions</th>
+                <th class="px-5 py-3.5">{{ $t('worklogs.week') }}</th>
+                <th class="px-5 py-3.5">{{ $t('worklogs.description') }}</th>
+                <th class="px-5 py-3.5">{{ $t('worklogs.status') }}</th>
+                <th class="px-5 py-3.5">{{ $t('worklogs.submittedDate') }}</th>
+                <th class="px-5 py-3.5">{{ $t('worklogs.tutorFeedback') }}</th>
+                <th class="px-5 py-3.5 text-right">{{ $t('worklogs.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -121,13 +121,13 @@
                   <router-link
                     :to="`/student/worklogs/${w.id}`"
                     class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-all"
-                    >View</router-link
+                    >{{ $t('worklogs.view') }}</router-link
                   >
                   <router-link
                     v-if="isEditable(w)"
                     :to="`/student/worklogs/${w.id}/edit`"
                     class="ml-2 rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-all"
-                    >Edit</router-link
+                    >{{ $t('worklogs.edit') }}</router-link
                   >
                 </td>
               </tr>
@@ -145,15 +145,14 @@
           >
             <div class="flex items-start justify-between gap-3">
               <div>
-                <p class="text-xs font-semibold text-slate-500">Week</p>
+                <p class="text-xs font-semibold text-slate-500">{{ $t('worklogs.week') }}</p>
                 <p class="text-sm font-bold text-slate-900">{{ w.week_number }}</p>
               </div>
               <WorklogStatusBadge :status="w.status" />
             </div>
             <p class="mt-3 text-sm font-semibold text-slate-900">{{ w.description }}</p>
-            <p class="mt-1 text-xs text-slate-500">Submitted: {{ formatDate(w.submitted_at) }}</p>
-            <p class="mt-2 text-xs text-slate-600">
-              Tutor: {{ w.tutor_review?.feedback ? w.tutor_review.feedback.slice(0, 60) : '—'
+            <p class="mt-1 text-xs text-slate-500">{{ $t('worklogs.submitted') }}: {{ formatDate(w.submitted_at) }}</p>              <p class="mt-2 text-xs text-slate-600">
+                {{ $t('worklogs.tutor') }}: {{ w.tutor_review?.feedback ? w.tutor_review.feedback.slice(0, 60) : '—'
               }}{{ w.tutor_review?.feedback && w.tutor_review.feedback.length > 60 ? '…' : '' }}
             </p>
 
@@ -161,13 +160,13 @@
               <router-link
                 :to="`/student/worklogs/${w.id}`"
                 class="inline-flex flex-1 items-center justify-center rounded-xl bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100"
-                >View</router-link
+                >{{ $t('worklogs.view') }}</router-link
               >
               <router-link
                 v-if="isEditable(w)"
                 :to="`/student/worklogs/${w.id}/edit`"
                 class="inline-flex flex-1 items-center justify-center rounded-xl bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700 hover:bg-amber-100"
-                >Edit</router-link
+                >{{ $t('worklogs.edit') }}</router-link
               >
             </div>
           </div>
@@ -190,7 +189,7 @@
               d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
             />
           </svg>
-          <p class="mt-3 text-sm font-semibold text-slate-400">No worklogs found.</p>
+          <p class="mt-3 text-sm font-semibold text-slate-400">{{ $t('worklogs.noWorklogs') }}</p>
         </div>
 
         <div v-if="store.pagination" class="mt-2">

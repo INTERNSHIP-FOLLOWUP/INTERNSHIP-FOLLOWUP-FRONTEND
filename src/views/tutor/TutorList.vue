@@ -26,7 +26,7 @@
     <div class="flex flex-wrap items-center gap-3">
       <DebouncedInput
         v-model="searchQuery"
-        placeholder="Search by name or email..."
+        :placeholder="$t('common.searchByNameEmail')"
         class="min-w-0 flex-1 basis-[200px]"
         @change="onSearch"
       />
@@ -205,6 +205,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useTutorStore } from '@/stores/tutorStore'
 import { useStudentStore } from '@/stores/student'
 import { useToastStore } from '@/stores/toast'
@@ -213,6 +214,8 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import DebouncedInput from '@/components/ui/DebouncedInput.vue'
 import ActiveFilters from '@/components/ui/ActiveFilters.vue'
 import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
+
+const { t: $t_script } = useI18n()
 
 const store = useTutorStore()
 const studentStore = useStudentStore()
@@ -304,7 +307,7 @@ async function handleConfirm(): Promise<void> {
   if (deleteTargetId === null) return
   await dialog.confirmAsync(async () => {
     await store.deleteTutor(deleteTargetId!)
-    toast.success('Tutor deleted successfully.')
+    toast.success($t_script('users.tutorDeletedToast'))
   })
 }
 </script>

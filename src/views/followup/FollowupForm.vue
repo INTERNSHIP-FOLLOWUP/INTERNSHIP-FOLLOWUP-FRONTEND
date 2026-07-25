@@ -5,7 +5,7 @@
       class="w-full max-w-lg max-h-[calc(100dvh-64px)] sm:max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-xl p-4 sm:p-6"
     >
       <h2 class="text-lg font-semibold mb-4 text-slate-900">
-        {{ isEdit ? 'Edit Follow-up' : 'New Follow-up' }}
+        {{ isEdit ? $t('followups.editFollowup') : $t('followups.newFollowupFormTitle') }}
       </h2>
 
       <ErrorAlert :message="submitError" />
@@ -27,7 +27,7 @@
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
             </svg>
-            Student
+            {{ $t('followups.studentLabel') }}
           </label>
 
           <!-- Student: auto-filled readonly field -->
@@ -45,7 +45,7 @@
             v-model.number="form.student_id"
             type="number"
             min="1"
-            placeholder="Enter student ID"
+            :placeholder="$t('followups.enterStudentId')"
             class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             :class="{ 'border-red-400 ring-2 ring-red-500/20': errors.student_id }"
           />
@@ -86,7 +86,7 @@
               />
               <circle cx="12" cy="7" r="4" />
             </svg>
-            Company
+            {{ $t('followups.companyLabel') }}
           </label>
           <div class="relative">
             <select
@@ -95,7 +95,7 @@
               class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 appearance-none focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60"
               :class="{ 'border-red-400 ring-2 ring-red-500/20': errors.company_id }"
             >
-              <option :value="null">Auto-assign from student internship</option>
+              <option :value="null">{{ $t('followups.autoAssignFromInternship') }}</option>
               <option v-for="company in companies" :key="company.id" :value="company.id">
                 {{ company.name }}
               </option>
@@ -136,7 +136,7 @@
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            Meeting Type
+            {{ $t('followups.meetingTypeLabel') }}
           </label>
           <div class="relative">
             <select
@@ -144,10 +144,10 @@
               class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 appearance-none focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               :class="{ 'border-red-400 ring-2 ring-red-500/20': errors.meeting_type }"
             >
-              <option value="" disabled>Select meeting type</option>
-              <option value="Monthly">Monthly</option>
-              <option value="Quarterly">Quarterly</option>
-              <option value="Annual">Annual</option>
+              <option value="" disabled>{{ $t('followups.selectMeetingType') }}</option>
+              <option value="Monthly">{{ $t('followups.monthly') }}</option>
+              <option value="Quarterly">{{ $t('followups.quarterly') }}</option>
+              <option value="Annual">{{ $t('followups.annual') }}</option>
             </select>
             <svg
               class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400"
@@ -202,7 +202,7 @@
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            Meeting Date
+            {{ $t('followups.meetingDateLabel') }}
           </label>
           <input
             v-model="form.meeting_date"
@@ -250,7 +250,7 @@
                   d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                 />
               </svg>
-              Notes
+              {{ $t('followups.notesLabel') }}
             </label>
             <span
               class="text-xs text-slate-400"
@@ -264,7 +264,7 @@
             v-model="form.notes"
             rows="3"
             maxlength="5000"
-            placeholder="Enter meeting notes..."
+            :placeholder="$t('followups.enterNotes')"
             class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none"
             :class="{ 'border-red-400 ring-2 ring-red-500/20': errors.notes }"
           ></textarea>
@@ -305,8 +305,8 @@
                   d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
                 />
               </svg>
-              Action Items
-              <span class="text-xs font-normal text-slate-400">(optional)</span>
+              {{ $t('followups.actionItemsLabel') }}
+              <span class="text-xs font-normal text-slate-400">{{ $t('followups.optional') }}</span>
             </label>
             <span class="text-xs text-slate-400" v-if="form.action_items">
               {{ actionItemsLength }}
@@ -316,7 +316,7 @@
             v-model="form.action_items"
             rows="3"
             maxlength="5000"
-            placeholder="Enter action items..."
+            :placeholder="$t('followups.enterActionItems')"
             class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none"
           ></textarea>
         </div>
@@ -337,8 +337,8 @@
                 d="M13 10V3L4 14h7v7l9-11h-7z"
               />
             </svg>
-            Next Follow-up Date
-            <span class="text-xs font-normal text-slate-400">(optional)</span>
+            {{ $t('followups.nextFollowupDateLabel') }}
+            <span class="text-xs font-normal text-slate-400">{{ $t('followups.optional') }}</span>
           </label>
           <input
             v-model="form.next_followup"
@@ -363,7 +363,7 @@
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            Status
+            {{ $t('followups.statusLabel') }}
           </label>
           <div class="relative">
             <select
@@ -371,10 +371,10 @@
               class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 appearance-none focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               :class="{ 'border-red-400 ring-2 ring-red-500/20': errors.status }"
             >
-              <option value="Scheduled">Scheduled</option>
-              <option value="Completed">Completed</option>
-              <option value="Missed">Missed</option>
-              <option value="Cancelled">Cancelled</option>
+              <option value="Scheduled">{{ $t('followups.scheduled') }}</option>
+              <option value="Completed">{{ $t('followups.completed') }}</option>
+              <option value="Missed">{{ $t('followups.missed') }}</option>
+              <option value="Cancelled">{{ $t('followups.cancelled') }}</option>
             </select>
             <svg
               class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400"
@@ -416,8 +416,7 @@
             <kbd
               class="inline-flex items-center rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-xs text-slate-500"
               >Esc</kbd
-            >
-            to cancel
+            >              {{ $t('followups.escToCancel') }}
           </p>
           <div class="flex items-center gap-2">
             <button
@@ -425,7 +424,7 @@
               @click="$emit('cancelled')"
               class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:text-slate-900 active:scale-95"
             >
-              Cancel
+              {{ $t('followups.cancel') }}
             </button>
             <button
               type="submit"
@@ -469,7 +468,7 @@
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-              {{ submitting ? 'Saving...' : isEdit ? 'Update' : 'Save' }}
+              {{ submitting ? $t('followups.saving') : isEdit ? $t('followups.update') : $t('followups.save') }}
             </button>
           </div>
         </div>
@@ -480,6 +479,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useFollowupStore } from '@/stores/followupStore'
 import { useAuthStore } from '@/stores/auth'
 import type { Followup, FollowupPayload, FollowupStatus, MeetingType } from '@/types/followup'
@@ -490,10 +490,11 @@ import api from '@/services/api'
 const props = defineProps<{ followup: Followup | null }>()
 const emit = defineEmits<{ saved: []; cancelled: [] }>()
 
+const { t: $t_script } = useI18n()
 const followupStore = useFollowupStore()
 const auth = useAuthStore()
 
-const studentDisplayName = computed(() => auth.user?.name || auth.user?.email || 'You')
+const studentDisplayName = computed(() => auth.user?.name || auth.user?.email || $t_script('followups.you'))
 const isStudent = computed(() => auth.userRole === 'student')
 const isEdit = computed(() => !!props.followup)
 
@@ -538,7 +539,7 @@ async function fetchStudents() {
     const res = await api.get('/tutor/students')
     students.value = (res.data.data || []).map((s: any) => ({ id: s.id, name: s.name }))
   } catch {
-    studentsError.value = 'Unable to load students.'
+    studentsError.value = $t_script('followups.unableLoadStudents')
   } finally {
     studentsLoading.value = false
   }
@@ -554,7 +555,7 @@ async function fetchCompanies() {
       name: c.company_name || c.name,
     }))
   } catch {
-    companiesError.value = 'Unable to load companies.'
+    companiesError.value = $t_script('followups.unableLoadCompanies')
   } finally {
     companiesLoading.value = false
   }
@@ -571,23 +572,23 @@ function validate(): boolean {
   let valid = true
 
   if (!form.student_id) {
-    errors.student_id = isStudent.value ? 'Please select a student.' : 'Please enter a student ID.'
+    errors.student_id = isStudent.value ? $t_script('followups.validateSelectStudent') : $t_script('followups.validateStudentId')
     valid = false
   }
   if (!form.meeting_type) {
-    errors.meeting_type = 'Please select a meeting type.'
+    errors.meeting_type = $t_script('followups.validateMeetingType')
     valid = false
   }
   if (!form.meeting_date) {
-    errors.meeting_date = 'Meeting date is required.'
+    errors.meeting_date = $t_script('followups.validateMeetingDate')
     valid = false
   }
   if (!form.notes.trim()) {
-    errors.notes = 'Notes are required.'
+    errors.notes = $t_script('followups.validateNotes')
     valid = false
   }
   if (!form.status) {
-    errors.status = 'Please select a status.'
+    errors.status = $t_script('followups.validateStatus')
     valid = false
   }
 
@@ -612,7 +613,7 @@ async function submit(): Promise<void> {
     emit('saved')
   } catch (err) {
     const axiosErr = err as AxiosError<{ message?: string }>
-    submitError.value = axiosErr.response?.data?.message ?? 'Failed to save follow-up.'
+    submitError.value = axiosErr.response?.data?.message ?? $t_script('followups.failedSave')
   } finally {
     submitting.value = false
   }

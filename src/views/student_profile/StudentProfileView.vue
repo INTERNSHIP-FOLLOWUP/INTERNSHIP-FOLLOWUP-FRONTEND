@@ -1,16 +1,24 @@
 <template>
   <div class="space-y-6">
 
-    <!-- Back link -->
-    <router-link
-      to="/admin/students"
-      class="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-primary-600 transition-colors"
-    >
-      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m7-7l-7 7 7 7" />
-      </svg>
-      Back to Students
-    </router-link>
+    <div class="flex items-center gap-3 text-sm">
+      <router-link
+        to="/admin/students"
+        class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+      >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+        Back to Students
+      </router-link>
+      <span class="text-slate-300">/</span>
+      <span class="font-medium text-slate-900">Student Profile</span>
+    </div>
 
     <!-- Loading -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-24 gap-3">

@@ -178,7 +178,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
-              <tr v-for="(student, index) in store.students" :key="student.id" class="transition-colors hover:bg-slate-50/50">
+              <tr v-for="(student, index) in store.students" :key="student.id" @click="goToStudent(student)" class="cursor-pointer transition-colors hover:bg-slate-50/70">
                 <td class="whitespace-nowrap px-6 py-4">
                   <img
                     v-if="getStudentPhoto(student) && !failedStudentPhotos.has(student.id)"
@@ -394,6 +394,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import { formatStudentId } from '@/utils/studentUtils'
 import type { Student } from '@/types/student'
@@ -415,6 +416,7 @@ import StudentForm from '@/components/student/StudentForm.vue'
 import ImportStudentsModal from '@/components/admin/ImportStudentsModal.vue'
 import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
+const router = useRouter()
 const store = useStudentStore()
 const batchStore = useBatchStore()
 const tutorStore = useTutorStore()
@@ -640,6 +642,11 @@ const showImportModal = ref(false)
 const showFormModal = ref(false)
 const editingStudentId = ref<number | undefined>(undefined)
 
+function goToStudent(student: Student) {
+  const id = student.user_id || student.id
+  router.push(`/admin/student-profile/${id}`)
+}
+
 function editStudent(id: number) {
   editingStudentId.value = id
   showFormModal.value = true
@@ -659,7 +666,12 @@ function onStudentSaved() {
 
 async function exportPdf() {
   try {
-    const blob = await studentService.exportPdf()
+    const params: Record<string, string | number> = {}
+    if (searchQuery.value) params.search = searchQuery.value
+    if (batchFilter.value) params.batch_id = batchFilter.value
+    if (statusFilter.value) params.status = statusFilter.value
+    if (tutorFilter.value) params.tutor_id = tutorFilter.value
+    const blob = await studentService.exportPdf(params)
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -674,7 +686,12 @@ async function exportPdf() {
 
 async function exportExcel() {
   try {
-    const blob = await studentService.exportExcel()
+    const params: Record<string, string | number> = {}
+    if (searchQuery.value) params.search = searchQuery.value
+    if (batchFilter.value) params.batch_id = batchFilter.value
+    if (statusFilter.value) params.status = statusFilter.value
+    if (tutorFilter.value) params.tutor_id = tutorFilter.value
+    const blob = await studentService.exportExcel(params)
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url

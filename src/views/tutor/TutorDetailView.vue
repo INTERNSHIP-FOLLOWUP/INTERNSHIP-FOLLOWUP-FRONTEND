@@ -1,12 +1,23 @@
 <template>
   <div class="space-y-6">
-    <router-link to="/admin/tutors"
-      class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-600 hover:text-primary-800 mb-4">
-      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m7-7l-7 7 7 7" />
-      </svg>
-      Back to Tutors
-    </router-link>
+    <div class="flex items-center gap-3 text-sm mb-4">
+      <router-link
+        to="/admin/tutors"
+        class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+      >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+        Back to Tutors
+      </router-link>
+      <span class="text-slate-300">/</span>
+      <span class="font-medium text-slate-900">Tutor Profile</span>
+    </div>
 
     <div v-if="loading" class="flex items-center justify-center py-20">
       <p class="text-sm text-slate-500">Loading...</p>
@@ -15,21 +26,35 @@
     <template v-else-if="data">
       <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div class="flex items-center gap-5">
-          <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary-100 to-blue-100 text-xl font-bold text-primary-700 shadow-xs">
+          <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary-100 to-blue-100 text-xl font-bold text-primary-700 shadow-xs ring-2 ring-white">
             {{ initials }}
           </div>
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
               <h1 class="text-xl font-bold text-slate-900">{{ data.tutor.name }}</h1>
               <span
-                class="rounded-full px-2.5 py-0.5 text-xs font-bold"
-                :class="(data.tutor.user?.status || data.tutor.status) === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'"
+                class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
+                :class="(data.tutor.status || data.tutor.user?.status) === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'"
               >
-                {{ data.tutor.user?.status || data.tutor.status || 'active' }}
+                <span class="h-1.5 w-1.5 rounded-full" :class="(data.tutor.status || data.tutor.user?.status) === 'active' ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                {{ data.tutor.status || data.tutor.user?.status || 'active' }}
+              </span>
+              <span
+                v-if="data.tutor.gender || data.tutor.user?.gender"
+                class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium"
+                :class="(data.tutor.gender || data.tutor.user?.gender) === 'Female' ? 'bg-pink-50 text-pink-700' : 'bg-blue-50 text-blue-700'"
+              >
+                {{ data.tutor.gender || data.tutor.user?.gender }}
               </span>
             </div>
-            <p class="text-sm text-slate-500"><span class="truncate max-w-[200px] inline-block align-bottom">{{ data.tutor.email }}</span> &middot; {{ data.tutor.phone || data.tutor.user?.phone || 'No phone' }}</p>
-            <p class="mt-1 text-sm font-semibold text-primary-600">{{ data.tutor.students_count }} assigned student{{ data.tutor.students_count !== 1 ? 's' : '' }}</p>
+            <p class="mt-1 text-sm text-slate-500 flex items-center gap-2 flex-wrap">
+              <span>{{ data.tutor.email }}</span>
+              <span class="text-slate-300">&middot;</span>
+              <span>{{ data.tutor.phone || data.tutor.user?.phone || 'No phone' }}</span>
+            </p>
+            <p class="mt-1.5 text-sm font-semibold text-primary-600">
+              {{ data.tutor.students_count }} assigned student{{ data.tutor.students_count !== 1 ? 's' : '' }}
+            </p>
           </div>
         </div>
 
@@ -46,22 +71,28 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
-          <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Worklogs</p>
-          <div class="mt-3 flex gap-3 text-sm">
-            <span class="rounded-full bg-amber-50 px-3 py-1 font-bold text-amber-700">{{ data.worklog_stats.submitted }} Submitted</span>
-            <span class="rounded-full bg-emerald-50 px-3 py-1 font-bold text-emerald-700">{{ data.worklog_stats.approved }} Approved</span>
-            <span class="rounded-full bg-rose-50 px-3 py-1 font-bold text-rose-700">{{ data.worklog_stats.rejected }} Rejected</span>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm flex items-center gap-4">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Assigned Students</p>
+            <p class="text-2xl font-bold text-slate-900 mt-0.5">{{ data.students.length }}</p>
           </div>
         </div>
-        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
-          <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Issues</p>
-          <p class="mt-3 text-2xl font-bold text-slate-900">{{ data.issues.length }}</p>
-        </div>
-        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
-          <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Assignments</p>
-          <p class="mt-3 text-2xl font-bold text-slate-900">{{ data.assignments.length }}</p>
+        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm flex items-center gap-4">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Supervised Assignments</p>
+            <p class="text-2xl font-bold text-slate-900 mt-0.5">{{ data.assignments.length }}</p>
+          </div>
         </div>
       </div>
 
@@ -89,9 +120,12 @@
                   <td class="py-3 pr-4 text-slate-500">{{ s.worklogs_count }}</td>
                   <td class="py-3 pr-4 text-slate-500">{{ s.issues_count }}</td>
                   <td class="py-3 pr-4">
-                    <span class="rounded-full px-2.5 py-0.5 text-xs font-bold"
-                      :class="(s.user?.status || s.status) === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'">
-                      {{ s.user?.status || s.status }}
+                    <span
+                      class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
+                      :class="(s.user?.status || s.status || 'active') === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'"
+                    >
+                      <span class="h-1.5 w-1.5 rounded-full" :class="(s.user?.status || s.status || 'active') === 'active' ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                      {{ s.user?.status || s.status || 'active' }}
                     </span>
                   </td>
                   <td class="py-3 text-right">
@@ -103,13 +137,7 @@
                 <tr v-if="expanded.has(s.id)">
                   <td colspan="7" class="bg-slate-50/50 px-6 py-4">
                     <div v-if="!studentActivity[s.user_id]" class="text-sm text-slate-500">Loading tracking data...</div>
-                    <div v-else class="space-y-4">
-                      <div class="flex gap-3 text-xs">
-                        <span class="rounded-full bg-amber-50 px-2.5 py-1 font-semibold text-amber-700">{{ studentActivity[s.user_id].worklog_stats.submitted }} Submitted</span>
-                        <span class="rounded-full bg-emerald-50 px-2.5 py-1 font-semibold text-emerald-700">{{ studentActivity[s.user_id].worklog_stats.approved }} Approved</span>
-                        <span class="rounded-full bg-rose-50 px-2.5 py-1 font-semibold text-rose-700">{{ studentActivity[s.user_id].worklog_stats.rejected }} Rejected</span>
-                        <span class="rounded-full bg-blue-50 px-2.5 py-1 font-semibold text-blue-700">{{ studentActivity[s.user_id].issues.length }} Issues</span>
-                      </div>
+                    <div v-else class="space-y-2">
                       <div v-if="studentActivity[s.user_id].assignment" class="text-xs text-slate-500">
                         <span class="font-semibold text-slate-700">Internship:</span>
                         {{ studentActivity[s.user_id].assignment.company?.company_name }} — {{ studentActivity[s.user_id].assignment.position }}
@@ -127,44 +155,6 @@
         </div>
         <p v-else class="text-sm text-slate-400">No students assigned.</p>
       </div>
-
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-          <h2 class="text-base font-bold text-slate-900 mb-4">Issues</h2>
-          <div v-if="data.issues.length > 0" class="space-y-2">
-            <div v-for="issue in data.issues" :key="issue.id"
-              class="flex items-center justify-between rounded-lg border border-slate-100 px-4 py-2.5 text-sm">
-              <div class="min-w-0 flex-1">
-                <p class="truncate font-semibold text-slate-700">{{ issue.title }}</p>
-                <p class="text-xs text-slate-400">{{ issue.student?.name }} &middot; {{ formatDate(issue.created_at) }}</p>
-              </div>
-              <span class="ml-2 shrink-0 rounded-full px-2 py-0.5 text-xs font-bold"
-                :class="issue.status === 'Resolved' ? 'bg-emerald-50 text-emerald-700' : issue.status === 'Open' ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700'">
-                {{ issue.status }}
-              </span>
-            </div>
-          </div>
-          <p v-else class="text-sm text-slate-400">No issues assigned.</p>
-        </div>
-
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-          <h2 class="text-base font-bold text-slate-900 mb-4">Supervised Assignments</h2>
-          <div v-if="data.assignments.length > 0" class="space-y-2">
-            <div v-for="a in data.assignments" :key="a.id"
-              class="rounded-lg border border-slate-100 px-4 py-3 text-sm">
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-slate-700">{{ a.student?.name }}</span>
-                <span class="rounded-full px-2 py-0.5 text-xs font-bold"
-                  :class="a.status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'">
-                  {{ a.status }}
-                </span>
-              </div>
-              <p class="mt-1 text-xs text-slate-500">{{ a.company?.name }} &middot; {{ a.position }} &middot; {{ a.start_date }} — {{ a.end_date }}</p>
-            </div>
-          </div>
-          <p v-else class="text-sm text-slate-400">No supervised assignments.</p>
-        </div>
-      </div>
     </template>
 
     <div v-else-if="!loading" class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center">
@@ -174,7 +164,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/services/api'
 import { formatStudentId } from '@/utils/studentUtils'
@@ -233,9 +223,12 @@ function formatDate(dateStr?: string | null): string {
   return dateStr
 }
 
-onMounted(async () => {
+async function fetchTutorDetail() {
+  const id = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id
+  if (!id) return
+  loading.value = true
   try {
-    const res = await api.get(`/admin/tutors/${route.params.id}/activity`)
+    const res = await api.get(`/admin/tutors/${id}/activity`)
     data.value = res.data
   } catch (err) {
     console.error('Failed to load tutor profile:', err)
@@ -243,5 +236,8 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
-})
+}
+
+onMounted(fetchTutorDetail)
+watch(() => route.params.id, fetchTutorDetail)
 </script>

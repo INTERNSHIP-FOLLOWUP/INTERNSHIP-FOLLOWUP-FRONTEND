@@ -118,9 +118,10 @@
             </thead>
             <tbody class="divide-y divide-slate-50">
               <tr v-for="(user, index) in users" :key="user.id"
-                class="transition-colors hover:bg-slate-50/50"
+                @click="goToProfile(user)"
+                class="cursor-pointer transition-colors hover:bg-slate-50/70"
                 :class="{ 'bg-rose-50/40': selectedIds.has(user.id) }">
-                <td v-if="selectMode" class="px-4 py-4 w-10">
+                <td v-if="selectMode" class="px-4 py-4 w-10" @click.stop>
                   <input type="checkbox" :checked="selectedIds.has(user.id)"
                     @change="toggleSelect(user.id)"
                     class="h-4 w-4 rounded border-slate-300 text-rose-600 cursor-pointer accent-rose-600" />
@@ -492,6 +493,7 @@ function goToPage(page: number): void {
   fetchUsers()
 }
 
+
 function clearFilters(): void {
   searchQuery.value = ''
   roleFilter.value = ''
@@ -540,11 +542,15 @@ async function handleConfirmAction() {
 }
 
 function goToProfile(user: User) {
-  const roleName = user.role?.name?.toLowerCase()
+  const roleName = (user.role?.name || '').toLowerCase()
   if (roleName === 'student') {
     router.push(`/admin/student-profile/${user.id}`)
   } else if (roleName === 'tutor') {
-    router.push(`/admin/tutor-profile/${user.id}`)
+    router.push(`/admin/tutors/${user.id}`)
+  } else if (roleName === 'supervisor' || roleName === 'company_supervisor') {
+    router.push('/admin/supervisors')
+  } else if (roleName === 'company') {
+    router.push(`/admin/companies/${user.id}`)
   } else {
     router.push(`/admin/users/${user.id}/edit`)
   }

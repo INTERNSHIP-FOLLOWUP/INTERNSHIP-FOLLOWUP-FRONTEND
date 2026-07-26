@@ -1,11 +1,10 @@
 <template>
   <div class="animate-fade-in">
+    <div class="fixed right-6 top-6 z-50">
+      <LanguageSwitcher variant="standalone" />
+    </div>
     <AuthLayout>
       <div class="relative rounded-[20px] p-8 transition-all duration-300">
-        <!-- Language Switcher -->
-        <div class="absolute right-6 top-6">
-          <LanguageSwitcher variant="standalone" />
-        </div>
 
         <div class="text-center mb-6">
           <div
@@ -175,11 +174,11 @@
 import { computed, reactive, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 import AuthLayout from '@/components/auth/AuthLayout.vue'
 import InputField from '@/components/ui/InputField.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
 import PrimaryButton from '@/components/ui/PrimaryButton.vue'
-import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 import { authService } from '@/services/auth'
 import { parseApiError } from '@/utils/errorParser'
 

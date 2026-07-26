@@ -48,7 +48,7 @@
           >
             <component :is="item.icon" />
           </span>
-          {{ item.label }}
+          {{ $t(item.label) }}
         </router-link>
       </nav>
 
@@ -308,9 +308,25 @@ const userInitials = computed(() => {
     .slice(0, 2)
 })
 
+const pageTitleKey = computed(() => {
+  const map: Record<string, string> = {
+    StudentDashboard: 'nav.student.dashboard',
+    StudentInternship: 'nav.student.myInternship',
+    StudentWorklogs: 'nav.student.worklogs',
+    StudentWorklogsCreate: 'page.createWorklog',
+    StudentWorklogDetail: 'page.worklogDetail',
+    StudentWorklogEdit: 'page.editWorklog',
+    StudentFollowups: 'nav.student.followups',
+    StudentIssues: 'nav.student.issues',
+    StudentMessages: 'nav.student.messages',
+    StudentSelfProfile: 'nav.student.profile',
+  }
+  const name = route.name
+  return typeof name === 'string' ? map[name] ?? '' : ''
+})
+
 const pageTitle = computed(() => {
-  const title = route.meta?.title
-  return typeof title === 'string' ? title : 'Dashboard'
+  return pageTitleKey.value ? $t(pageTitleKey.value) : ''
 })
 
 function isActive(path: string) {
@@ -378,7 +394,7 @@ interface NavItem {
 const navItems = computed<NavItem[]>(() => [
   {
     name: 'dashboard',
-    label: $t('nav.student.dashboard'),
+    label: 'nav.student.dashboard',
     to: '/student',
     icon: createIcon(
       'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
@@ -386,7 +402,7 @@ const navItems = computed<NavItem[]>(() => [
   },
   {
     name: 'internship',
-    label: $t('nav.student.myInternship'),
+    label: 'nav.student.myInternship',
     to: '/student/internship',
     icon: createIcon(
       'M21 13.255A23.893 23.893 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
@@ -394,7 +410,7 @@ const navItems = computed<NavItem[]>(() => [
   },
   {
     name: 'worklogs',
-    label: $t('nav.student.worklogs'),
+    label: 'nav.student.worklogs',
     to: '/student/worklogs',
     icon: createIcon(
       'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
@@ -402,7 +418,7 @@ const navItems = computed<NavItem[]>(() => [
   },
   {
     name: 'followups',
-    label: $t('nav.student.followups'),
+    label: 'nav.student.followups',
     to: '/student/followups',
     icon: createIcon(
       'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
@@ -410,7 +426,7 @@ const navItems = computed<NavItem[]>(() => [
   },
   {
     name: 'issues',
-    label: $t('nav.student.issues'),
+    label: 'nav.student.issues',
     to: '/student/issues',
     icon: createIcon(
       'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z',
@@ -418,7 +434,7 @@ const navItems = computed<NavItem[]>(() => [
   },
   {
     name: 'messages',
-    label: $t('nav.student.messages'),
+    label: 'nav.student.messages',
     to: '/student/messages',
     icon: createIcon(
       'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
@@ -426,7 +442,7 @@ const navItems = computed<NavItem[]>(() => [
   },
   {
     name: 'profile',
-    label: $t('nav.student.profile'),
+    label: 'nav.student.profile',
     to: '/student/profile',
     icon: createIcon('M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'),
   },

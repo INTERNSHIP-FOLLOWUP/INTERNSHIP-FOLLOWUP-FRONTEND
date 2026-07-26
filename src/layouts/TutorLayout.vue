@@ -48,7 +48,7 @@
           >
             <component :is="item.icon" />
           </span>
-          {{ item.label }}
+          {{ $t(item.label) }}
         </router-link>
 
         <!-- Messages submenu -->
@@ -109,7 +109,7 @@
                       : 'bg-slate-500'
                   "
                 />
-                {{ sub.label }}
+                {{ $t(sub.label) }}
               </router-link>
             </div>
           </transition>
@@ -387,21 +387,37 @@ watch(
 const messagesSubItems = [
   {
     name: 'company-messages',
-    label: $t('nav.tutor.company'),
+    label: 'nav.tutor.company',
     to: '/tutor/messages?type=company',
     type: 'company',
   },
   {
     name: 'student-messages',
-    label: $t('nav.tutor.students'),
+    label: 'nav.tutor.students',
     to: '/tutor/messages?type=students',
     type: 'students',
   },
 ]
 
+const pageTitleKey = computed(() => {
+  const map: Record<string, string> = {
+    TutorDashboard: 'nav.tutor.dashboard',
+    TutorStudents: 'nav.tutor.myStudents',
+    TutorStudentDetail: 'page.studentDetails',
+    TutorWorklogs: 'nav.tutor.worklogs',
+    TutorWorklogDetail: 'page.reviewWorklog',
+    TutorFollowups: 'nav.tutor.followups',
+    TutorIssues: 'nav.tutor.issues',
+    TutorFeedback: 'nav.tutor.companyFeedback',
+    TutorMessages: 'nav.tutor.messages',
+    TutorSelfProfile: 'nav.tutor.profile',
+  }
+  const name = route.name
+  return typeof name === 'string' ? map[name] ?? '' : ''
+})
+
 const pageTitle = computed(() => {
-  const title = route.meta?.title
-  return typeof title === 'string' ? title : 'Dashboard'
+  return pageTitleKey.value ? $t(pageTitleKey.value) : ''
 })
 
 function isActive(path: string) {
@@ -469,7 +485,7 @@ interface NavItem {
 const navItems = computed<NavItem[]>(() => [
   {
     name: 'dashboard',
-    label: $t('nav.tutor.dashboard'),
+    label: 'nav.tutor.dashboard',
     to: '/tutor',
     icon: createIcon(
       'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
@@ -477,7 +493,7 @@ const navItems = computed<NavItem[]>(() => [
   },
   {
     name: 'students',
-    label: $t('nav.tutor.myStudents'),
+    label: 'nav.tutor.myStudents',
     to: '/tutor/students',
     icon: createIcon(
       'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',
@@ -485,7 +501,7 @@ const navItems = computed<NavItem[]>(() => [
   },
   {
     name: 'worklogs',
-    label: $t('nav.tutor.worklogs'),
+    label: 'nav.tutor.worklogs',
     to: '/tutor/worklogs',
     icon: createIcon(
       'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
@@ -493,7 +509,7 @@ const navItems = computed<NavItem[]>(() => [
   },
   {
     name: 'followups',
-    label: $t('nav.tutor.followups'),
+    label: 'nav.tutor.followups',
     to: '/tutor/followups',
     icon: createIcon(
       'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
@@ -501,7 +517,7 @@ const navItems = computed<NavItem[]>(() => [
   },
   {
     name: 'issues',
-    label: $t('nav.tutor.issues'),
+    label: 'nav.tutor.issues',
     to: '/tutor/issues',
     icon: createIcon(
       'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z',
@@ -509,7 +525,7 @@ const navItems = computed<NavItem[]>(() => [
   },
   {
     name: 'feedback',
-    label: $t('nav.tutor.companyFeedback'),
+    label: 'nav.tutor.companyFeedback',
     to: '/tutor/feedback',
     icon: createIcon(
       'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z',
@@ -518,7 +534,7 @@ const navItems = computed<NavItem[]>(() => [
   // Messages is rendered separately as a submenu item below
   {
     name: 'profile',
-    label: $t('nav.tutor.profile'),
+    label: 'nav.tutor.profile',
     to: '/tutor/profile',
     icon: createIcon('M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'),
   },

@@ -1154,11 +1154,18 @@
     "fieldBatch": "Batch:",
     "unknown": "Unknown",
     "updateStatusTo": "Update status to \"{status}\"?",
-    "placeholderTab": "This tab will be lazy-loaded from the backend in the next phase."
+    "placeholderTab": "Content coming soon."
   },
   "language": {
     "en": "English",
     "km": "ភាសាខ្មែរ",
     "switchTo": "Switch Language"
+  },
+  "page": {
+    "studentDetails": "Student Details",
+    "reviewWorklog": "Review Work Log",
+    "createWorklog": "Create Work Log",
+    "worklogDetail": "Work Log Details",
+    "editWorklog": "Edit Work Log"
   }
 }

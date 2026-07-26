@@ -48,6 +48,11 @@ export interface SendMessageResponse {
   message: string
 }
 
+export interface TutorStudentSendMessageResponse {
+  data: TutorStudentMessageItem
+  message: string
+}
+
 // ── Tutor-Student Messaging Types ──
 
 export interface TutorStudentConversation {

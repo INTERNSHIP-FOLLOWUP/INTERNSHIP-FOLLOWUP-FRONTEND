@@ -217,7 +217,7 @@ const router = createRouter({
         {
           path: 'students',
           name: 'TutorStudents',
-          component: () => import('@/views/student/StudentDashboardView.vue'),
+          component: () => import('@/views/tutor/MyStudentsView.vue'),
           meta: { title: 'My Students' },
         },
         {
@@ -253,7 +253,7 @@ const router = createRouter({
         {
           path: 'profile',
           name: 'TutorProfile',
-          component: () => import('@/views/profile/ProfileView.vue'),
+          component: () => import('@/views/profile/TutorProfileView.vue'),
           meta: { title: 'Profile' },
         },
       ],

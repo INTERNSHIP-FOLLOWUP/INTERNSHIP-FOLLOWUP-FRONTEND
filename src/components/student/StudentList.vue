@@ -205,7 +205,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
-            <tr v-for="(student, index) in store.students" :key="student.id" class="transition-colors hover:bg-slate-50/50">
+            <tr v-for="(student, index) in store.students" :key="student.id" @click="goToStudent(student)" class="cursor-pointer transition-colors hover:bg-slate-50/70">
               <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.first_name }}</td>
               <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.last_name }}</td>
               <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-500">{{ student.email }}</td>
@@ -387,12 +387,15 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStudentStore } from '@/stores/student'
 import { useToastStore } from '@/stores/toast'
 import { studentService } from '@/services/student'
 import type { Student } from '@/types/student'
 import api from '@/services/api'
 import ImportStudentsModal from '@/components/admin/ImportStudentsModal.vue'
+
+const router = useRouter()
 
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
@@ -420,6 +423,13 @@ const confirmMessage = ref('')
 const confirmButtonText = ref('Confirm')
 type ActionType = 'delete' | 'deactivate' | 'activate' | 'reactivate'
 const pendingAction = ref<{ type: ActionType; student: Student } | null>(null)
+
+function goToStudent(student: Student) {
+  const id = student.user_id || student.id
+  if (id) {
+    router.push(`/admin/student-profile/${id}`)
+  }
+}
 
 function openImportModal() {
   showImportModal.value = true

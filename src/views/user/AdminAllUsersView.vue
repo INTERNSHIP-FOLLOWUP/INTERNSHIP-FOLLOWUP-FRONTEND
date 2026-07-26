@@ -113,7 +113,7 @@
                 <th class="px-6 py-3.5 font-medium">Email</th>
                 <th class="px-6 py-3.5 font-medium">Role</th>
                 <th class="px-6 py-3.5 font-medium">Status</th>
-                <th class="px-6 py-3.5 text-right font-medium">Actions</th>
+                <th class="px-6 py-3.5 text-center font-medium">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -157,16 +157,16 @@
                     {{ user.deleted_at ? 'Deactivated' : 'Active' }}
                   </span>
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 text-right">
-                  <div class="relative inline-block text-left">
+                <td class="whitespace-nowrap px-6 py-4 text-center">
+                  <div class="relative inline-block text-center">
                     <button type="button" @click.stop="toggleKebab(user.id)" title="Actions"
-                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95">
+                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 mx-auto">
                       <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                       </svg>
                     </button>
 
-                    <!-- Kebab Dropdown Menu (Smart positioning: Top rows pop DOWN, Bottom rows pop UP) -->
+                    <!-- Kebab Dropdown Menu -->
                     <transition name="fade">
                       <div v-if="openKebabId === user.id"
                         class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none"
@@ -178,14 +178,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
                           View Profile
-                        </button>
-
-                        <button type="button" @click.stop="openKebabId = null; editUser(user.id)"
-                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
-                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                          Edit User
                         </button>
 
                         <button v-if="!user.deleted_at" type="button" @click.stop="openKebabId = null; deactivateUser(user)"

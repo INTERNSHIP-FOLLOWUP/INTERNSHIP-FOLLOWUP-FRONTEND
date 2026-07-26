@@ -150,9 +150,10 @@
             </thead>
             <tbody class="divide-y divide-slate-50">
               <tr v-for="(student, index) in students" :key="student.id"
-                class="transition-colors hover:bg-slate-50/50"
+                @click="goToStudent(student)"
+                class="cursor-pointer transition-colors hover:bg-slate-50/70"
                 :class="{ 'bg-rose-50/40': selectedIds.has(student.id) }">
-                <td v-if="selectMode" class="px-4 py-4 w-10">
+                <td v-if="selectMode" class="px-4 py-4 w-10" @click.stop>
                   <input type="checkbox" :checked="selectedIds.has(student.id)"
                     @change="toggleSelect(student.id)"
                     class="h-4 w-4 rounded border-slate-300 cursor-pointer accent-rose-600" />
@@ -661,6 +662,11 @@ const visiblePages = computed(() => {
   return pages
 })
 
+function goToStudent(student: Student) {
+  const id = student.user_id || student.id
+  router.push(`/admin/student-profile/${id}`)
+}
+
 function openCreateModal() {
   editingStudentId.value = undefined
   showFormModal.value = true
@@ -735,7 +741,12 @@ function goToPage(page: number) {
 
 async function exportPdf() {
   try {
-    const blob = await studentService.exportPdf()
+    const params: Record<string, string | number> = {}
+    if (searchQuery.value) params.search = searchQuery.value
+    if (batchFilter.value) params.batch_id = batchFilter.value
+    if (statusFilter.value) params.status = statusFilter.value
+    if (tutorFilter.value) params.tutor_id = tutorFilter.value
+    const blob = await studentService.exportPdf(params)
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -750,7 +761,12 @@ async function exportPdf() {
 
 async function exportExcel() {
   try {
-    const blob = await studentService.exportExcel()
+    const params: Record<string, string | number> = {}
+    if (searchQuery.value) params.search = searchQuery.value
+    if (batchFilter.value) params.batch_id = batchFilter.value
+    if (statusFilter.value) params.status = statusFilter.value
+    if (tutorFilter.value) params.tutor_id = tutorFilter.value
+    const blob = await studentService.exportExcel(params)
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url

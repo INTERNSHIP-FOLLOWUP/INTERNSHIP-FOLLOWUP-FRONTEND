@@ -127,7 +127,8 @@
             <tr
               v-for="tutor in tutors"
               :key="tutor.id"
-              class="transition-colors hover:bg-slate-50/50"
+              @click="goToTutor(tutor)"
+              class="cursor-pointer transition-colors hover:bg-slate-50/70"
             >
               <td class="whitespace-nowrap px-6 py-4">
                 <div class="flex items-center gap-3">
@@ -155,9 +156,10 @@
                   {{ tutor.deleted_at ? 'Deactivated' : 'Active' }}
                 </span>
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-center">
+              <td class="whitespace-nowrap px-6 py-4 text-center" @click.stop>
                 <div class="flex items-center justify-center gap-1">
                   <router-link :to="`/admin/tutors/${tutor.id || tutor.user_id}`" title="View Profile"
+                    @click.stop
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-700">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -165,7 +167,7 @@
                     </svg>
                   </router-link>
                   <button
-                    @click="$emit('view', tutor.id)" title="Edit Tutor"
+                    @click.stop="$emit('view', tutor.id)" title="Edit Tutor"
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
                   >
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,7 +175,7 @@
                     </svg>
                   </button>
                   <button
-                    @click="confirmDelete(tutor)" title="Delete Tutor"
+                    @click.stop="confirmDelete(tutor)" title="Delete Tutor"
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-700"
                   >
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -265,8 +267,11 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useTutorStore } from '@/stores/tutorStore'
 import type { Student } from '@/types/student'
+
+const router = useRouter()
 
 const emit = defineEmits<{
   view: [id: number]
@@ -278,6 +283,13 @@ const store = useTutorStore()
 
 const tutors = computed(() => store.tutors)
 const searchQuery = ref('')
+
+function goToTutor(tutor: any) {
+  const id = tutor.id || tutor.user_id
+  if (id) {
+    router.push(`/admin/tutors/${id}`)
+  }
+}
 
 const deletingTarget = ref<Student | null>(null)
 const deleting = ref(false)

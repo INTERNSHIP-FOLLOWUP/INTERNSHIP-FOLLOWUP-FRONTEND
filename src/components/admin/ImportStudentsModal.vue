@@ -37,12 +37,16 @@
                 <p>• Default password <strong>12345678</strong> will be set for all students</p>
                 <p>• Student IDs will auto-generate as PNC2026-001, PNC2026-002, etc.</p>
               </div>
-              <a :href="templateUrl" class="mt-3 inline-flex items-center gap-1.5 font-semibold text-indigo-700 hover:text-indigo-900 underline">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button @click="downloadTemplate" :disabled="downloadingTemplate" class="mt-3 inline-flex items-center gap-1.5 font-semibold text-indigo-700 hover:text-indigo-900 underline bg-transparent border-0 p-0 cursor-pointer disabled:opacity-50">
+                <svg v-if="!downloadingTemplate" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
-                Download template
-              </a>
+                <svg v-else class="h-4 w-4 animate-spin text-indigo-700" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                {{ downloadingTemplate ? 'Downloading template...' : 'Download template' }}
+              </button>
             </div>
           </div>
         </div>
@@ -174,11 +178,31 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import api from '@/services/api'
+import { studentService } from '@/services/student'
+import { useToastStore } from '@/stores/toast'
 
 defineProps<{ show: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
-const templateUrl = `${api.defaults.baseURL}/admin/students/import/template`
+const toast = useToastStore()
+const downloadingTemplate = ref(false)
+
+async function downloadTemplate() {
+  downloadingTemplate.value = true
+  try {
+    const blob = await studentService.downloadImportTemplate()
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'student-import-template.xlsx'
+    a.click()
+    window.URL.revokeObjectURL(url)
+  } catch {
+    toast.error('Failed to download template.')
+  } finally {
+    downloadingTemplate.value = false
+  }
+}
 const fileInput = ref<HTMLInputElement | null>(null)
 const file = ref<File | null>(null)
 const dragOver = ref(false)

@@ -83,4 +83,11 @@ export const studentService = {
     })
     return response.data
   },
+
+  async downloadImportTemplate(): Promise<Blob> {
+    const response = await api.get('/admin/students/import/template', {
+      responseType: 'blob',
+    })
+    return response.data
+  },
 }

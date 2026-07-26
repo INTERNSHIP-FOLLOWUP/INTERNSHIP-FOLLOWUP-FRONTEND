@@ -689,7 +689,7 @@ const pendingAction = ref<{ type: ActionType; student: Student } | null>(null)
 
 async function confirmAction(type: ActionType, student: Student) {
   pendingAction.value = { type, student }
-  const displayName = student.name || `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
+  const displayName = student.name || `${student.last_name || ''} ${student.first_name || ''}`.trim() || 'Student'
   if (type === 'delete') {
     confirmTitle.value = 'Delete Student'
     confirmMessage.value = `Are you sure you want to permanently delete ${displayName}?`
@@ -712,7 +712,7 @@ async function handleConfirmAction() {
   if (!pendingAction.value) return
   const { type, student } = pendingAction.value
   const targetId = student.user_id || student.id
-  const displayName = student.name || `${student.first_name || ''} ${student.last_name || ''}`.trim() || 'Student'
+  const displayName = student.name || `${student.last_name || ''} ${student.first_name || ''}`.trim() || 'Student'
   await dialog.confirmAsync(async () => {
     if (type === 'delete') {
       await store.deleteStudent(student.id)

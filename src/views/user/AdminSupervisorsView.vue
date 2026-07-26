@@ -220,7 +220,8 @@
               <tr
                 v-for="(supervisor, index) in supervisors"
                 :key="supervisor.id"
-                class="transition-colors hover:bg-slate-50/60"
+                @click="viewSupervisor(supervisor)"
+                class="cursor-pointer transition-colors hover:bg-slate-50/70"
               >
                 <!-- Photo -->
                 <td class="whitespace-nowrap px-6 py-4">
@@ -250,7 +251,7 @@
                   <div class="flex items-center gap-1.5 group max-w-[220px]">
                     <span class="truncate" :title="supervisor.email">{{ supervisor.email }}</span>
                     <button
-                      @click="copyEmail(supervisor.email)"
+                      @click.stop="copyEmail(supervisor.email)"
                       title="Copy email address"
                       class="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-amber-600 p-0.5"
                     >

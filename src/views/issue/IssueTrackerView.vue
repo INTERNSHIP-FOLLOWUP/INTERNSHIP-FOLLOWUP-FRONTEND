@@ -78,7 +78,7 @@
           <input
             v-model="localSearch"
             class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-colors focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
-            placeholder="Search by title..."
+            placeholder="Search by title or student name..."
           />
         </div>
         <div>

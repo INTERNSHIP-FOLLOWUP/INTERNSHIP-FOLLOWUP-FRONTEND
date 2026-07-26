@@ -242,7 +242,13 @@ const router = createRouter({
           path: 'issues',
           name: 'TutorIssues',
           component: () => import('@/views/tutor/TutorIssuesView.vue'),
-          meta: { title: 'Issues' },
+          meta: { title: 'Issue Tracker' },
+        },
+        {
+          path: 'feedback',
+          name: 'TutorFeedback',
+          component: () => import('@/views/tutor/TutorCompanyFeedbackView.vue'),
+          meta: { title: 'Company Feedback' },
         },
         {
           path: 'messages',

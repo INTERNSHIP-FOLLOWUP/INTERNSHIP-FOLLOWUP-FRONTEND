@@ -159,7 +159,7 @@
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Search by student name or issue title..."
+              placeholder="Search by title or student name..."
               class="h-10 w-full rounded-xl border border-[#E5E7EB] bg-white py-2 pl-10 pr-10 text-sm text-[#111827] placeholder-[#9CA3AF] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10"
             />
             <button
@@ -807,13 +807,17 @@ const displayRange = computed(() => {
 // ── Data Fetching ──
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-async function fetchAllIssues(): Promise<void> {
+async function fetchAllIssues(filters?: { search?: string; status?: string; priority?: string }): Promise<void> {
   loading.value = true
   error.value = null
 
   try {
-    // Fetch a generous page to have enough data for client-side filtering & pagination
-    const response = await issueService.getIssues({ search: '', status: '', priority: '' })
+    // Pass current filter values to the API so backend can search by student name as well
+    const response = await issueService.getIssues({
+      search: filters?.search ?? searchQuery.value,
+      status: filters?.status ?? statusFilter.value,
+      priority: filters?.priority ?? priorityFilter.value,
+    })
     allIssues.value = response.data || []
     // Reset to page 1 when data changes
     currentPage.value = 1
@@ -852,6 +856,7 @@ function onPerPageChange(): void {
 
 function onFilterChange(): void {
   currentPage.value = 1
+  fetchAllIssues({ search: searchQuery.value, status: statusFilter.value, priority: priorityFilter.value })
 }
 
 // ── Debounced search ──
@@ -859,12 +864,14 @@ watch(searchQuery, () => {
   if (debounceTimer) clearTimeout(debounceTimer)
   debounceTimer = setTimeout(() => {
     currentPage.value = 1
+    fetchAllIssues({ search: searchQuery.value, status: statusFilter.value, priority: priorityFilter.value })
   }, 350)
 })
 
 function clearSearch(): void {
   searchQuery.value = ''
   currentPage.value = 1
+  fetchAllIssues()
 }
 
 function resetFilters(): void {
@@ -872,6 +879,7 @@ function resetFilters(): void {
   statusFilter.value = ''
   priorityFilter.value = ''
   currentPage.value = 1
+  fetchAllIssues()
 }
 
 // ── Detail Modal ──

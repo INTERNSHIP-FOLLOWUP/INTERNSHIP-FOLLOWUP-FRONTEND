@@ -668,11 +668,15 @@ const displayRange = computed(() => {
 // ── Data Fetching ──
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-async function fetchAllIssues(): Promise<void> {
+async function fetchAllIssues(filters?: { search?: string; status?: string; priority?: string }): Promise<void> {
   loading.value = true
   error.value = null
   try {
-    const response = await issueService.getIssues({ search: '', status: '', priority: '' })
+    const response = await issueService.getIssues({
+      search: filters?.search ?? searchQuery.value,
+      status: filters?.status ?? statusFilter.value,
+      priority: filters?.priority ?? priorityFilter.value,
+    })
     allIssues.value = response.data || []
     currentPage.value = 1
   } catch (err: unknown) {
@@ -703,15 +707,32 @@ function goToPage(page: number): void {
 }
 
 function onPerPageChange(): void { currentPage.value = 1 }
-function onFilterChange(): void { currentPage.value = 1 }
+function onFilterChange(): void {
+  currentPage.value = 1
+  fetchAllIssues({ search: searchQuery.value, status: statusFilter.value, priority: priorityFilter.value })
+}
 
 watch(searchQuery, () => {
   if (debounceTimer) clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(() => { currentPage.value = 1 }, 350)
+  debounceTimer = setTimeout(() => {
+    currentPage.value = 1
+    fetchAllIssues({ search: searchQuery.value, status: statusFilter.value, priority: priorityFilter.value })
+  }, 350)
 })
 
-function clearSearch(): void { searchQuery.value = ''; currentPage.value = 1 }
-function resetFilters(): void { searchQuery.value = ''; statusFilter.value = ''; priorityFilter.value = ''; currentPage.value = 1 }
+function clearSearch(): void {
+  searchQuery.value = ''
+  currentPage.value = 1
+  fetchAllIssues()
+}
+
+function resetFilters(): void {
+  searchQuery.value = ''
+  statusFilter.value = ''
+  priorityFilter.value = ''
+  currentPage.value = 1
+  fetchAllIssues()
+}
 
 // ── Create Modal ──
 function openCreateModal(): void {

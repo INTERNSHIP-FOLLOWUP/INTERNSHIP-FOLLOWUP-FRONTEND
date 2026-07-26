@@ -1,14 +1,14 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-6" @click="openKebabId = null">
     <div class="flex items-center gap-3 text-sm">
-      <router-link to="/admin/batches" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
+      <router-link to="/admin/batches" class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
         Back to Batches
       </router-link>
-      <span class="text-slate-300">/</span>
-      <span class="font-medium text-slate-900">{{ stats?.batch_name || 'Batch Details' }}</span>
+      <span class="text-slate-300 dark:text-slate-700">/</span>
+      <span class="font-medium text-slate-900 dark:text-white">{{ stats?.batch_name || 'Batch Details' }}</span>
     </div>
 
     <div v-if="loading" class="flex items-center justify-center py-20">
@@ -57,26 +57,22 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4 sm:grid-cols-5">
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <p class="text-xs font-semibold text-slate-400">Total</p>
           <p class="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{{ stats.total_students }}</p>
         </div>
         <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <p class="text-xs font-semibold text-slate-400">Active</p>
-          <p class="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ stats.status_breakdown.active || 0 }}</p>
-        </div>
-        <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <p class="text-xs font-semibold text-slate-400">Graduated</p>
-          <p class="mt-1 text-2xl font-bold text-blue-600 dark:text-blue-400">{{ stats.status_breakdown.graduated || 0 }}</p>
+          <p class="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ activeCount }}</p>
         </div>
         <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <p class="text-xs font-semibold text-slate-400">Inactive</p>
-          <p class="mt-1 text-2xl font-bold text-slate-500 dark:text-slate-400">{{ stats.status_breakdown.inactive || 0 }}</p>
+          <p class="mt-1 text-2xl font-bold text-slate-500 dark:text-slate-400">{{ inactiveCount }}</p>
         </div>
         <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <p class="text-xs font-semibold text-slate-400">Suspended</p>
-          <p class="mt-1 text-2xl font-bold text-rose-600 dark:text-rose-400">{{ stats.status_breakdown.suspended || 0 }}</p>
+          <p class="text-xs font-semibold text-slate-400">Deactivated</p>
+          <p class="mt-1 text-2xl font-bold text-rose-600 dark:text-rose-400">{{ deactivatedCount }}</p>
         </div>
       </div>
 
@@ -95,6 +91,7 @@
             <option value="">All Statuses</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
+            <option value="deactivated">Deactivated</option>
           </select>
           <button v-if="hasActiveFilters" @click="clearFilters"
             class="flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
@@ -113,22 +110,25 @@
         </div>
 
         <div v-else-if="students.length > 0" class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
+          <table class="w-full border-collapse text-left text-sm">
             <thead>
               <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:border-slate-800 dark:bg-slate-800/50">
-                <th class="px-5 py-3.5 font-medium">Student</th>
-                <th class="px-5 py-3.5 font-medium">Student ID</th>
-                <th class="px-5 py-3.5 font-medium">Email</th>
-                <th class="px-5 py-3.5 font-medium">Status</th>
-                <th class="px-5 py-3.5 text-right font-medium">Actions</th>
+                <th class="px-5 py-3.5">Student</th>
+                <th class="px-5 py-3.5">Student ID</th>
+                <th class="px-5 py-3.5">Email</th>
+                <th class="px-5 py-3.5">Status</th>
+                <th class="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
-              <tr v-for="student in students" :key="student.id" class="transition-colors hover:bg-slate-50/30 dark:hover:bg-slate-800/30">
+              <tr v-for="(student, index) in students" :key="student.id" @click="goToStudent(student.user_id || student.id)"
+                class="cursor-pointer transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
                 <td class="whitespace-nowrap px-5 py-4">
                   <div class="flex items-center gap-3">
                     <div class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">{{ getInitials(student.name) }}</div>
-                    <span class="font-semibold text-slate-900 dark:text-white">{{ student.name }}</span>
+                    <router-link :to="`/admin/students/${student.user_id || student.id}`" @click.stop class="font-semibold text-slate-900 hover:text-indigo-600 transition-colors dark:text-white dark:hover:text-indigo-400">
+                      {{ student.name }}
+                    </router-link>
                   </div>
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 font-mono text-xs font-medium text-slate-500">{{ formatStudentId(student.student_code, stats?.batch_name) }}</td>
@@ -140,9 +140,57 @@
                   </span>
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-right">
-                  <div class="flex items-center justify-end gap-1">
-                    <router-link :to="`/admin/users/${student.id}`" class="rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30">Edit</router-link>
-                    <button @click="deleteStudent(student.id)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-rose-600 transition-all hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-900/30">Delete</button>
+                  <div class="relative inline-block text-left">
+                    <button
+                      type="button"
+                      @click.stop="toggleKebab(student.id)"
+                      title="Actions"
+                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 dark:text-slate-400 dark:hover:bg-slate-800"
+                    >
+                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                      </svg>
+                    </button>
+
+                    <transition name="fade">
+                      <div
+                        v-if="openKebabId === student.id"
+                        class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none dark:border-slate-700 dark:bg-slate-800"
+                        :class="index < 2 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'"
+                      >
+                        <router-link
+                          :to="`/admin/students/${student.user_id || student.id}`"
+                          @click.stop="openKebabId = null"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors dark:text-slate-200 dark:hover:bg-slate-700"
+                        >
+                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          View Profile
+                        </router-link>
+                        <router-link
+                          :to="`/admin/users/${student.id}`"
+                          @click.stop="openKebabId = null"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors dark:text-slate-200 dark:hover:bg-slate-700"
+                        >
+                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          Edit Student
+                        </router-link>
+                        <div class="my-1 border-t border-slate-100 dark:border-slate-700"></div>
+                        <button
+                          @click.stop="deleteStudent(student.id); openKebabId = null"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors dark:hover:bg-rose-900/20"
+                        >
+                          <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          Delete Student
+                        </button>
+                      </div>
+                    </transition>
                   </div>
                 </td>
               </tr>
@@ -172,7 +220,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, reactive } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { batchService, type BatchStatistics } from '@/services/batch'
 import { useStudentStore } from '@/stores/student'
 import { useToastStore } from '@/stores/toast'
@@ -183,6 +231,7 @@ import { formatStudentId } from '@/utils/studentUtils'
 import type { StudentPaginationMeta } from '@/types/student'
 
 const route = useRoute()
+const router = useRouter()
 const studentStore = useStudentStore()
 const toast = useToastStore()
 const confirm = reactive(useConfirmDialog())
@@ -193,6 +242,7 @@ const stats = ref<BatchStatistics | null>(null)
 const loading = ref(false)
 const error = ref('')
 const exporting = ref(false)
+const openKebabId = ref<number | null>(null)
 
 const students = computed(() => studentStore.students)
 const studentsLoading = computed(() => studentStore.loading)
@@ -203,6 +253,37 @@ const statusFilter = ref('')
 const currentPage = ref(1)
 
 const hasActiveFilters = computed(() => !!searchQuery.value || !!statusFilter.value)
+
+const activeCount = computed(() => {
+  if (!stats.value) return 0
+  const sb = stats.value.status_breakdown || {}
+  const explicitActive = (sb.active || 0) + (sb.Active || 0)
+  if (explicitActive > 0) return explicitActive
+  // Fallback if users.status was null or defaulted
+  const inactive = (sb.inactive || 0) + (sb.Inactive || 0)
+  const deactivated = (sb.deactivated || 0) + (sb.Deactivated || 0) + (sb.suspended || 0) + (sb.Suspended || 0)
+  return Math.max(0, stats.value.total_students - inactive - deactivated)
+})
+
+const inactiveCount = computed(() => {
+  if (!stats.value) return 0
+  const sb = stats.value.status_breakdown || {}
+  return (sb.inactive || 0) + (sb.Inactive || 0)
+})
+
+const deactivatedCount = computed(() => {
+  if (!stats.value) return 0
+  const sb = stats.value.status_breakdown || {}
+  return (sb.deactivated || 0) + (sb.Deactivated || 0) + (sb.suspended || 0) + (sb.Suspended || 0)
+})
+
+function toggleKebab(id: number) {
+  openKebabId.value = openKebabId.value === id ? null : id
+}
+
+function goToStudent(id: number) {
+  router.push(`/admin/students/${id}`)
+}
 
 async function fetchStats() {
   loading.value = true
@@ -274,31 +355,34 @@ async function exportExcel() {
 }
 
 function getInitials(name: string): string {
+  if (!name) return 'ST'
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
 }
 
 function statusClass(status?: string): string {
-  switch (status) {
+  const st = (status || 'active').toLowerCase()
+  switch (st) {
     case 'active': return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
     case 'inactive': return 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-    case 'graduated': return 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+    case 'deactivated':
     case 'suspended': return 'bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
-    default: return 'bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+    default: return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
   }
 }
 
 function statusDotClass(status?: string): string {
-  switch (status) {
+  const st = (status || 'active').toLowerCase()
+  switch (st) {
     case 'active': return 'bg-emerald-500'
     case 'inactive': return 'bg-slate-400'
-    case 'graduated': return 'bg-blue-500'
+    case 'deactivated':
     case 'suspended': return 'bg-rose-500'
-    default: return 'bg-slate-400'
+    default: return 'bg-emerald-500'
   }
 }
 
 function formatStatus(status?: string): string {
-  if (!status) return 'Unknown'
+  if (!status) return 'Active'
   return status.charAt(0).toUpperCase() + status.slice(1)
 }
 

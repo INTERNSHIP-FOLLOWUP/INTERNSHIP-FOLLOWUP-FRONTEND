@@ -1,24 +1,17 @@
 <template>
   <div class="animate-fade-in">
     <AuthLayout>
-      <div class="rounded-[20px] p-8 transition-all duration-300">
-        <div class="text-center mb-6">
-          <div
-            class="mx-auto w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-500 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20 mb-4"
-          >
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-              />
-            </svg>
-          </div>
-          <h1 class="text-[22px] sm:text-[24px] font-bold text-slate-900 leading-tight">
+      <div class="px-2 sm:px-4 py-2">
+        <div class="text-center mb-8">
+          <img
+            src="@/assets/images/logo.png"
+            alt="PN Logo"
+            class="mx-auto w-20 h-20 object-contain mb-5"
+          />
+          <h1 class="text-2xl sm:text-[26px] font-bold text-slate-900 leading-snug tracking-tight">
             Forgot Password
           </h1>
-          <p class="mt-1.5 text-[14px] text-slate-500">
+          <p class="mt-2 text-sm text-slate-400 font-normal">
             Enter your email address and we'll send you a link to reset your password.
           </p>
         </div>

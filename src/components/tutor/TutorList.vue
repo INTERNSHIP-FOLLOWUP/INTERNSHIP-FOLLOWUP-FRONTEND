@@ -35,7 +35,7 @@
               <th class="px-6 py-3.5 font-medium">Email</th>
               <th class="px-6 py-3.5 font-medium">Students</th>
               <th class="px-6 py-3.5 font-medium">Status</th>
-              <th class="px-6 py-3.5 text-right font-medium">Actions</th>
+              <th class="px-6 py-3.5 text-center font-medium">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
@@ -59,34 +59,59 @@
                     <path
                       class="opacity-75"
                       fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     />
                   </svg>
-                  <p class="mt-3 text-sm font-medium text-slate-500">Loading tutors...</p>
+                  <p class="mt-3 text-sm font-semibold text-slate-700">Loading tutors...</p>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Error -->
+            <tr v-else-if="store.error">
+              <td colspan="6" class="px-6 py-12">
+                <div class="flex flex-col items-center justify-center text-center">
+                  <div
+                    class="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-50 text-rose-500"
+                  >
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
+                    </svg>
+                  </div>
+                  <p class="mt-3 text-sm font-semibold text-slate-700">Failed to load tutors</p>
+                  <p class="mt-1 text-xs text-slate-400">{{ store.error }}</p>
+                  <button
+                    @click="store.fetchTutors()"
+                    class="mt-4 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-200"
+                  >
+                    Try Again
+                  </button>
                 </div>
               </td>
             </tr>
 
             <!-- Empty -->
             <tr v-else-if="tutors.length === 0">
-              <td colspan="6" class="px-6 py-16">
+              <td colspan="6" class="px-6 py-12">
                 <div class="flex flex-col items-center justify-center text-center">
-                  <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50">
-                    <svg
-                      class="h-7 w-7 text-slate-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                  <div
+                    class="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-400"
+                  >
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        stroke-width="1.5"
-                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                        stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
                       />
                     </svg>
                   </div>
-                  <h3 class="mt-4 text-sm font-semibold text-slate-700">No tutors found</h3>
+                  <p class="mt-3 text-sm font-semibold text-slate-700">No tutors found</p>
                   <p class="mt-1 text-xs text-slate-400">
                     {{
                       searchQuery
@@ -130,8 +155,8 @@
                   {{ tutor.deleted_at ? 'Deactivated' : 'Active' }}
                 </span>
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-right">
-                <div class="flex items-center justify-end gap-1">
+              <td class="whitespace-nowrap px-6 py-4 text-center">
+                <div class="flex items-center justify-center gap-1">
                   <router-link :to="`/admin/tutors/${tutor.id || tutor.user_id}`" title="View Profile"
                     class="flex h-8 w-8 items-center justify-center rounded-lg text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-700">
                     <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

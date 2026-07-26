@@ -326,7 +326,7 @@
                       <div
                         v-if="openKebabId === supervisor.id"
                         class="absolute right-0 z-30 w-48 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left"
-                        :class="index < 2 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'"
+                        :class="index < (supervisors.length > 2 ? supervisors.length - 2 : 1) && supervisors.length > 1 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'"
                       >
                         <button
                           type="button"

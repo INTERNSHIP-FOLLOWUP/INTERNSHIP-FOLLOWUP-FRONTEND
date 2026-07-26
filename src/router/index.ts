@@ -241,7 +241,7 @@ const router = createRouter({
         {
           path: 'issues',
           name: 'TutorIssues',
-          component: () => import('@/views/issue/IssueTrackerView.vue'),
+          component: () => import('@/views/tutor/TutorIssuesView.vue'),
           meta: { title: 'Issues' },
         },
         {
@@ -314,7 +314,7 @@ const router = createRouter({
         {
           path: 'issues',
           name: 'StudentIssues',
-          component: () => import('@/views/issue/IssueTrackerView.vue'),
+          component: () => import('@/views/student/StudentIssuesView.vue'),
           meta: { title: 'Issues' },
         },
         {

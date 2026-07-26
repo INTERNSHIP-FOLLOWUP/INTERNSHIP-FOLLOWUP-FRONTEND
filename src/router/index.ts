@@ -375,7 +375,7 @@ const router = createRouter({
         {
           path: 'profile',
           name: 'CompanyProfile',
-          component: () => import('@/views/company/CompanyFormView.vue'),
+          component: () => import('@/views/company/CompanyProfileView.vue'),
           meta: { title: 'Company Profile' },
         },
         {

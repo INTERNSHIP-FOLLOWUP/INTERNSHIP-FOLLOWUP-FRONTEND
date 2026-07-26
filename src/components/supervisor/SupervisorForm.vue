@@ -64,11 +64,11 @@
         />
       </FormField>
 
-      <FormField v-if="!isEdit" label="Password" :error="errors.password" required>
+      <FormField :label="isEdit ? 'Password (leave blank to keep current)' : 'Password'" :error="errors.password" :required="!isEdit">
         <input
           v-model="form.password"
           type="password"
-          placeholder="Min. 8 characters"
+          :placeholder="isEdit ? 'Leave blank to keep current' : 'Min. 8 characters'"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('password')"
           @input="clearFieldError('password')"
@@ -76,12 +76,11 @@
         />
       </FormField>
 
-      <FormField label="Company" :error="errors.company_id" :required="!isEdit">
+      <FormField label="Company" :error="errors.company_id" required>
         <select
           v-model.number="form.company_id"
-          :disabled="isEdit"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
-          :class="[inputClass('company_id'), isEdit ? 'cursor-not-allowed bg-slate-50 text-slate-500' : '']"
+          :class="inputClass('company_id')"
           @change="clearFieldError('company_id')"
           @blur="validateField('company_id')"
         >
@@ -91,9 +90,6 @@
             {{ c.company_name || c.name }}
           </option>
         </select>
-        <p v-if="isEdit" class="mt-1.5 text-xs text-slate-400">
-          Company cannot be changed after creation.
-        </p>
       </FormField>
     </div>
 
@@ -219,11 +215,14 @@ function validateField(field: string): boolean {
 }
 
 function validateAll(): boolean {
-  const fieldsToValidate = ['first_name', 'last_name', 'email']
-  if (isEdit.value) {
+  const fieldsToValidate = ['first_name', 'last_name', 'email', 'company_id']
+  if (!isEdit.value) {
+    fieldsToValidate.push('password')
+  } else if (form.password) {
+    fieldsToValidate.push('password')
+  }
+  if (form.phone) {
     fieldsToValidate.push('phone')
-  } else {
-    fieldsToValidate.push('company_id', 'password')
   }
   return fieldsToValidate.every((field) => validateField(field))
 }
@@ -237,12 +236,17 @@ async function handleSubmit(): Promise<void> {
   try {
     if (isEdit.value) {
       // Edit supervisor — update via admin endpoint
-      await api.put(`/admin/users/${props.supervisorId}`, {
+      const payload: Record<string, unknown> = {
         first_name: form.first_name,
         last_name: form.last_name,
         email: form.email,
         phone: form.phone || undefined,
-      })
+        company_id: form.company_id || undefined,
+      }
+      if (form.password) {
+        payload.password = form.password
+      }
+      await api.put(`/admin/users/${props.supervisorId}`, payload)
     } else {
       // Create supervisor via the company endpoint
       await api.post(`/admin/companies/${form.company_id}/supervisors`, {

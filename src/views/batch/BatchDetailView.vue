@@ -33,6 +33,13 @@
           <p class="text-sm text-slate-500 dark:text-slate-400">Year {{ stats.year }} &middot; {{ stats.total_students }} {{ stats.total_students === 1 ? 'student' : 'students' }} enrolled</p>
         </div>
         <div class="flex items-center gap-2">
+          <button @click="showImportModal = true"
+            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 active:scale-95 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            Import
+          </button>
           <button @click="exportPdf" :disabled="exporting"
             class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 active:scale-95 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,6 +181,9 @@
       confirm-text="Delete" cancel-text="Cancel" :loading="confirm.loading" :error="confirm.error"
       @confirm="handleConfirmDelete" @cancel="confirm.cancel()" />
 
+    <!-- Import Students Modal -->
+    <ImportStudentsModal :show="showImportModal" @close="showImportModal = false; fetchData()" />
+
     <!-- Add / Edit Student Modal -->
     <transition name="fade">
       <div v-if="showFormModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-y-auto py-8" @click.self="closeFormModal">
@@ -239,6 +249,7 @@ import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import StudentForm from '@/components/student/StudentForm.vue'
+import ImportStudentsModal from '@/components/admin/ImportStudentsModal.vue'
 import { formatStudentId } from '@/utils/studentUtils'
 import type { StudentPaginationMeta } from '@/types/student'
 
@@ -254,6 +265,7 @@ const stats = ref<BatchStatistics | null>(null)
 const loading = ref(false)
 const error = ref('')
 const exporting = ref(false)
+const showImportModal = ref(false)
 const openKebabId = ref<number | null>(null)
 const selectedStudentForKebab = ref<any | null>(null)
 const kebabPos = ref<{ top: number; right: number }>({ top: 0, right: 0 })

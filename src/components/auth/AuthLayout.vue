@@ -1,79 +1,81 @@
 <template>
-  <div class="flex min-h-screen max-h-screen overflow-hidden bg-[#F8FAFC]">
-    <div
-      class="hidden lg:flex lg:w-1/2 relative items-center justify-center overflow-hidden bg-gradient-to-br from-primary-600 via-primary-500 to-primary-400"
-    >
-      <div class="relative z-10 w-full px-16">
-        <div class="animate-float">
-          <svg
-            viewBox="0 0 800 600"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-full h-auto drop-shadow-2xl"
-            aria-hidden="true"
-          >
-            <g opacity="0.08">
-              <circle cx="100" cy="100" r="200" fill="white" />
-              <circle cx="700" cy="500" r="150" fill="white" />
-              <circle cx="650" cy="100" r="100" fill="white" />
-            </g>
+  <div class="flex min-h-screen max-h-screen overflow-hidden bg-white">
+    <!-- Left Hero Banner with photoLoginForm.png -->
+    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-white select-none flex-col justify-between p-10 xl:p-14">
+      <img
+        src="@/assets/images/photoLoginForm.png"
+        alt="Student Internship"
+        class="absolute inset-0 w-full h-full object-cover object-left"
+      />
 
-            <rect x="180" y="100" width="440" height="320" rx="20" fill="white" opacity="0.95" />
-            <rect x="200" y="130" width="120" height="12" rx="6" fill="#2563EB" opacity="0.6" />
-            <rect x="200" y="155" width="200" height="12" rx="6" fill="#E2E8F0" />
-            <rect x="200" y="180" width="180" height="12" rx="6" fill="#E2E8F0" />
+      <!-- Soft gradient overlay fading from left image smoothly into white on the right -->
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-white/10 via-white/40 via-65% to-white pointer-events-none"
+      />
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent pointer-events-none"
+      />
 
-            <rect x="200" y="220" width="400" height="60" rx="10" fill="#F1F5F9" />
-            <rect x="220" y="240" width="80" height="8" rx="4" fill="#94A3B8" />
-            <circle cx="210" cy="250" r="8" fill="#22C55E" />
-
-            <rect x="200" y="290" width="400" height="60" rx="10" fill="#F1F5F9" />
-            <rect x="220" y="310" width="80" height="8" rx="4" fill="#94A3B8" />
-            <circle cx="210" cy="320" r="8" fill="#60A5FA" />
-
-            <rect x="200" y="360" width="400" height="60" rx="10" fill="#F1F5F9" />
-            <rect x="220" y="380" width="80" height="8" rx="4" fill="#94A3B8" />
-            <circle cx="210" cy="390" r="8" fill="#F59E0B" />
-
-            <rect x="250" y="440" width="300" height="60" rx="30" fill="white" opacity="0.3" />
-
-            <circle cx="140" cy="480" r="30" fill="white" opacity="0.2" />
-            <circle cx="660" cy="450" r="20" fill="white" opacity="0.15" />
-
-            <g transform="translate(180, 100)">
-              <path
-                d="M0 0 L440 0"
-                stroke="#2563EB"
-                stroke-width="3"
-                opacity="0.3"
-                stroke-dasharray="8 4"
-              />
-            </g>
-          </svg>
+      <!-- Top Header Badges -->
+      <div class="relative z-10 flex items-center justify-between animate-fade-in">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-xl text-slate-800 text-xs font-semibold border border-white/90 shadow-md">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#21BAEA] opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#21BAEA]"></span>
+          </span>
+          Passerelles Numériques Cambodia
         </div>
 
-        <div class="mt-8 text-center text-white">
-          <h2 class="text-2xl font-semibold">Track Your Internship Journey</h2>
-          <p class="mt-2 text-primary-100 text-sm max-w-md mx-auto">
-            Connect students with companies, manage internships, and monitor progress all in one
-            place.
-          </p>
+        <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#21BAEA]/15 backdrop-blur-md text-[#21BAEA] text-xs font-semibold border border-[#21BAEA]/25 shadow-xs">
+          <svg class="w-3.5 h-3.5 text-[#FF9933]" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+          PNC Portal
         </div>
       </div>
 
-      <div
-        class="absolute top-20 left-16 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-float-delayed"
-      />
-      <div
-        class="absolute bottom-20 right-16 w-48 h-48 bg-white/5 rounded-full blur-3xl animate-float-slow"
-      />
-      <div class="absolute top-1/2 left-1/3 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
+      <!-- Bottom Frosted Light Glass Card (Flawlessly matching the light form theme) -->
+      <div class="relative z-10 max-w-lg p-7.5 rounded-3xl bg-white/80 backdrop-blur-xl border border-white/90 shadow-xl shadow-slate-900/5 animate-slide-up transition-all hover:shadow-2xl">
+        <!-- Title with Luminous #21BAEA & #FF9933 Gradient Accent -->
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight tracking-tight">
+          Student Internship<br />
+          <span class="bg-gradient-to-r from-[#21BAEA] to-[#FF9933] bg-clip-text text-transparent">
+            Follow-up System
+          </span>
+        </h2>
+
+        <p class="mt-3 text-sm text-slate-600 font-normal leading-relaxed">
+          Empowering students, tutors, and partner companies to seamlessly connect, track daily worklogs, and monitor progress in real-time.
+        </p>
+
+        <!-- Stats / Feature Pill Grid -->
+        <div class="mt-5 pt-4 border-t border-slate-200/60 grid grid-cols-3 gap-2.5">
+          <div class="bg-white/70 backdrop-blur-md rounded-2xl p-2.5 text-center border border-white/80 shadow-2xs">
+            <p class="text-base sm:text-lg font-bold text-[#21BAEA]">100%</p>
+            <p class="text-[11px] text-slate-600 font-medium">Digital Tracking</p>
+          </div>
+          <div class="bg-white/70 backdrop-blur-md rounded-2xl p-2.5 text-center border border-white/80 shadow-2xs">
+            <p class="text-base sm:text-lg font-bold text-[#FF9933]">Real-time</p>
+            <p class="text-[11px] text-slate-600 font-medium">Evaluations</p>
+          </div>
+          <div class="bg-white/70 backdrop-blur-md rounded-2xl p-2.5 text-center border border-white/80 shadow-2xs">
+            <p class="text-base sm:text-lg font-bold text-[#21BAEA]">PNC</p>
+            <p class="text-[11px] text-slate-600 font-medium">Tutor Support</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="flex-1 flex items-center justify-center px-8 lg:px-16">
-      <div class="w-full max-w-[520px] animate-slide-up">
+    <!-- Right Login Form Area -->
+    <div class="flex-1 flex items-center justify-center px-6 sm:px-12 lg:px-16 bg-white overflow-y-auto">
+      <div class="w-full max-w-[440px] py-8 animate-slide-up">
         <slot />
       </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+// AuthLayout wrapper
+</script>
+

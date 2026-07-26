@@ -1,39 +1,26 @@
 <template>
-  <div class="animate-fade-in">
+  <div>
     <AuthLayout>
-      <div class="rounded-[20px] p-8 transition-all duration-300">
-        <div class="text-center mb-6">
-          <div
-            class="mx-auto w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-500 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20 mb-4"
-          >
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 14l9-5-9-5-9 5 9 5z"
-              />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-              />
-            </svg>
-          </div>
-          <h1 class="text-[22px] sm:text-[24px] font-bold text-slate-900 leading-tight">
+      <div class="px-2 sm:px-4 py-2">
+        <div class="text-center mb-8">
+          <img
+            src="@/assets/images/logo.png"
+            alt="PN Logo"
+            class="mx-auto w-20 h-20 object-contain mb-5 animate-pop-in transition-transform duration-300 hover:scale-105 cursor-pointer"
+          />
+          <h1 class="text-2xl sm:text-[26px] font-bold text-slate-900 leading-snug tracking-tight animate-slide-up">
             Student Internship<br />Follow-up System
           </h1>
-          <p class="mt-1.5 text-[14px] text-slate-500">
+          <p class="mt-2 text-sm text-slate-400 font-normal animate-slide-up anim-delay-100 anim-fill-both">
             Sign in to access your internship management dashboard.
           </p>
         </div>
 
-        <form @submit.prevent="handleSubmit" novalidate>
+        <form @submit.prevent="handleSubmit" novalidate class="space-y-5">
           <!-- Error Banner -->
           <div
             v-if="authStore.error || generalError"
-            class="mb-4 flex items-start gap-3 rounded-xl border border-red-100 bg-red-50/60 p-4"
+            class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 animate-pop-in"
           >
             <svg
               class="h-5 w-5 shrink-0 text-red-500 mt-0.5"
@@ -51,38 +38,22 @@
             <p class="text-sm font-medium text-red-800">{{ authStore.error || generalError }}</p>
           </div>
 
-          <div class="space-y-4">
+          <div class="space-y-4 animate-slide-up anim-delay-150 anim-fill-both">
             <InputField
               v-model="form.email"
               label="Email Address"
               type="email"
-              placeholder="Enter your email"
+              placeholder="admin@pnc.com"
               required
               :error="errors.email"
               autocomplete="email"
               @blur="validateField('email')"
-            >
-              <template #icon>
-                <svg
-                  class="h-5 w-5 text-slate-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-              </template>
-            </InputField>
+            />
 
             <PasswordInput
               v-model="form.password"
               label="Password"
-              placeholder="Enter your password"
+              placeholder="........"
               required
               :error="errors.password"
               autocomplete="current-password"
@@ -90,29 +61,27 @@
             />
           </div>
 
-          <div class="flex items-center justify-between mt-4">
+          <div class="flex items-center justify-between animate-slide-up anim-delay-200 anim-fill-both">
             <label class="flex items-center gap-2 cursor-pointer select-none group">
               <input
                 v-model="rememberMe"
                 type="checkbox"
-                class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500/30 focus:ring-offset-0 cursor-pointer transition"
+                class="w-4 h-4 rounded border-slate-300 text-[#21BAEA] focus:ring-[#21BAEA]/30 focus:ring-offset-0 cursor-pointer transition transform group-hover:scale-110"
               />
-              <span
-                class="text-sm text-slate-600 group-hover:text-slate-800 transition-colors select-none"
-              >
+              <span class="text-sm text-slate-500 group-hover:text-slate-700 transition-colors">
                 Remember me
               </span>
             </label>
 
             <router-link
               to="/forgot-password"
-              class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors focus:outline-none focus:underline underline-offset-2"
+              class="text-sm font-semibold text-[#21BAEA] hover:text-[#FF9933] transition-all hover:underline underline-offset-2"
             >
               Forgot Password?
             </router-link>
           </div>
 
-          <div class="mt-6">
+          <div class="pt-1 animate-slide-up anim-delay-300 anim-fill-both">
             <PrimaryButton type="submit" :loading="authStore.loading" :disabled="authStore.loading">
               {{ authStore.loading ? 'Loading...' : 'Log In' }}
             </PrimaryButton>

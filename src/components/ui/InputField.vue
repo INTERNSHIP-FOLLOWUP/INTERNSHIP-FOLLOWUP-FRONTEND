@@ -2,7 +2,7 @@
   <div class="space-y-1.5">
     <label :for="inputId" class="block text-sm font-medium text-slate-700">
       {{ label }}
-      <span v-if="required" class="text-error ml-0.5">*</span>
+      <span v-if="required" class="text-red-500 ml-0.5">*</span>
     </label>
 
     <div class="relative">
@@ -25,12 +25,12 @@
         :aria-invalid="!!error"
         :aria-describedby="error ? errorId : undefined"
         v-bind="$attrs"
-        class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 transition-all duration-200 ease-in-out outline-none"
+        class="block w-full rounded-xl border px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 transition-all duration-200 ease-in-out outline-none font-normal"
         :class="[
           icon ? 'pl-11' : 'pl-4',
           error
-            ? 'border-error ring-1 ring-error/20 focus:border-error focus:ring-2 focus:ring-error/30'
-            : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20',
+            ? 'border-red-300 bg-red-50/50 ring-1 ring-red-400/20 focus:border-red-500 focus:ring-2 focus:ring-red-500/20'
+            : 'border-blue-100/60 bg-[#EDF4FE] focus:bg-white focus:border-[#21BAEA] focus:ring-2 focus:ring-[#21BAEA]/20',
         ]"
         @input="onInput"
         @blur="emit('blur')"

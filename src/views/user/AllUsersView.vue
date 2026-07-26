@@ -93,7 +93,7 @@
                   <span class="font-semibold text-slate-900">{{ user.name }}</span>
                 </div>
               </td>
-              <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-500">
+              <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-500 max-w-[200px] truncate">
                 {{ user.email }}
               </td>
               <td class="whitespace-nowrap px-6 py-4">

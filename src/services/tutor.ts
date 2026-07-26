@@ -7,13 +7,14 @@ interface TutorListResponse {
 
 export const tutorService = {
   async list(params?: {
-    role?: string
     search?: string
     per_page?: number
     page?: number
   }): Promise<TutorListResponse> {
-    const response = await api.get<TutorListResponse>('/admin/users', {
-      params: { ...params, role: 'tutor' },
+    // Use /admin/tutors — returns Tutor model with correct tutors.id and students_count
+    // Do NOT use /admin/users?role=tutor — that returns users.id which mismatches students.tutor_id
+    const response = await api.get<TutorListResponse>('/admin/tutors', {
+      params,
     })
     return response.data
   },

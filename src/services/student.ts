@@ -24,9 +24,10 @@ export const studentService = {
     search?: string
     per_page?: number
     page?: number
-    batch_id?: string
-    tutor_id?: string
+    batch_id?: string | number
+    tutor_id?: string | number
     status?: string
+    gender?: string
   }): Promise<StudentListResponse> {
     const response = await api.get<StudentListResponse>('/admin/students', { params })
     const payload = (response.data as any)?.data ?? response.data

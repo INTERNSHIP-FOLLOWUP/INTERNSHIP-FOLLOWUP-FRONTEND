@@ -16,65 +16,99 @@
     </div>
 
     <!-- Photo Upload -->
-    <div class="flex items-center gap-6">
-      <div class="relative">
+    <div class="flex items-start gap-5">
+      <!-- Avatar with click-to-change overlay -->
+      <div class="relative group shrink-0" @click="fileInput?.click()">
         <div
-          class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 border-dashed text-sm font-bold transition-colors"
-          :class="
-            errors.photo
-              ? 'border-error bg-error/5 text-error'
-              : 'border-slate-300 bg-slate-50 text-slate-400'
-          "
+          class="relative h-24 w-24 cursor-pointer overflow-hidden rounded-2xl shadow-md ring-4 transition-all duration-300"
+          :class="errors.photo ? 'ring-red-200' : 'ring-slate-100 group-hover:ring-blue-200'"
         >
+          <!-- Photo or placeholder -->
           <img
             v-if="photoPreview"
             :src="photoPreview"
-            alt="Preview"
-            class="h-full w-full rounded-full object-cover"
+            alt="Profile photo"
+            class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <svg v-else class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
+          <div
+            v-else
+            class="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200"
+          >
+            <svg class="h-10 w-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <!-- Hover overlay -->
+          <div class="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100 rounded-2xl">
+            <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="text-[10px] font-semibold text-white tracking-wide">Change</span>
+          </div>
+        </div>
+        <!-- Badge indicator for existing photo -->
+        <div
+          v-if="photoPreview"
+          class="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 ring-2 ring-white shadow-sm"
+        >
+          <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
           </svg>
         </div>
       </div>
-      <div class="flex-1">
-        <label for="photo" class="block text-sm font-medium text-slate-700">Photo</label>
-        <p class="mt-0.5 text-xs text-slate-400">JPG or PNG. Max 2MB.</p>
-        <input
-          id="photo"
-          ref="fileInput"
-          type="file"
-          accept="image/jpeg,image/png/awg"
-          :aria-invalid="!!errors.photo"
-          :aria-describedby="errors.photo ? 'photo-error' : undefined"
-          class="mt-2 block w-full text-sm text-slate-500 file:mr-3 file:rounded-lg file:border-0 file:bg-primary-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-primary-700 hover:file:bg-primary-100"
-          @change="onFileChange"
-        />
-        <p v-if="errors.photo" id="photo-error" class="mt-1 text-xs text-error">
-          {{ errors.photo }}
-        </p>
-        <button
-          v-if="photoPreview && isEdit"
-          type="button"
-          @click="removePhoto"
-          class="mt-1 text-xs font-medium text-error hover:text-error/80"
-        >
-          Remove photo
-        </button>
+
+      <!-- Upload controls -->
+      <div class="flex flex-col justify-center gap-2 pt-1">
+        <div>
+          <p class="text-sm font-semibold text-slate-800">Profile Photo</p>
+          <p class="text-xs text-slate-400">JPG or PNG · Max 2 MB</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <label
+            for="photo"
+            class="cursor-pointer inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:border-slate-300"
+          >
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            {{ photoPreview ? 'Change Photo' : 'Upload Photo' }}
+          </label>
+          <button
+            v-if="photoPreview"
+            type="button"
+            @click="removePhoto"
+            class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-500 transition-colors hover:bg-red-50 hover:text-red-600"
+          >
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Remove
+          </button>
+        </div>
+        <p v-if="errors.photo" class="text-xs text-red-500 font-medium">{{ errors.photo }}</p>
       </div>
+
+      <!-- Hidden file input -->
+      <input
+        id="photo"
+        ref="fileInput"
+        type="file"
+        accept="image/jpeg,image/png"
+        class="sr-only"
+        :aria-invalid="!!errors.photo"
+        @change="onFileChange"
+      />
     </div>
 
     <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
-      <FormField label="Student Code" :error="errors.student_code" required>
+      <FormField label="Student ID" :error="errors.student_code" required>
         <input
           v-model="form.student_code"
           type="text"
-          placeholder="STU-001"
+          placeholder="PNC2026-001"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
           :class="inputClass('student_code')"
           @input="clearFieldError('student_code')"
@@ -187,9 +221,7 @@
         >
           <option value="" disabled>Select status</option>
           <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="graduated">Graduated</option>
-          <option value="suspended">Suspended</option>
+          <option value="deactivated">Deactivated</option>
         </select>
       </FormField>
     </div>
@@ -241,6 +273,7 @@ import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStudentStore } from '@/stores/student'
 import { useBatchStore } from '@/stores/batchStore'
 import { useTutorStore } from '@/stores/tutorStore'
+import api from '@/services/api'
 import FormField from '@/components/ui/FormField.vue'
 import type { StudentFormData, StudentStatus } from '@/types/student'
 
@@ -412,6 +445,14 @@ async function handleSubmit(): Promise<void> {
       delete basePayload.photo
     }
 
+    if (isEdit.value && props.studentId) {
+      if (form.status === 'deactivated') {
+        await api.put(`/admin/users/${props.studentId}/deactivate`).catch(() => {})
+      } else {
+        await api.put(`/admin/users/${props.studentId}/activate`).catch(() => {})
+      }
+    }
+
     const result = isEdit.value
       ? await studentStore.updateStudent(props.studentId!, omitPassword(basePayload))
       : await studentStore.createStudent(basePayload)
@@ -440,24 +481,50 @@ async function handleSubmit(): Promise<void> {
   }
 }
 
-function populateForm(): void {
-  const s = studentStore.currentStudent
+function populateForm(data?: unknown): void {
+  const s = (data || studentStore.currentStudent || (props.studentId ? studentStore.getStudentById(props.studentId) : null)) as Record<string, any> | null
   if (!s) return
 
-  form.student_code = s.student_code || ''
-  form.first_name = s.first_name || ''
-  form.last_name = s.last_name || ''
-  form.email = s.email || ''
-  form.gender = s.gender || ''
-  form.phone = s.phone || ''
-  form.batch_id = s.batch_id ?? null
-  form.tutor_id = s.tutor_id ?? null
-  form.status = (s.status || '') as StudentStatus | ''
+  const user = s.user || {}
+  const profile = s.student_profile || {}
+  form.student_code = s.student_code || profile.student_code || ''
+  form.first_name = user.first_name || s.first_name || (s.name ? s.name.split(' ')[0] : '')
+  form.last_name = user.last_name || s.last_name || (s.name ? s.name.split(' ').slice(1).join(' ') : '')
+  form.email = user.email || s.email || ''
+  form.gender = user.gender || s.gender || profile.gender || ''
+  form.phone = user.phone || s.phone || ''
+  form.batch_id = s.batch_id ?? s.batch?.id ?? profile.batch_id ?? null
+  form.tutor_id = s.tutor_id ?? s.tutor?.id ?? profile.tutor_id ?? null
+  if (s.deleted_at || user.deleted_at) {
+    form.status = 'deactivated'
+  } else {
+    form.status = (user.status || s.status || profile.status || 'active') as StudentStatus | ''
+  }
   form.password = ''
   form.password_confirmation = ''
   form.photo = null
-  originalPhoto.value = s.avatar
-  photoPreview.value = s.avatar
+  // Try all possible photo URL fields from the API
+  const photoUrl = s.photo_url || s.photo || s.user?.avatar || s.avatar || null
+  originalPhoto.value = photoUrl
+  photoPreview.value = photoUrl
+}
+
+function resetForm(): void {
+  form.student_code = ''
+  form.first_name = ''
+  form.last_name = ''
+  form.email = ''
+  form.gender = ''
+  form.phone = ''
+  form.batch_id = null
+  form.tutor_id = null
+  form.status = 'active'
+  form.password = '12345678'
+  form.password_confirmation = '12345678'
+  form.photo = null
+  originalPhoto.value = null
+  if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
+  photoPreview.value = null
 }
 
 function omitPassword(payload: StudentFormData & Record<string, unknown>): Record<string, unknown> {
@@ -465,27 +532,58 @@ function omitPassword(payload: StudentFormData & Record<string, unknown>): Recor
   return rest
 }
 
-onMounted(async () => {
-    const promises: Promise<unknown>[] = [
-        batchStore.fetchBatches(),
-        tutorStore.fetchTutors(),
-    ]
-    if (props.studentId) {
-        promises.push(studentStore.fetchStudent(props.studentId).then(populateForm))
-    }
-    await Promise.all(promises)
+async function initData(): Promise<void> {
+  // 1. FAST: Instantly populate from local store cache if available
+  if (props.studentId) {
+    const cached = studentStore.getStudentById(props.studentId)
+    if (cached) populateForm(cached)
+  }
+
+  // 2. CLEAN: Fetch batches/tutors only if not already loaded in memory
+  const tasks: Promise<unknown>[] = []
+  if (batchStore.batches.length === 0) {
+    tasks.push(batchStore.fetchBatches().catch(() => {}))
+  }
+  if (tutorStore.tutors.length === 0) {
+    tasks.push(tutorStore.fetchTutors().catch(() => {}))
+  }
+
+  // 3. Refresh detailed student record in background if needed
+  if (props.studentId) {
+    tasks.push(
+      studentStore.fetchStudent(props.studentId)
+        .then(() => populateForm(studentStore.currentStudent))
+        .catch(() => {})
+    )
+  }
+
+  await Promise.all(tasks)
+}
+
+onMounted(() => {
+  initData()
+})
+
+watch(() => props.studentId, (newId) => {
+  if (newId) {
+    const cached = studentStore.getStudentById(newId)
+    if (cached) populateForm(cached)
+    studentStore.fetchStudent(newId).then(() => populateForm(studentStore.currentStudent)).catch(() => {})
+  } else {
+    resetForm()
+  }
 })
 
 watch(() => props.apiErrors, (vals) => {
-    if (vals) {
-        formError.value = ''
-        for (const [key, msg] of Object.entries(vals)) {
-            ;(errors as Record<string, string>)[key] = msg
-        }
+  if (vals) {
+    formError.value = ''
+    for (const [key, msg] of Object.entries(vals)) {
+      ;(errors as Record<string, string>)[key] = msg
     }
+  }
 }, { immediate: true })
 
 onUnmounted(() => {
-    if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
+  if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
 })
 </script>

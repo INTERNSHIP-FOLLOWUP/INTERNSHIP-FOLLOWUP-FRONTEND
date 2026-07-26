@@ -8,13 +8,24 @@ export interface Student {
   email: string
   role: UserRole
   avatar: string | null
+  user?: {
+    id?: number
+    first_name?: string
+    last_name?: string
+    name?: string
+    email?: string
+    phone?: string
+    gender?: string
+    status?: string
+    avatar?: string | null
+  }
   student_code?: string
   gender?: string
   phone?: string
   batch_id?: number | null
   tutor_id?: number | null
-  batch?: string | { batch_name?: string; name?: string }
-  tutor?: string | { name?: string }
+  batch?: string | { id?: number; batch_name?: string; name?: string }
+  tutor?: string | { id?: number; name?: string }
   status?: string
   photo_url?: string | null
   students_count?: number
@@ -27,7 +38,7 @@ export interface Student {
   deleted_at?: string | null
 }
 
-export type StudentStatus = 'active' | 'inactive' | 'graduated' | 'suspended'
+export type StudentStatus = 'active' | 'inactive' | 'deactivated'
 
 export interface StudentFormData {
   student_code: string

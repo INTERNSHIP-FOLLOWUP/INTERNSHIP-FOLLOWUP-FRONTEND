@@ -1,3 +1,4 @@
+<!-- src/views/profile/StudentProfileView.vue -->
 <template>
   <div class="animate-fade-in space-y-6">
     <!-- Page Header -->
@@ -10,7 +11,7 @@
 
     <!-- Loading State -->
     <div
-      v-if="!user"
+      v-if="store.loading && !store.profile"
       class="flex items-center justify-center py-20"
     >
       <div class="flex flex-col items-center gap-3">
@@ -19,8 +20,14 @@
       </div>
     </div>
 
+    <!-- Error State (initial load failure) -->
+    <ErrorAlert
+      v-else-if="store.error && !store.profile"
+      :message="store.error"
+    />
+
     <!-- Profile Content -->
-    <template v-else>
+    <template v-else-if="store.profile">
       <!-- Success Toast Notifications -->
       <div
         v-if="successMessage"
@@ -49,28 +56,29 @@
           <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <!-- Avatar Section -->
             <div class="flex flex-col items-center text-center">
-              <div class="relative group">
+              <div class="relative group cursor-pointer" @click="triggerFileInput" title="Click to change profile picture">
                 <div
-                  class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-shadow duration-200 group-hover:shadow-xl"
+                  class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-all duration-200 group-hover:shadow-xl ring-4 ring-slate-100/80"
                   :class="photoUploadError ? 'border-red-300' : 'border-slate-100'"
                 >
                   <img
-                    v-if="photoPreview || displayPhoto"
-                    :src="photoPreview || displayPhoto || undefined"
-                    :alt="fullName"
+                    v-if="(photoPreview || displayPhoto) && !photoError"
+                    :src="photoPreview ?? displayPhoto ?? undefined"
+                    :alt="store.profile.name"
+                    @error="photoError = true"
                     class="h-full w-full rounded-full object-cover"
                   />
                   <div
                     v-else
-                    class="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary-400 to-purple-500 text-3xl font-bold text-white"
+                    class="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-500 to-teal-600 text-3xl font-bold text-white shadow-inner"
                   >
                     {{ initials }}
                   </div>
                 </div>
 
-                <!-- Upload overlay -->
-                <label
-                  class="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                <!-- Hover overlay -->
+                <div
+                  class="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
                   :class="{ 'opacity-100': uploadingPhoto }"
                 >
                   <svg
@@ -89,27 +97,39 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   <LoadingSpinner v-else size="sm" color="white" />
-                  <input
-                    ref="fileInput"
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    class="hidden"
-                    @change="handlePhotoUpload"
-                  />
-                </label>
+                </div>
+
+                <!-- Camera badge button -->
+                <div
+                  class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 text-white shadow-md transition-all hover:bg-primary-700 hover:scale-110 active:scale-95 ring-2 ring-white"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+
+                <input
+                  ref="fileInput"
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg,image/webp"
+                  class="hidden"
+                  @change="handlePhotoUpload"
+                />
               </div>
 
               <p v-if="photoUploadError" class="mt-2 text-xs text-red-500">{{ photoUploadError }}</p>
 
-              <h2 class="mt-4 text-lg font-bold text-slate-900">{{ fullName }}</h2>
-              <p class="text-sm text-slate-500 truncate max-w-[250px]">{{ user?.email }}</p>
+              <h2 class="mt-4 text-lg font-bold text-slate-900">{{ store.profile.name }}</h2>
+              <p class="text-sm text-slate-500">{{ formatStudentId(store.profile.student_code, store.profile.batch) }}</p>
 
-              <!-- Role Badge -->
+              <!-- Status Badge -->
               <span
-                class="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-purple-50 text-purple-700"
+                class="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
+                :class="statusBadgeClass"
               >
-                <span class="flex h-1.5 w-1.5 rounded-full bg-purple-500" />
-                {{ user?.role || 'N/A' }}
+                <span class="flex h-1.5 w-1.5 rounded-full" :class="statusDotClass" />
+                {{ store.profile.status || 'N/A' }}
               </span>
             </div>
 
@@ -119,23 +139,19 @@
               <dl class="mt-3 space-y-3">
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Email</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800 truncate max-w-[250px]">{{ user?.email }}</dd>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800 truncate max-w-[250px]">{{ store.profile.email }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Role</dt>
-                  <dd class="mt-0.5 text-sm font-medium capitalize text-slate-800">{{ user?.role || 'N/A' }}</dd>
+                  <dt class="text-xs font-medium text-slate-400">Batch</dt>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ store.profile.batch?.batch_name || 'Not assigned' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">First Name</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ user?.first_name || '—' }}</dd>
-                </div>
-                <div>
-                  <dt class="text-xs font-medium text-slate-400">Last Name</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ user?.last_name || '—' }}</dd>
+                  <dt class="text-xs font-medium text-slate-400">Tutor</dt>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ store.profile.tutor?.name || 'Not assigned' }}</dd>
                 </div>
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Member Since</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ memberSince }}</dd>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ formatDate(store.profile.created_at) }}</dd>
                 </div>
               </dl>
             </div>
@@ -170,19 +186,23 @@
               <dl v-if="!editingProfile" class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                 <div>
                   <dt class="text-xs font-medium text-slate-400">First Name</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ user?.first_name || '—' }}</dd>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ firstName }}</dd>
                 </div>
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Last Name</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ user?.last_name || '—' }}</dd>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ lastName }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Email</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800 truncate max-w-[250px]">{{ user?.email || '—' }}</dd>
+                  <dt class="text-xs font-medium text-slate-400">Phone Number</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ store.profile.phone || '—' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium text-slate-400">Gender</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ store.profile.user?.gender || store.profile.gender || '—' }}</dd>
                 </div>
                 <div>
                   <dt class="text-xs font-medium text-slate-400">Last Updated</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ formatDate((user as any)?.updated_at) }}</dd>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ formatDate(store.profile.updated_at) }}</dd>
                 </div>
               </dl>
 
@@ -211,15 +231,27 @@
                     />
                   </FormField>
 
-                  <FormField label="Email" :error="formErrors.email" required class="sm:col-span-2">
+                  <FormField label="Phone" :error="formErrors.phone">
                     <input
-                      v-model="editForm.email"
-                      type="email"
-                      placeholder="Enter your email"
+                      v-model="editForm.phone"
+                      type="tel"
+                      placeholder="Enter your phone number"
                       class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
-                      :class="inputErrorClass('email')"
-                      @input="clearFieldError('email')"
+                      :class="inputErrorClass('phone')"
+                      @input="clearFieldError('phone')"
                     />
+                  </FormField>
+
+                  <FormField label="Gender" :error="formErrors.gender">
+                    <select
+                      v-model="editForm.gender"
+                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
+                      :class="inputErrorClass('gender')"
+                    >
+                      <option value="">Select gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
                   </FormField>
                 </div>
 
@@ -230,7 +262,7 @@
                 <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
                   <button
                     type="button"
-                    :disabled="profileSubmitting"
+                    :disabled="store.saving"
                     class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
                     @click="cancelEditing"
                   >
@@ -238,10 +270,10 @@
                   </button>
                   <button
                     type="submit"
-                    :disabled="profileSubmitting"
+                    :disabled="store.saving"
                     class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    <LoadingSpinner v-if="profileSubmitting" size="sm" color="white" />
+                    <LoadingSpinner v-if="store.saving" size="sm" color="white" />
                     Save Changes
                   </button>
                 </div>
@@ -272,7 +304,7 @@
 
             <div class="p-6">
               <template v-if="!editingPassword">
-                <p class="text-sm text-slate-500">Keep your account secure by using a strong password and changing it regularly.</p>
+                <p class="text-sm text-slate-500">Your password was last changed whenever you last set it. Keep it secure and don't share it with anyone.</p>
               </template>
 
               <form v-else @submit.prevent="savePassword" class="space-y-4">
@@ -324,7 +356,7 @@
                 <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
                   <button
                     type="button"
-                    :disabled="passwordSubmitting"
+                    :disabled="store.saving"
                     class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
                     @click="cancelPasswordChange"
                   >
@@ -332,10 +364,10 @@
                   </button>
                   <button
                     type="submit"
-                    :disabled="passwordSubmitting || !isPasswordFormValid"
+                    :disabled="store.saving || !isPasswordFormValid"
                     class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    <LoadingSpinner v-if="passwordSubmitting" size="sm" color="white" />
+                    <LoadingSpinner v-if="store.saving" size="sm" color="white" />
                     Update Password
                   </button>
                 </div>
@@ -350,8 +382,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { useStudentProfileStore } from '@/stores/studentProfile'
 import { useAuthStore } from '@/stores/auth'
-import { authService } from '@/services/auth'
 import { useToastStore } from '@/stores/toast'
 import FormField from '@/components/ui/FormField.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
@@ -359,48 +391,103 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
 import { parseApiError } from '@/utils/errorParser'
 import { mapValidationErrors } from '@/utils/mapValidationErrors'
+import { formatStudentId } from '@/utils/studentUtils'
+import type { StudentProfileUpdatePayload } from '@/types/studentProfile'
 
+const store = useStudentProfileStore()
 const authStore = useAuthStore()
 const toast = useToastStore()
 
-const user = computed(() => authStore.user)
+// ── Lifecycle ──
+onMounted(async () => {
+  try {
+    await store.fetchProfile()
+  } catch {
+    // Error is handled by the store
+  }
+})
 
 // ── Helpers ──
+const photoError = ref(false)
 
+function triggerFileInput(): void {
+  if (fileInput.value) {
+    fileInput.value.click()
+  }
+}
+
+/**
+ * Construct a displayable photo URL from the profile object.
+ */
 const displayPhoto = computed(() => {
-  const u = user.value
-  if (!u) return null
-  const raw = (u as Record<string, unknown>).avatar_url as string | undefined
-    ?? (u as Record<string, unknown>).avatar as string | undefined
-  if (!raw) return null
-  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw
+  if (photoError.value) return null
+  const photo =
+    (store.profile as any)?.photo_url ||
+    (store.profile as any)?.photo ||
+    (store.profile as any)?.avatar_url ||
+    (store.profile as any)?.avatar ||
+    (store.profile as any)?.user?.avatar_url ||
+    (store.profile as any)?.user?.avatar ||
+    authStore.user?.avatar_url ||
+    authStore.user?.avatar ||
+    null
+
+  if (!photo) return null
+  if (photo.startsWith('http://') || photo.startsWith('https://')) return photo
   const baseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '')
-  const cleanPath = raw.startsWith('/') ? raw : `/storage/${raw}`
+  const cleanPath = photo.startsWith('/') ? photo : `/storage/${photo}`
   return `${baseUrl}${cleanPath}`
 })
 
-const fullName = computed(() => {
-  const u = user.value
-  if (!u) return ''
-  return `${u.first_name || ''} ${u.last_name || ''}`.trim()
+const firstName = computed(() => {
+  const name = store.profile?.name || ''
+  return name.split(' ')[0] || '—'
+})
+
+const lastName = computed(() => {
+  const name = store.profile?.name || ''
+  const parts = name.split(' ')
+  return parts.slice(1).join(' ') || '—'
 })
 
 const initials = computed(() => {
-  const u = user.value
-  if (!u) return '?'
-  return `${(u.first_name?.[0] || '')}${(u.last_name?.[0] || '')}`.toUpperCase() || '?'
+  if (!store.profile?.name) return '?'
+  return store.profile.name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
 })
 
-const memberSince = computed(() => {
-  const u = user.value as Record<string, unknown> | null
-  const raw = u?.created_at as string | undefined
-  if (raw) {
-    const d = new Date(raw)
-    if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-    }
+const statusBadgeClass = computed(() => {
+  switch (store.profile?.status) {
+    case 'active':
+      return 'bg-emerald-50 text-emerald-700'
+    case 'inactive':
+      return 'bg-slate-50 text-slate-600'
+    case 'graduated':
+      return 'bg-blue-50 text-blue-700'
+    case 'suspended':
+      return 'bg-red-50 text-red-700'
+    default:
+      return 'bg-slate-50 text-slate-600'
   }
-  return '—'
+})
+
+const statusDotClass = computed(() => {
+  switch (store.profile?.status) {
+    case 'active':
+      return 'bg-emerald-500'
+    case 'inactive':
+      return 'bg-slate-400'
+    case 'graduated':
+      return 'bg-blue-500'
+    case 'suspended':
+      return 'bg-red-500'
+    default:
+      return 'bg-slate-400'
+  }
 })
 
 function formatDate(dateStr: string | null | undefined): string {
@@ -424,17 +511,17 @@ const editingProfile = ref(false)
 const editForm = reactive({
   first_name: '',
   last_name: '',
-  email: '',
+  phone: '',
+  gender: '',
 })
 const formErrors = reactive<Record<string, string>>({})
-const profileSubmitting = ref(false)
 
 function startEditing(): void {
-  const u = user.value
-  if (!u) return
-  editForm.first_name = u.first_name || ''
-  editForm.last_name = u.last_name || ''
-  editForm.email = u.email || ''
+  const parts = (store.profile?.name || '').split(' ')
+  editForm.first_name = parts[0] || ''
+  editForm.last_name = parts.slice(1).join(' ') || ''
+  editForm.phone = store.profile?.user?.phone || store.profile?.phone || ''
+  editForm.gender = store.profile?.user?.gender || store.profile?.gender || ''
   editingProfile.value = true
 }
 
@@ -473,11 +560,8 @@ function validateProfileForm(): boolean {
     valid = false
   }
 
-  if (!editForm.email.trim()) {
-    formErrors.email = 'Email is required.'
-    valid = false
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editForm.email)) {
-    formErrors.email = 'Please enter a valid email address.'
+  if (editForm.phone && !/^[\d\s\-+()]{7,20}$/.test(editForm.phone)) {
+    formErrors.phone = 'Please enter a valid phone number.'
     valid = false
   }
 
@@ -487,21 +571,26 @@ function validateProfileForm(): boolean {
 async function saveProfile(): Promise<void> {
   if (!validateProfileForm()) return
 
-  profileSubmitting.value = true
+  const payload: StudentProfileUpdatePayload = {}
+  const fullName = `${editForm.first_name} ${editForm.last_name}`.trim()
+  if (fullName !== store.profile?.name) payload.name = fullName
+  if (editForm.phone !== (store.profile?.user?.phone || store.profile?.phone)) payload.phone = editForm.phone || undefined
+  if (editForm.gender !== (store.profile?.user?.gender || store.profile?.gender)) payload.gender = editForm.gender || undefined
+
+  // Only send if something changed
+  if (Object.keys(payload).length === 0) {
+    editingProfile.value = false
+    return
+  }
+
   try {
-    const fd = new FormData()
-    fd.append('first_name', editForm.first_name)
-    fd.append('last_name', editForm.last_name)
-    fd.append('email', editForm.email)
-    fd.append('_method', 'PUT')
-
-    // Add avatar if a new one was selected
-    const file = fileInput.value?.files?.[0]
-    if (file) fd.append('avatar', file)
-
-    const updated = await authService.updateProfile(fd)
-    authStore.user = updated
-
+    await store.updateProfile(payload)
+    // Sync sidebar/navbar name with updated profile
+    try {
+      await authStore.refreshUser()
+    } catch {
+      // Silently ignore — profile was saved successfully
+    }
     successMessage.value = 'Profile updated successfully!'
     setTimeout(() => { successMessage.value = '' }, 4000)
     toast.success('Your profile has been updated.', 'Profile Updated')
@@ -519,8 +608,6 @@ async function saveProfile(): Promise<void> {
       const parsed = parseApiError(err)
       formErrors._form = parsed.message
     }
-  } finally {
-    profileSubmitting.value = false
   }
 }
 
@@ -535,29 +622,28 @@ async function handlePhotoUpload(event: Event): Promise<void> {
   const file = input.files?.[0]
   if (!file) return
 
-  if (!['image/jpeg', 'image/png'].includes(file.type)) {
-    photoUploadError.value = 'Only JPG and PNG files are allowed.'
+  // Validate
+  if (!['image/jpeg', 'image/png', 'image/jpg', 'image/webp'].includes(file.type)) {
+    photoUploadError.value = 'Only JPG, PNG, and WEBP files are allowed.'
     return
   }
 
   photoUploadError.value = ''
+  photoError.value = false
   uploadingPhoto.value = true
 
+  // Show local preview immediately
   if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
   photoPreview.value = URL.createObjectURL(file)
 
   try {
-    const fd = new FormData()
-    fd.append('avatar', file)
-    fd.append('_method', 'PUT')
-    // Include current profile fields to avoid overwriting
-    fd.append('first_name', user.value?.first_name || '')
-    fd.append('last_name', user.value?.last_name || '')
-    fd.append('email', user.value?.email || '')
-
-    const updated = await authService.updateProfile(fd)
-    authStore.user = updated
-
+    await store.uploadPhoto(file)
+    // Sync sidebar avatar with updated profile photo
+    try {
+      await authStore.refreshUser()
+    } catch {
+      // Silently ignore — photo was uploaded successfully
+    }
     successMessage.value = 'Profile photo updated!'
     setTimeout(() => { successMessage.value = '' }, 4000)
     toast.success('Your profile photo has been updated.', 'Photo Updated')
@@ -565,6 +651,7 @@ async function handlePhotoUpload(event: Event): Promise<void> {
   } catch (err: unknown) {
     const parsed = parseApiError(err)
     photoUploadError.value = parsed.message
+    // Revert preview on failure
     if (photoPreview.value) {
       URL.revokeObjectURL(photoPreview.value)
       photoPreview.value = null
@@ -575,6 +662,7 @@ async function handlePhotoUpload(event: Event): Promise<void> {
   }
 }
 
+// Cleanup object URLs on unmount
 onUnmounted(() => {
   if (photoPreview.value) {
     URL.revokeObjectURL(photoPreview.value)
@@ -590,7 +678,6 @@ const passwordForm = reactive({
   password_confirmation: '',
 })
 const passwordErrors = reactive<Record<string, string>>({})
-const passwordSubmitting = ref(false)
 
 const isPasswordFormValid = computed(() => {
   return (
@@ -650,9 +737,8 @@ function validatePasswordForm(): boolean {
 async function savePassword(): Promise<void> {
   if (!validatePasswordForm()) return
 
-  passwordSubmitting.value = true
   try {
-    const res = await authService.changePassword({
+    await store.changePassword({
       current_password: passwordForm.current_password,
       password: passwordForm.password,
       password_confirmation: passwordForm.password_confirmation,
@@ -676,8 +762,6 @@ async function savePassword(): Promise<void> {
       const parsed = parseApiError(err)
       passwordErrors._form = parsed.message
     }
-  } finally {
-    passwordSubmitting.value = false
   }
 }
 </script>

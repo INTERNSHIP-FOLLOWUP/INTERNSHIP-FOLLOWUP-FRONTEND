@@ -66,7 +66,7 @@
             <p>
               <span class="text-xs font-semibold text-slate-500">Name:</span> {{ student?.name }}
             </p>
-            <p>
+            <p class="truncate max-w-[300px]">
               <span class="text-xs font-semibold text-slate-500">Email:</span> {{ student?.email }}
             </p>
             <p>

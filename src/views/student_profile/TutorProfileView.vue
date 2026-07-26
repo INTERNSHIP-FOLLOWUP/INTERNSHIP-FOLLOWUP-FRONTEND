@@ -21,7 +21,7 @@
           </div>
           <div class="flex-1 min-w-0">
             <h1 class="text-xl font-bold text-slate-900">{{ profile.tutor.name }}</h1>
-            <p class="text-sm text-slate-500">{{ profile.tutor.email }}</p>
+            <p class="text-sm text-slate-500 truncate max-w-[250px]">{{ profile.tutor.email }}</p>
             <p class="mt-1 text-sm font-semibold text-primary-600">{{ profile.tutor.students_count }} assigned student{{ profile.tutor.students_count !== 1 ? 's' : '' }}</p>
           </div>
         </div>
@@ -53,7 +53,7 @@
             <thead>
               <tr class="border-b border-slate-100 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 <th class="py-3 pr-4 font-medium">Name</th>
-                <th class="py-3 pr-4 font-medium">Code</th>
+                <th class="py-3 pr-4 font-medium">Student ID</th>
                 <th class="py-3 pr-4 font-medium">Batch</th>
                 <th class="py-3 pr-4 font-medium">Worklogs</th>
                 <th class="py-3 pr-4 font-medium">Issues</th>
@@ -63,7 +63,7 @@
             <tbody class="divide-y divide-slate-50">
               <tr v-for="s in profile.students" :key="s.id" @click="viewStudent(s.user_id)" class="cursor-pointer hover:bg-slate-50/50">
                 <td class="py-3 pr-4 font-semibold text-slate-900">{{ s.name }}</td>
-                <td class="py-3 pr-4 text-slate-500">{{ s.student_code }}</td>
+                <td class="py-3 pr-4 text-slate-500">{{ formatStudentId(s.student_code, s.batch) }}</td>
                 <td class="py-3 pr-4 text-slate-500">{{ s.batch }}</td>
                 <td class="py-3 pr-4 text-slate-500">{{ s.worklogs_count }}</td>
                 <td class="py-3 pr-4 text-slate-500">{{ s.issues_count }}</td>
@@ -129,6 +129,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
+import { formatStudentId } from '@/utils/studentUtils'
 
 interface TutorProfileData {
   tutor: {

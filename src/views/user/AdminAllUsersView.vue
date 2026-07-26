@@ -15,9 +15,16 @@
           </svg>
           Import Excel
         </button>
+        <button @click="exportPdf"
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-red-200 hover:bg-red-50">
+          <svg class="h-4 w-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          Export PDF
+        </button>
         <button @click="exportUsers"
           class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-emerald-200 hover:bg-emerald-50">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="h-4 w-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           Export Excel
@@ -110,7 +117,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
-              <tr v-for="user in users" :key="user.id"
+              <tr v-for="(user, index) in users" :key="user.id"
                 class="transition-colors hover:bg-slate-50/50"
                 :class="{ 'bg-rose-50/40': selectedIds.has(user.id) }">
                 <td v-if="selectMode" class="px-4 py-4 w-10">
@@ -120,13 +127,24 @@
                 </td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <div class="flex items-center gap-3">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold" :class="roleAvatarClass(user.role?.name)">
+                    <img
+                      v-if="getUserPhoto(user) && !failedUserPhotos.has(user.id)"
+                      :src="getUserPhoto(user)!"
+                      :alt="user.name"
+                      @error="failedUserPhotos.add(user.id)"
+                      class="h-9 w-9 rounded-full object-cover ring-2 ring-white shadow-xs"
+                    />
+                    <div
+                      v-else
+                      class="flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold ring-2 ring-white shadow-xs"
+                      :class="roleAvatarClass(user.role?.name)"
+                    >
                       {{ getInitials(user.name) }}
                     </div>
                     <span class="font-semibold text-slate-900">{{ user.name }}</span>
                   </div>
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">{{ user.email }}</td>
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500 max-w-[200px] truncate">{{ user.email }}</td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold" :class="roleBadgeClass(user.role?.name)">
                     <span class="h-1.5 w-1.5 rounded-full" :class="roleDotClass(user.role?.name)" />
@@ -140,19 +158,63 @@
                   </span>
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 text-right">
-                  <div class="flex items-center justify-end gap-1">
-                    <router-link :to="`/admin/users/${user.id}/edit`" class="rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-800">
-                      Edit
-                    </router-link>
-                    <button v-if="user.deleted_at" @click="activateUser(user)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-emerald-600 transition-all hover:bg-emerald-50 hover:text-emerald-800">
-                      Activate
+                  <div class="relative inline-block text-left">
+                    <button type="button" @click.stop="toggleKebab(user.id)" title="Actions"
+                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95">
+                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                      </svg>
                     </button>
-                    <button v-else @click="deactivateUser(user)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-amber-600 transition-all hover:bg-amber-50 hover:text-amber-800">
-                      Deactivate
-                    </button>
-                    <button @click="deleteUser(user)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-800">
-                      Delete
-                    </button>
+
+                    <!-- Kebab Dropdown Menu (Smart positioning: Top rows pop DOWN, Bottom rows pop UP) -->
+                    <transition name="fade">
+                      <div v-if="openKebabId === user.id"
+                        class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none"
+                        :class="index < 2 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'">
+                        <button type="button" @click.stop="openKebabId = null; goToProfile(user)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          View Profile
+                        </button>
+
+                        <button type="button" @click.stop="openKebabId = null; editUser(user.id)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          Edit User
+                        </button>
+
+                        <button v-if="!user.deleted_at" type="button" @click.stop="openKebabId = null; deactivateUser(user)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
+                          <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                          </svg>
+                          Deactivate
+                        </button>
+
+                        <button v-else type="button" @click.stop="openKebabId = null; activateUser(user)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors">
+                          <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Activate
+                        </button>
+
+                        <div class="my-1 h-px bg-slate-100" />
+
+                        <button type="button" @click.stop="openKebabId = null; deleteUser(user)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors">
+                          <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          Delete User
+                        </button>
+                      </div>
+                    </transition>
                   </div>
                 </td>
               </tr>
@@ -282,13 +344,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '@/services/api'
+import { studentService } from '@/services/student'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import ImportUsersModal from '@/components/admin/ImportUsersModal.vue'
 
+const router = useRouter()
 const toast = useToastStore()
 const { show: confirmShow, loading: confirmLoading, error: confirmError, open: confirmOpen, cancel: confirmCancel, confirmAsync: confirmAsyncFn } = useConfirmDialog()
 
@@ -313,6 +378,12 @@ const roleStats = ref<RoleCounts>({ admin: 0, tutor: 0, student: 0, supervisor: 
 const currentPage = ref(1)
 const showImportModal = ref(false)
 const searchQuery = ref('')
+const failedUserPhotos = ref<Set<number>>(new Set())
+
+function getUserPhoto(user: any): string | null {
+  if (!user) return null
+  return user.avatar_url || user.avatar || user.photo_url || user.photo || user.student_profile?.photo || null
+}
 const roleFilter = ref('')
 const statusFilter = ref('')
 const confirmTitle = ref('')
@@ -476,9 +547,39 @@ async function handleConfirmAction() {
   })
 }
 
+function goToProfile(user: User) {
+  const roleName = user.role?.name?.toLowerCase()
+  if (roleName === 'student') {
+    router.push(`/admin/student-profile/${user.id}`)
+  } else if (roleName === 'tutor') {
+    router.push(`/admin/tutor-profile/${user.id}`)
+  } else {
+    router.push(`/admin/users/${user.id}/edit`)
+  }
+}
+
+function editUser(userId: number) {
+  router.push(`/admin/users/${userId}/edit`)
+}
+
 function deleteUser(user: User) { confirmAction('delete', user) }
 function deactivateUser(user: User) { confirmAction('deactivate', user) }
 function activateUser(user: User) { confirmAction('activate', user) }
+
+async function exportPdf() {
+  try {
+    const blob = await studentService.exportPdf()
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `users-${new Date().toISOString().slice(0, 10)}.pdf`
+    a.click()
+    window.URL.revokeObjectURL(url)
+    toast.success('PDF exported successfully.')
+  } catch {
+    toast.error('Failed to export PDF.')
+  }
+}
 
 async function exportUsers() {
   try {
@@ -538,7 +639,24 @@ watch(searchQuery, () => {
 watch(roleFilter, () => { currentPage.value = 1; fetchUsers() })
 watch(statusFilter, () => { currentPage.value = 1; fetchUsers() })
 
-onMounted(() => { fetchUsers() })
+const openKebabId = ref<number | null>(null)
+
+function toggleKebab(id: number) {
+  openKebabId.value = openKebabId.value === id ? null : id
+}
+
+function handleWindowClick() {
+  openKebabId.value = null
+}
+
+onMounted(() => {
+  fetchUsers()
+  window.addEventListener('click', handleWindowClick)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleWindowClick)
+})
 </script>
 
 <style scoped>

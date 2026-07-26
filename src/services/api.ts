@@ -141,8 +141,9 @@ api.interceptors.response.use(
     const { config, response } = error
 
     // Gracefully handle cancelled requests
-    const cancelled = (error as { cancelled?: boolean } | undefined)?.cancelled
-    if (cancelled) return Promise.reject(error)
+    if (axios.isCancel(error) || (error as { cancelled?: boolean } | undefined)?.cancelled) {
+      return Promise.reject({ cancelled: true, message: 'Request cancelled' })
+    }
 
     // No response = network error
     if (!response) {

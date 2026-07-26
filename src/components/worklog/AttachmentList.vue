@@ -1,42 +1,77 @@
 <template>
   <div class="space-y-3">
-    <div v-if="!attachments.length" class="text-sm font-semibold text-slate-500">No attachments.</div>
-    <div
-      v-for="att in attachments"
-      :key="att.id ?? att.filename ?? att.file_path"
-      class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-3"
-    >
-      <div class="flex min-w-0 items-center gap-3">
-        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-500">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-          </svg>
-        </span>
-        <div class="min-w-0">
-          <p class="truncate text-xs font-semibold text-slate-800">
-            {{ att.filename || att.file_path || 'attachment' }}
-          </p>
-          <p class="text-xs text-slate-500">
-            {{ att.mime_type || att.file_type || guessType(att.filename || att.file_path || '') }}
-            • {{ formatBytes(Number(att.size_bytes ?? att.file_size)) }}
-          </p>
+    <!-- Empty state -->
+    <div v-if="!attachments.length"
+      class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 py-10 text-center">
+      <svg class="mb-2 h-8 w-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+      </svg>
+      <p class="text-sm font-medium text-slate-400">No attachments</p>
+    </div>
+
+    <!-- Attachment cards -->
+    <div v-for="att in attachments" :key="att.id ?? att.filename"
+      class="group flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 transition-all duration-200 hover:border-slate-200 hover:shadow-sm">
+      
+      <!-- File type icon -->
+      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+        :class="fileIconBgClass(att.filename)">
+        <!-- PDF icon -->
+        <svg v-if="/\.pdf$/i.test(att.filename)" class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+        <!-- Image icon -->
+        <svg v-else-if="/\.(png|jpg|jpeg)$/i.test(att.filename)" class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <!-- Document icon -->
+        <svg v-else-if="/\.(doc|docx)$/i.test(att.filename)" class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <!-- ZIP icon -->
+        <svg v-else-if="/\.zip$/i.test(att.filename)" class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+        </svg>
+        <!-- Generic file icon -->
+        <svg v-else class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+
+      <!-- File info -->
+      <div class="min-w-0 flex-1">
+        <p class="truncate text-sm font-semibold text-slate-800">{{ att.filename }}</p>
+        <div class="flex items-center gap-2 mt-0.5">
+          <span class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
+            :class="fileTypeBadgeClass(att.filename)">
+            {{ fileTypeLabel(att.filename) }}
+          </span>
+          <span class="text-xs text-slate-400">{{ formatFileSize(att.size_bytes ?? 0) }}</span>
         </div>
       </div>
 
-      <div class="flex shrink-0 items-center gap-2">
+      <!-- Actions -->
+      <div class="flex items-center gap-1.5 shrink-0">
         <button
           type="button"
-          class="rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-bold text-indigo-700 hover:bg-indigo-100"
-          @click="download(att)"
-        >
+          class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition-all hover:bg-slate-50 hover:text-slate-900"
+          @click="download(att)">
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
           Download
         </button>
         <button
           v-if="isPreviewable(att)"
           type="button"
-          class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50"
-          @click="preview(att)"
-        >
+          class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-indigo-600 shadow-sm transition-all hover:bg-indigo-50 hover:text-indigo-700"
+          @click="preview(att)">
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
           Preview
         </button>
       </div>
@@ -45,85 +80,26 @@
 </template>
 
 <script setup lang="ts">
+import { fileIconBgClass, formatFileSize, fileTypeLabel, fileTypeBadgeClass } from '@/utils/fileIcons'
 import type { Attachment } from '@/types/worklog'
 
-const props = defineProps<{
+defineProps<{
   attachments: Attachment[]
 }>()
 
-function apiBase(): string {
-  const base = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'
-  return base.replace(/\/api\/?$/, '')
-}
 
-function fileUrl(att: Attachment): string | null {
-  if (att.url) return att.url
-  if (att.file_path) return `${apiBase()}/storage/${att.file_path}`
-  return null
-}
-
-function downloadName(att: Attachment): string {
-  const raw = att.filename || att.file_path || 'download'
-  return raw.split('/').pop() || 'download'
-}
-
-function formatBytes(bytes?: number): string {
-  if (!bytes || !Number.isFinite(bytes) || bytes <= 0) return '—'
-  const units = ['B', 'KB', 'MB', 'GB'] as const
-  let i = 0
-  let v = bytes
-  while (v >= 1024 && i < units.length - 1) {
-    v /= 1024
-    i++
-  }
-  return `${v.toFixed(v >= 10 || i === 0 ? 0 : 1)} ${units[i]}`
-}
-
-function guessType(filename?: string): string {
-  const name = (filename || '').toLowerCase()
-  if (name.endsWith('.pdf')) return 'application/pdf'
-  if (name.endsWith('.png')) return 'image/png'
-  if (name.endsWith('.jpg') || name.endsWith('.jpeg')) return 'image/jpeg'
-  if (name.endsWith('.doc') || name.endsWith('.docx')) return 'application/msword'
-  if (name.endsWith('.zip')) return 'application/zip'
-  return 'file'
+function download(att: Attachment) {
+  if (!att.url) return
+  window.open(att.url, '_blank')
 }
 
 function isPreviewable(att: Attachment): boolean {
   const name = (att.filename || att.file_path || '').toLowerCase()
-  return (
-    name.endsWith('.png') ||
-    name.endsWith('.jpg') ||
-    name.endsWith('.jpeg') ||
-    name.endsWith('.pdf')
-  )
-}
-
-async function download(att: Attachment) {
-  const url = fileUrl(att)
-  if (!url) return
-  try {
-    // Files in storage/app/public are publicly served; fetch as a simple
-    // (header-less) GET so it stays a non-preflighted cross-origin request.
-    const res = await fetch(url)
-    if (!res.ok) throw new Error('download failed')
-    const blob = await res.blob()
-    const objectUrl = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = objectUrl
-    a.download = downloadName(att)
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
-    URL.revokeObjectURL(objectUrl)
-  } catch {
-    // Fallback: open in a new tab (works for publicly served files)
-    window.open(url, '_blank')
-  }
+  return name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.pdf')
 }
 
 function preview(att: Attachment) {
-  const url = fileUrl(att)
-  if (url) window.open(url, '_blank')
+  if (!att.url) return
+  window.open(att.url, '_blank')
 }
 </script>

@@ -92,7 +92,7 @@
                     <span class="font-semibold text-slate-900">{{ supervisor.name || supervisor.first_name + ' ' + supervisor.last_name }}</span>
                   </div>
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 text-slate-500">{{ supervisor.email }}</td>
+                <td class="whitespace-nowrap px-6 py-4 text-slate-500 max-w-[200px] truncate">{{ supervisor.email }}</td>
                 <td class="whitespace-nowrap px-6 py-4 text-slate-500">{{ supervisor.phone || '—' }}</td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-700">

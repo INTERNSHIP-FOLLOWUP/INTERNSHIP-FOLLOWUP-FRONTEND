@@ -14,13 +14,17 @@ export const useStudentStore = defineStore('student', () => {
   const studentCount = computed(() => pagination.value?.total ?? students.value.length)
 
   function getStudentById(id: number): Student | null {
-    return students.value.find((s) => s.id === id) ?? null
+    return students.value.find((s) => s.id === id || s.user_id === id) ?? null
   }
 
   async function fetchStudents(params?: {
     per_page?: number
     page?: number
     search?: string
+    batch_id?: string | number
+    tutor_id?: string | number
+    status?: string
+    gender?: string
   }): Promise<void> {
     loading.value = true
     error.value = null
@@ -31,8 +35,11 @@ export const useStudentStore = defineStore('student', () => {
       students.value = Array.isArray(payload) ? payload : []
       pagination.value = response.meta
     } catch (err: unknown) {
+      if ((err as { cancelled?: boolean })?.cancelled) return
       const parsed = parseApiError(err)
-      error.value = parsed.message
+      if (parsed.message) {
+        error.value = parsed.message
+      }
       throw err
     } finally {
       loading.value = false

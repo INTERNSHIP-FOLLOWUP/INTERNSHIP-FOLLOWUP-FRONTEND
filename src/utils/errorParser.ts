@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export interface ParsedApiError {
   message: string
   fields?: Record<string, string>
@@ -59,6 +61,10 @@ function findFriendlyMessage(field: string, rawMessage: string): string | null {
 // ── Main parser ─────────────────────────────────────────────
 
 export function parseApiError(err: unknown): ParsedApiError {
+  if (axios.isCancel(err) || (err as { cancelled?: boolean })?.cancelled) {
+    return { message: '' }
+  }
+
   const axiosErr = err as {
     response?: {
       status?: number

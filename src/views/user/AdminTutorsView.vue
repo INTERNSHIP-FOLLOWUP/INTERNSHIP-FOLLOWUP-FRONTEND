@@ -72,7 +72,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
-              <template v-for="user in users" :key="user.id">
+              <template v-for="(user, index) in users" :key="user.id">
                 <tr @click="toggleTutor(user.id)" class="cursor-pointer transition-colors hover:bg-slate-50/50"
                   :class="{ 'bg-rose-50/40': selectedIds.has(user.id) }">
                   <td v-if="selectMode" class="px-4 py-4 w-10" @click.stop>
@@ -82,7 +82,7 @@
                   </td>
                   <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ user.first_name }}</td>
                   <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ user.last_name }}</td>
-                  <td class="whitespace-nowrap px-6 py-4 text-slate-500">{{ user.email }}</td>
+                  <td class="whitespace-nowrap px-6 py-4 text-slate-500 max-w-[200px] truncate">{{ user.email }}</td>
                   <td class="whitespace-nowrap px-6 py-4 text-slate-500">{{ user.students_count ?? '—' }}</td>
                   <td class="whitespace-nowrap px-6 py-4">
                     <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
@@ -91,34 +91,72 @@
                       {{ user.deleted_at ? 'Deactivated' : 'Active' }}
                     </span>
                   </td>
-                  <td class="whitespace-nowrap px-6 py-4 text-right" @click.stop>
-                    <div class="flex items-center justify-end gap-1">
-                      <button type="button" @click.stop="goToProfile(user.id)" title="View Profile"
-                        class="flex h-8 w-8 items-center justify-center rounded-lg text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-700">
-                        <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  <td class="whitespace-nowrap px-6 py-4 text-right">
+                    <div class="relative inline-block text-left">
+                      <button type="button" @click.stop="toggleKebab(user.id)" title="Actions"
+                        class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                         </svg>
                       </button>
-                      <button type="button" @click.stop="editTutor(user.id)" title="Edit Tutor"
-                        class="flex h-8 w-8 items-center justify-center rounded-lg text-blue-600 transition-all hover:bg-blue-50 hover:text-blue-700">
-                        <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                      </button>
-                      <button type="button" @click.stop="deleteUser(user)" title="Delete Tutor"
-                        class="flex h-8 w-8 items-center justify-center rounded-lg text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-700">
-                        <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                      <button type="button" @click.stop="toggleTutor(user.id)" title="Toggle Activity"
-                        class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
-                        :class="{ 'bg-slate-100 text-slate-900': expandedTutorId === user.id }">
-                        <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                      </button>
+
+                      <!-- Kebab Dropdown Menu (Smart positioning: Top rows pop DOWN, Bottom rows pop UP) -->
+                      <transition name="fade">
+                        <div v-if="openKebabId === user.id"
+                          class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none"
+                          :class="index < 2 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'">
+                          <button type="button" @click.stop="openKebabId = null; goToProfile(user.id)"
+                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            View Profile
+                          </button>
+
+                          <button type="button" @click.stop="openKebabId = null; editTutor(user.id)"
+                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Edit Tutor
+                          </button>
+
+                          <button type="button" @click.stop="openKebabId = null; toggleTutor(user.id)"
+                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            View Activity
+                          </button>
+
+                          <button v-if="!user.deleted_at" type="button" @click.stop="openKebabId = null; deactivateUser(user)"
+                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
+                            <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                            Deactivate
+                          </button>
+
+                          <button v-else type="button" @click.stop="openKebabId = null; activateUser(user)"
+                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors">
+                            <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Activate
+                          </button>
+
+                          <div class="my-1 h-px bg-slate-100" />
+
+                          <button type="button" @click.stop="openKebabId = null; deleteUser(user)"
+                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors">
+                            <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete Tutor
+                          </button>
+                        </div>
+                      </transition>
                     </div>
                   </td>
                 </tr>
@@ -221,7 +259,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
@@ -252,7 +290,7 @@ const { show: confirmShow, loading: confirmLoading, error: confirmError, open: c
 const confirmTitle = ref('')
 const confirmMessage = ref('')
 const confirmButtonText = ref('Confirm')
-type ActionType = 'delete'
+type ActionType = 'delete' | 'deactivate' | 'activate'
 const pendingAction = ref<{ type: ActionType; user: User } | null>(null)
 const users = ref<User[]>([])
 const loading = ref(false)
@@ -335,10 +373,19 @@ function goToProfile(userId: number) {
 
 async function confirmAction(type: ActionType, user: User) {
   pendingAction.value = { type, user }
+  const name = user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.name
   if (type === 'delete') {
     confirmTitle.value = 'Delete Tutor'
-    confirmMessage.value = `Are you sure you want to permanently delete ${user.first_name} ${user.last_name}?`
+    confirmMessage.value = `Are you sure you want to permanently delete ${name}?`
     confirmButtonText.value = 'Delete'
+  } else if (type === 'deactivate') {
+    confirmTitle.value = 'Deactivate Tutor'
+    confirmMessage.value = `Are you sure you want to deactivate ${name}?`
+    confirmButtonText.value = 'Deactivate'
+  } else if (type === 'activate') {
+    confirmTitle.value = 'Activate Tutor'
+    confirmMessage.value = `Are you sure you want to activate ${name}?`
+    confirmButtonText.value = 'Activate'
   }
   const confirmed = await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value })
   if (!confirmed) return
@@ -348,10 +395,17 @@ async function confirmAction(type: ActionType, user: User) {
 async function handleConfirmAction() {
   if (!pendingAction.value) return
   const { type, user } = pendingAction.value
+  const name = user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.name
   await confirmAsyncFn(async () => {
     if (type === 'delete') {
       await api.delete(`/admin/users/${user.id}`)
-      toast.success(`Tutor "${user.first_name} ${user.last_name}" deleted.`)
+      toast.success(`Tutor "${name}" deleted.`)
+    } else if (type === 'deactivate') {
+      await api.put(`/admin/users/${user.id}/deactivate`)
+      toast.success(`Tutor "${name}" deactivated.`)
+    } else if (type === 'activate') {
+      await api.put(`/admin/users/${user.id}/activate`)
+      toast.success(`Tutor "${name}" activated.`)
     }
     pendingAction.value = null
     fetchUsers()
@@ -359,6 +413,8 @@ async function handleConfirmAction() {
 }
 
 function deleteUser(user: User) { confirmAction('delete', user) }
+function deactivateUser(user: User) { confirmAction('deactivate', user) }
+function activateUser(user: User) { confirmAction('activate', user) }
 
 function activityFor(userId: number): TutorActivity | undefined {
   return tutorActivity.value[userId]
@@ -406,7 +462,24 @@ watch(searchQuery, () => {
   timeout = setTimeout(fetchUsers, 300)
 })
 
-onMounted(fetchUsers)
+const openKebabId = ref<number | null>(null)
+
+function toggleKebab(id: number) {
+  openKebabId.value = openKebabId.value === id ? null : id
+}
+
+function handleWindowClick() {
+  openKebabId.value = null
+}
+
+onMounted(() => {
+  fetchUsers()
+  window.addEventListener('click', handleWindowClick)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleWindowClick)
+})
 </script>
 
 <style scoped>

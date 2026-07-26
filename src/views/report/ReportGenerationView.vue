@@ -163,7 +163,7 @@
           <thead>
             <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400">
               <th class="px-4 py-3">Student</th>
-              <th class="px-4 py-3">Code</th>
+              <th class="px-4 py-3">Student ID</th>
               <th class="px-4 py-3">Batch</th>
               <th class="px-4 py-3">Company</th>
               <th class="px-4 py-3">Tutor</th>
@@ -178,7 +178,7 @@
           <tbody class="divide-y divide-slate-50">
             <tr v-for="a in paginatedAssignments" :key="String(a.id)" class="hover:bg-slate-50/30 transition-colors">
               <td class="break-words px-4 py-3 font-semibold text-slate-900 max-w-[180px]">{{ a.student }}</td>
-              <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-500">{{ a.student_code }}</td>
+              <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-500">{{ formatStudentId(a.student_code, a.batch) }}</td>
               <td class="whitespace-nowrap px-4 py-3 text-slate-600">{{ a.batch }}</td>
               <td class="break-words px-4 py-3 text-slate-600 max-w-[200px]">{{ a.company }}</td>
               <td class="break-words px-4 py-3 text-slate-600 max-w-[160px]">{{ a.tutor }}</td>
@@ -245,7 +245,7 @@
           <div class="space-y-4 px-6 py-5">
             <div class="grid grid-cols-2 gap-4">
               <div><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Student</p><p class="mt-0.5 text-sm font-semibold text-slate-900">{{ detailModal.assignment.student }}</p></div>
-              <div><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Student Code</p><p class="mt-0.5 text-sm font-medium text-slate-700">{{ detailModal.assignment.student_code }}</p></div>
+              <div><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Student ID</p><p class="mt-0.5 text-sm font-medium text-slate-700">{{ formatStudentId(detailModal.assignment.student_code, detailModal.assignment.batch) }}</p></div>
               <div><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Batch</p><p class="mt-0.5 text-sm font-medium text-slate-700">{{ detailModal.assignment.batch }}</p></div>
               <div><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Company</p><p class="mt-0.5 text-sm font-medium text-slate-700">{{ detailModal.assignment.company }}</p></div>
               <div><p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Tutor</p><p class="mt-0.5 text-sm font-medium text-slate-700">{{ detailModal.assignment.tutor }}</p></div>
@@ -302,6 +302,7 @@ import { batchService, type Batch } from '@/services/batch'
 import { companyService } from '@/services/company'
 import { useToastStore } from '@/stores/toast'
 import type { Company } from '@/types/company'
+import { formatStudentId } from '@/utils/studentUtils'
 
 interface ReportFilters {
   batch_id: string

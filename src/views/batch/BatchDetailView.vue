@@ -95,8 +95,6 @@
             <option value="">All Statuses</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
-            <option value="graduated">Graduated</option>
-            <option value="suspended">Suspended</option>
           </select>
           <button v-if="hasActiveFilters" @click="clearFilters"
             class="flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
@@ -119,7 +117,7 @@
             <thead>
               <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:border-slate-800 dark:bg-slate-800/50">
                 <th class="px-5 py-3.5 font-medium">Student</th>
-                <th class="px-5 py-3.5 font-medium">Code</th>
+                <th class="px-5 py-3.5 font-medium">Student ID</th>
                 <th class="px-5 py-3.5 font-medium">Email</th>
                 <th class="px-5 py-3.5 font-medium">Status</th>
                 <th class="px-5 py-3.5 text-right font-medium">Actions</th>
@@ -133,8 +131,8 @@
                     <span class="font-semibold text-slate-900 dark:text-white">{{ student.name }}</span>
                   </div>
                 </td>
-                <td class="whitespace-nowrap px-5 py-4 font-mono text-xs font-medium text-slate-500">{{ student.student_code || '—' }}</td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400">{{ student.email }}</td>
+                <td class="whitespace-nowrap px-5 py-4 font-mono text-xs font-medium text-slate-500">{{ formatStudentId(student.student_code, stats?.batch_name) }}</td>
+                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400 max-w-[200px] truncate">{{ student.email }}</td>
                 <td class="whitespace-nowrap px-5 py-4">
                   <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold" :class="statusClass(student.status)">
                     <span class="h-1.5 w-1.5 rounded-full" :class="statusDotClass(student.status)" />
@@ -181,6 +179,7 @@ import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import { formatStudentId } from '@/utils/studentUtils'
 import type { StudentPaginationMeta } from '@/types/student'
 
 const route = useRoute()

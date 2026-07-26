@@ -56,9 +56,20 @@
       <div class="border-t border-slate-700/50 p-4">
         <div class="flex items-center gap-3 rounded-lg bg-slate-800/50 p-3">
           <div
-            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 text-sm font-bold text-white shadow-lg"
+            class="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-full shadow-lg"
           >
-            {{ userInitials }}
+            <img
+              v-if="userAvatar"
+              :src="userAvatar"
+              :alt="user?.name"
+              class="h-full w-full rounded-full object-cover"
+            />
+            <div
+              v-else
+              class="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-400 to-teal-500 text-sm font-bold text-white"
+            >
+              {{ userInitials }}
+            </div>
           </div>
           <div class="min-w-0 flex-1">
             <p class="truncate text-sm font-medium text-white">{{ user?.name }}</p>
@@ -128,9 +139,20 @@
               @click.stop="dropdownOpen = !dropdownOpen"
             >
               <div
-                class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 text-xs font-bold text-white shadow-sm"
+                class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full shadow-sm"
               >
-                {{ userInitials }}
+                <img
+                  v-if="userAvatar"
+                  :src="userAvatar"
+                  :alt="user?.name"
+                  class="h-full w-full rounded-full object-cover"
+                />
+                <div
+                  v-else
+                  class="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-400 to-teal-500 text-xs font-bold text-white"
+                >
+                  {{ userInitials }}
+                </div>
               </div>
               <div class="hidden text-left md:block">
                 <p class="text-sm font-medium leading-tight text-gray-700">
@@ -290,6 +312,16 @@ onUnmounted(() => {
 })
 
 const user = computed(() => auth.user)
+
+const userAvatar = computed(() => {
+  const avatar = user.value?.avatar
+  if (!avatar) return null
+  if (avatar.startsWith('http://') || avatar.startsWith('https://')) return avatar
+  const baseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '')
+  // Backend returns raw relative path (e.g. "students/xxx.jpg") — prepend /storage/
+  const cleanPath = avatar.startsWith('/') ? avatar : `/storage/${avatar}`
+  return `${baseUrl}${cleanPath}`
+})
 
 const userInitials = computed(() => {
   if (!user.value?.name) return '?'

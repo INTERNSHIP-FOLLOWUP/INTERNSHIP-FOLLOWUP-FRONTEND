@@ -9,6 +9,7 @@ export const issueService = {
     if (filters.search) params.search = filters.search
     if (filters.status) params.status = filters.status
     if (filters.priority) params.priority = filters.priority
+    if ((filters as any).per_page) params.per_page = String((filters as any).per_page)
 
     const { data } = await api.get<{ data: Issue[]; meta?: PaginationMeta }>('/issues', { params })
     return data

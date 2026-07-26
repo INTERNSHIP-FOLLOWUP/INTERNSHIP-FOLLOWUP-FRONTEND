@@ -62,9 +62,8 @@ function hasFileUpload(
   payload: CreateCompanyPayload | UpdateCompanyPayload,
 ): boolean {
   return (
-    payload.companyImage instanceof File ||
-    payload.companyProfileImage instanceof File ||
-    payload.companyProfileImage instanceof File
+    (payload.companyImage as unknown) instanceof File ||
+    (payload.companyProfileImage as unknown) instanceof File
   )
 }
 

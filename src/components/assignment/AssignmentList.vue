@@ -451,7 +451,7 @@ const filteredAssignments = computed(() => {
   }
 
   if (filters.value.company_id) {
-    list = list.filter((a: Assignment) => a.company_id === Number(filters.value.company_id))
+    list = list.filter((a: Assignment) => Number(a.company_id ?? a.company_supervisors_id) === Number(filters.value.company_id))
   }
 
   return list

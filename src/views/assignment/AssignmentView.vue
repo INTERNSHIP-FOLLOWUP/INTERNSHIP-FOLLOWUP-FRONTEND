@@ -578,9 +578,15 @@
                 <td class="whitespace-nowrap px-5 py-4">
                   <div class="flex items-center gap-3">
                     <div
-                      class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400"
+                      class="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-indigo-50 text-xs font-bold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400"
                     >
-                      {{ getInitials(a.student_name) }}
+                      <img
+                        v-if="getStudentPhoto(a)"
+                        :src="getStudentPhoto(a)"
+                        :alt="a.student_name"
+                        class="h-full w-full object-cover"
+                      />
+                      <span v-else>{{ getInitials(a.student_name) }}</span>
                     </div>
                     <span class="font-semibold text-slate-900 dark:text-white">{{
                       a.student_name
@@ -638,9 +644,15 @@
             <div class="flex items-start justify-between gap-3">
               <div class="flex items-center gap-3 min-w-0">
                 <div
-                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400"
+                  class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-indigo-50 text-xs font-bold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400"
                 >
-                  {{ getInitials(a.student_name) }}
+                  <img
+                    v-if="getStudentPhoto(a)"
+                    :src="getStudentPhoto(a)"
+                    :alt="a.student_name"
+                    class="h-full w-full object-cover"
+                  />
+                  <span v-else>{{ getInitials(a.student_name) }}</span>
                 </div>
                 <div class="min-w-0">
                   <p class="text-sm font-semibold text-slate-900 truncate dark:text-white">
@@ -818,6 +830,10 @@ function getInitials(name: string | null | undefined): string {
     .join('')
     .toUpperCase()
     .slice(0, 2)
+}
+
+function getStudentPhoto(assignment: Assignment): string | null {
+  return assignment.student_photo_url || assignment.student?.photo_url || null
 }
 
 function formatDate(date?: string): string {

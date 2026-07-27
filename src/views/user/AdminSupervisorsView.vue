@@ -278,9 +278,15 @@
                 <td class="whitespace-nowrap px-6 py-4">
                   <span
                     v-if="getCompanyName(supervisor) !== '—'"
-                    class="inline-flex items-center gap-1.5 rounded-xl bg-amber-50 px-3 py-1 text-xs font-bold text-amber-800 border border-amber-200/50"
+                    class="inline-flex items-center gap-1.5 rounded-xl bg-amber-50 py-1 pl-1 pr-3 text-xs font-bold text-amber-800 border border-amber-200/50"
                   >
-                    <svg class="h-3.5 w-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <img
+                      v-if="getCompanyLogo(supervisor)"
+                      :src="getCompanyLogo(supervisor)"
+                      :alt="getCompanyName(supervisor)"
+                      class="h-5 w-5 shrink-0 rounded-lg object-cover ring-1 ring-white"
+                    />
+                    <svg v-else class="h-3.5 w-3.5 shrink-0 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m3 0h1m-1-4h.01M9 16h.01M9 12h.01M9 8h.01M15 16h.01M15 12h.01M15 8h.01" />
                     </svg>
                     {{ getCompanyName(supervisor) }}
@@ -492,6 +498,8 @@ interface Company {
   industry?: string
   website?: string
   email?: string
+  company_image_url?: string | null
+  company_profile_image_url?: string | null
 }
 
 interface SupervisorProfile {
@@ -568,6 +576,11 @@ function getInitials(name: string): string {
 
 function getCompanyName(supervisor: Supervisor): string {
   return supervisor.supervisor_profile?.company?.company_name || supervisor.company_name || '—'
+}
+
+function getCompanyLogo(supervisor: Supervisor): string | null {
+  const company = supervisor.supervisor_profile?.company
+  return company?.company_image_url || company?.company_profile_image_url || null
 }
 
 function copyEmail(email: string) {

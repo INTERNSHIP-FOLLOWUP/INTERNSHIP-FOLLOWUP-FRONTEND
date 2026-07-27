@@ -223,9 +223,15 @@
               <td class="whitespace-nowrap px-6 py-4">
                 <div class="flex items-center gap-3">
                   <div
-                    class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-50 text-xs font-bold text-primary-600"
+                    class="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-50 text-xs font-bold text-primary-600"
                   >
-                    {{ getInitials(assignment.student_name) }}
+                    <img
+                      v-if="getStudentPhoto(assignment)"
+                      :src="getStudentPhoto(assignment)"
+                      :alt="assignment.student_name"
+                      class="h-full w-full object-cover"
+                    />
+                    <span v-else>{{ getInitials(assignment.student_name) }}</span>
                   </div>
                   <span class="font-semibold text-slate-900">{{ assignment.student_name }}</span>
                 </div>
@@ -504,6 +510,10 @@ function getInitials(name: string): string {
     .join('')
     .toUpperCase()
     .slice(0, 2)
+}
+
+function getStudentPhoto(assignment: Assignment): string | null {
+  return assignment.student_photo_url || assignment.student?.photo_url || null
 }
 
 function statusBadgeClass(status?: string): string {

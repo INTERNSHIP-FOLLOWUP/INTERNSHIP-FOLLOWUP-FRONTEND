@@ -8,6 +8,7 @@ export interface Assignment {
   company_id?: number
   tutor_id: number
   student_name: string
+  student_photo_url?: string | null
   company_name: string
   tutor_name: string
   position: string
@@ -16,7 +17,7 @@ export interface Assignment {
   status: AssignmentStatus
   created_at?: string
   updated_at?: string
-  student?: { id: number; name: string }
+  student?: { id: number; name: string; email?: string; photo_url?: string | null }
   company?: { id: number; company_name: string }
   tutor?: { id: number; name: string }
 }

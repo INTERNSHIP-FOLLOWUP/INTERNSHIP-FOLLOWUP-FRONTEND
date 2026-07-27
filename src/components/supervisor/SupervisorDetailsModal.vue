@@ -89,8 +89,21 @@
 
               <div v-if="company" class="mt-3 space-y-2">
                 <div class="flex items-center justify-between">
-                  <h4 class="text-base font-bold text-slate-900">{{ company.company_name }}</h4>
-                  <span v-if="company.industry" class="rounded-lg bg-amber-100/80 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1 ring-amber-200/60">
+                      <img
+                        v-if="companyLogo"
+                        :src="companyLogo"
+                        :alt="company.company_name"
+                        class="h-full w-full object-cover"
+                      />
+                      <svg v-else class="h-4 w-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m3 0h1m-1-4h.01M9 16h.01M9 12h.01M9 8h.01M15 16h.01M15 12h.01M15 8h.01" />
+                      </svg>
+                    </div>
+                    <h4 class="text-base font-bold text-slate-900 truncate">{{ company.company_name }}</h4>
+                  </div>
+                  <span v-if="company.industry" class="shrink-0 rounded-lg bg-amber-100/80 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
                     {{ company.industry }}
                   </span>
                 </div>
@@ -150,6 +163,8 @@ interface Company {
   industry?: string
   website?: string
   email?: string
+  company_image_url?: string | null
+  company_profile_image_url?: string | null
 }
 
 interface Supervisor {
@@ -191,6 +206,10 @@ const initials = computed(() => {
 
 const company = computed(() => {
   return props.supervisor?.supervisor_profile?.company
+})
+
+const companyLogo = computed(() => {
+  return company.value?.company_image_url || company.value?.company_profile_image_url || null
 })
 
 function formatDate(dateStr?: string): string {

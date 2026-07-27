@@ -53,25 +53,26 @@
         <div class="mb-3 flex items-start justify-between gap-3">
           <div class="flex items-center gap-3">
             <div
-              v-if="item.company?.company_image_url || item.company?.company_profile_image_url"
+              v-if="getCompanyLogo(item)"
               class="h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white"
             >
               <img
-                :src="item.company.company_image_url || item.company.company_profile_image_url || undefined"
-                :alt="item.company.company_name"
+                :src="getCompanyLogo(item)"
+                :alt="getCompanyName(item)"
                 class="h-full w-full object-cover"
+                @error="(e: Event) => (e.target as HTMLImageElement).style.display = 'none'"
               />
             </div>
             <div
               v-else
               class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-white"
-              :class="avatarBg(item.company?.company_name)"
+              :class="avatarBg(getCompanyName(item))"
             >
-              {{ companyInitials(item.company?.company_name) }}
+              {{ companyInitials(getCompanyName(item)) }}
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
-                <h3 class="text-sm font-semibold text-gray-900 truncate">{{ item.company?.company_name || 'Company' }}</h3>
+                <h3 class="text-sm font-semibold text-gray-900 truncate">{{ getCompanyName(item) }}</h3>
                 <span class="shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">Feedback</span>
               </div>
               <!-- Student info with photo -->
@@ -167,7 +168,9 @@
 import { ref, computed, onMounted } from 'vue'
 import api from '@/services/api'
 import { useTutorStudentStore } from '@/stores/tutorStudent'
+import { useCompanyStore } from '@/stores/company'
 import UserAvatar from '@/components/common/UserAvatar.vue'
+import { normalizeImageUrl } from '@/utils/normalizeImageUrl'
 
 interface FeedbackItem {
   id: number
@@ -182,6 +185,11 @@ interface FeedbackItem {
   strengths?: string[]
   improvement_areas?: string[]
   created_at?: string
+  // Flat company fields (when API doesn't nest company object)
+  company_name?: string
+  company_image_url?: string | null
+  company_profile_image_url?: string | null
+  // Nested company object (when API includes the relation)
   company?: {
     id: number
     company_name: string
@@ -213,6 +221,7 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 const meta = ref<PaginationMeta | null>(null)
 const studentStore = useTutorStudentStore()
+const companyStore = useCompanyStore()
 
 const visiblePages = computed(() => {
   if (!meta.value) return []
@@ -243,6 +252,10 @@ async function load(page = 1) {
     const res = await api.get('/tutor/feedback', { params: { page } })
     const data = res.data
     feedback.value = data?.data ?? []
+
+    // Enrich feedback items with company data if missing
+    await enrichCompanyData()
+
     meta.value = {
       current_page: data.current_page,
       last_page: data.last_page,
@@ -256,6 +269,112 @@ async function load(page = 1) {
   } finally {
     loading.value = false
   }
+}
+
+/**
+ * Try to enrich feedback items with company name/logo when the API
+ * doesn't include nested company data. Uses the company store cache
+ * if available, or fetches from the API (may fail for non-admin roles).
+ */
+async function enrichCompanyData(): Promise<void> {
+  const items = feedback.value
+  if (!items.length) return
+
+  // Collect unique company IDs from items that lack company info
+  const missingIds = new Set<number>()
+  for (const item of items) {
+    if (!item.company && !item.company_name && item.company_id) {
+      missingIds.add(item.company_id)
+    }
+  }
+  if (!missingIds.size) return
+
+  // Try to fetch companies if the store doesn't have them yet (admin endpoint)
+  if (companyStore.companies.length === 0) {
+    try {
+      await companyStore.fetchCompanies({ per_page: 100 })
+    } catch {
+      // Tutors may not have admin access — try individual fetch below
+    }
+  }
+
+  // Map company data from store onto feedback items
+  for (const item of items) {
+    if (item.company || item.company_name) continue
+    const company = companyStore.companies.find((c) => c.id === item.company_id)
+    if (company) {
+      item.company_name = company.name
+      item.company_image_url = company.companyImageUrl || company.companyProfileImageUrl || null
+      item.company_profile_image_url = company.companyProfileImageUrl || null
+    }
+  }
+
+  // If some items still lack company data, try fetching individual companies
+  const stillMissing = new Set<number>()
+  for (const item of items) {
+    if (!item.company && !item.company_name && item.company_id) {
+      stillMissing.add(item.company_id)
+    }
+  }
+  if (!stillMissing.size) return
+
+  const fetched = new Map<number, { name: string; logo: string | null }>()
+  for (const companyId of stillMissing) {
+    try {
+      const res = await api.get(`/companies/${companyId}`)
+      const raw = res.data?.company ?? res.data?.data ?? res.data
+      if (raw?.id) {
+        fetched.set(companyId, {
+          name: raw.company_name ?? raw.name ?? '',
+          logo: raw.company_image_url ?? raw.company_profile_image_url ?? raw.logo ?? null,
+        })
+      }
+    } catch {
+      // try alternative endpoint
+      try {
+        const res = await api.get(`/admin/companies/${companyId}`)
+        const raw = res.data?.company ?? res.data?.data ?? res.data
+        if (raw?.id) {
+          fetched.set(companyId, {
+            name: raw.company_name ?? raw.name ?? '',
+            logo: raw.company_image_url ?? raw.company_profile_image_url ?? raw.logo ?? null,
+          })
+        }
+      } catch {
+        // company info not available
+      }
+    }
+  }
+
+  for (const item of items) {
+    if (item.company || item.company_name) continue
+    const info = fetched.get(item.company_id)
+    if (info) {
+      item.company_name = info.name
+      item.company_image_url = info.logo
+    }
+  }
+}
+
+/** Extract company name from either nested `company` object or flat fields */
+function getCompanyName(item: FeedbackItem): string {
+  return item.company?.company_name || item.company_name || 'Company'
+}
+
+/** Extract and resolve company logo URL from either nested `company` object or flat fields */
+function getCompanyLogo(item: FeedbackItem): string | null {
+  const raw = item.company?.company_image_url
+    || item.company?.company_profile_image_url
+    || item.company_image_url
+    || item.company_profile_image_url
+  if (!raw) return null
+  // Strip duplicate /storage/ prefix
+  const cleaned = normalizeImageUrl(raw) ?? raw
+  if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) return cleaned
+  // Resolve relative path using API base URL
+  const baseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '')
+  const cleanPath = cleaned.startsWith('/') ? cleaned : `/storage/${cleaned}`
+  return `${baseUrl}${cleanPath}`
 }
 
 function companyInitials(name?: string) {

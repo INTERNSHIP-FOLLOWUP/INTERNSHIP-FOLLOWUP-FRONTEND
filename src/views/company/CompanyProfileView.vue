@@ -472,7 +472,7 @@ import PasswordInput from '@/components/ui/PasswordInput.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
 import { parseApiError } from '@/utils/errorParser'
-import { mapValidationErrors } from '@/utils/mapValidationErrors'
+
 
 const authStore = useAuthStore()
 const companyStore = useCompanyStore()
@@ -731,13 +731,14 @@ onMounted(async () => {
   loadingAll.value = true
   try {
     await Promise.all([
-      authStore.fetchUser(),
+      authStore.refreshUser(),
       companyStore.fetchProfile(),
     ])
   } catch {
     // Silently continue
+  } finally {
+    loadingAll.value = false
   }
-  loadingAll.value = false
 })
 
 onUnmounted(() => {

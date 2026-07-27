@@ -28,7 +28,7 @@
             <tr
               class="border-b border-gray-100 text-xs font-medium uppercase tracking-wider text-gray-400"
             >
-              <th class="px-4 py-3 font-medium">Student Name</th>
+              <th class="px-4 py-3 font-medium">Student</th>
               <th class="px-4 py-3 font-medium">Tutor</th>
               <th class="px-4 py-3 font-medium">Intern Position</th>
               <th class="px-4 py-3 font-medium">Start Date</th>
@@ -43,7 +43,14 @@
               class="transition-colors hover:bg-gray-50/50"
             >
               <td class="px-4 py-3.5">
-                <span class="font-medium text-gray-900">{{ item.studentName }}</span>
+                <div class="flex items-center gap-3">
+                  <UserAvatar
+                    :avatar="item.studentPhoto"
+                    :name="item.studentName"
+                    size="sm"
+                  />
+                  <span class="font-medium text-gray-900">{{ item.studentName }}</span>
+                </div>
               </td>
               <td class="px-4 py-3.5 text-gray-600">{{ item.tutorName }}</td>
               <td class="px-4 py-3.5 text-gray-600">{{ item.position }}</td>
@@ -92,6 +99,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useCompanyStore } from '@/stores/company'
+import UserAvatar from '@/components/common/UserAvatar.vue'
 
 const store = useCompanyStore()
 
@@ -105,6 +113,7 @@ const statusMap: Record<string, { text: string; class: string }> = {
 interface InternshipRow {
   id: number
   studentName: string
+  studentPhoto?: string | null
   tutorName: string
   position: string
   startDate: string
@@ -143,6 +152,7 @@ onMounted(async () => {
     internships.value = rawData.map((item) => ({
       id: Number(item?.id ?? 0),
       studentName: String(item?.student_name ?? ''),
+      studentPhoto: item?.photo_url || item?.photo || item?.avatar || null,
       tutorName: String(item?.tutor_name ?? ''),
       position: String(item?.position ?? ''),
       startDate: formatDate(item?.start_date),

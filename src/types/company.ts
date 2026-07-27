@@ -57,6 +57,9 @@ export interface CompanyStudentItem {
   start_date?: string
   end_date?: string
   tutor_name?: string
+  photo_url?: string | null
+  photo?: string | null
+  avatar?: string | null
 }
 
 export interface CompanyEvaluationItem {

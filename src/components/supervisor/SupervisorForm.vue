@@ -2,10 +2,10 @@
   <form @submit.prevent="handleSubmit" class="space-y-6" novalidate>
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
           {{ isEdit ? 'Edit Supervisor' : 'Add Supervisor' }}
         </h2>
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {{
             isEdit
               ? 'Update supervisor details below.'
@@ -21,7 +21,7 @@
           v-model="form.first_name"
           type="text"
           placeholder="Enter first name"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           :class="inputClass('first_name')"
           @input="clearFieldError('first_name')"
           @blur="validateField('first_name')"
@@ -33,7 +33,7 @@
           v-model="form.last_name"
           type="text"
           placeholder="Enter last name"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           :class="inputClass('last_name')"
           @input="clearFieldError('last_name')"
           @blur="validateField('last_name')"
@@ -45,7 +45,7 @@
           v-model="form.email"
           type="email"
           placeholder="Enter email address"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           :class="inputClass('email')"
           @input="clearFieldError('email')"
           @blur="validateField('email')"
@@ -57,7 +57,7 @@
           v-model="form.phone"
           type="tel"
           placeholder="Enter phone number"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           :class="inputClass('phone')"
           @input="clearFieldError('phone')"
           @blur="validateField('phone')"
@@ -83,7 +83,7 @@
           v-model="form.password"
           type="password"
           :placeholder="isEdit ? 'Leave blank to keep current' : 'Min. 8 characters'"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           :class="inputClass('password')"
           @input="clearFieldError('password')"
           @blur="validateField('password')"
@@ -93,7 +93,7 @@
       <FormField label="Company" :error="errors.company_id" required>
         <select
           v-model.number="form.company_id"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           :class="inputClass('company_id')"
           @change="clearFieldError('company_id')"
           @blur="validateField('company_id')"
@@ -111,16 +111,16 @@
       v-if="formError"
       role="alert"
       aria-live="polite"
-      class="rounded-lg border border-error/20 bg-error/5 px-4 py-3 text-sm font-medium text-error"
+      class="rounded-lg border border-error/20 bg-error/5 px-4 py-3 text-sm font-medium text-error dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400"
     >
       {{ formError }}
     </div>
 
-    <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-5">
+    <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-5 dark:border-slate-700">
       <button
         type="button"
         @click="$emit('cancel')"
-        class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+        class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
       >
         Cancel
       </button>
@@ -187,8 +187,8 @@ const PHONE_RE = /^[\d\s\-+()]{7,20}$/
 
 function inputClass(field: string): string {
   return errors[field]
-    ? 'border-error ring-1 ring-error/20 focus:border-error focus:ring-2 focus:ring-error/30'
-    : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
+    ? 'border-error ring-1 ring-error/20 focus:border-error focus:ring-2 focus:ring-error/30 dark:border-red-700 dark:ring-red-800/30'
+    : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-slate-600'
 }
 
 function clearFieldError(field: string): void {

@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Tutors</h1>
-        <p class="mt-1 text-sm text-slate-500">Manage academic tutors, their status, and student assignments.</p>
+        <h1 class="text-2xl font-bold tracking-tight dark:text-slate-100 text-slate-900">Tutors</h1>
+        <p class="mt-1 text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">Manage academic tutors, their status, and student assignments.</p>
       </div>
       <router-link
         to="/admin/tutors/create"
@@ -24,7 +24,7 @@
 
     <!-- Summary Stats Bar -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <div class="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+      <div class="rounded-xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white p-4 shadow-sm">
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,12 +32,12 @@
             </svg>
           </div>
           <div>
-            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Tutors</p>
-            <p class="text-xl font-bold text-slate-900">{{ store.tutors.length }}</p>
+            <p class="text-xs font-semibold uppercase tracking-wider dark:text-slate-500 text-slate-400">Total Tutors</p>
+            <p class="text-xl font-bold dark:text-slate-100 text-slate-900">{{ store.tutors.length }}</p>
           </div>
         </div>
       </div>
-      <div class="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+      <div class="rounded-xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white p-4 shadow-sm">
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,12 +45,12 @@
             </svg>
           </div>
           <div>
-            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Active Tutors</p>
-            <p class="text-xl font-bold text-slate-900">{{ activeTutorsCount }}</p>
+            <p class="text-xs font-semibold uppercase tracking-wider dark:text-slate-500 text-slate-400">Active Tutors</p>
+            <p class="text-xl font-bold dark:text-slate-100 text-slate-900">{{ activeTutorsCount }}</p>
           </div>
         </div>
       </div>
-      <div class="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+      <div class="rounded-xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white p-4 shadow-sm">
         <div class="flex items-center gap-3">
           <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,8 +58,8 @@
             </svg>
           </div>
           <div>
-            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Students Assigned</p>
-            <p class="text-xl font-bold text-slate-900">{{ totalStudentsAssigned }}</p>
+            <p class="text-xs font-semibold uppercase tracking-wider dark:text-slate-500 text-slate-400">Total Students Assigned</p>
+            <p class="text-xl font-bold dark:text-slate-100 text-slate-900">{{ totalStudentsAssigned }}</p>
           </div>
         </div>
       </div>
@@ -76,7 +76,7 @@
 
       <select
         v-model="selectedStatus"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition-colors focus:border-primary-500 focus:outline-none"
+        class="h-10 rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-3 text-xs font-medium dark:text-slate-200 text-slate-700 shadow-sm transition-colors focus:border-primary-500 focus:outline-none"
       >
         <option value="">All Statuses</option>
         <option value="active">Active</option>
@@ -86,7 +86,7 @@
 
       <select
         v-model="selectedGender"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition-colors focus:border-primary-500 focus:outline-none"
+        class="h-10 rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-3 text-xs font-medium dark:text-slate-200 text-slate-700 shadow-sm transition-colors focus:border-primary-500 focus:outline-none"
       >
         <option value="">All Genders</option>
         <option value="Male">Male</option>
@@ -95,7 +95,7 @@
 
       <select
         v-model="selectedAssignment"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition-colors focus:border-primary-500 focus:outline-none"
+        class="h-10 rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-3 text-xs font-medium dark:text-slate-200 text-slate-700 shadow-sm transition-colors focus:border-primary-500 focus:outline-none"
       >
         <option value="">All Assignments</option>
         <option value="assigned">Has Students</option>
@@ -105,7 +105,7 @@
       <button
         v-if="hasActiveFilters"
         @click="clearFilters"
-        class="flex h-10 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+        class="flex h-10 items-center gap-1.5 rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-3.5 text-xs font-semibold dark:dark:text-slate-500 text-slate-400 text-slate-500 transition-colors hover:dark:bg-slate-700 bg-slate-50 hover:dark:text-slate-200 text-slate-700"
       >
         <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -135,19 +135,19 @@
     </div>
 
     <!-- Content Table -->
-    <div class="rounded-xl border border-slate-200/80 bg-white shadow-sm">
+    <div class="rounded-xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white shadow-sm">
       <!-- Loading Skeleton -->
-      <div v-if="store.loading" class="divide-y divide-slate-50">
+      <div v-if="store.loading" class="divide-y dark:divide-slate-700 divide-slate-50">
         <div v-for="n in 5" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse">
-          <div class="h-10 w-10 rounded-full bg-slate-200" />
+          <div class="h-10 w-10 rounded-full dark:bg-slate-600 bg-slate-200" />
           <div class="flex-1 space-y-2">
-            <div class="h-3.5 w-1/3 rounded bg-slate-200" />
-            <div class="h-3 w-1/4 rounded bg-slate-100" />
+            <div class="h-3.5 w-1/3 rounded dark:bg-slate-600 bg-slate-200" />
+            <div class="h-3 w-1/4 rounded dark:bg-slate-600 bg-slate-100" />
           </div>
-          <div class="h-4 w-16 rounded bg-slate-200" />
+          <div class="h-4 w-16 rounded dark:bg-slate-600 bg-slate-200" />
           <div class="flex gap-2">
-            <div class="h-8 w-16 rounded-lg bg-slate-200" />
-            <div class="h-8 w-14 rounded-lg bg-slate-200" />
+            <div class="h-8 w-16 rounded-lg dark:bg-slate-600 bg-slate-200" />
+            <div class="h-8 w-14 rounded-lg dark:bg-slate-600 bg-slate-200" />
           </div>
         </div>
       </div>
@@ -158,7 +158,7 @@
           <table class="w-full text-left text-sm">
             <thead>
               <tr
-                class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400"
+                class="border-b dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider dark:text-slate-500 text-slate-400"
               >
                 <th class="px-6 py-3.5 font-medium">Photo</th>
                 <th class="px-6 py-3.5 font-medium">Full name</th>
@@ -169,11 +169,11 @@
                 <th class="px-6 py-3.5 text-center font-medium">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y dark:divide-slate-700 divide-slate-50">
               <tr
                 v-for="(tutor, index) in filteredTutors"
                 :key="tutor.id"
-                class="group transition-colors hover:bg-slate-50/50"
+                class="group transition-colors hover:dark:bg-slate-700 bg-slate-50/50"
               >
                 <td class="whitespace-nowrap px-6 py-4">
                   <img
@@ -194,14 +194,14 @@
                   <div>
                     <router-link
                       :to="`/admin/tutors/${tutor.user_id || tutor.id}`"
-                      class="font-semibold text-slate-900 hover:text-primary-600 transition-colors"
+                      class="font-semibold dark:text-slate-100 text-slate-900 hover:text-primary-600 transition-colors"
                     >
                       {{ tutor.name }}
                     </router-link>
-                    <p class="text-xs text-slate-500 truncate max-w-[200px]">{{ tutor.email }}</p>
+                    <p class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500 truncate max-w-[200px]">{{ tutor.email }}</p>
                   </div>
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-600">
+                <td class="whitespace-nowrap px-6 py-4 font-medium dark:text-slate-400 text-slate-600">
                   {{ tutor.phone || tutor.user?.phone || '—' }}
                 </td>
                 <td class="whitespace-nowrap px-6 py-4">
@@ -212,7 +212,7 @@
                   >
                     {{ tutor.gender || tutor.user?.gender }}
                   </span>
-                  <span v-else class="text-slate-400">—</span>
+                  <span v-else class="dark:text-slate-500 text-slate-400">—</span>
                 </td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <span
@@ -220,7 +220,7 @@
                     :class="
                       (tutor.status || tutor.user?.status) === 'active'
                         ? 'bg-emerald-50 text-emerald-700'
-                        : 'bg-slate-100 text-slate-600'
+                        : 'dark:bg-slate-600 bg-slate-100 dark:text-slate-400 text-slate-600'
                     "
                   >
                     <span
@@ -250,7 +250,7 @@
                       type="button"
                       @click.stop="toggleKebab(tutor.id)"
                       title="Actions"
-                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 mx-auto"
+                      class="flex h-8 w-8 items-center justify-center rounded-lg dark:dark:text-slate-500 text-slate-400 text-slate-500 transition-all hover:dark:bg-slate-600 bg-slate-100 hover:dark:text-slate-200 text-slate-700 active:scale-95 mx-auto"
                     >
                       <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -261,15 +261,15 @@
                     <transition name="fade">
                       <div
                         v-if="openKebabId === tutor.id"
-                        class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left"
+                        class="absolute right-0 z-30 w-44 rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left"
                         :class="index < (filteredTutors.length > 2 ? filteredTutors.length - 2 : 1) && filteredTutors.length > 1 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'"
                       >
                         <router-link
                           :to="`/admin/tutors/${tutor.user_id || tutor.id}`"
                           @click.stop="openKebabId = null"
-                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold dark:text-slate-200 text-slate-700 hover:dark:bg-slate-700 bg-slate-50 hover:text-primary-600 transition-colors"
                         >
-                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg class="h-4 w-4 dark:text-slate-500 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
@@ -279,15 +279,15 @@
                         <router-link
                           :to="`/admin/tutors/${tutor.id}/edit`"
                           @click.stop="openKebabId = null"
-                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold dark:text-slate-200 text-slate-700 hover:dark:bg-slate-700 bg-slate-50 hover:text-primary-600 transition-colors"
                         >
-                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg class="h-4 w-4 dark:text-slate-500 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                           </svg>
                           Edit Tutor
                         </router-link>
 
-                        <div class="my-1 h-px bg-slate-100" />
+                        <div class="my-1 h-px dark:bg-slate-600 bg-slate-100" />
 
                         <button
                           type="button"
@@ -314,7 +314,7 @@
         <div
           v-for="tutor in filteredTutors"
           :key="tutor.id"
-          class="p-4 transition-colors hover:bg-slate-50/50 space-y-3"
+          class="p-4 transition-colors hover:dark:bg-slate-700 bg-slate-50/50 space-y-3"
         >
           <div class="flex items-start justify-between">
             <div class="flex items-center gap-3">
@@ -334,11 +334,11 @@
               <div>
                 <router-link
                   :to="`/admin/tutors/${tutor.user_id || tutor.id}`"
-                  class="font-semibold text-slate-900 hover:text-primary-600"
+                  class="font-semibold dark:text-slate-100 text-slate-900 hover:text-primary-600"
                 >
                   {{ tutor.name }}
                 </router-link>
-                <p class="text-xs text-slate-500 truncate max-w-[200px]">{{ tutor.email }}</p>
+                <p class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500 truncate max-w-[200px]">{{ tutor.email }}</p>
               </div>
             </div>
             <span
@@ -346,20 +346,20 @@
               :class="
                 (tutor.status || tutor.user?.status) === 'active'
                   ? 'bg-emerald-50 text-emerald-700'
-                  : 'bg-slate-100 text-slate-600'
+                  : 'dark:bg-slate-600 bg-slate-100 dark:text-slate-400 text-slate-600'
               "
             >
               {{ tutor.status || tutor.user?.status || 'active' }}
             </span>
           </div>
 
-          <div class="grid grid-cols-2 gap-2 rounded-lg bg-slate-50 p-2.5 text-xs text-slate-600">
+          <div class="grid grid-cols-2 gap-2 rounded-lg dark:bg-slate-700 bg-slate-50 p-2.5 text-xs dark:text-slate-400 text-slate-600">
             <div>
-              <span class="font-medium text-slate-500">Phone:</span>
+              <span class="font-medium dark:dark:text-slate-500 text-slate-400 text-slate-500">Phone:</span>
               {{ tutor.phone || tutor.user?.phone || '—' }}
             </div>
             <div>
-              <span class="font-medium text-slate-500">Students:</span>
+              <span class="font-medium dark:dark:text-slate-500 text-slate-400 text-slate-500">Students:</span>
               <span class="font-bold text-indigo-600">{{ getTutorStudentCount(tutor.id) }}</span>
             </div>
           </div>
@@ -367,7 +367,7 @@
           <div class="flex items-center gap-2 pt-1">
             <router-link
               :to="`/admin/tutors/${tutor.user_id || tutor.id}`"
-              class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-center text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              class="flex-1 rounded-lg border dark:border-slate-600 border-slate-200 px-3 py-2 text-center text-xs font-semibold dark:text-slate-200 text-slate-700 transition-colors hover:dark:bg-slate-700 bg-slate-50"
             >
               Details
             </router-link>
@@ -389,8 +389,8 @@
 
       <!-- Empty State -->
       <div v-else class="flex flex-col items-center justify-center px-6 py-16 text-center">
-        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50">
-          <svg class="h-7 w-7 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl dark:bg-slate-700 bg-slate-50">
+          <svg class="h-7 w-7 dark:text-slate-500 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -399,8 +399,8 @@
             />
           </svg>
         </div>
-        <h3 class="mt-4 text-sm font-semibold text-slate-700">No tutors found</h3>
-        <p class="mt-1 text-xs text-slate-400">
+        <h3 class="mt-4 text-sm font-semibold dark:text-slate-200 text-slate-700">No tutors found</h3>
+        <p class="mt-1 text-xs dark:text-slate-500 text-slate-400">
           {{ hasActiveFilters ? 'Try adjusting your search or filters.' : 'No tutors have been added yet.' }}
         </p>
       </div>

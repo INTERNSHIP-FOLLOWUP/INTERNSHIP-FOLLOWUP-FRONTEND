@@ -9,7 +9,7 @@
       </div>
       <router-link
         to="/student/worklogs"
-        class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+        class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
       >
         Back
       </router-link>
@@ -18,12 +18,12 @@
     <div class="mt-6 max-w-3xl">
       <form @submit.prevent="onSubmit" class="space-y-5">
         <div>
-          <label class="text-sm font-semibold text-slate-700">Week Number</label>
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Week Number</label>
           <select
             v-model="form.week_number"
             required
-            class="mt-2 h-11 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200"
-            :class="errors.week_number ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20'"
+            class="mt-2 h-11 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+            :class="errors.week_number ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
           >
             <option disabled value="">Select a week</option>
             <option v-for="w in weeks" :key="w" :value="w">Week {{ w }}</option>
@@ -32,32 +32,32 @@
         </div>
 
         <div>
-          <label class="text-sm font-semibold text-slate-700">Description</label>
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Description</label>
           <textarea
             v-model="form.description"
             required
             rows="4"
             placeholder="What did you work on this week?"
-            class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200"
-            :class="errors.description ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20'"
+            class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+            :class="errors.description ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
           />
           <p v-if="errors.description" class="mt-1 text-xs font-semibold text-red-500">{{ errors.description }}</p>
         </div>
 
         <div>
-          <label class="text-sm font-semibold text-slate-700">Challenges</label>
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Challenges</label>
           <textarea
             v-model="form.challenges"
             rows="3"
             placeholder="What difficulties did you face?"
-            class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200"
-            :class="errors.challenges ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20'"
+            class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+            :class="errors.challenges ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
           />
           <p v-if="errors.challenges" class="mt-1 text-xs font-semibold text-red-500">{{ errors.challenges }}</p>
         </div>
 
         <div>
-          <label class="text-sm font-semibold text-slate-700">Attachments</label>
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Attachments</label>
           <div class="mt-2 rounded-xl transition-all duration-200" :class="errors.attachments ? 'border-2 border-red-400 ring-2 ring-red-500/20' : ''">
             <FileUpload v-model="files" />
           </div>
@@ -84,13 +84,13 @@
             type="button"
             :disabled="submitting"
             @click="cancel"
-            class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+            class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
           >
             Cancel
           </button>
         </div>
 
-        <div v-if="serverError" class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">
+        <div v-if="serverError" class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400">
           {{ serverError }}
         </div>
       </form>

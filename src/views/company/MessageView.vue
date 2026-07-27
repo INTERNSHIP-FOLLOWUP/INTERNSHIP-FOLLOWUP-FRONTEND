@@ -2,12 +2,12 @@
   <div class="flex h-[calc(100vh-8rem)] gap-4">
     <!-- Conversations List -->
     <div
-      class="w-full shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm sm:w-80 lg:w-96"
+      class="w-full shrink-0 overflow-hidden rounded-2xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white shadow-sm sm:w-80 lg:w-96"
       :class="{ 'hidden md:block': store.activeConversationId !== null }"
     >
-      <div class="border-b border-slate-100 px-5 py-4">
+      <div class="border-b dark:border-slate-700 border-slate-100 px-5 py-4">
         <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold text-slate-900">Messages</h2>
+          <h2 class="text-lg font-bold dark:text-slate-100 text-slate-900">Messages</h2>
           <span
             v-if="store.totalUnreadCount > 0"
             class="inline-flex items-center justify-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-bold text-indigo-700"
@@ -15,16 +15,16 @@
             {{ store.totalUnreadCount }} new
           </span>
         </div>
-        <p class="mt-0.5 text-xs text-slate-500">
+        <p class="mt-0.5 text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">
           Communicate with your assigned tutors
         </p>
       </div>
 
       <!-- Search -->
-      <div class="border-b border-slate-100 px-4 py-3">
+      <div class="border-b dark:border-slate-700 border-slate-100 px-4 py-3">
         <div class="relative">
           <svg
-            class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+            class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 dark:text-slate-500 text-slate-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -40,7 +40,7 @@
             v-model="searchQuery"
             type="text"
             placeholder="Search conversations..."
-            class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="h-9 w-full rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-700 bg-slate-50 pl-9 pr-3 text-sm dark:text-slate-200 text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-300 focus:dark:bg-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
         </div>
       </div>
@@ -79,7 +79,7 @@
           class="flex flex-col items-center justify-center py-16 text-center"
         >
           <svg
-            class="h-12 w-12 text-slate-300"
+            class="h-12 w-12 dark:text-slate-500 text-slate-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -91,21 +91,21 @@
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
             />
           </svg>
-          <p class="mt-3 text-sm font-semibold text-slate-400">
+          <p class="mt-3 text-sm font-semibold dark:text-slate-500 text-slate-400">
             {{ searchQuery ? 'No conversations match your search.' : 'No conversations yet.' }}
           </p>
-          <p v-if="!searchQuery" class="mt-1 text-xs text-slate-400">
+          <p v-if="!searchQuery" class="mt-1 text-xs dark:text-slate-500 text-slate-400">
             Start a conversation by sending a message to a tutor.
           </p>
         </div>
 
         <!-- Conversation list -->
-        <div v-else class="divide-y divide-slate-50">
+        <div v-else class="divide-y dark:divide-slate-700 divide-slate-50">
           <button
             v-for="conv in filteredConversations"
             :key="conv.user?.id || conv.company?.id"
             @click="selectConversation(conv)"
-            class="flex w-full items-center gap-3 px-5 py-3.5 text-left transition-all hover:bg-slate-50"
+            class="flex w-full items-center gap-3 px-5 py-3.5 text-left transition-all hover:dark:bg-slate-700 bg-slate-50"
             :class="{
               'bg-indigo-50/50': (conv.user?.id === store.activeConversationId || conv.company?.id === store.activeConversationId),
             }"
@@ -137,14 +137,14 @@
               <div class="flex items-center justify-between">
                 <h3
                   class="truncate text-sm font-semibold"
-                  :class="conv.unread_count > 0 ? 'text-slate-900' : 'text-slate-700'"
+                  :class="conv.unread_count > 0 ? 'dark:text-slate-100 text-slate-900' : 'dark:text-slate-200 text-slate-700'"
                 >
                   {{ getConversationName(conv) }}
                 </h3>
                 <span
                   v-if="conv.last_message"
                   class="ml-2 shrink-0 text-[11px]"
-                  :class="conv.unread_count > 0 ? 'font-semibold text-indigo-600' : 'text-slate-400'"
+                  :class="conv.unread_count > 0 ? 'font-semibold text-indigo-600' : 'dark:text-slate-500 text-slate-400'"
                 >
                   {{ formatTime(conv.last_message.created_at) }}
                 </span>
@@ -152,12 +152,12 @@
               <p
                 v-if="conv.last_message"
                 class="mt-0.5 truncate text-xs"
-                :class="conv.unread_count > 0 ? 'font-medium text-slate-700' : 'text-slate-400'"
+                :class="conv.unread_count > 0 ? 'font-medium dark:text-slate-200 text-slate-700' : 'dark:text-slate-500 text-slate-400'"
               >
                 {{ isOwnMessage(conv.last_message) ? 'You: ' : '' }}
                 {{ conv.last_message.message }}
               </p>
-              <p v-else class="mt-0.5 text-xs text-slate-400 italic">
+              <p v-else class="mt-0.5 text-xs dark:text-slate-500 text-slate-400 italic">
                 No messages yet
               </p>
 
@@ -178,7 +178,7 @@
 
     <!-- Chat Area -->
     <div
-      class="flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+      class="flex flex-1 flex-col overflow-hidden rounded-2xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white shadow-sm"
       :class="{ 'hidden md:flex': store.activeConversationId === null }"
     >
       <!-- No conversation selected -->
@@ -186,9 +186,9 @@
         v-if="!activeConversation"
         class="flex flex-1 flex-col items-center justify-center text-center"
       >
-        <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-50">
+        <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl dark:bg-slate-700 bg-slate-50">
           <svg
-            class="h-10 w-10 text-slate-300"
+            class="h-10 w-10 dark:text-slate-500 text-slate-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -202,7 +202,7 @@
           </svg>
         </div>
         <h3 class="mt-4 text-lg font-bold text-slate-800">Your Messages</h3>
-        <p class="mt-1 max-w-xs text-sm text-slate-500">
+        <p class="mt-1 max-w-xs text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">
           Select a conversation from the left to start chatting with a tutor.
         </p>
       </div>
@@ -211,11 +211,11 @@
       <template v-else>
         <!-- Chat header -->
         <div
-          class="flex items-center gap-3 border-b border-slate-100 px-5 py-4"
+          class="flex items-center gap-3 border-b dark:border-slate-700 border-slate-100 px-5 py-4"
         >
           <!-- Mobile back button -->
           <button
-            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 md:hidden"
+            class="flex h-9 w-9 items-center justify-center rounded-xl dark:dark:text-slate-500 text-slate-400 text-slate-500 transition-colors hover:dark:bg-slate-600 bg-slate-100 md:hidden"
             @click="store.clearMessages()"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -244,10 +244,10 @@
           </div>
 
           <div class="flex-1 min-w-0">
-            <h3 class="truncate text-sm font-bold text-slate-900">
+            <h3 class="truncate text-sm font-bold dark:text-slate-100 text-slate-900">
               {{ getConversationName(activeConversation) }}
             </h3>
-            <p class="text-xs text-slate-500">
+            <p class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">
               {{ activeConversation.user ? 'Tutor' : 'Company Representative' }}
             </p>
           </div>
@@ -287,7 +287,7 @@
             class="flex flex-col items-center justify-center py-16 text-center"
           >
             <svg
-              class="h-10 w-10 text-slate-300"
+              class="h-10 w-10 dark:text-slate-500 text-slate-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -299,8 +299,8 @@
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
               />
             </svg>
-            <h4 class="mt-3 text-sm font-bold text-slate-600">No messages yet</h4>
-            <p class="mt-1 text-xs text-slate-400">
+            <h4 class="mt-3 text-sm font-bold dark:text-slate-400 text-slate-600">No messages yet</h4>
+            <p class="mt-1 text-xs dark:text-slate-500 text-slate-400">
               Send a message to start the conversation.
             </p>
           </div>
@@ -318,13 +318,13 @@
                 :class="
                   isOwnMessage(msg)
                     ? 'bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-br-md'
-                    : 'bg-slate-100 text-slate-800 rounded-bl-md'
+                    : 'dark:bg-slate-600 bg-slate-100 text-slate-800 rounded-bl-md'
                 "
               >
                 <p class="whitespace-pre-wrap text-sm leading-relaxed">{{ msg.message }}</p>
                 <div
                   class="mt-1 flex items-center justify-end gap-1"
-                  :class="isOwnMessage(msg) ? '' : 'text-slate-400'"
+                  :class="isOwnMessage(msg) ? '' : 'dark:text-slate-500 text-slate-400'"
                 >
                   <span
                     class="text-[10px]"
@@ -357,14 +357,14 @@
         </div>
 
         <!-- Message Input -->
-        <div class="border-t border-slate-100 px-5 py-4">
+        <div class="border-t dark:border-slate-700 border-slate-100 px-5 py-4">
           <div class="flex items-end gap-3">
             <div class="relative flex-1">
               <textarea
                 v-model="newMessage"
                 placeholder="Type your message..."
                 rows="1"
-                class="block w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                class="block w-full resize-none rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-700 bg-slate-50 px-4 py-2.5 text-sm dark:text-slate-200 text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-300 focus:dark:bg-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 @keydown.enter.exact="handleSend"
                 @input="autoResize"
               />

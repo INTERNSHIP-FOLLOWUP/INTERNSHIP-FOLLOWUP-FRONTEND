@@ -4,8 +4,8 @@
     <template v-if="isProfileMode">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-slate-900">Company & Supervisor Profile</h1>
-          <p class="mt-1 text-sm text-slate-500">
+          <h1 class="text-2xl font-bold dark:text-slate-100 text-slate-900">Company & Supervisor Profile</h1>
+          <p class="mt-1 text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">
             Manage your personal supervisor details, company information, and security settings.
           </p>
         </div>
@@ -19,7 +19,7 @@
       <div v-if="isLoading" class="flex items-center justify-center py-20">
         <div class="flex flex-col items-center gap-3">
           <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-          <p class="text-sm font-medium text-slate-500">Loading profile details...</p>
+          <p class="text-sm font-medium dark:dark:text-slate-500 text-slate-400 text-slate-500">Loading profile details...</p>
         </div>
       </div>
 
@@ -50,13 +50,13 @@
           <!-- Left Column: Supervisor Avatar & Quick Info -->
           <div class="lg:col-span-1 space-y-6">
             <!-- Supervisor Info Card -->
-            <div class="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div class="rounded-3xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white p-6 shadow-sm">
               <!-- Avatar Section -->
               <div class="flex flex-col items-center text-center">
                 <div class="relative group">
                   <div
                     class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-shadow duration-200 group-hover:shadow-xl"
-                    :class="photoUploadError ? 'border-red-300' : 'border-slate-100'"
+                    :class="photoUploadError ? 'border-red-300' : 'dark:border-slate-700 border-slate-100'"
                   >
                     <img
                       v-if="photoPreview || displayPhoto"
@@ -75,8 +75,8 @@
 
                 <p v-if="photoUploadError" class="mt-2 text-xs text-red-500">{{ photoUploadError }}</p>
 
-                <h2 class="mt-4 text-lg font-bold text-slate-900">{{ supervisorFullName }}</h2>
-                <p class="text-sm text-slate-500 truncate max-w-[250px]">{{ user?.email }}</p>
+                <h2 class="mt-4 text-lg font-bold dark:text-slate-100 text-slate-900">{{ supervisorFullName }}</h2>
+                <p class="text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500 truncate max-w-[250px]">{{ user?.email }}</p>
 
                 <!-- Role Badge -->
                 <span class="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-blue-50 text-blue-700">
@@ -86,23 +86,23 @@
               </div>
 
               <!-- Account Info Divider -->
-              <div class="mt-6 border-t border-slate-100 pt-5">
-                <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Account Info</h3>
+              <div class="mt-6 border-t dark:border-slate-700 border-slate-100 pt-5">
+                <h3 class="text-xs font-semibold uppercase tracking-wider dark:text-slate-500 text-slate-400">Account Info</h3>
                 <dl class="mt-3 space-y-3">
                   <div>
-                    <dt class="text-xs font-medium text-slate-400">Email</dt>
+                    <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Email</dt>
                     <dd class="mt-0.5 text-sm font-medium text-slate-800 truncate max-w-[250px]">{{ user?.email }}</dd>
                   </div>
                   <div>
-                    <dt class="text-xs font-medium text-slate-400">Role</dt>
+                    <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Role</dt>
                     <dd class="mt-0.5 text-sm font-medium capitalize text-slate-800">{{ user?.role || 'N/A' }}</dd>
                   </div>
                   <div>
-                    <dt class="text-xs font-medium text-slate-400">First Name</dt>
+                    <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">First Name</dt>
                     <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ user?.first_name || '—' }}</dd>
                   </div>
                   <div>
-                    <dt class="text-xs font-medium text-slate-400">Last Name</dt>
+                    <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Last Name</dt>
                     <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ user?.last_name || '—' }}</dd>
                   </div>
                 </dl>
@@ -113,11 +113,11 @@
           <!-- Right Column: Forms -->
           <div class="space-y-6 lg:col-span-2">
             <!-- Company Profile Card -->
-            <div class="rounded-3xl border border-slate-200/80 bg-white shadow-sm">
-              <div class="border-b border-slate-100 px-6 py-4">
+            <div class="rounded-3xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white shadow-sm">
+              <div class="border-b dark:border-slate-700 border-slate-100 px-6 py-4">
                 <div>
-                  <h2 class="text-base font-bold text-slate-900">Company Profile</h2>
-                  <p class="mt-0.5 text-sm text-slate-500">Update your company information and details</p>
+                  <h2 class="text-base font-bold dark:text-slate-100 text-slate-900">Company Profile</h2>
+                  <p class="mt-0.5 text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">Update your company information and details</p>
                 </div>
               </div>
 
@@ -142,7 +142,7 @@
       <div class="flex items-center gap-3">
         <button
           @click="goBack"
-          class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+          class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm dark:text-slate-400 text-slate-600 transition-colors hover:dark:bg-slate-600 bg-slate-100 hover:dark:text-slate-100 text-slate-900"
         >
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -154,8 +154,8 @@
           </svg>
           Back to Companies
         </button>
-        <span class="text-sm text-slate-300">/</span>
-        <span class="text-sm font-medium text-slate-900">
+        <span class="text-sm dark:text-slate-500 text-slate-300">/</span>
+        <span class="text-sm font-medium dark:text-slate-100 text-slate-900">
           {{ mode === 'create' ? 'New Company' : 'Edit Company' }}
         </span>
       </div>

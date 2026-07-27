@@ -8,10 +8,10 @@
             alt="PN Logo"
             class="mx-auto w-20 h-20 object-contain mb-5 animate-pop-in transition-transform duration-300 hover:scale-105 cursor-pointer"
           />
-          <h1 class="text-2xl sm:text-[26px] font-bold text-slate-900 leading-snug tracking-tight animate-slide-up">
+          <h1 class="text-2xl sm:text-[26px] font-bold dark:text-slate-100 text-slate-900 leading-snug tracking-tight animate-slide-up">
             Student Internship<br />Follow-up System
           </h1>
-          <p class="mt-2 text-sm text-slate-400 font-normal animate-slide-up anim-delay-100 anim-fill-both">
+          <p class="mt-2 text-sm dark:text-slate-500 text-slate-400 font-normal animate-slide-up anim-delay-100 anim-fill-both">
             Sign in to access your internship management dashboard.
           </p>
         </div>
@@ -20,7 +20,7 @@
           <!-- Error Banner -->
           <div
             v-if="authStore.error || generalError"
-            class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 animate-pop-in"
+            class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 animate-pop-in dark:border-red-900/50 dark:bg-red-950/30"
           >
             <svg
               class="h-5 w-5 shrink-0 text-red-500 mt-0.5"
@@ -35,7 +35,7 @@
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
             </svg>
-            <p class="text-sm font-medium text-red-800">{{ authStore.error || generalError }}</p>
+            <p class="text-sm font-medium text-red-800 dark:text-red-400">{{ authStore.error || generalError }}</p>
           </div>
 
           <div class="space-y-4 animate-slide-up anim-delay-150 anim-fill-both">
@@ -66,9 +66,9 @@
               <input
                 v-model="rememberMe"
                 type="checkbox"
-                class="w-4 h-4 rounded border-slate-300 text-[#21BAEA] focus:ring-[#21BAEA]/30 focus:ring-offset-0 cursor-pointer transition transform group-hover:scale-110"
+                class="w-4 h-4 rounded dark:border-slate-600 border-slate-300 text-[#21BAEA] focus:ring-[#21BAEA]/30 focus:ring-offset-0 cursor-pointer transition transform group-hover:scale-110"
               />
-              <span class="text-sm text-slate-500 group-hover:text-slate-700 transition-colors">
+              <span class="text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500 group-hover:dark:text-slate-200 text-slate-700 transition-colors">
                 Remember me
               </span>
             </label>

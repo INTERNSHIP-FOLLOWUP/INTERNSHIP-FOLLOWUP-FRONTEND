@@ -2,41 +2,41 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-slate-900">Worklog Review</h1>
-        <p class="text-sm text-slate-500">Review and provide feedback on student worklogs.</p>
+        <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">Worklog Review</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">Review and provide feedback on student worklogs.</p>
       </div>
     </div>
 
     <!-- Filters -->
-    <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+    <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <div class="grid gap-3 md:grid-cols-4">
         <div>
-          <label class="text-xs font-semibold text-slate-500">Student</label>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">Student</label>
           <select
             v-model="filters.studentId"
             @change="changed"
-            class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
           >
             <option value="">All Students</option>
             <option v-for="s in students" :key="s.id" :value="s.id">{{ s.name }}</option>
           </select>
         </div>
         <div>
-          <label class="text-xs font-semibold text-slate-500">Week</label>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">Week</label>
           <input
             v-model.number="filters.week"
             type="number"
             min="1"
             placeholder="Week #"
-            class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
           />
         </div>
         <div>
-          <label class="text-xs font-semibold text-slate-500">Status</label>
+          <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">Status</label>
           <select
             v-model="filters.status"
             @change="changed"
-            class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
           >
             <option value="">All</option>
             <option>Pending</option>
@@ -49,14 +49,14 @@
           <button
             type="button"
             @click="changed"
-            class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-3.5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 transition"
+            class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-3.5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700 transition dark:bg-indigo-500 dark:hover:bg-indigo-600"
           >
             Search
           </button>
           <button
             type="button"
             @click="reset"
-            class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
+            class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700/50"
           >
             Reset
           </button>
@@ -64,25 +64,25 @@
       </div>
     </div>
 
-    <div class="rounded-2xl border border-slate-100 bg-white shadow-sm">
-      <div v-if="store.loading" class="divide-y divide-slate-50">
-        <div v-for="n in 6" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse">
-          <div class="h-8 w-8 rounded-full bg-slate-200" />
+    <div class="rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div v-if="store.loading" class="divide-y divide-slate-50 dark:divide-slate-700">
+        <div v-for="n in 6" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse dark:border-slate-700">
+          <div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-600" />
           <div class="flex-1 space-y-2">
-            <div class="h-3 w-1/3 rounded bg-slate-200" />
-            <div class="h-3 w-1/4 rounded bg-slate-100" />
+            <div class="h-3 w-1/3 rounded bg-slate-200 dark:bg-slate-600" />
+            <div class="h-3 w-1/4 rounded bg-slate-100 dark:bg-slate-600" />
           </div>
-          <div class="h-5 w-16 rounded-full bg-slate-200" />
-          <div class="h-5 w-16 rounded-full bg-slate-200" />
-          <div class="h-8 w-24 rounded-xl bg-slate-200" />
+          <div class="h-5 w-16 rounded-full bg-slate-200 dark:bg-slate-600" />
+          <div class="h-5 w-16 rounded-full bg-slate-200 dark:bg-slate-600" />
+          <div class="h-8 w-24 rounded-xl bg-slate-200 dark:bg-slate-600" />
         </div>
       </div>
 
       <div
         v-else-if="store.error"
-        class="flex flex-col items-center justify-center py-16 text-center"
+        class="flex flex-col items-center justify-center py-16 text-center dark:bg-slate-800"
       >
-        <div class="rounded-full bg-red-50 p-3 text-red-600">
+        <div class="rounded-full bg-red-50 p-3 text-red-600 dark:bg-red-900/30">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-8 w-8"
@@ -98,11 +98,11 @@
             />
           </svg>
         </div>
-        <p class="mt-3 text-sm font-semibold text-red-600">Unable to load worklogs.</p>
+        <p class="mt-3 text-sm font-semibold text-red-600 dark:text-red-400">Unable to load worklogs.</p>
         <button
           type="button"
           @click="load"
-          class="mt-3 rounded-xl bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-100 transition"
+          class="mt-3 rounded-xl bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-100 transition dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
         >
           Retry
         </button>
@@ -110,9 +110,9 @@
 
       <div
         v-else-if="!store.list.length"
-        class="flex flex-col items-center justify-center px-6 py-16 text-center"
+        class="flex flex-col items-center justify-center px-6 py-16 text-center dark:bg-slate-800"
       >
-        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-700">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-7 w-7 text-slate-300"
@@ -128,15 +128,15 @@
             />
           </svg>
         </div>
-        <h3 class="mt-4 text-sm font-semibold text-slate-700">No worklogs found</h3>
-        <p class="text-xs text-slate-400">Try adjusting your search or filters.</p>
+        <h3 class="mt-4 text-sm font-semibold text-slate-700 dark:text-slate-300">No worklogs found</h3>
+        <p class="text-xs text-slate-400 dark:text-slate-500">Try adjusting your search or filters.</p>
       </div>
 
       <div v-else class="overflow-x-auto">
         <table class="w-full text-left text-sm">
           <thead>
             <tr
-              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400"
+              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-500"
             >
               <th class="px-6 py-3.5">Student</th>
               <th class="px-6 py-3.5">Week</th>
@@ -146,27 +146,27 @@
               <th class="px-6 py-3.5 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-50">
+          <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
             <tr
               v-for="w in store.list"
               :key="w.id"
-              class="transition-colors hover:bg-slate-50/50"
+              class="transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-700/30"
               :class="{ 'border-l-4 border-l-rose-500': isStale(w) }"
             >
               <td class="whitespace-nowrap px-6 py-4">
                 <div class="flex items-center gap-3">
                   <div
-                    class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-700"
+                    class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
                   >
                     {{ w.student?.name ? initials(w.student.name) : '??' }}
                   </div>
-                  <span class="font-semibold text-slate-900">{{ w.student?.name || '—' }}</span>
+                  <span class="font-semibold text-slate-900 dark:text-slate-100">{{ w.student?.name || '—' }}</span>
                 </div>
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
+              <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
                 Week {{ w.week_number }}
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-500">
+              <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-500 dark:text-slate-400">
                 {{ submittedLabel(w) }}
               </td>
               <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-600">

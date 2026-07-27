@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Supervisors Management</h1>
-        <p class="mt-1 text-sm font-medium text-slate-500">
+        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Supervisors Management</h1>
+        <p class="mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">
           Manage company supervisors, assigned companies, and account statuses.
         </p>
       </div>
@@ -12,7 +12,7 @@
         <button
           @click="refresh"
           :disabled="loading"
-          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-amber-200 hover:bg-amber-50/50 disabled:opacity-60"
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 hover:border-amber-200 hover:bg-amber-50/50 disabled:opacity-60"
         >
           <svg
             class="h-4 w-4 text-slate-500"
@@ -40,11 +40,11 @@
     <!-- Stat Cards Grid -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <!-- Total Supervisors -->
-      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Supervisors</p>
-            <p class="mt-1 text-2xl font-black text-slate-900">{{ totalSupervisors }}</p>
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Total Supervisors</p>
+            <p class="mt-1 text-2xl font-black text-slate-900 dark:text-slate-100">{{ totalSupervisors }}</p>
           </div>
           <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,10 +55,10 @@
       </div>
 
       <!-- Active Supervisors -->
-      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Active</p>
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Active</p>
             <p class="mt-1 text-2xl font-black text-emerald-600">{{ activeCount }}</p>
           </div>
           <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
@@ -70,10 +70,10 @@
       </div>
 
       <!-- Deactivated Supervisors -->
-      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Deactivated</p>
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Deactivated</p>
             <p class="mt-1 text-2xl font-black text-rose-600">{{ deactivatedCount }}</p>
           </div>
           <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-600">
@@ -85,10 +85,10 @@
       </div>
 
       <!-- Partner Companies -->
-      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Partner Companies</p>
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Partner Companies</p>
             <p class="mt-1 text-2xl font-black text-indigo-600">{{ companies.length }}</p>
           </div>
           <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
@@ -101,17 +101,17 @@
     </div>
 
     <!-- Filters & Search Toolbar -->
-    <div class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+    <div class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <!-- Search Input -->
       <div class="relative min-w-[220px] flex-1">
-        <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search supervisor name or email..."
-          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-sm text-slate-900 placeholder-slate-400 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-sm text-slate-900 placeholder-slate-400 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
         />
         <button
           v-if="searchQuery"
@@ -126,7 +126,7 @@
       <div class="w-full sm:w-auto">
         <select
           v-model="companyFilter"
-          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm font-medium text-slate-700 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm font-medium text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
         >
           <option value="">All Companies</option>
           <option v-for="c in companies" :key="c.id" :value="c.id">
@@ -139,7 +139,7 @@
       <div class="w-full sm:w-auto">
         <select
           v-model="statusFilter"
-          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm font-medium text-slate-700 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm font-medium text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
         >
           <option value="all">All Statuses</option>
           <option value="active">Active Only</option>
@@ -151,7 +151,7 @@
       <div class="w-full sm:w-auto">
         <select
           v-model="sortOrder"
-          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm font-medium text-slate-700 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm font-medium text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
         >
           <option value="newest">Newest First</option>
           <option value="oldest">Oldest First</option>
@@ -187,17 +187,17 @@
     </div>
 
     <!-- Table & List View -->
-    <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
+    <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-800">
       <!-- Loading Skeleton -->
-      <div v-if="loading" class="divide-y divide-slate-100">
-        <div v-for="n in 4" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse">
-          <div class="h-10 w-10 rounded-full bg-slate-200" />
+      <div v-if="loading" class="divide-y divide-slate-100 dark:divide-slate-700">
+        <div v-for="n in 4" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse dark:border-slate-700">
+          <div class="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-600" />
           <div class="flex-1 space-y-2">
-            <div class="h-4 w-1/3 rounded bg-slate-200" />
-            <div class="h-3 w-1/4 rounded bg-slate-100" />
+            <div class="h-4 w-1/3 rounded bg-slate-200 dark:bg-slate-600" />
+            <div class="h-3 w-1/4 rounded bg-slate-100 dark:bg-slate-600" />
           </div>
-          <div class="h-6 w-24 rounded-full bg-slate-200" />
-          <div class="h-8 w-20 rounded-lg bg-slate-200" />
+          <div class="h-6 w-24 rounded-full bg-slate-200 dark:bg-slate-600" />
+          <div class="h-8 w-20 rounded-lg bg-slate-200 dark:bg-slate-600" />
         </div>
       </div>
 
@@ -206,7 +206,7 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
             <thead>
-              <tr class="border-b border-slate-100 bg-slate-50/70 text-xs font-bold uppercase tracking-wider text-slate-500">
+              <tr class="border-b border-slate-100 bg-slate-50/70 text-xs font-bold uppercase tracking-wider text-slate-500 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-400">
                 <th class="px-6 py-4 font-semibold">Photo</th>
                 <th class="px-6 py-4 font-semibold">Supervisor</th>
                 <th class="px-6 py-4 font-semibold">Email</th>
@@ -216,12 +216,12 @@
                 <th class="px-6 py-4 text-center font-semibold">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
               <tr
                 v-for="(supervisor, index) in supervisors"
                 :key="supervisor.id"
                 @click="viewSupervisor(supervisor)"
-                class="cursor-pointer transition-colors hover:bg-slate-50/70"
+                class="cursor-pointer transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-700/30"
               >
                 <!-- Photo -->
                 <td class="whitespace-nowrap px-6 py-4">
@@ -239,15 +239,15 @@
                 <!-- Supervisor Name -->
                 <td class="whitespace-nowrap px-6 py-4">
                   <div>
-                    <div class="font-bold text-slate-900 flex items-center gap-1.5">
+                    <div class="font-bold text-slate-900 flex items-center gap-1.5 dark:text-slate-100">
                       {{ getSupervisorName(supervisor) }}
                     </div>
-                    <span class="text-xs text-slate-400 font-medium">Supervisor</span>
+                    <span class="text-xs text-slate-400 font-medium dark:text-slate-500">Supervisor</span>
                   </div>
                 </td>
 
                 <!-- Email -->
-                <td class="whitespace-nowrap px-6 py-4 text-slate-600">
+                <td class="whitespace-nowrap px-6 py-4 text-slate-600 dark:text-slate-400">
                   <div class="flex items-center gap-1.5 group max-w-[220px]">
                     <span class="truncate" :title="supervisor.email">{{ supervisor.email }}</span>
                     <button
@@ -263,7 +263,7 @@
                 </td>
 
                 <!-- Phone -->
-                <td class="whitespace-nowrap px-6 py-4 text-slate-600 font-medium">
+                <td class="whitespace-nowrap px-6 py-4 text-slate-600 font-medium dark:text-slate-400">
                   <a
                     v-if="supervisor.phone"
                     :href="`tel:${supervisor.phone}`"

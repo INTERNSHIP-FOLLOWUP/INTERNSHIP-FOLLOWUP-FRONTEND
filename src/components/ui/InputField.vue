@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-1.5">
-    <label :for="inputId" class="block text-sm font-medium text-slate-700">
+    <label :for="inputId" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
       {{ label }}
       <span v-if="required" class="text-red-500 ml-0.5">*</span>
     </label>
@@ -8,7 +8,7 @@
     <div class="relative">
       <span
         v-if="icon"
-        class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400"
+        class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 dark:text-slate-500"
         aria-hidden="true"
       >
         <component :is="icon" class="h-5 w-5" />
@@ -25,12 +25,12 @@
         :aria-invalid="!!error"
         :aria-describedby="error ? errorId : undefined"
         v-bind="$attrs"
-        class="block w-full rounded-xl border px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 transition-all duration-200 ease-in-out outline-none font-normal"
+        class="block w-full rounded-xl border px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 transition-all duration-200 ease-in-out outline-none font-normal dark:text-slate-100 dark:placeholder-slate-500"
         :class="[
           icon ? 'pl-11' : 'pl-4',
           error
-            ? 'border-red-300 bg-red-50/50 ring-1 ring-red-400/20 focus:border-red-500 focus:ring-2 focus:ring-red-500/20'
-            : 'border-blue-100/60 bg-[#EDF4FE] focus:bg-white focus:border-[#21BAEA] focus:ring-2 focus:ring-[#21BAEA]/20',
+            ? 'border-red-300 bg-red-50/50 ring-1 ring-red-400/20 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 dark:border-red-700 dark:bg-red-950/30 dark:ring-red-800/30'
+            : 'border-blue-100/60 bg-[#EDF4FE] focus:bg-white focus:border-[#21BAEA] focus:ring-2 focus:ring-[#21BAEA]/20 dark:border-slate-600 dark:bg-slate-700 dark:focus:bg-slate-700 dark:focus:border-[#3B82F6]',
         ]"
         @input="onInput"
         @blur="emit('blur')"
@@ -40,7 +40,7 @@
     <p
       v-if="error"
       :id="errorId"
-      class="text-sm text-error flex items-center gap-1 mt-1"
+      class="text-sm text-error flex items-center gap-1 mt-1 dark:text-red-400"
       role="alert"
     >
       <svg class="h-4 w-4 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">

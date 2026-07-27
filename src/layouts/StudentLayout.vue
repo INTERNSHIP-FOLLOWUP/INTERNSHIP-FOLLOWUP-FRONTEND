@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen overflow-hidden bg-gray-50">
+  <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-slate-900">
     <!-- Mobile overlay -->
     <transition name="fade">
       <div
@@ -91,11 +91,11 @@
     <div class="flex flex-1 flex-col lg:pl-0">
       <!-- Header -->
       <header
-        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6"
+        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6 dark:border-slate-700 dark:bg-slate-800/80"
       >
         <div class="flex items-center gap-3">
           <button
-            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden"
+            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-300"
             @click="sidebarOpen = !sidebarOpen"
             aria-label="Toggle navigation"
           >
@@ -116,13 +116,13 @@
               />
             </svg>
           </button>
-          <h2 class="text-lg font-semibold text-gray-800">{{ pageTitle }}</h2>
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-slate-100">{{ pageTitle }}</h2>
         </div>
 
         <div class="flex items-center gap-2">
           <!-- Notifications -->
           <button
-            class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -140,10 +140,24 @@
             </span>
           </button>
 
+          <!-- Dark Mode Toggle -->
+          <button
+            @click="themeStore.setDarkMode(!themeStore.darkMode)"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+            :title="themeStore.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+          >
+            <svg v-if="!themeStore.darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <svg v-else class="h-5 w-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </button>
+
           <!-- User dropdown -->
           <div class="relative">
             <button
-              class="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100"
+              class="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-700"
               @click.stop="dropdownOpen = !dropdownOpen"
             >
               <div
@@ -163,10 +177,10 @@
                 </div>
               </div>
               <div class="hidden text-left md:block">
-                <p class="text-sm font-medium leading-tight text-gray-700">
+                <p class="text-sm font-medium leading-tight text-gray-700 dark:text-slate-300">
                   {{ user?.name }}
                 </p>
-                <p class="text-xs leading-tight text-gray-400">Student</p>
+                <p class="text-xs leading-tight text-gray-400 dark:text-slate-500">Student</p>
               </div>
               <svg
                 class="h-4 w-4 text-gray-400 transition-transform"
@@ -187,19 +201,19 @@
             <transition name="dropdown">
               <div
                 v-if="dropdownOpen"
-                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-gray-100 bg-white py-1 shadow-lg ring-1 ring-black/5"
+                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-gray-100 bg-white py-1 shadow-lg ring-1 ring-black/5 dark:border-slate-700 dark:bg-slate-800"
                 @click="dropdownOpen = false"
               >
-                <div class="border-b border-gray-100 px-4 py-3">
-                  <p class="text-sm font-medium text-gray-900">{{ user?.name }}</p>
-                  <p class="truncate text-xs text-gray-500">{{ user?.email }}</p>
+                <div class="border-b border-gray-100 px-4 py-3 dark:border-slate-700">
+                  <p class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ user?.name }}</p>
+                  <p class="truncate text-xs text-gray-500 dark:text-slate-400">{{ user?.email }}</p>
                 </div>
                 <router-link
                   to="/student/profile"
-                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
                 >
                   <svg
-                    class="h-4.5 w-4.5 text-gray-400"
+                    class="h-4.5 w-4.5 text-gray-400 dark:text-slate-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -219,10 +233,10 @@
                   </svg>
                   Profile Settings
                 </router-link>
-                <hr class="my-1 border-gray-100" />
+                <hr class="my-1 border-gray-100 dark:border-slate-700" />
                 <button
                   @click="openLogoutModal"
-                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
+                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50 dark:hover:bg-red-950/30"
                 >
                   <svg
                     class="h-4.5 w-4.5 text-red-500"
@@ -264,17 +278,17 @@
         @click="closeLogoutModal"
       >
         <div
-          class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl"
+          class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800"
           @click.stop
         >
-          <h3 id="logout-modal-title" class="text-base font-semibold text-slate-900">
+          <h3 id="logout-modal-title" class="text-base font-semibold text-slate-900 dark:text-slate-100">
             Are you sure you want to log out?
           </h3>
-          <p class="mt-1 text-sm text-slate-600">You can cancel if you changed your mind.</p>
+          <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">You can cancel if you changed your mind.</p>
 
           <div class="mt-5 flex items-center justify-end gap-3">
             <button
-              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
               @click="closeLogoutModal"
               :disabled="loggingOut"
             >
@@ -298,9 +312,11 @@
 import { ref, computed, onMounted, onUnmounted, h, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useThemeStore } from '@/stores/theme'
 
 const route = useRoute()
 const auth = useAuthStore()
+const themeStore = useThemeStore()
 
 const sidebarOpen = ref(false)
 const dropdownOpen = ref(false)

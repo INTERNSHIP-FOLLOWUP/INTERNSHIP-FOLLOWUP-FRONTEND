@@ -14,7 +14,7 @@
         type="button"
         @click="refresh"
         :disabled="loading"
-        class="inline-flex items-center gap-2 rounded-xl border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm font-medium text-[#6B7280] transition-all hover:border-[#2563EB]/20 hover:bg-[#2563EB]/5 hover:text-[#2563EB] disabled:opacity-50"
+        class="inline-flex items-center gap-2 rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white px-4 py-2.5 text-sm font-medium text-[#6B7280] transition-all hover:border-[#2563EB]/20 hover:bg-[#2563EB]/5 hover:text-[#2563EB] disabled:opacity-50"
       >
         <svg
           class="h-4 w-4"
@@ -40,7 +40,7 @@
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <!-- Total Issues -->
       <div
-        class="group rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+        class="group rounded-2xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
       >
         <div class="flex items-start justify-between">
           <div class="space-y-1">
@@ -65,7 +65,7 @@
 
       <!-- Open Issues -->
       <div
-        class="group rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+        class="group rounded-2xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
       >
         <div class="flex items-start justify-between">
           <div class="space-y-1">
@@ -90,7 +90,7 @@
 
       <!-- In Progress -->
       <div
-        class="group rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+        class="group rounded-2xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
       >
         <div class="flex items-start justify-between">
           <div class="space-y-1">
@@ -115,7 +115,7 @@
 
       <!-- Resolved -->
       <div
-        class="group rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+        class="group rounded-2xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
       >
         <div class="flex items-start justify-between">
           <div class="space-y-1">
@@ -142,7 +142,7 @@
     <!-- ════════════════════════════════════════════
          Search & Filters Bar
          ════════════════════════════════════════════ -->
-    <div class="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm">
+    <div class="rounded-2xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-5 shadow-sm">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
         <!-- Search -->
         <div class="lg:col-span-2">
@@ -160,7 +160,7 @@
               v-model="searchQuery"
               type="text"
               placeholder="Search by title or student name..."
-              class="h-10 w-full rounded-xl border border-[#E5E7EB] bg-white py-2 pl-10 pr-10 text-sm text-[#111827] placeholder-[#9CA3AF] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10"
+              class="h-10 w-full rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white py-2 pl-10 pr-10 text-sm text-[#111827] placeholder-[#9CA3AF] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10"
             />
             <button
               v-if="searchQuery.length > 0"
@@ -185,7 +185,7 @@
           <select
             v-model="statusFilter"
             @change="onFilterChange"
-            class="h-10 w-full rounded-xl border border-[#E5E7EB] bg-white px-3.5 pr-8 text-sm text-[#111827] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10 appearance-none"
+            class="h-10 w-full rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white px-3.5 pr-8 text-sm text-[#111827] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10 appearance-none"
           >
             <option value="">All Statuses</option>
             <option value="Open">Open</option>
@@ -203,7 +203,7 @@
           <select
             v-model="priorityFilter"
             @change="onFilterChange"
-            class="h-10 w-full rounded-xl border border-[#E5E7EB] bg-white px-3.5 pr-8 text-sm text-[#111827] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10 appearance-none"
+            class="h-10 w-full rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white px-3.5 pr-8 text-sm text-[#111827] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10 appearance-none"
           >
             <option value="">All Priorities</option>
             <option value="Low">Low</option>
@@ -218,7 +218,7 @@
           <button
             type="button"
             @click="resetFilters"
-            class="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-4 text-sm font-medium text-[#6B7280] transition-all hover:border-[#EF4444]/30 hover:bg-[#FEF2F2] hover:text-[#EF4444] disabled:opacity-40"
+            class="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white px-4 text-sm font-medium text-[#6B7280] transition-all hover:border-[#EF4444]/30 hover:bg-[#FEF2F2] hover:text-[#EF4444] disabled:opacity-40"
             :disabled="!hasActiveFilters"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -276,7 +276,7 @@
       <div
         v-for="i in 6"
         :key="i"
-        class="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm"
+        class="rounded-2xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-5 shadow-sm"
       >
         <div class="flex items-center gap-3">
           <div class="h-10 w-10 animate-pulse rounded-full bg-[#E5E7EB]" />
@@ -305,7 +305,7 @@
       <div
         v-for="issue in paginatedIssues"
         :key="issue.id"
-        class="group relative flex flex-col rounded-2xl border border-[#E5E7EB] bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[#2563EB]/20 hover:shadow-md"
+        class="group relative flex flex-col rounded-2xl border border-[#E5E7EB] dark:bg-slate-800 bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[#2563EB]/20 hover:shadow-md"
       >
         <!-- Student Info Header -->
         <div class="flex items-center gap-3 border-b border-[#F3F4F6] px-5 py-4">
@@ -386,7 +386,7 @@
           <button
             type="button"
             @click="openDetail(issue)"
-            class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#E5E7EB] bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition-all hover:border-[#2563EB]/30 hover:bg-[#EFF6FF] hover:text-[#2563EB]"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white px-4 py-2 text-sm font-semibold text-[#374151] transition-all hover:border-[#2563EB]/30 hover:bg-[#EFF6FF] hover:text-[#2563EB]"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -401,7 +401,7 @@
     <!-- Empty / No Results State -->
     <div
       v-else-if="!loading"
-      class="flex flex-col items-center justify-center rounded-2xl border border-[#E5E7EB] bg-white px-6 py-20 text-center"
+      class="flex flex-col items-center justify-center rounded-2xl border border-[#E5E7EB] dark:bg-slate-800 bg-white px-6 py-20 text-center"
     >
       <div class="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#F9FAFB]">
         <svg class="h-10 w-10 text-[#D1D5DB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -429,7 +429,7 @@
          ════════════════════════════════════════════ -->
     <div
       v-if="totalPages > 1"
-      class="flex flex-col items-center justify-between gap-3 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm sm:flex-row sm:px-6"
+      class="flex flex-col items-center justify-between gap-3 rounded-2xl border border-[#E5E7EB] dark:bg-slate-800 bg-white px-4 py-3 shadow-sm sm:flex-row sm:px-6"
     >
       <p class="text-xs text-[#6B7280]">
         Showing
@@ -440,7 +440,7 @@
       </p>
       <div class="flex items-center gap-2">
         <button
-          class="rounded-xl border border-[#E5E7EB] px-3 py-1.5 text-xs font-semibold text-[#6B7280] transition-colors hover:bg-gray-50 disabled:opacity-60"
+          class="rounded-xl border border-[#E5E7EB] px-3 py-1.5 text-xs font-semibold text-[#6B7280] transition-colors hover:dark:bg-slate-700 bg-gray-50 disabled:opacity-60"
           :disabled="currentPage === 1"
           @click="goToPage(currentPage - 1)"
         >
@@ -453,14 +453,14 @@
               v-else
               @click="goToPage(page as number)"
               class="flex h-8 min-w-[2rem] items-center justify-center rounded-xl px-2 text-xs font-semibold transition-colors"
-              :class="page === currentPage ? 'bg-[#2563EB] text-white' : 'text-[#6B7280] hover:bg-gray-100'"
+              :class="page === currentPage ? 'bg-[#2563EB] text-white' : 'text-[#6B7280] hover:dark:bg-slate-600 bg-gray-100'"
             >
               {{ page }}
             </button>
           </template>
         </div>
         <button
-          class="rounded-xl border border-[#E5E7EB] px-3 py-1.5 text-xs font-semibold text-[#6B7280] transition-colors hover:bg-gray-50 disabled:opacity-60"
+          class="rounded-xl border border-[#E5E7EB] px-3 py-1.5 text-xs font-semibold text-[#6B7280] transition-colors hover:dark:bg-slate-700 bg-gray-50 disabled:opacity-60"
           :disabled="currentPage === totalPages"
           @click="goToPage(currentPage + 1)"
         >
@@ -473,7 +473,7 @@
           <select
             v-model="perPage"
             @change="onPerPageChange"
-            class="h-8 rounded-xl border border-[#E5E7EB] bg-white px-2 text-xs text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10"
+            class="h-8 rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white px-2 text-xs text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10"
           >
             <option :value="6">6</option>
             <option :value="12">12</option>
@@ -495,7 +495,7 @@
       @click.self="closeDetail"
     >
       <div
-        class="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl bg-white shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
+        class="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl dark:bg-slate-800 bg-white shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
       >
         <!-- Header -->
         <div class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-100 px-6 py-4 bg-slate-50/50">
@@ -602,7 +602,7 @@
                 target="_blank"
                 class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm transition-all hover:border-[#2563EB]/30 hover:bg-[#EFF6FF] group"
               >
-                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-slate-400 group-hover:text-[#2563EB] transition-colors">
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg dark:bg-slate-800 bg-white text-slate-400 group-hover:text-[#2563EB] transition-colors">
                   <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 000 2.828 2 2 0 002.828 0L18 10m0 0h-6m6 0v6" />
                   </svg>
@@ -664,7 +664,7 @@
                   >
                     <div
                       class="h-3 w-3 rounded-full border-2"
-                      :class="idx === 0 ? 'border-[#2563EB] bg-[#2563EB]' : 'border-slate-300 bg-white'"
+                      :class="idx === 0 ? 'border-[#2563EB] bg-[#2563EB]' : 'border-slate-300 dark:bg-slate-800 bg-white'"
                     />
                   </div>
 
@@ -691,7 +691,7 @@
           <button
             type="button"
             @click="closeDetail"
-            class="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300"
+            class="rounded-xl border border-slate-200 dark:bg-slate-800 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300"
           >
             Close
           </button>

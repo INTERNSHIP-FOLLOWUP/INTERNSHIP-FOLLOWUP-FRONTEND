@@ -3,10 +3,10 @@
     <!-- Header -->
     <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">
           {{ context === 'student' ? 'My Internship Issues' : (context === 'admin' ? 'Global Issue Management' : 'Tutor Issue Management') }}
         </h1>
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {{ context === 'student' ? 'Report challenges or issues during your internship and track tutor resolution.' : 'Track, assign, update, and resolve internship project issues.' }}
         </p>
       </div>
@@ -32,12 +32,12 @@
       <div
         v-for="stat in issueStore.statsItems"
         :key="stat.label"
-        class="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+        class="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
       >
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-slate-500">{{ stat.label }}</p>
-            <p class="mt-1 text-2xl font-bold text-gray-900">{{ stat.value }}</p>
+            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ stat.label }}</p>
+            <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-slate-100">{{ stat.value }}</p>
           </div>
           <div
             class="flex h-10 w-10 items-center justify-center rounded-xl text-white transition-transform duration-200 group-hover:scale-110"
@@ -59,11 +59,11 @@
     <!-- Error -->
     <div
       v-if="issueStore.error"
-      class="flex flex-col gap-3 rounded-2xl border border-red-200 bg-red-50 p-4"
+      class="flex flex-col gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-950/30"
     >
-      <p class="text-sm font-medium text-red-700">{{ issueStore.error }}</p>
+      <p class="text-sm font-medium text-red-700 dark:text-red-400">{{ issueStore.error }}</p>
       <button
-        class="self-start rounded-xl border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100"
+        class="self-start rounded-xl border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/50"
         @click="retry"
       >
         Retry
@@ -71,21 +71,21 @@
     </div>
 
     <!-- Filters -->
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
         <div class="lg:col-span-2">
-          <label class="mb-1 block text-xs font-semibold text-slate-500">Search</label>
+          <label class="mb-1 block text-xs font-semibold text-slate-500 dark:text-slate-400">Search</label>
           <input
             v-model="localSearch"
-            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-colors focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
+            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-colors focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
             placeholder="Search by title or student name..."
           />
         </div>
         <div>
-          <label class="mb-1 block text-xs font-semibold text-slate-500">Status</label>
+          <label class="mb-1 block text-xs font-semibold text-slate-500 dark:text-slate-400">Status</label>
           <select
             v-model="localStatus"
-            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-colors focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
+            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-colors focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           >
             <option value="">All</option>
             <option value="Open">Open</option>
@@ -95,10 +95,10 @@
           </select>
         </div>
         <div>
-          <label class="mb-1 block text-xs font-semibold text-slate-500">Priority</label>
+          <label class="mb-1 block text-xs font-semibold text-slate-500 dark:text-slate-400">Priority</label>
           <select
             v-model="localPriority"
-            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-colors focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20"
+            class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none transition-colors focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           >
             <option value="">All</option>
             <option value="Low">Low</option>
@@ -116,7 +116,7 @@
             Search
           </button>
           <button
-            class="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50"
+            class="rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
             @click="resetFilters"
           >
             Reset
@@ -130,13 +130,13 @@
       <div
         v-for="i in 6"
         :key="i"
-        class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+        class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800"
       >
-        <div class="h-4 w-24 animate-pulse rounded bg-gray-100" />
-        <div class="mt-4 h-5 w-3/4 animate-pulse rounded bg-gray-100" />
-        <div class="mt-3 h-3 w-full animate-pulse rounded bg-gray-100" />
-        <div class="mt-3 h-3 w-5/6 animate-pulse rounded bg-gray-100" />
-        <div class="mt-5 h-9 w-full animate-pulse rounded-xl bg-gray-100" />
+        <div class="h-4 w-24 animate-pulse rounded bg-gray-100 dark:bg-slate-700" />
+        <div class="mt-4 h-5 w-3/4 animate-pulse rounded bg-gray-100 dark:bg-slate-700" />
+        <div class="mt-3 h-3 w-full animate-pulse rounded bg-gray-100 dark:bg-slate-700" />
+        <div class="mt-3 h-3 w-5/6 animate-pulse rounded bg-gray-100 dark:bg-slate-700" />
+        <div class="mt-5 h-9 w-full animate-pulse rounded-xl bg-gray-100 dark:bg-slate-700" />
       </div>
     </div>
 
@@ -148,11 +148,11 @@
       <div
         v-for="issue in issueStore.paginatedIssues"
         :key="issue.id"
-        class="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+        class="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
       >
         <div class="flex items-start justify-between">
           <span
-            class="inline-flex items-center rounded-lg bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600"
+            class="inline-flex items-center rounded-lg bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600 dark:bg-slate-700 dark:text-slate-300"
           >
             {{ issue.id }}
           </span>
@@ -164,17 +164,17 @@
           </span>
         </div>
 
-        <h3 class="mt-3 text-base font-bold leading-snug text-gray-900">
+        <h3 class="mt-3 text-base font-bold leading-snug text-gray-900 dark:text-slate-100">
           {{ issue.title }}
         </h3>
-        <p class="mt-2 text-sm leading-relaxed text-slate-500 line-clamp-2">
+        <p class="mt-2 text-sm leading-relaxed text-slate-500 line-clamp-2 dark:text-slate-400">
           {{ issue.description }}
         </p>
 
-        <div class="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+        <div class="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
           <div class="flex items-center gap-1.5">
             <svg
-              class="h-3.5 w-3.5 text-gray-400"
+              class="h-3.5 w-3.5 text-gray-400 dark:text-slate-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -192,11 +192,11 @@
                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
               />
             </svg>
-            <span class="font-medium text-gray-700">{{ issue.reporter }}</span>
+            <span class="font-medium text-gray-700 dark:text-slate-300">{{ issue.reporter }}</span>
           </div>
           <div class="flex items-center gap-1.5">
             <svg
-              class="h-3.5 w-3.5 text-gray-400"
+              class="h-3.5 w-3.5 text-gray-400 dark:text-slate-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -208,14 +208,14 @@
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
             </svg>
-            <span class="text-gray-700">{{ issue.assignedTo }}</span>
+            <span class="text-gray-700 dark:text-slate-300">{{ issue.assignedTo }}</span>
           </div>
         </div>
 
-        <div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+        <div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
           <span class="flex items-center gap-1.5">
             <svg
-              class="h-3.5 w-3.5 text-gray-400"
+              class="h-3.5 w-3.5 text-gray-400 dark:text-slate-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -231,7 +231,7 @@
           </span>
           <span class="flex items-center gap-1.5">
             <svg
-              class="h-3.5 w-3.5 text-gray-400"
+              class="h-3.5 w-3.5 text-gray-400 dark:text-slate-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -255,7 +255,7 @@
 
         <div
           v-if="issue.attachments && issue.attachments > 0"
-          class="mt-3 flex items-center gap-1.5 text-xs text-slate-500"
+          class="mt-3 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400"
         >
           <svg
             class="h-3.5 w-3.5 text-gray-400"
@@ -276,7 +276,7 @@
         <!-- Role-based Action Buttons -->
         <div class="mt-5 grid grid-cols-2 gap-2" v-if="context === 'student'">
           <button
-            class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+            class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
             @click="openDetail(issue)"
           >
             View Details
@@ -291,7 +291,7 @@
         </div>
         <div class="mt-5 grid grid-cols-4 gap-2" v-else>
           <button
-            class="rounded-xl border border-gray-200 px-2.5 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-gray-50"
+            class="rounded-xl border border-gray-200 px-2.5 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
             @click="openDetail(issue)"
           >
             View
@@ -333,9 +333,9 @@
     <!-- Empty state -->
     <div
       v-else-if="!issueStore.loading && (issueStore.isEmpty || !issueStore.paginatedIssues.length)"
-      class="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-14 text-center"
+      class="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-14 text-center dark:border-slate-700 dark:bg-slate-800"
     >
-      <svg class="h-12 w-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="h-12 w-12 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -343,10 +343,10 @@
           d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
         />
       </svg>
-      <h3 class="mt-4 text-lg font-semibold text-gray-900">
+      <h3 class="mt-4 text-lg font-semibold text-gray-900 dark:text-slate-100">
         {{ (localSearch || localStatus || localPriority) ? 'No Matching Issues Found' : 'No Issues Found' }}
       </h3>
-      <p class="mt-2 max-w-md text-sm text-slate-500">
+      <p class="mt-2 max-w-md text-sm text-slate-500 dark:text-slate-400">
         {{ (localSearch || localStatus || localPriority) ? 'No issues match your selected filters. Try clearing or adjusting your search parameters.' : 'There are currently no reported issues. Click the button below to create the first issue.' }}
       </p>
       <button
@@ -369,18 +369,18 @@
     <!-- Pagination -->
     <div
       v-if="issueStore.pagination.totalPages > 1"
-      class="flex flex-col items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3 sm:flex-row sm:px-6"
+      class="flex flex-col items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3 sm:flex-row sm:px-6 dark:bg-slate-800"
     >
-      <p class="text-xs text-slate-500">
+      <p class="text-xs text-slate-500 dark:text-slate-400">
         Showing
-        <span class="font-semibold text-gray-700">{{ displayRange }}</span>
+        <span class="font-semibold text-gray-700 dark:text-slate-300">{{ displayRange }}</span>
         of
-        <span class="font-semibold text-gray-700">{{ issueStore.pagination.totalItems }}</span>
+        <span class="font-semibold text-gray-700 dark:text-slate-300">{{ issueStore.pagination.totalItems }}</span>
         issues
       </p>
       <div class="flex items-center gap-2">
         <button
-          class="rounded-xl border border-gray-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-gray-50 disabled:opacity-60"
+          class="rounded-xl border border-gray-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-gray-50 disabled:opacity-60 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
           :disabled="issueStore.pagination.page === 1"
           @click="issueStore.setPage(issueStore.pagination.page - 1)"
         >
@@ -394,7 +394,7 @@
             :class="
               p === issueStore.pagination.page
                 ? 'bg-[#2563EB] text-white'
-                : 'text-slate-700 hover:bg-gray-100'
+                : 'text-slate-700 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700/50'
             "
             @click="issueStore.setPage(p)"
           >
@@ -402,7 +402,7 @@
           </button>
         </div>
         <button
-          class="rounded-xl border border-gray-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-gray-50 disabled:opacity-60"
+          class="rounded-xl border border-gray-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-gray-50 disabled:opacity-60 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
           :disabled="issueStore.pagination.page === issueStore.pagination.totalPages"
           @click="issueStore.setPage(issueStore.pagination.page + 1)"
         >
@@ -417,24 +417,24 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm transition-opacity"
     >
       <div
-        class="flex max-h-[90vh] w-full max-w-xl flex-col rounded-2xl bg-white shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
+        class="flex max-h-[90vh] w-full max-w-xl flex-col rounded-2xl bg-white shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in-95 duration-200 dark:border-slate-700 dark:bg-slate-800"
       >
         <!-- Header -->
-        <div class="flex shrink-0 items-center justify-between border-b border-slate-100 px-6 py-4 bg-slate-50/50">
+        <div class="flex shrink-0 items-center justify-between border-b border-slate-100 px-6 py-4 bg-slate-50/50 dark:border-slate-700 dark:bg-slate-800/80">
           <div>
-            <h2 class="text-base font-bold text-slate-900 sm:text-lg">
+            <h2 class="text-base font-bold text-slate-900 sm:text-lg dark:text-slate-100">
               {{ formModal.mode === 'create' ? 'New Issue' : 'Update Issue' }}
             </h2>
-            <p class="mt-0.5 text-xs text-slate-500">
+            <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
               Fill in the issue details below to keep shared progress clear.
             </p>
           </div>
           <button
             type="button"
-            class="rounded-xl p-1.5 text-slate-400 hover:bg-slate-200/60 hover:text-slate-600 transition-colors"
+            class="rounded-xl p-1.5 text-slate-400 hover:bg-slate-200/60 hover:text-slate-600 transition-colors dark:hover:bg-slate-700 dark:hover:text-slate-300"
             @click="closeFormModal"
             aria-label="Close modal"
-          >
+  >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -444,36 +444,36 @@
         <!-- Body -->
         <div class="flex-1 overflow-y-auto px-6 py-5 space-y-4">
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-700">
+            <label class="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">
               Issue Title <span class="text-red-500">*</span>
             </label>
             <input
               v-model="formModal.form.title"
-              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm"
+              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-400 dark:hover:border-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
               :disabled="closedOnlyView(formModal.item!)"
               placeholder="Enter issue title"
             />
           </div>
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-700">
+            <label class="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">
               Description <span class="text-red-500">*</span>
             </label>
             <textarea
               v-model="formModal.form.description"
               rows="3"
-              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm resize-none"
+              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm resize-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-400 dark:hover:border-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
               :disabled="closedOnlyView(formModal.item!)"
               placeholder="What's the issue?"
             />
           </div>
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-700">
+              <label class="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">
                 Priority <span class="text-red-500">*</span>
               </label>
               <select
                 v-model="formModal.form.priority"
-                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm bg-white"
+                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:border-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
                 :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
               >
                 <option value="">Select priority</option>
@@ -484,12 +484,12 @@
               </select>
             </div>
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-700">
+              <label class="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">
                 Status <span class="text-red-500">*</span>
               </label>
               <select
                 v-model="formModal.form.status"
-                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm bg-white"
+                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:border-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
                 :disabled="
                   !['Open', 'In Progress', 'Resolved', 'Closed'].includes(
                     formModal.form.status || '',
@@ -507,12 +507,12 @@
           </div>
           <!-- Student selector - shown for tutor and admin contexts -->
           <div v-if="context === 'tutor'">
-            <label class="mb-1 block text-xs font-semibold text-slate-700">
+            <label class="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">
               Assign To Student <span class="text-red-500">*</span>
             </label>
             <select
               v-model="formModal.form.studentId"
-              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 shadow-sm bg-white"
+              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 shadow-sm bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:border-slate-500"
             >
               <option value="">Select student</option>
               <option
@@ -525,12 +525,12 @@
             </select>
           </div>
           <div v-else-if="context === 'admin'">
-            <label class="mb-1 block text-xs font-semibold text-slate-700">
+            <label class="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">
               Student <span class="text-red-500">*</span>
             </label>
             <select
               v-model="formModal.form.studentId"
-              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 shadow-sm bg-white"
+              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 shadow-sm bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:border-slate-500"
             >
               <option value="">Select student</option>
               <option
@@ -543,10 +543,10 @@
             </select>
           </div>
           <div v-else>
-            <label class="mb-1 block text-xs font-semibold text-slate-700">Assign To</label>
+            <label class="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">Assign To</label>
             <select
               v-model="formModal.form.assignedUserId"
-              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm bg-white"
+              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:border-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
               :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
             >
               <option value="">Assign an available contact</option>
@@ -556,26 +556,26 @@
             </select>
           </div>
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-700">Due Date</label>
+            <label class="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">Due Date</label>
             <input
               v-model="formModal.form.dueDate"
               type="date"
-              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm bg-white"
+              class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 hover:border-slate-300 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed shadow-sm bg-white dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:hover:border-slate-500 dark:disabled:bg-slate-800 dark:disabled:text-slate-500"
               :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
             />
           </div>
           <!-- Existing attachments display (tutor edit mode) -->
           <div v-if="context === 'tutor' && formModal.mode === 'update' && existingAttachments.length">
-            <label class="mb-1 block text-xs font-semibold text-slate-700">Current Attachments</label>
-            <ul class="rounded-xl border border-slate-200 divide-y divide-slate-100 bg-slate-50/50">
+            <label class="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">Current Attachments</label>
+            <ul class="rounded-xl border border-slate-200 divide-y divide-slate-100 bg-slate-50/50 dark:border-slate-600 dark:divide-slate-700 dark:bg-slate-800/50">
               <li
                 v-for="att in existingAttachments"
                 :key="att.id"
                 class="flex items-center justify-between px-3.5 py-2"
               >
-                <div class="flex items-center gap-2 text-xs text-slate-600">
+                <div class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
                   <svg
-                    class="h-4 w-4 shrink-0 text-slate-400"
+                    class="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -594,7 +594,7 @@
                   >
                     {{ att.filename }}
                   </a>
-                  <span v-if="att.file_size" class="text-slate-400">
+                  <span v-if="att.file_size" class="text-slate-400 dark:text-slate-500">
                     ({{ formatFileSize(att.file_size) }})
                   </span>
                 </div>
@@ -602,14 +602,14 @@
             </ul>
           </div>
           <div>
-            <label class="mb-1 block text-xs font-semibold text-slate-700">Attachments</label>
+            <label class="mb-1 block text-xs font-semibold text-slate-700 dark:text-slate-300">Attachments</label>
             <button
               type="button"
-              class="group flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 p-4 text-center transition-all duration-200 hover:border-[#2563EB] hover:bg-blue-50/40 disabled:cursor-not-allowed disabled:opacity-60 bg-slate-50/40"
+              class="group flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 p-4 text-center transition-all duration-200 hover:border-[#2563EB] hover:bg-blue-50/40 disabled:cursor-not-allowed disabled:opacity-60 bg-slate-50/40 dark:border-slate-600 dark:hover:border-[#3B82F6] dark:hover:bg-blue-950/30 dark:bg-slate-800/40"
               :disabled="formModal.mode === 'update' && closedOnlyView(formModal.item!)"
               @click="fileInputRef?.click()"
             >
-              <div class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-400 group-hover:bg-blue-100 group-hover:text-[#2563EB] transition-colors">
+              <div class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-400 group-hover:bg-blue-100 group-hover:text-[#2563EB] transition-colors dark:bg-slate-700 dark:text-slate-500 dark:group-hover:bg-blue-950/40 dark:group-hover:text-[#3B82F6]">
                 <svg
                   class="h-5 w-5"
                   fill="none"
@@ -624,10 +624,10 @@
                   />
                 </svg>
               </div>
-              <p class="mt-2 text-xs font-semibold text-slate-700 group-hover:text-[#2563EB]">
+              <p class="mt-2 text-xs font-semibold text-slate-700 group-hover:text-[#2563EB] dark:text-slate-300 dark:group-hover:text-[#3B82F6]">
                 Click or drag & drop files here
               </p>
-              <p class="mt-0.5 text-[11px] text-slate-400">PDF, DOCX, PNG, ZIP</p>
+              <p class="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">PDF, DOCX, PNG, ZIP</p>
             </button>
             <input
               ref="fileInputRef"
@@ -638,16 +638,16 @@
               @change="handleFiles"
             />
             <div v-if="formModal.form.files.length" class="mt-2 space-y-1.5">
-              <p class="text-xs font-semibold text-slate-600">Attached Files:</p>
+              <p class="text-xs font-semibold text-slate-600 dark:text-slate-400">Attached Files:</p>
               <div
                 v-for="(file, idx) in formModal.form.files"
                 :key="file.name + idx"
-                class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-700"
+                class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300"
               >
                 <span class="truncate font-medium">{{ file.name }}</span>
                 <button
                   type="button"
-                  class="ml-2 text-slate-400 hover:text-red-600 transition-colors"
+                  class="ml-2 text-slate-400 hover:text-red-600 transition-colors dark:text-slate-500 dark:hover:text-red-400"
                   @click="removeFile(idx)"
                   title="Remove file"
                 >
@@ -659,25 +659,25 @@
           <!-- Validation errors display (only shown after submit attempt) -->
           <div
             v-if="showValidationErrors && validationErrors.length"
-            class="rounded-xl border border-red-200 bg-red-50/80 p-3.5"
+            class="rounded-xl border border-red-200 bg-red-50/80 p-3.5 dark:border-red-900/50 dark:bg-red-950/30"
           >
-            <div class="flex items-center gap-2 text-xs font-semibold text-red-700">
+            <div class="flex items-center gap-2 text-xs font-semibold text-red-700 dark:text-red-400">
               <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
               Please fix the following errors:
             </div>
-            <ul class="mt-1.5 list-inside list-disc text-xs text-red-600 space-y-0.5">
+            <ul class="mt-1.5 list-inside list-disc text-xs text-red-600 space-y-0.5 dark:text-red-400">
               <li v-for="err in validationErrors" :key="err">{{ err }}</li>
             </ul>
           </div>
         </div>
 
         <!-- Footer -->
-        <div class="flex shrink-0 items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/50 px-6 py-3.5">
+        <div class="flex shrink-0 items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/50 px-6 py-3.5 dark:border-slate-700 dark:bg-slate-800/80">
           <button
             type="button"
-            class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300"
+            class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:border-slate-500"
             @click="closeFormModal"
           >
             Cancel
@@ -704,13 +704,13 @@
       class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm transition-opacity"
     >
       <div
-        class="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl bg-white shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
+        class="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl bg-white shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in-95 duration-200 dark:border-slate-700 dark:bg-slate-800"
       >
         <!-- Header -->
-        <div class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-100 px-6 py-4 bg-slate-50/50">
+        <div class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-100 px-6 py-4 bg-slate-50/50 dark:border-slate-700 dark:bg-slate-800/80">
           <div>
-            <p class="text-xs font-semibold text-slate-400">{{ detailModal.item.id }}</p>
-            <h2 class="text-lg font-bold text-slate-900">{{ detailModal.item.title }}</h2>
+            <p class="text-xs font-semibold text-slate-400 dark:text-slate-500">{{ detailModal.item.id }}</p>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">{{ detailModal.item.title }}</h2>
           </div>
           <div class="flex items-center gap-2">
             <span
@@ -727,7 +727,7 @@
             </span>
             <button
               type="button"
-              class="ml-2 rounded-xl p-1.5 text-slate-400 hover:bg-slate-200/60 hover:text-slate-600 transition-colors"
+              class="ml-2 rounded-xl p-1.5 text-slate-400 hover:bg-slate-200/60 hover:text-slate-600 transition-colors dark:hover:bg-slate-700 dark:hover:text-slate-300"
               @click="detailModal.open = false"
               aria-label="Close detail modal"
             >
@@ -740,37 +740,37 @@
 
         <!-- Body -->
         <div class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
-          <p class="text-sm leading-relaxed text-slate-600">{{ detailModal.item.description }}</p>
+          <p class="text-sm leading-relaxed text-slate-600 dark:text-slate-400">{{ detailModal.item.description }}</p>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Reporter</p>
-              <p class="mt-1 text-sm font-semibold text-slate-900">
+            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4 dark:border-slate-600 dark:bg-slate-800/50">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Reporter</p>
+              <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
                 {{ detailModal.item.reporter }}
               </p>
             </div>
-            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4 dark:border-slate-600 dark:bg-slate-800/50">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
                 Assigned To
               </p>
-              <p class="mt-1 text-sm font-semibold text-slate-900">
+              <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
                 {{ detailModal.item.assignedTo }}
               </p>
             </div>
-            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Created</p>
-              <p class="mt-1 text-sm font-semibold text-slate-900">
+            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4 dark:border-slate-600 dark:bg-slate-800/50">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Created</p>
+              <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
                 {{ detailModal.item.createdAt }}
               </p>
             </div>
-            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Updated</p>
-              <p class="mt-1 text-sm font-semibold text-slate-900">
+            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4 dark:border-slate-600 dark:bg-slate-800/50">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Updated</p>
+              <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
                 {{ detailModal.item.updatedAt }}
               </p>
             </div>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-slate-900">Activity Timeline</h3>
+            <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Activity Timeline</h3>
             <ol class="mt-3 space-y-4">
               <li
                 v-for="event in detailModal.item.history || []"
@@ -778,10 +778,10 @@
                 class="flex gap-3"
               >
                 <div
-                  class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB]/10"
+                  class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB]/10 dark:bg-[#2563EB]/20"
                 >
                   <svg
-                    class="h-4 w-4 text-[#2563EB]"
+                    class="h-4 w-4 text-[#2563EB] dark:text-[#3B82F6]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -795,8 +795,8 @@
                   </svg>
                 </div>
                 <div>
-                  <p class="text-sm font-semibold text-slate-900">{{ event.text }}</p>
-                  <p class="text-xs text-slate-500">{{ event.time }} · {{ event.user }}</p>
+                  <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ event.text }}</p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">{{ event.time }} · {{ event.user }}</p>
                 </div>
               </li>
             </ol>
@@ -804,10 +804,10 @@
         </div>
 
         <!-- Footer -->
-        <div class="flex shrink-0 items-center justify-end border-t border-slate-100 bg-slate-50/50 px-6 py-3.5">
+        <div class="flex shrink-0 items-center justify-end border-t border-slate-100 bg-slate-50/50 px-6 py-3.5 dark:border-slate-700 dark:bg-slate-800/80">
           <button
             type="button"
-            class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300"
+            class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:border-slate-500"
             @click="detailModal.open = false"
           >
             Close

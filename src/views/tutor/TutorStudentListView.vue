@@ -2,18 +2,18 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-slate-900">My Students</h1>
-        <p class="text-sm text-slate-500">
+        <h1 class="text-3xl font-bold dark:text-slate-100 text-slate-900">My Students</h1>
+        <p class="text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">
           Students assigned to you, with quick status and follow-up signals.
         </p>
       </div>
     </div>
 
     <!-- Filters -->
-    <div class="rounded-2xl border border-slate-100 bg-white shadow-sm">
+    <div class="rounded-2xl border dark:border-slate-700 border-slate-100 dark:bg-slate-800 bg-white shadow-sm">
       <div class="flex flex-wrap items-center gap-3 p-4">
         <div class="relative min-w-0 flex-1 basis-[240px]">
-          <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+          <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 dark:text-slate-500 text-slate-400">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
@@ -23,13 +23,13 @@
             v-model="search"
             type="text"
             placeholder="Search by name, email, or code..."
-            class="h-10 w-full rounded-xl border border-slate-200 bg-white py-2 pl-10 pr-10 text-sm text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="h-10 w-full rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white py-2 pl-10 pr-10 text-sm dark:text-slate-200 text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
           <button
             v-if="!!search"
             type="button"
             @click="clearSearchOnly"
-            class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600"
+            class="absolute inset-y-0 right-0 flex items-center pr-3 dark:text-slate-500 text-slate-400 transition-colors hover:dark:text-slate-400 text-slate-600"
             aria-label="Clear search"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -43,7 +43,7 @@
           <select
             v-model="status"
             @change="applyApiIfNeeded"
-            class="h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 transition-all focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="h-10 w-full rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-3.5 text-sm dark:text-slate-200 text-slate-700 transition-all focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
             <option value="">All Statuses</option>
             <option>Assigned</option>
@@ -53,7 +53,7 @@
           </select>
         </div>
 
-        <label class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 cursor-pointer select-none whitespace-nowrap transition-all hover:border-indigo-200">
+        <label class="inline-flex items-center gap-2 rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-3.5 py-2.5 text-sm font-semibold dark:text-slate-200 text-slate-700 cursor-pointer select-none whitespace-nowrap transition-all hover:border-indigo-200">
           <input
             type="checkbox"
             v-model="hasOpenIssue"
@@ -65,17 +65,17 @@
       </div>
     </div>
 
-    <div class="rounded-2xl border border-slate-100 bg-white shadow-sm">
-      <div v-if="store.loading" class="divide-y divide-slate-50">
+    <div class="rounded-2xl border dark:border-slate-700 border-slate-100 dark:bg-slate-800 bg-white shadow-sm">
+      <div v-if="store.loading" class="divide-y dark:divide-slate-700 divide-slate-50">
         <div v-for="n in 8" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse">
-          <div class="h-8 w-8 rounded-full bg-slate-200" />
+          <div class="h-8 w-8 rounded-full dark:bg-slate-600 bg-slate-200" />
           <div class="flex-1 space-y-2">
-            <div class="h-3 w-1/3 rounded bg-slate-200" />
-            <div class="h-3 w-1/4 rounded bg-slate-100" />
+            <div class="h-3 w-1/3 rounded dark:bg-slate-600 bg-slate-200" />
+            <div class="h-3 w-1/4 rounded dark:bg-slate-600 bg-slate-100" />
           </div>
-          <div class="h-3 w-20 rounded bg-slate-200" />
-          <div class="h-3 w-16 rounded bg-slate-200" />
-          <div class="h-5 w-24 rounded-full bg-slate-200" />
+          <div class="h-3 w-20 rounded dark:bg-slate-600 bg-slate-200" />
+          <div class="h-3 w-16 rounded dark:bg-slate-600 bg-slate-200" />
+          <div class="h-5 w-24 rounded-full dark:bg-slate-600 bg-slate-200" />
         </div>
       </div>
 
@@ -110,18 +110,18 @@
       </div>
 
       <div v-else-if="livePendingMessage()" class="px-6 py-10 text-center">
-        <p class="text-sm font-semibold text-slate-700">Type at least {{ MIN_SEARCH_LENGTH }} characters to search.</p>
-        <p class="mt-1 text-xs text-slate-400">Results will update as you type.</p>
+        <p class="text-sm font-semibold dark:text-slate-200 text-slate-700">Type at least {{ MIN_SEARCH_LENGTH }} characters to search.</p>
+        <p class="mt-1 text-xs dark:text-slate-500 text-slate-400">Results will update as you type.</p>
       </div>
 
       <div
         v-else-if="!store.loading && displayed.length === 0"
         class="flex flex-col items-center justify-center px-6 py-16 text-center"
       >
-        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl dark:bg-slate-700 bg-slate-50">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-7 w-7 text-slate-300"
+            class="h-7 w-7 dark:text-slate-500 text-slate-300"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -134,15 +134,15 @@
             />
           </svg>
         </div>
-        <h3 class="mt-4 text-sm font-semibold text-slate-700">No students found</h3>
-        <p class="text-xs text-slate-400">Try adjusting your search or filters.</p>
+        <h3 class="mt-4 text-sm font-semibold dark:text-slate-200 text-slate-700">No students found</h3>
+        <p class="text-xs dark:text-slate-500 text-slate-400">Try adjusting your search or filters.</p>
       </div>
 
       <div v-else class="overflow-x-auto">
         <table class="w-full text-left text-sm">
           <thead>
             <tr
-              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400"
+              class="border-b dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider dark:text-slate-500 text-slate-400"
             >
               <th class="px-6 py-3.5">Student</th>
               <th class="px-6 py-3.5">Company</th>
@@ -154,11 +154,11 @@
               <th class="px-6 py-3.5 text-center">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-50">
+          <tbody class="divide-y dark:divide-slate-700 divide-slate-50">
             <tr
               v-for="student in displayed"
               :key="student.id"
-              class="transition-colors hover:bg-slate-50/50"
+              class="transition-colors hover:dark:bg-slate-700 bg-slate-50/50"
             >
               <td class="whitespace-nowrap px-6 py-4">
                 <div class="flex items-center gap-3">
@@ -168,12 +168,12 @@
                     {{ initials(student.name) }}
                   </div>
                   <div>
-                    <p class="font-semibold text-slate-900">{{ student.name }}</p>
-                    <p class="text-xs text-slate-500 truncate max-w-[200px]">{{ student.email }}</p>
+                    <p class="font-semibold dark:text-slate-100 text-slate-900">{{ student.name }}</p>
+                    <p class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500 truncate max-w-[200px]">{{ student.email }}</p>
                   </div>
                 </div>
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
+              <td class="whitespace-nowrap px-6 py-4 text-sm dark:text-slate-400 text-slate-600">
                 {{ student.company_name || '—' }}
               </td>
               <td class="whitespace-nowrap px-6 py-4">
@@ -188,10 +188,10 @@
                   {{ formatStatus(student.assignment_status) }}
                 </span>
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
+              <td class="whitespace-nowrap px-6 py-4 text-sm dark:text-slate-400 text-slate-600">
                 {{ student.last_worklog_at || '—' }}
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
+              <td class="whitespace-nowrap px-6 py-4 text-sm dark:text-slate-400 text-slate-600">
                 {{ student.feedback_given ? 'Yes' : 'No' }}
               </td>
               <td class="whitespace-nowrap px-6 py-4">
@@ -200,9 +200,9 @@
                   class="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-0.5 text-xs font-bold text-rose-700"
                   >{{ student.open_issues_count }}</span
                 >
-                <span v-else class="text-xs text-slate-400">0</span>
+                <span v-else class="text-xs dark:text-slate-500 text-slate-400">0</span>
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-600">
+              <td class="whitespace-nowrap px-6 py-4 text-xs dark:text-slate-400 text-slate-600">
                 {{ nextFollowup(student) }}
               </td>
               <td class="whitespace-nowrap px-6 py-4 text-center">
@@ -314,7 +314,7 @@ function statusColor(status?: string) {
     case 'Terminated':
       return 'bg-rose-50 text-rose-700'
     default:
-      return 'bg-slate-100 text-slate-700'
+      return 'dark:bg-slate-600 bg-slate-100 dark:text-slate-200 text-slate-700'
   }
 }
 

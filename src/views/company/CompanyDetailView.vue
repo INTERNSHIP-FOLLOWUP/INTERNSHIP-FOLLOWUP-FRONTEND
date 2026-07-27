@@ -4,7 +4,7 @@
     <div class="flex items-center gap-3 text-sm">
       <button
         @click="goBack"
-        class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+        class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 dark:text-slate-400 text-slate-600 transition-colors hover:dark:bg-slate-600 bg-slate-100 hover:dark:text-slate-100 text-slate-900"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -16,8 +16,8 @@
         </svg>
         Back to Companies
       </button>
-      <span class="text-slate-300">/</span>
-      <span class="font-medium text-slate-900">{{
+      <span class="dark:text-slate-500 text-slate-300">/</span>
+      <span class="font-medium dark:text-slate-100 text-slate-900">{{
         company?.companyName || 'Company Details'
       }}</span>
     </div>
@@ -56,7 +56,7 @@
     <!-- Company Detail Card -->
     <div
       v-else-if="company"
-      class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm"
+      class="overflow-hidden rounded-2xl border dark:border-slate-700 border-slate-100 dark:bg-slate-800 bg-white shadow-sm"
     >
       <!-- Hero Header with Avatar -->
       <div class="relative overflow-hidden bg-gradient-to-r from-indigo-500 to-sky-400 px-8 py-10">
@@ -65,7 +65,7 @@
 
         <div class="relative flex flex-col items-center gap-5 sm:flex-row sm:items-end">
           <div
-            class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white/50 bg-white shadow-xl"
+            class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white/50 dark:bg-slate-800 bg-white shadow-xl"
           >
             <img
               v-if="companyLogoUrl"
@@ -111,7 +111,7 @@
         <div class="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
           <div class="space-y-5">
             <h3
-              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
+              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider dark:text-slate-500 text-slate-400"
             >
               <span class="h-1 w-1 rounded-full bg-indigo-500"></span>
               Contact Details
@@ -137,15 +137,15 @@
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-medium text-slate-400">Address</p>
-                <p class="text-sm font-semibold text-slate-900">{{ company.address }}</p>
+                <p class="text-xs font-medium dark:text-slate-500 text-slate-400">Address</p>
+                <p class="text-sm font-semibold dark:text-slate-100 text-slate-900">{{ company.address }}</p>
               </div>
             </div>
           </div>
 
           <div class="space-y-5">
             <h3
-              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
+              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider dark:text-slate-500 text-slate-400"
             >
               <span class="h-1 w-1 rounded-full bg-sky-400"></span>
               Communication
@@ -165,7 +165,7 @@
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-medium text-slate-400">Email</p>
+                <p class="text-xs font-medium dark:text-slate-500 text-slate-400">Email</p>
                 <a
                   :href="`mailto:${company.email}`"
                   class="text-sm font-semibold text-sky-600 transition-colors hover:text-sky-800"
@@ -179,12 +179,12 @@
         </div>
 
         <!-- Divider -->
-        <div class="my-8 border-t border-slate-100" />
+        <div class="my-8 border-t dark:border-slate-700 border-slate-100" />
 
         <!-- Section: Digital Presence -->
         <div class="space-y-5">
           <h3
-            class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
+            class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider dark:text-slate-500 text-slate-400"
           >
             <span class="h-1 w-1 rounded-full bg-violet-400"></span>
             Digital Presence
@@ -193,7 +193,7 @@
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div
               v-if="company.website"
-              class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50"
+              class="flex items-center gap-3 rounded-xl border dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/50 p-4 transition-colors hover:dark:bg-slate-700 bg-slate-50"
             >
               <div
                 class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600"
@@ -208,7 +208,7 @@
                 </svg>
               </div>
               <div class="min-w-0">
-                <p class="text-xs font-medium text-slate-400">Website</p>
+                <p class="text-xs font-medium dark:text-slate-500 text-slate-400">Website</p>
                 <a
                   :href="normalizeUrl(company.website)"
                   target="_blank"
@@ -222,7 +222,7 @@
 
             <div
               v-if="company.telegramLink"
-              class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50"
+              class="flex items-center gap-3 rounded-xl border dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/50 p-4 transition-colors hover:dark:bg-slate-700 bg-slate-50"
             >
               <div
                 class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sky-50 text-sky-600"
@@ -234,7 +234,7 @@
                 </svg>
               </div>
               <div class="min-w-0">
-                <p class="text-xs font-medium text-slate-400">Telegram</p>
+                <p class="text-xs font-medium dark:text-slate-500 text-slate-400">Telegram</p>
                 <a
                   :href="normalizeUrl(company.telegramLink)"
                   target="_blank"
@@ -249,48 +249,48 @@
 
           <div
             v-if="!company.website && !company.telegramLink"
-            class="rounded-xl border border-dashed border-slate-200 py-6 text-center text-sm text-slate-400"
+            class="rounded-xl border border-dashed dark:border-slate-600 border-slate-200 py-6 text-center text-sm dark:text-slate-500 text-slate-400"
           >
             No digital presence links provided.
           </div>
         </div>
 
         <!-- Divider -->
-        <div class="my-8 border-t border-slate-100" />
+        <div class="my-8 border-t dark:border-slate-700 border-slate-100" />
 
         <!-- Section: Metadata -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div v-if="company.createdAt" class="rounded-xl bg-slate-50/60 p-4">
-            <p class="text-xs font-medium text-slate-400">Created</p>
-            <p class="mt-1 text-sm font-semibold text-slate-700">
+          <div v-if="company.createdAt" class="rounded-xl dark:bg-slate-700 bg-slate-50/60 p-4">
+            <p class="text-xs font-medium dark:text-slate-500 text-slate-400">Created</p>
+            <p class="mt-1 text-sm font-semibold dark:text-slate-200 text-slate-700">
               {{ formatDate(company.createdAt) }}
             </p>
           </div>
-          <div v-if="company.updatedAt" class="rounded-xl bg-slate-50/60 p-4">
-            <p class="text-xs font-medium text-slate-400">Last Updated</p>
-            <p class="mt-1 text-sm font-semibold text-slate-700">
+          <div v-if="company.updatedAt" class="rounded-xl dark:bg-slate-700 bg-slate-50/60 p-4">
+            <p class="text-xs font-medium dark:text-slate-500 text-slate-400">Last Updated</p>
+            <p class="mt-1 text-sm font-semibold dark:text-slate-200 text-slate-700">
               {{ formatDate(company.updatedAt) }}
             </p>
           </div>
-          <div class="rounded-xl bg-slate-50/60 p-4">
-            <p class="text-xs font-medium text-slate-400">Company ID</p>
-            <p class="mt-1 text-sm font-semibold text-slate-700">#{{ company.id }}</p>
+          <div class="rounded-xl dark:bg-slate-700 bg-slate-50/60 p-4">
+            <p class="text-xs font-medium dark:text-slate-500 text-slate-400">Company ID</p>
+            <p class="mt-1 text-sm font-semibold dark:text-slate-200 text-slate-700">#{{ company.id }}</p>
           </div>
         </div>
       </div>
 
       <!-- Action Footer -->
       <div
-        class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-8 py-5 sm:flex-row"
+        class="flex flex-col items-center justify-between gap-3 border-t dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/60 px-8 py-5 sm:flex-row"
       >
         <div class="flex items-center gap-2">
           <span class="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
-          <span class="text-xs font-medium text-slate-400">Active company record</span>
+          <span class="text-xs font-medium dark:text-slate-500 text-slate-400">Active company record</span>
         </div>
         <div class="flex items-center gap-2">
           <router-link
             :to="`/admin/companies/${company.id}/edit`"
-            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+            class="inline-flex items-center gap-1.5 rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-4 py-2 text-sm font-semibold dark:text-slate-200 text-slate-700 shadow-sm transition-colors hover:dark:bg-slate-700 bg-slate-50 hover:dark:text-slate-100 text-slate-900"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path

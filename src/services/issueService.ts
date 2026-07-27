@@ -66,21 +66,12 @@ export const issueService = {
     await api.delete(`/issues/${encodeURIComponent(id)}`)
   },
 
-  // ── Tutor-specific endpoints ──
 
-  /**
-   * GET /api/tutor/issues/{id}
-   * Fetch full issue detail for tutor edit modal.
-   */
   async getTutorIssue(id: string): Promise<{ data: Issue }> {
     const { data } = await api.get<{ data: Issue }>(`/tutor/issues/${encodeURIComponent(id)}`)
     return data
   },
 
-  /**
-   * PUT /api/tutor/issues/{id}
-   * Update an issue as a tutor.
-   */
   async updateTutorIssue(id: string, payload: {
     title: string
     description: string

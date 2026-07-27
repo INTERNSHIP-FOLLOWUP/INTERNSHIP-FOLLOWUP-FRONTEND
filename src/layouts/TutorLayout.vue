@@ -28,7 +28,7 @@
       </div>
 
       <!-- Navigation -->
-      <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+      <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" :class="{ 'pointer-events-none opacity-40 select-none': isInactive }">
         <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Menu</p>
         <router-link
           v-for="item in navItems"
@@ -50,6 +50,12 @@
           </span>
           {{ item.label }}
         </router-link>
+
+        <!-- Inactive overlay on sidebar nav -->
+        <div v-if="isInactive" class="rounded-lg bg-amber-500/10 border border-amber-500/20 px-3 py-2.5 text-center mt-4">
+          <p class="text-xs font-medium text-amber-300">Activate your account</p>
+          <p class="text-[10px] text-amber-400/70 mt-0.5">Set a new password to unlock all features</p>
+        </div>
 
         <!-- Messages submenu -->
         <div>
@@ -347,6 +353,8 @@ onUnmounted(() => {
 })
 
 const user = computed(() => auth.user)
+
+const isInactive = computed(() => auth.user?.status === 'inactive')
 
 const userInitials = computed(() => {
   if (!user.value?.name) return '?'

@@ -229,7 +229,7 @@ const router = createRouter({
         {
           path: 'students',
           name: 'TutorStudents',
-          component: () => import('@/views/student/StudentDashboardView.vue'),
+          component: () => import('@/views/tutor/MyStudentsView.vue'),
           meta: { title: 'My Students' },
         },
         {
@@ -253,8 +253,14 @@ const router = createRouter({
         {
           path: 'issues',
           name: 'TutorIssues',
-          component: () => import('@/views/issue/IssueTrackerView.vue'),
-          meta: { title: 'Issues' },
+          component: () => import('@/views/tutor/TutorIssuesView.vue'),
+          meta: { title: 'Issue Tracker' },
+        },
+        {
+          path: 'feedback',
+          name: 'TutorFeedback',
+          component: () => import('@/views/tutor/TutorCompanyFeedbackView.vue'),
+          meta: { title: 'Company Feedback' },
         },
         {
           path: 'messages',
@@ -265,7 +271,7 @@ const router = createRouter({
         {
           path: 'profile',
           name: 'TutorProfile',
-          component: () => import('@/views/profile/ProfileView.vue'),
+          component: () => import('@/views/profile/TutorProfileView.vue'),
           meta: { title: 'Profile' },
         },
       ],
@@ -326,7 +332,7 @@ const router = createRouter({
         {
           path: 'issues',
           name: 'StudentIssues',
-          component: () => import('@/views/issue/IssueTrackerView.vue'),
+          component: () => import('@/views/student/StudentIssuesView.vue'),
           meta: { title: 'Issues' },
         },
         {

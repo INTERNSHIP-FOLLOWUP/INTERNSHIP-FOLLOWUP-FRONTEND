@@ -1,25 +1,24 @@
-# Follow-up Meeting Type Validation Fix
+# Task: Enable searching issues by student name across all issue views
 
-## Progress
+## Objective
+Enable searching/filtering issues by student name (e.g., "Vicheka") in the TutorIssuesView and StudentIssuesView, since the backend API (`IssueController::index`) already supports searching by student name via the `search` parameter (it searches `CONCAT(first_name, ' ', last_name)`).
 
-### ✅ Step 1: Backend - Replace inline validation with FormRequest classes
-- [x] Update FollowupController.php `store()` to use StoreFollowupRequest
-- [x] Update FollowupController.php `update()` to use UpdateFollowupRequest
-- [x] Updated StoreFollowupRequest to add `company_id` and fix `student_id` references to `students` table
-- [x] Updated UpdateFollowupRequest to add `company_id`, `status`, and fix `student_id` references to `students` table
+## Plan
 
-### ✅ Step 2: Frontend - Update MeetingType type to match backend
-- [x] Update types/followup.ts MeetingType union type from `'In-Person' | 'Online' | 'Phone' | 'Virtual'` to `'Monthly' | 'Quarterly' | 'Annual'`
+### Step 1: ✅ Update IssueTrackerView.vue search placeholder
+- Updated placeholder from "Search by title..." to "Search by title or student name..."
 
-### ✅ Step 3: Frontend - Clean up duplicate form markup
-- [x] Removed old first form block (In-Person/Online/Phone/Virtual) from FollowupForm.vue
-- [x] Kept correct form with Monthly/Quarterly/Annual
+### Step 2: ✅ Update TutorIssuesView.vue
+- Modified `fetchAllIssues()` to pass the actual search/status/priority filter values to the API instead of always sending empty strings
+- Updated debounced search watch to call `fetchAllIssues()` with current filter values
+- Updated `onFilterChange()`, `clearSearch()`, and `resetFilters()` to re-fetch from API with proper filter params
+- Updated placeholder to "Search by title or student name..."
 
-### ✅ Step 4: Search for remaining old value references
-- [x] Verified FollowupList.vue uses correct values (Monthly/Quarterly/Annual)
-- [x] Verified no other references to old values in frontend
-- [x] Verified backend validations now consistent
+### Step 3: ✅ Update StudentIssuesView.vue
+- Modified `fetchAllIssues()` to pass the actual search/status/priority filter values to the API instead of always sending empty strings
+- Updated debounced search watch to call `fetchAllIssues()` with current filter values
+- Updated `onFilterChange()`, `clearSearch()`, and `resetFilters()` to re-fetch from API with proper filter params
 
-### ✅ Step 5: Verify
-- [x] All changes complete and consistent
+### Step 4: 🔄 Verification
+- [ ] Test that typing "Vicheka" in the search bar returns issues related to "Vicheka Hav"
 

@@ -40,8 +40,8 @@ const sizeMap: Record<string, string> = {
 }
 
 const colorMap: Record<string, string> = {
-  white: 'text-white',
-  primary: 'text-primary-600',
+  white: 'text-white dark:text-white',
+  primary: 'text-primary-600 dark:text-primary-400',
 }
 
 // 3. Use computed properties to reactively return the string based on the prop value

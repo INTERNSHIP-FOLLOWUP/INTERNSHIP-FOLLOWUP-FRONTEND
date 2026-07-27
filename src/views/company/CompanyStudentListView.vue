@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+    <div class="rounded-2xl border dark:border-slate-700 border-gray-100 dark:bg-slate-800 bg-white p-6 shadow-sm">
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 class="text-xl font-semibold text-gray-900">Assigned Students</h1>
-          <p class="mt-1 text-sm text-gray-500">Students assigned to your company.</p>
+          <h1 class="text-xl font-semibold dark:text-slate-100 text-gray-900">Assigned Students</h1>
+          <p class="mt-1 text-sm dark:text-slate-400 text-gray-500">Students assigned to your company.</p>
         </div>
       </div>
 
@@ -13,7 +13,7 @@
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
-        <span class="ml-3 text-sm text-gray-500">Loading students…</span>
+        <span class="ml-3 text-sm dark:text-slate-400 text-gray-500">Loading students…</span>
       </div>
       <div
         v-else-if="error"
@@ -26,7 +26,7 @@
         <table class="w-full text-left text-sm" v-if="students.length">
           <thead>
             <tr
-              class="border-b border-gray-100 text-xs font-medium uppercase tracking-wider text-gray-400"
+              class="border-b dark:border-slate-700 border-gray-100 text-xs font-medium uppercase tracking-wider dark:text-slate-500 text-gray-400"
             >
               <th class="px-4 py-3 font-medium">Student</th>
               <th class="px-4 py-3 font-medium">Email</th>
@@ -37,11 +37,11 @@
               <th class="px-4 py-3 font-medium">Status</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-50">
+          <tbody class="divide-y dark:divide-slate-700 divide-gray-50">
             <tr
               v-for="student in students"
               :key="student.id"
-              class="transition-colors hover:bg-gray-50/50"
+              class="transition-colors hover:dark:bg-slate-700 bg-gray-50/50"
             >
               <td class="px-4 py-3.5">
                 <div class="flex items-center gap-3">
@@ -51,14 +51,14 @@
                   >
                     {{ student.initials }}
                   </div>
-                  <span class="font-medium text-gray-900">{{ student.name }}</span>
+                  <span class="font-medium dark:text-slate-100 text-gray-900">{{ student.name }}</span>
                 </div>
               </td>
-              <td class="px-4 py-3.5 text-gray-600">{{ student.email }}</td>
-              <td class="px-4 py-3.5 text-gray-600">{{ student.batch }}</td>
-              <td class="px-4 py-3.5 text-gray-600">{{ student.position }}</td>
-              <td class="px-4 py-3.5 text-gray-600">{{ student.tutorName }}</td>
-              <td class="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+              <td class="px-4 py-3.5 dark:text-slate-400 text-gray-600">{{ student.email }}</td>
+              <td class="px-4 py-3.5 dark:text-slate-400 text-gray-600">{{ student.batch }}</td>
+              <td class="px-4 py-3.5 dark:text-slate-400 text-gray-600">{{ student.position }}</td>
+              <td class="px-4 py-3.5 dark:text-slate-400 text-gray-600">{{ student.tutorName }}</td>
+              <td class="px-4 py-3.5 dark:text-slate-400 text-gray-600 whitespace-nowrap">
                 <span class="text-xs text-slate-400">{{ student.startDate }}</span>
                 <span v-if="student.startDate && student.endDate" class="text-xs text-slate-300 mx-1">→</span>
                 <span v-if="student.endDate" class="text-xs text-slate-400">{{ student.endDate }}</span>
@@ -77,9 +77,9 @@
 
         <div v-else class="px-4 py-12 text-center">
           <div class="flex flex-col items-center">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50">
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl dark:bg-slate-700 bg-gray-50">
               <svg
-                class="h-6 w-6 text-gray-300"
+                class="h-6 w-6 dark:text-slate-500 text-gray-300"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -92,8 +92,8 @@
                 />
               </svg>
             </div>
-            <h3 class="mt-3 text-sm font-semibold text-gray-700">No assigned students yet</h3>
-            <p class="mt-1 text-xs text-gray-400">
+            <h3 class="mt-3 text-sm font-semibold dark:text-slate-200 text-gray-700">No assigned students yet</h3>
+            <p class="mt-1 text-xs dark:text-slate-500 text-gray-400">
               Students assigned to your company will appear here.
             </p>
           </div>

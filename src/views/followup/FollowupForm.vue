@@ -6,7 +6,7 @@
       @click.self="$emit('cancelled')"
       @keydown.escape="$emit('cancelled')"
     >
-      <div class="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-100 bg-white shadow-2xl">
+      <div class="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-100 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-800">
         <!-- Header with gradient -->
         <div class="sticky top-0 z-10 flex items-center justify-between bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-4 rounded-t-2xl">
           <div class="flex items-center gap-3">
@@ -40,8 +40,8 @@
           <form @submit.prevent="submit" class="space-y-5">
             <!-- Student selector -->
             <div>
-              <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-1.5">
-                <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-1.5 dark:text-slate-300">
+                <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
                 Student
@@ -53,13 +53,13 @@
                 :value="studentDisplayName"
                 type="text"
                 readonly
-                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-500 cursor-not-allowed"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-500 cursor-not-allowed dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400"
               />
 
               <!-- Tutor/Admin: search student by name -->
               <div v-else-if="canSearchStudents" class="relative">
                 <div class="relative">
-                  <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <input
@@ -71,7 +71,7 @@
                     @input="onStudentSearchInput"
                     @focus="showStudentDropdown = studentResults.length > 0"
                     @blur="onStudentSearchBlur"
-                    class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-400"
                     :class="{ 'border-red-400 ring-2 ring-red-500/20': errors.student_id }"
                   />
                   <!-- Clear button when student is selected -->
@@ -79,7 +79,7 @@
                     v-if="form.student_id && studentSearch"
                     type="button"
                     @click="clearStudent"
-                    class="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+                    class="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors dark:text-slate-500 dark:hover:bg-slate-600 dark:hover:text-slate-300"
                   >
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -91,22 +91,22 @@
                 <transition name="dropdown">
                   <div
                     v-if="showStudentDropdown && studentResults.length > 0"
-                    class="absolute z-50 mt-1 w-full rounded-xl border border-slate-200 bg-white py-1 shadow-lg shadow-slate-200/50 max-h-60 overflow-y-auto"
+                    class="absolute z-50 mt-1 w-full rounded-xl border border-slate-200 bg-white py-1 shadow-lg shadow-slate-200/50 max-h-60 overflow-y-auto dark:border-slate-600 dark:bg-slate-700 dark:shadow-black/20"
                   >
                     <button
                       v-for="(s, idx) in studentResults"
                       :key="s.id"
                       type="button"
                       @mousedown.prevent="selectStudent(s)"
-                      class="flex w-full items-center gap-3 px-3.5 py-2.5 text-left text-sm transition-colors hover:bg-indigo-50"
-                      :class="idx < studentResults.length - 1 ? 'border-b border-slate-50' : ''"
+                      class="flex w-full items-center gap-3 px-3.5 py-2.5 text-left text-sm transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-950/40"
+                      :class="idx < studentResults.length - 1 ? 'border-b border-slate-50 dark:border-slate-600' : ''"
                     >
-                      <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-xs font-bold text-indigo-600">
+                      <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-xs font-bold text-indigo-600 dark:from-indigo-800 dark:to-indigo-900 dark:text-indigo-300">
                         {{ s.name?.charAt(0)?.toUpperCase() || '?' }}
                       </div>
                       <div class="min-w-0">
-                        <p class="font-medium text-slate-800 truncate">{{ s.name }}</p>
-                        <p class="text-xs text-slate-400 truncate">
+                        <p class="font-medium text-slate-800 truncate dark:text-slate-200">{{ s.name }}</p>
+                        <p class="text-xs text-slate-400 truncate dark:text-slate-400">
                           {{ s.student_code ? `#${s.student_code}` : '' }}
                           {{ s.student_code && s.email ? '·' : '' }}
                           {{ s.email || '' }}
@@ -120,9 +120,9 @@
                 <transition name="dropdown">
                   <div
                     v-if="showStudentDropdown && studentSearch.length >= 2 && studentResults.length === 0 && !searchingStudents"
-                    class="absolute z-50 mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 shadow-lg shadow-slate-200/50 text-center"
+                    class="absolute z-50 mt-1 w-full rounded-xl border border-slate-200 bg-white p-3 shadow-lg shadow-slate-200/50 text-center dark:border-slate-600 dark:bg-slate-700 dark:shadow-black/20"
                   >
-                    <p class="text-sm text-slate-500">No students found matching "{{ studentSearch }}"</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">No students found matching "{{ studentSearch }}"</p>
                   </div>
                 </transition>
               </div>
@@ -133,11 +133,11 @@
                 type="number"
                 min="1"
                 placeholder="Enter student ID"
-                class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-400"
                 :class="{ 'border-red-400 ring-2 ring-red-500/20': errors.student_id }"
               />
               <transition name="error-slide">
-                <p v-if="errors.student_id" class="text-red-600 text-xs mt-1.5 flex items-center gap-1">
+                <p v-if="errors.student_id" class="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1">
                   <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
@@ -148,8 +148,8 @@
 
             <!-- Meeting type -->
             <div>
-              <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-1.5">
-                <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-1.5 dark:text-slate-300">
+                <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 Meeting Type
@@ -157,7 +157,7 @@
               <div class="relative">
                 <select
                   v-model="form.meeting_type"
-                  class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 appearance-none focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 appearance-none focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
                   :class="{ 'border-red-400 ring-2 ring-red-500/20': errors.meeting_type }"
                 >
                   <option value="" disabled>Select meeting type</option>
@@ -165,12 +165,12 @@
                   <option value="Quarterly">Quarterly</option>
                   <option value="Annual">Annual</option>
                 </select>
-                <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
               <transition name="error-slide">
-                <p v-if="errors.meeting_type" class="text-red-600 text-xs mt-1.5 flex items-center gap-1">
+                <p v-if="errors.meeting_type" class="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1">
                   <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
@@ -181,8 +181,8 @@
 
             <!-- Meeting date -->
             <div>
-              <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-1.5">
-                <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-1.5 dark:text-slate-300">
+                <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 Meeting Date
@@ -190,11 +190,11 @@
               <input
                 v-model="form.meeting_date"
                 type="date"
-                class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
                 :class="{ 'border-red-400 ring-2 ring-red-500/20': errors.meeting_date }"
               />
               <transition name="error-slide">
-                <p v-if="errors.meeting_date" class="text-red-600 text-xs mt-1.5 flex items-center gap-1">
+                <p v-if="errors.meeting_date" class="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1">
                   <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
@@ -206,13 +206,13 @@
             <!-- Notes with character count -->
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700">
-                  <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                   Notes
                 </label>
-                <span class="text-xs text-slate-400" :class="{ 'text-amber-500': notesLength > 0 }" v-if="form.notes">
+                <span class="text-xs text-slate-400 dark:text-slate-500" :class="{ 'text-amber-500': notesLength > 0 }" v-if="form.notes">
                   {{ notesLength }}
                 </span>
               </div>
@@ -221,11 +221,11 @@
                 rows="3"
                 maxlength="5000"
                 placeholder="Enter meeting notes..."
-                class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-400"
                 :class="{ 'border-red-400 ring-2 ring-red-500/20': errors.notes }"
               ></textarea>
               <transition name="error-slide">
-                <p v-if="errors.notes" class="text-red-600 text-xs mt-1.5 flex items-center gap-1">
+                <p v-if="errors.notes" class="text-red-600 dark:text-red-400 text-xs mt-1.5 flex items-center gap-1">
                   <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
@@ -237,14 +237,14 @@
             <!-- Action items with character count -->
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700">
-                  <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                   </svg>
                   Action Items
-                  <span class="text-xs font-normal text-slate-400">(optional)</span>
+                  <span class="text-xs font-normal text-slate-400 dark:text-slate-500">(optional)</span>
                 </label>
-                <span class="text-xs text-slate-400" v-if="form.action_items">
+                <span class="text-xs text-slate-400 dark:text-slate-500" v-if="form.action_items">
                   {{ actionItemsLength }}
                 </span>
               </div>
@@ -253,37 +253,37 @@
                 rows="3"
                 maxlength="5000"
                 placeholder="Enter action items..."
-                class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-400"
               ></textarea>
             </div>
 
             <!-- Next follow-up date -->
             <div>
-              <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-1.5">
-                <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <label class="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-1.5 dark:text-slate-300">
+                <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
                 Next Follow-up Date
-                <span class="text-xs font-normal text-slate-400">(optional)</span>
+                <span class="text-xs font-normal text-slate-400 dark:text-slate-500">(optional)</span>
               </label>
               <input
                 v-model="form.next_followup"
                 type="date"
-                class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-700 transition-all duration-200 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
               />
             </div>
 
             <!-- Form Footer -->
             <div class="flex items-center justify-between gap-3 pt-2">
-              <p class="text-xs text-slate-400">
-                <kbd class="inline-flex items-center rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-xs text-slate-500">Esc</kbd>
+              <p class="text-xs text-slate-400 dark:text-slate-500">
+                <kbd class="inline-flex items-center rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-xs text-slate-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400">Esc</kbd>
                 to cancel
               </p>
               <div class="flex items-center gap-2">
                 <button
                   type="button"
                   @click="$emit('cancelled')"
-                  class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:text-slate-900 active:scale-95"
+                  class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:text-slate-900 active:scale-95 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:text-slate-100"
                 >
                   Cancel
                 </button>

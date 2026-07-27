@@ -4,8 +4,8 @@
     <template v-if="isStudent">
       <!-- Page Header -->
       <div class="flex flex-col gap-1">
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">My Internship</h1>
-        <p class="text-sm text-slate-500">View your current internship assignment and progress.</p>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">My Internship</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">View your current internship assignment and progress.</p>
       </div>
 
       <!-- Loading state -->
@@ -15,19 +15,19 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          <p class="text-sm font-medium text-slate-500">Loading your internship details...</p>
+          <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Loading your internship details...</p>
         </div>
       </div>
 
       <!-- Error state -->
-      <div v-else-if="internshipError" class="flex flex-col items-center justify-center rounded-2xl border border-red-100 bg-red-50 py-16 px-4 text-center">
+      <div v-else-if="internshipError" class="flex flex-col items-center justify-center rounded-2xl border border-red-100 bg-red-50 py-16 px-4 text-center dark:border-red-900/50 dark:bg-red-950/30">
         <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow mb-4">
           <svg class="h-7 w-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
         </div>
-        <h3 class="text-base font-semibold text-slate-800">Could not load internship info</h3>
-        <p class="mt-1 text-sm text-slate-500">{{ internshipError }}</p>
+        <h3 class="text-base font-semibold text-slate-800 dark:text-slate-200">Could not load internship info</h3>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ internshipError }}</p>
         <button
           @click="fetchMyInternship"
           class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-[#21BAEA] px-4 py-2 text-xs font-bold text-white hover:bg-[#00A3D9] transition-all"
@@ -40,14 +40,14 @@
       </div>
 
       <!-- No assignment yet -->
-      <div v-else-if="!myInternship" class="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white py-20 px-4 text-center shadow-sm">
+      <div v-else-if="!myInternship" class="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white py-20 px-4 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div class="flex h-20 w-20 items-center justify-center rounded-full bg-[#21BAEA]/10 mb-5">
           <svg class="h-10 w-10 text-[#21BAEA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.893 23.893 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
-        <h3 class="text-lg font-bold text-slate-800">No internship assignment yet</h3>
-        <p class="mt-2 max-w-md text-sm text-slate-500 leading-relaxed">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">No internship assignment yet</h3>
+        <p class="mt-2 max-w-md text-sm text-slate-500 leading-relaxed dark:text-slate-400">
           Your internship assignment details will appear here once your tutor or admin assigns you to a company. In the meantime, you can explore your dashboard and update your profile.
         </p>
       </div>
@@ -149,21 +149,21 @@
 
         <!-- Progress Metric Cards Row -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center">
+          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center dark:border-slate-700 dark:bg-slate-800">
             <p class="text-2xl font-black text-[#21BAEA]">{{ daysElapsed }}</p>
-            <p class="text-xs font-medium text-slate-500 mt-0.5">Days Elapsed</p>
+            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">Days Elapsed</p>
           </div>
-          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center">
+          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center dark:border-slate-700 dark:bg-slate-800">
             <p class="text-2xl font-black text-[#FF9933]">{{ remainingDays > 0 ? remainingDays : 0 }}</p>
-            <p class="text-xs font-medium text-slate-500 mt-0.5">Days Remaining</p>
+            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">Days Remaining</p>
           </div>
-          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center">
+          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center dark:border-slate-700 dark:bg-slate-800">
             <p class="text-2xl font-black text-emerald-500">{{ Math.ceil(totalDays / 7) }}</p>
-            <p class="text-xs font-medium text-slate-500 mt-0.5">Total Weeks</p>
+            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">Total Weeks</p>
           </div>
-          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center">
+          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center dark:border-slate-700 dark:bg-slate-800">
             <p class="text-2xl font-black text-indigo-500">{{ Math.ceil(totalDays / 30) }}</p>
-            <p class="text-xs font-medium text-slate-500 mt-0.5">Est. Months</p>
+            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">Est. Months</p>
           </div>
         </div>
 
@@ -171,7 +171,7 @@
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
           <!-- Company Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 group">
+          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800">
             <div class="flex items-center gap-3 mb-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#21BAEA]/10 group-hover:scale-110 transition-transform duration-200">
                 <svg class="h-5 w-5 text-[#21BAEA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -179,22 +179,22 @@
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Company</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Company</p>
               </div>
             </div>
             <div class="flex items-center gap-3">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#21BAEA]/20 to-blue-100 text-sm font-bold text-[#21BAEA]">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#21BAEA]/20 to-blue-100 text-sm font-bold text-[#21BAEA] dark:from-[#21BAEA]/30 dark:to-blue-900/30">
                 {{ getInitials(myInternship.company_name) }}
               </div>
               <div class="min-w-0">
-                <p class="text-base font-bold text-slate-900 truncate">{{ myInternship.company_name }}</p>
-                <p class="text-xs text-slate-400">Host Company</p>
+                <p class="text-base font-bold text-slate-900 truncate dark:text-slate-100">{{ myInternship.company_name }}</p>
+                <p class="text-xs text-slate-400 dark:text-slate-500">Host Company</p>
               </div>
             </div>
           </div>
 
           <!-- Position Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 group">
+          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800">
             <div class="flex items-center gap-3 mb-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF9933]/10 group-hover:scale-110 transition-transform duration-200">
                 <svg class="h-5 w-5 text-[#FF9933]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,23 +202,23 @@
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Position / Role</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Position / Role</p>
               </div>
             </div>
-            <p class="text-base font-bold text-slate-900">{{ myInternship.position }}</p>
-            <p class="text-xs text-slate-400 mt-0.5">Internship Role</p>
+            <p class="text-base font-bold text-slate-900 dark:text-slate-100">{{ myInternship.position }}</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Internship Role</p>
           </div>
 
           <!-- Tutor Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 group">
+          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800">
             <div class="flex items-center gap-3 mb-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 group-hover:scale-110 transition-transform duration-200">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 group-hover:scale-110 transition-transform duration-200 dark:bg-emerald-900/30">
                 <svg class="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Assigned Tutor</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Assigned Tutor</p>
               </div>
             </div>
             <div class="flex items-center gap-3">
@@ -226,54 +226,54 @@
                 {{ getInitials(myInternship.tutor_name) }}
               </div>
               <div class="min-w-0">
-                <p class="text-base font-bold text-slate-900 truncate">{{ myInternship.tutor_name }}</p>
-                <p class="text-xs text-slate-400">PNC Tutor</p>
+                <p class="text-base font-bold text-slate-900 truncate dark:text-slate-100">{{ myInternship.tutor_name }}</p>
+                <p class="text-xs text-slate-400 dark:text-slate-500">PNC Tutor</p>
               </div>
             </div>
           </div>
 
           <!-- Start Date Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200">
+          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 dark:border-slate-700 dark:bg-slate-800">
             <div class="flex items-center gap-3 mb-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-900/30">
                 <svg class="h-5 w-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Start Date</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Start Date</p>
               </div>
             </div>
-            <p class="text-base font-bold text-slate-900">{{ formatDate(myInternship.start_date) }}</p>
-            <p class="text-xs text-slate-400 mt-0.5">{{ formatRelativeDate(myInternship.start_date) }}</p>
+            <p class="text-base font-bold text-slate-900 dark:text-slate-100">{{ formatDate(myInternship.start_date) }}</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{{ formatRelativeDate(myInternship.start_date) }}</p>
           </div>
 
           <!-- End Date Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200">
+          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 dark:border-slate-700 dark:bg-slate-800">
             <div class="flex items-center gap-3 mb-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-900/30">
                 <svg class="h-5 w-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">End Date</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">End Date</p>
               </div>
             </div>
-            <p class="text-base font-bold text-slate-900">{{ formatDate(myInternship.end_date) }}</p>
-            <p class="text-xs text-slate-400 mt-0.5">{{ myInternship.status === 'Completed' ? 'Completed' : formatRelativeDate(myInternship.end_date) }}</p>
+            <p class="text-base font-bold text-slate-900 dark:text-slate-100">{{ formatDate(myInternship.end_date) }}</p>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{{ myInternship.status === 'Completed' ? 'Completed' : formatRelativeDate(myInternship.end_date) }}</p>
           </div>
 
           <!-- Status Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200">
+          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 dark:border-slate-700 dark:bg-slate-800">
             <div class="flex items-center gap-3 mb-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl" :class="statusIconBgClass(myInternship.status)">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl dark:bg-slate-700" :class="statusIconBgClass(myInternship.status)">
                 <svg class="h-5 w-5" :class="statusIconColorClass(myInternship.status)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Current Status</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Current Status</p>
               </div>
             </div>
             <span
@@ -287,12 +287,12 @@
         </div>
 
         <!-- Quick Actions Section -->
-        <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-          <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-slate-400">Quick Actions</h3>
+        <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+          <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Quick Actions</h3>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <router-link
               to="/student/worklogs"
-              class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 hover:bg-[#21BAEA]/5 hover:border-[#21BAEA]/30 transition-all duration-200 group"
+              class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 hover:bg-[#21BAEA]/5 hover:border-[#21BAEA]/30 transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800/50 dark:hover:bg-[#21BAEA]/10"
             >
               <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#21BAEA]/10 group-hover:scale-110 transition-transform">
                 <svg class="h-5 w-5 text-[#21BAEA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -300,14 +300,14 @@
                 </svg>
               </div>
               <div>
-                <p class="text-sm font-bold text-slate-800 group-hover:text-[#21BAEA] transition-colors">Submit Worklog</p>
-                <p class="text-xs text-slate-500">Log your weekly hours & tasks</p>
+                <p class="text-sm font-bold text-slate-800 group-hover:text-[#21BAEA] transition-colors dark:text-slate-200">Submit Worklog</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Log your weekly hours & tasks</p>
               </div>
             </router-link>
 
             <router-link
               to="/student/followups"
-              class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 hover:bg-[#FF9933]/5 hover:border-[#FF9933]/30 transition-all duration-200 group"
+              class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 hover:bg-[#FF9933]/5 hover:border-[#FF9933]/30 transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800/50 dark:hover:bg-[#FF9933]/10"
             >
               <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#FF9933]/10 group-hover:scale-110 transition-transform">
                 <svg class="h-5 w-5 text-[#FF9933]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -315,33 +315,33 @@
                 </svg>
               </div>
               <div>
-                <p class="text-sm font-bold text-slate-800 group-hover:text-[#FF9933] transition-colors">View Follow-ups</p>
-                <p class="text-xs text-slate-500">Check your meeting schedules</p>
+                <p class="text-sm font-bold text-slate-800 group-hover:text-[#FF9933] transition-colors dark:text-slate-200">View Follow-ups</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Check your meeting schedules</p>
               </div>
             </router-link>
 
             <router-link
               to="/student/messages"
-              class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 hover:bg-emerald-50 hover:border-emerald-200 transition-all duration-200 group"
+              class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 hover:bg-emerald-50 hover:border-emerald-200 transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800/50 dark:hover:bg-emerald-950/30 dark:hover:border-emerald-800"
             >
-              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 group-hover:scale-110 transition-transform">
+              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 group-hover:scale-110 transition-transform dark:bg-emerald-900/30">
                 <svg class="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
               </div>
               <div>
-                <p class="text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">Messages</p>
-                <p class="text-xs text-slate-500">Chat with your tutor</p>
+                <p class="text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition-colors dark:text-slate-200 dark:group-hover:text-emerald-400">Messages</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Chat with your tutor</p>
               </div>
             </router-link>
           </div>
         </div>
 
         <!-- Timeline -->
-        <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
           <div class="flex items-center justify-between mb-5">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">Internship Timeline</h3>
-            <span class="text-xs text-slate-400">{{ totalDays }} days total</span>
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Internship Timeline</h3>
+            <span class="text-xs text-slate-400 dark:text-slate-500">{{ totalDays }} days total</span>
           </div>
           <div class="relative pl-6">
             <!-- Vertical line -->
@@ -355,8 +355,8 @@
                 </svg>
               </div>
               <div class="pt-0.5">
-                <p class="text-sm font-bold text-slate-800">Internship Started</p>
-                <p class="text-xs text-slate-500 mt-0.5">{{ formatDate(myInternship.start_date) }} · {{ formatRelativeDate(myInternship.start_date) }}</p>
+                <p class="text-sm font-bold text-slate-800 dark:text-slate-200">Internship Started</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ formatDate(myInternship.start_date) }} · {{ formatRelativeDate(myInternship.start_date) }}</p>
               </div>
             </div>
 
@@ -367,7 +367,7 @@
               </div>
               <div>
                 <p class="text-sm font-extrabold text-[#FF9933]">🔴  Today — Day {{ daysElapsed }}</p>
-                <p class="text-xs text-slate-500 mt-0.5">{{ formatDate(new Date().toISOString()) }} · {{ remainingDays }} days remaining until completion</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ formatDate(new Date().toISOString()) }} · {{ remainingDays }} days remaining until completion</p>
               </div>
             </div>
 
@@ -381,10 +381,10 @@
                 <svg v-else class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" /></svg>
               </div>
               <div class="pt-0.5">
-                <p class="text-sm font-bold" :class="myInternship.status === 'Completed' ? 'text-emerald-600' : 'text-slate-500'">
+                <p class="text-sm font-bold" :class="myInternship.status === 'Completed' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'">
                   {{ myInternship.status === 'Completed' ? 'Internship Completed 🎉' : 'Expected End Date' }}
                 </p>
-                <p class="text-xs text-slate-500 mt-0.5">{{ formatDate(myInternship.end_date) }} · {{ formatRelativeDate(myInternship.end_date) }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ formatDate(myInternship.end_date) }} · {{ formatRelativeDate(myInternship.end_date) }}</p>
               </div>
             </div>
           </div>

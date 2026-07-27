@@ -11,12 +11,12 @@
       <transition name="confirm-scale" appear>
         <div
           ref="dialogRef"
-          class="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl"
+          class="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-slate-800"
           @keydown.escape="$emit('cancel')"
           @keydown.enter="handleKeyEnter"
         >
           <div class="flex items-start gap-4">
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-50">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/30">
               <svg
                 class="h-5.5 w-5.5 text-red-600"
                 fill="none"
@@ -32,22 +32,17 @@
               </svg>
             </div>
             <div class="flex-1 min-w-0">
-              <h3 :id="titleId" class="text-base font-semibold text-slate-900">{{ title }}</h3>
-              <p class="mt-1.5 text-sm text-slate-600">{{ message }}</p>
+              <h3 :id="titleId" class="text-base font-semibold text-slate-900 dark:text-slate-100">{{ title }}</h3>
+              <p class="mt-1.5 text-sm text-slate-600 dark:text-slate-400">{{ message }}</p>
             </div>
-          </div>
-
-          <div
-            v-if="error"
-            class="mt-4 rounded-lg bg-red-50 px-3.5 py-2.5 text-xs font-semibold text-red-700"
-          >
+          </div>            <div v-if="error" class="mt-4 rounded-lg bg-red-50 px-3.5 py-2.5 text-xs font-semibold text-red-700 dark:bg-red-950/30 dark:text-red-400">
             {{ error }}
           </div>
 
           <div class="mt-6 flex items-center justify-end gap-3">
             <button
               :disabled="loading"
-              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
+              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
               @click="$emit('cancel')"
             >
               {{ cancelText }}

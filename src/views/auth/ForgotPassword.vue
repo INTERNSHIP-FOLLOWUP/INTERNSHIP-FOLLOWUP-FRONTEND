@@ -8,10 +8,10 @@
             alt="PN Logo"
             class="mx-auto w-20 h-20 object-contain mb-5"
           />
-          <h1 class="text-2xl sm:text-[26px] font-bold text-slate-900 leading-snug tracking-tight">
+          <h1 class="text-2xl sm:text-[26px] font-bold dark:text-slate-100 text-slate-900 leading-snug tracking-tight">
             Forgot Password
           </h1>
-          <p class="mt-2 text-sm text-slate-400 font-normal">
+          <p class="mt-2 text-sm dark:text-slate-500 text-slate-400 font-normal">
             Enter your email address and we'll send you a link to reset your password.
           </p>
         </div>
@@ -30,7 +30,7 @@
             >
               <template #icon>
                 <svg
-                  class="h-5 w-5 text-slate-400"
+                  class="h-5 w-5 dark:text-slate-500 text-slate-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -48,9 +48,9 @@
 
           <div
             v-if="successMessage"
-            class="mt-4 p-3 rounded-xl bg-green-50 border border-green-200"
+            class="mt-4 p-3 rounded-xl bg-green-50 border border-green-200 dark:bg-green-950/30 dark:border-green-900/50"
           >
-            <p class="text-sm text-green-700 flex items-center gap-2">
+            <p class="text-sm text-green-700 flex items-center gap-2 dark:text-green-400">
               <svg
                 class="h-5 w-5 shrink-0 text-green-500"
                 fill="none"
@@ -70,7 +70,7 @@
 
           <div
             v-if="errorMessage && !successMessage"
-            class="mt-4 p-3 rounded-xl bg-red-50 border border-red-200"
+            class="mt-4 p-3 rounded-xl bg-red-50 border border-red-200 dark:bg-red-950/30 dark:border-red-900/50"
           >
             <p class="text-sm text-error flex items-center gap-2">
               <svg

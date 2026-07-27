@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">Welcome back, {{ firstName }}!</h1>
-      <p class="mt-1 text-sm text-gray-500">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">Welcome back, {{ firstName }}!</h1>
+      <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">
         Here's an overview of your internship progress and activities.
       </p>
     </div>
@@ -11,12 +11,12 @@
       <div
         v-for="stat in stats"
         :key="stat.label"
-        class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+        class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
       >
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-500">{{ stat.label }}</p>
-            <p class="mt-1 text-2xl font-bold text-gray-900">{{ stat.value }}</p>
+            <p class="text-sm font-medium text-gray-500 dark:text-slate-400">{{ stat.label }}</p>
+            <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-slate-100">{{ stat.value }}</p>
           </div>
           <div class="flex h-10 w-10 items-center justify-center rounded-lg" :class="stat.color">
             <component :is="stat.icon" class="h-5 w-5 text-white" />
@@ -24,7 +24,7 @@
         </div>
         <p
           class="mt-2 text-xs"
-          :class="stat.trend.startsWith('+') ? 'text-green-600' : 'text-gray-400'"
+          :class="stat.trend.startsWith('+') ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-slate-500'"
         >
           {{ stat.trend }}
         </p>
@@ -32,15 +32,15 @@
     </div>
 
     <div class="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-        <h2 class="text-base font-semibold text-gray-900">Recent Worklogs</h2>
-        <p class="mt-2 text-sm text-gray-500">
+      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <h2 class="text-base font-semibold text-gray-900 dark:text-slate-100">Recent Worklogs</h2>
+        <p class="mt-2 text-sm text-gray-500 dark:text-slate-400">
           You haven't submitted any worklogs yet. Start logging your weekly progress.
         </p>
       </div>
-      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-        <h2 class="text-base font-semibold text-gray-900">Tutor Feedback</h2>
-        <p class="mt-2 text-sm text-gray-500">
+      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <h2 class="text-base font-semibold text-gray-900 dark:text-slate-100">Tutor Feedback</h2>
+        <p class="mt-2 text-sm text-gray-500 dark:text-slate-400">
           No feedback received yet. Submit worklogs to get feedback from your tutor.
         </p>
       </div>

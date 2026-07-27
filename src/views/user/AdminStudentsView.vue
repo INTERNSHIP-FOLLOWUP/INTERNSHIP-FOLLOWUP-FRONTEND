@@ -2,26 +2,26 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Students</h1>
-        <p class="mt-1 text-sm text-slate-500">{{ totalStudents }} registered student{{ totalStudents !== 1 ? 's' : '' }}</p>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Students</h1>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ totalStudents }} registered student{{ totalStudents !== 1 ? 's' : '' }}</p>
       </div>
       <div class="flex items-center gap-2">
         <button @click="showImportModal = true"
-          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-primary-200 hover:bg-primary-50">
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 hover:border-primary-200 hover:bg-primary-50">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
           Import Excel
         </button>
         <button @click="exportPdf"
-          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-primary-200 hover:bg-primary-50">
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 hover:border-primary-200 hover:bg-primary-50">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
           Export PDF
         </button>
         <button @click="exportExcel"
-          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-primary-200 hover:bg-primary-50">
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 hover:border-primary-200 hover:bg-primary-50">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
@@ -52,16 +52,16 @@
 
     <div class="flex flex-wrap items-center gap-3">
       <div class="relative min-w-0 flex-1 basis-[200px]">
-        <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         <input v-model="searchQuery" type="text" placeholder="Search students..."
-          class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100" />
+          class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100" />
       </div>
 
       <!-- Batch Filter -->
       <select v-model="batchFilter" @change="onFilterChange"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
         <option value="">All Batches</option>
         <option v-for="b in batches" :key="b.id" :value="b.id">
           {{ b.batch_name || b.name }}
@@ -70,7 +70,7 @@
 
       <!-- Tutor Filter -->
       <select v-model="tutorFilter" @change="onFilterChange"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
         <option value="">All Tutors</option>
         <option v-for="t in tutors" :key="t.id" :value="t.id">
           {{ t.name || ((t.first_name || '') + ' ' + (t.last_name || '')).trim() }}
@@ -79,7 +79,7 @@
 
       <!-- Status Filter -->
       <select v-model="statusFilter" @change="onFilterChange"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
         <option value="">All Statuses</option>
         <option value="active">Active</option>
         <option value="deactivated">Deactivated</option>
@@ -87,14 +87,14 @@
 
       <!-- Gender Filter -->
       <select v-model="genderFilter" @change="onFilterChange"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
         <option value="">All Genders</option>
         <option value="Male">Male</option>
         <option value="Female">Female</option>
       </select>
 
       <select v-model="sortOrder"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
         <option value="">Newest</option>
         <option value="name_asc">Name A-Z</option>
         <option value="name_desc">Name Z-A</option>
@@ -102,7 +102,7 @@
       </select>
 
       <button v-if="hasActiveFilters" @click="clearFilters"
-        class="flex h-10 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700">
+        class="flex h-10 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-slate-200">
         <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
@@ -110,7 +110,7 @@
       </button>
     </div>
 
-    <div class="rounded-xl border border-slate-200/80 bg-white shadow-sm">
+    <div class="rounded-xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <!-- Loading skeleton -->
       <div v-if="loading" class="space-y-0 divide-y divide-slate-50">
         <div v-for="n in 3" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse">
@@ -130,7 +130,7 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
             <thead>
-              <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-500">
                 <th v-if="selectMode" class="px-4 py-3.5 w-10">
                   <input type="checkbox" :checked="isAllSelected" :indeterminate="isIndeterminate"
                     @change="toggleSelectAll"
@@ -148,10 +148,10 @@
                 <th class="px-6 py-3.5 text-center font-medium">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
               <tr v-for="(student, index) in students" :key="student.id"
                 @click="goToStudent(student)"
-                class="cursor-pointer transition-colors hover:bg-slate-50/70"
+                class="cursor-pointer transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-700/30"
                 :class="{ 'bg-rose-50/40': selectedIds.has(student.id) }">
                 <td v-if="selectMode" class="px-4 py-4 w-10" @click.stop>
                   <input type="checkbox" :checked="selectedIds.has(student.id)"
@@ -173,20 +173,20 @@
                     {{ getInitials((student.first_name || '') + ' ' + (student.last_name || '')) }}
                   </div>
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.first_name }}</td>
-                <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.last_name }}</td>
+                <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900 dark:text-slate-100">{{ student.first_name }}</td>
+                <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900 dark:text-slate-100">{{ student.last_name }}</td>
                 <td class="whitespace-nowrap px-6 py-4 font-mono text-xs font-medium text-slate-500">{{ formatStudentId(student.student_profile?.student_code || student.student_code, getBatchName(student)) }}</td>
-                <td class="whitespace-nowrap px-6 py-4 text-slate-500 max-w-[200px] truncate">{{ student.email }}</td>
-                <td class="whitespace-nowrap px-6 py-4 text-slate-500">
-                  <span v-if="getBatchName(student) !== '—'" class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
+                <td class="whitespace-nowrap px-6 py-4 text-slate-500 dark:text-slate-400 max-w-[200px] truncate">{{ student.email }}</td>
+                <td class="whitespace-nowrap px-6 py-4 text-slate-500 dark:text-slate-400">
+                  <span v-if="getBatchName(student) !== '—'" class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                     {{ getBatchName(student) }}
                   </span>
                   <span v-else class="text-slate-300">—</span>
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 text-slate-600 font-medium">
+                <td class="whitespace-nowrap px-6 py-4 text-slate-600 font-medium dark:text-slate-400">
                   {{ getTutorName(student) }}
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 text-slate-500 capitalize">
+                <td class="whitespace-nowrap px-6 py-4 text-slate-500 dark:text-slate-400 capitalize">
                   {{ getGender(student) }}
                 </td>
                 <td class="whitespace-nowrap px-6 py-4">

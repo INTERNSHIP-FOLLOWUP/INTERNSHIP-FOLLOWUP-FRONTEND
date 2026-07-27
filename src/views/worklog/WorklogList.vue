@@ -21,7 +21,7 @@
       <select
         v-model="weekFilter"
         @change="onFilterChange"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
       >
         <option value="">All Weeks</option>
         <option v-for="w in weeks" :key="w" :value="w">Week {{ w }}</option>
@@ -60,7 +60,7 @@
         <div class="hidden md:block overflow-x-auto">
           <table class="w-full border-collapse text-left text-sm">
             <thead>
-              <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400">
+              <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-500">
                 <th class="px-5 py-3.5">Week</th>
                 <th class="px-5 py-3.5">Description</th>
                 <th class="px-5 py-3.5">Status</th>
@@ -69,40 +69,40 @@
                 <th class="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
               <tr
                 v-for="w in store.worklogs"
                 :key="w.id"
-                class="hover:bg-slate-50/30 transition-colors"
+                class="hover:bg-slate-50/30 transition-colors dark:hover:bg-slate-800/30"
               >
                 <td class="whitespace-nowrap px-5 py-4">{{ w.week_number }}</td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-600">
+                <td              class="whitespace-nowrap px-5 py-4 text-slate-600 dark:text-slate-400">
                   {{ w.description }}
                 </td>
                 <td class="whitespace-nowrap px-5 py-4">
                   <WorklogStatusBadge :status="w.status" />
                 </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500 text-xs">
+                <td class="whitespace-nowrap px-5 py-4 text-slate-500 text-xs dark:text-slate-400">
                   {{ formatDate(w.submitted_at) }}
                 </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500">
+                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400">
                   {{ w.tutor_review?.feedback?.slice(0, 42) || '—' }}{{ (w.tutor_review?.feedback?.length || 0) > 42 ? '…' : '' }}
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-right">
                   <div class="inline-flex items-center gap-1.5">
                     <router-link
                       :to="`/student/worklogs/${w.id}`"
-                      class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-all"
+                      class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-all dark:text-indigo-400 dark:hover:bg-indigo-950/30"
                     >View</router-link>
                     <router-link
                       v-if="isEditable(w)"
                       :to="`/student/worklogs/${w.id}/edit`"
-                      class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-all"
+                      class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-600 hover:bg-amber-50 transition-all dark:text-amber-400 dark:hover:bg-amber-950/30"
                     >Edit</router-link>
                     <button
                       v-if="isEditable(w)"
                       type="button"
-                      class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-all"
+                      class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-all dark:text-red-400 dark:hover:bg-red-950/30"
                       @click="promptDelete(w)"
                     >
                       <svg class="mr-0.5 inline-block h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,32 +120,32 @@
         <!-- Mobile cards -->
         <div class="md:hidden space-y-4 px-4 py-4">
           <div v-if="store.worklogs.length === 0" class="hidden" />
-          <div v-for="w in store.worklogs" :key="w.id" class="rounded-2xl border border-slate-100 p-4 bg-white">
+          <div v-for="w in store.worklogs" :key="w.id" class="rounded-2xl border border-slate-100 p-4 bg-white dark:border-slate-700 dark:bg-slate-800">
             <div class="flex items-start justify-between gap-3">
               <div>
-                <p class="text-xs font-semibold text-slate-500">Week</p>
-                <p class="text-sm font-bold text-slate-900">{{ w.week_number }}</p>
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Week</p>
+                <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ w.week_number }}</p>
               </div>
               <WorklogStatusBadge :status="w.status" />
             </div>
-            <p class="mt-3 text-sm font-semibold text-slate-900">{{ w.description }}</p>
-            <p class="mt-1 text-xs text-slate-500">Submitted: {{ formatDate(w.submitted_at) }}</p>
-            <p class="mt-2 text-xs text-slate-600">Tutor: {{ w.tutor_review?.feedback ? w.tutor_review.feedback.slice(0, 60) : '—' }}{{ w.tutor_review?.feedback && w.tutor_review.feedback.length > 60 ? '…' : '' }}</p>
+            <p class="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">{{ w.description }}</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Submitted: {{ formatDate(w.submitted_at) }}</p>
+            <p class="mt-2 text-xs text-slate-600 dark:text-slate-400">Tutor: {{ w.tutor_review?.feedback ? w.tutor_review.feedback.slice(0, 60) : '—' }}{{ w.tutor_review?.feedback && w.tutor_review.feedback.length > 60 ? '…' : '' }}</p>
 
             <div class="mt-4 flex items-center gap-2">
               <router-link
                 :to="`/student/worklogs/${w.id}`"
-                class="inline-flex flex-1 items-center justify-center rounded-xl bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100"
+                class="inline-flex flex-1 items-center justify-center rounded-xl bg-indigo-50 px-3 py-2 text-xs font-bold text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-950/30 dark:text-indigo-400 dark:hover:bg-indigo-900/40"
               >View</router-link>
               <router-link
                 v-if="isEditable(w)"
                 :to="`/student/worklogs/${w.id}/edit`"
-                class="inline-flex flex-1 items-center justify-center rounded-xl bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700 hover:bg-amber-100"
+                class="inline-flex flex-1 items-center justify-center rounded-xl bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700 hover:bg-amber-100 dark:bg-amber-950/30 dark:text-amber-400 dark:hover:bg-amber-900/40"
               >Edit</router-link>
               <button
                 v-if="isEditable(w)"
                 type="button"
-                class="inline-flex flex-1 items-center justify-center rounded-xl bg-red-50 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-100"
+                class="inline-flex flex-1 items-center justify-center rounded-xl bg-red-50 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-100 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-900/40"
                 @click="promptDelete(w)"
               >
                 Delete

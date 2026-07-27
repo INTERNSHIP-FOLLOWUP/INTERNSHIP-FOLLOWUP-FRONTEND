@@ -3,10 +3,10 @@
     <!-- Welcome Header -->
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 class="text-2xl font-bold tracking-tight dark:text-slate-100 text-slate-900">
           Welcome back, {{ displayName }}!
         </h1>
-        <p class="text-sm text-slate-500">
+        <p class="text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">
           Manage your assigned interns, submit evaluations, and track internship progress in
           real-time.
         </p>
@@ -94,8 +94,8 @@
       <div :class="[panelClass, 'lg:col-span-2']">
         <div class="mb-5 flex items-center justify-between">
           <div>
-            <h3 class="text-base font-bold text-slate-950">Assigned Students</h3>
-            <p class="text-xs text-slate-500">Interns currently assigned to your company</p>
+            <h3 class="text-base font-bold text-slate-950 dark:text-slate-100">Assigned Students</h3>
+            <p class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">Interns currently assigned to your company</p>
           </div>
           <router-link
             to="/company/students"
@@ -109,7 +109,7 @@
           <table class="w-full border-collapse text-left text-sm">
             <thead>
               <tr
-                class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
+                class="border-b dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/50 text-xs font-semibold dark:text-slate-500 text-slate-400"
               >
                 <th class="px-4 py-3">Student Name</th>
                 <th class="px-4 py-3">Program</th>
@@ -117,23 +117,23 @@
                 <th class="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y dark:divide-slate-700 divide-slate-50">
               <tr
                 v-for="student in assignedStudents"
                 :key="student.id"
-                class="hover:bg-slate-50/30 transition-colors"
+                class="hover:dark:bg-slate-700 bg-slate-50/30 transition-colors"
               >
-                <td class="whitespace-nowrap px-4 py-3 font-semibold text-slate-900">
+                <td class="whitespace-nowrap px-4 py-3 font-semibold dark:text-slate-100 text-slate-900">
                   <div class="flex items-center gap-3">
                     <div
-                      class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-600 text-xs"
+                      class="flex h-8 w-8 items-center justify-center rounded-full dark:bg-slate-600 bg-slate-100 font-bold dark:text-slate-400 text-slate-600 text-xs"
                     >
                       {{ getInitials(student.student_name || student.name) }}
                     </div>
                     {{ student.student_name || student.name }}
                   </div>
                 </td>
-                <td class="whitespace-nowrap px-4 py-3 text-slate-500 font-medium">
+                <td class="whitespace-nowrap px-4 py-3 dark:dark:text-slate-500 text-slate-400 text-slate-500 font-medium">
                   {{ student.batch || student.program || 'N/A' }}
                 </td>
                 <td class="whitespace-nowrap px-4 py-3">
@@ -158,10 +158,10 @@
         </div>
         <div
           v-else
-          class="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 py-10 text-center"
+          class="flex flex-col items-center justify-center rounded-lg border border-dashed dark:border-slate-600 border-slate-200 py-10 text-center"
         >
           <svg
-            class="mx-auto h-10 w-10 text-slate-300"
+            class="mx-auto h-10 w-10 dark:text-slate-500 text-slate-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -173,7 +173,7 @@
               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-          <p class="mt-2 text-xs font-semibold text-slate-500">No students assigned yet.</p>
+          <p class="mt-2 text-xs font-semibold dark:dark:text-slate-500 text-slate-400 text-slate-500">No students assigned yet.</p>
         </div>
       </div>
 
@@ -181,8 +181,8 @@
       <div :class="panelClass">
         <div class="mb-5 flex items-center justify-between">
           <div>
-            <h3 class="text-base font-bold text-slate-950">Recent Evaluations</h3>
-            <p class="text-xs text-slate-500">Latest submitted evaluation records</p>
+            <h3 class="text-base font-bold text-slate-950 dark:text-slate-100">Recent Evaluations</h3>
+            <p class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">Latest submitted evaluation records</p>
           </div>
           <router-link
             to="/company/evaluations"
@@ -196,7 +196,7 @@
           <div
             v-for="evalItem in recentEvaluations"
             :key="evalItem.id"
-            class="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/60 p-3 transition-colors hover:bg-slate-50"
+            class="flex items-center justify-between rounded-lg border dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/60 p-3 transition-colors hover:dark:bg-slate-700 bg-slate-50"
           >
             <div class="flex items-center gap-3">
               <div
@@ -212,8 +212,8 @@
                 </svg>
               </div>
               <div>
-                <h4 class="text-xs font-bold text-slate-900">{{ evaluationStudentName(evalItem) }}</h4>
-                <p class="text-[10px] font-semibold text-slate-400">
+                <h4 class="text-xs font-bold dark:text-slate-100 text-slate-900">{{ evaluationStudentName(evalItem) }}</h4>
+                <p class="text-[10px] font-semibold dark:text-slate-500 text-slate-400">
                   Rating: {{ evalItem.rating }}/5
                 </p>
               </div>
@@ -229,7 +229,7 @@
         </div>
         <div v-else class="flex flex-col items-center justify-center py-10 text-center">
           <svg
-            class="mx-auto h-8 w-8 text-slate-300"
+            class="mx-auto h-8 w-8 dark:text-slate-500 text-slate-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -241,7 +241,7 @@
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <p class="mt-2 text-xs font-semibold text-slate-400">No evaluations submitted yet.</p>
+          <p class="mt-2 text-xs font-semibold dark:text-slate-500 text-slate-400">No evaluations submitted yet.</p>
         </div>
       </div>
     </div>
@@ -250,8 +250,8 @@
     <div :class="panelClass">
       <div class="mb-5 flex items-center justify-between">
         <div>
-          <h3 class="text-base font-bold text-slate-950">Company Profile</h3>
-          <p class="text-xs text-slate-500">Your registered company information</p>
+          <h3 class="text-base font-bold text-slate-950 dark:text-slate-100">Company Profile</h3>
+          <p class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">Your registered company information</p>
         </div>
         <router-link
           to="/company/profile"
@@ -271,25 +271,25 @@
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div class="space-y-1">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Company Name</p>
-          <p class="text-sm font-semibold text-slate-900">{{ companyProfile.name || 'N/A' }}</p>
+          <p class="text-xs font-semibold uppercase tracking-wide dark:text-slate-500 text-slate-400">Company Name</p>
+          <p class="text-sm font-semibold dark:text-slate-100 text-slate-900">{{ companyProfile.name || 'N/A' }}</p>
         </div>
         <div class="space-y-1">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Industry</p>
-          <p class="text-sm font-semibold text-slate-900">{{ companyProfile.industry || 'N/A' }}</p>
+          <p class="text-xs font-semibold uppercase tracking-wide dark:text-slate-500 text-slate-400">Industry</p>
+          <p class="text-sm font-semibold dark:text-slate-100 text-slate-900">{{ companyProfile.industry || 'N/A' }}</p>
         </div>
       </div>
 
       <!-- Company Logo Section -->
-      <div v-if="companyLogoUrl" class="mt-4 flex items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+      <div v-if="companyLogoUrl" class="mt-4 flex items-center gap-4 rounded-xl border dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/50 p-4">
         <img
           :src="companyLogoUrl"
           alt="Company Logo"
           class="h-16 w-16 rounded-xl object-cover shadow-sm ring-2 ring-white"
         />
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Company Logo</p>
-          <p class="text-sm font-medium text-slate-700">Uploaded brand logo</p>
+          <p class="text-xs font-semibold uppercase tracking-wide dark:text-slate-500 text-slate-400">Company Logo</p>
+          <p class="text-sm font-medium dark:text-slate-200 text-slate-700">Uploaded brand logo</p>
         </div>
       </div>
     </div>
@@ -305,7 +305,7 @@ const store = useCompanyStore()
 
 const loading = ref(false)
 const panelClass =
-  'rounded-lg border border-slate-200/80 bg-white p-5 shadow-sm ring-1 ring-white/70 transition-shadow duration-200 hover:shadow-md'
+  'rounded-lg border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white p-5 shadow-sm ring-1 ring-white/70 transition-shadow duration-200 hover:shadow-md'
 
 const displayName = ref('Company')
 
@@ -345,11 +345,11 @@ function getStatusClass(status?: string) {
     case 'in progress':
       return 'bg-blue-50 text-blue-700'
     case 'completed':
-      return 'bg-slate-50 text-slate-700'
+      return 'dark:bg-slate-700 bg-slate-50 dark:text-slate-200 text-slate-700'
     case 'terminated':
       return 'bg-rose-50 text-rose-700'
     default:
-      return 'bg-slate-50 text-slate-700'
+      return 'dark:bg-slate-700 bg-slate-50 dark:text-slate-200 text-slate-700'
   }
 }
 

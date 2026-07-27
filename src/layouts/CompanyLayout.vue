@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen overflow-hidden bg-gray-50">
+  <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-slate-900">
     <transition name="fade">
       <div
         v-if="sidebarOpen"
@@ -97,11 +97,11 @@
 
     <div class="flex flex-1 flex-col lg:pl-0">
       <header
-        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6"
+        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6 dark:border-slate-700 dark:bg-slate-800/80"
       >
         <div class="flex items-center gap-3">
           <button
-            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden"
+            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-300"
             @click="sidebarOpen = !sidebarOpen"
             aria-label="Toggle navigation"
           >
@@ -122,14 +122,28 @@
               />
             </svg>
           </button>
-          <h2 class="text-lg font-semibold text-gray-800">{{ pageTitle }}</h2>
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-slate-100">{{ pageTitle }}</h2>
         </div>
 
         <div class="flex items-center gap-2">
+          <!-- Dark Mode Toggle -->
+          <button
+            @click="themeStore.setDarkMode(!themeStore.darkMode)"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+            :title="themeStore.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+          >
+            <svg v-if="!themeStore.darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <svg v-else class="h-5 w-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </button>
+
           <!-- Theme Settings Button -->
           <button
             @click.stop="themeSettingsOpen = !themeSettingsOpen"
-            class="relative flex h-9 w-9 items-center justify-center rounded-xl text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            class="relative flex h-9 w-9 items-center justify-center rounded-xl text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
             title="Theme Settings"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,7 +161,7 @@
           </button>
 
           <button
-            class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -169,11 +183,11 @@
             </span>
           </button>
 
-          <div class="h-6 w-[1px] bg-gray-200" />
+          <div class="h-6 w-[1px] bg-gray-200 dark:bg-slate-700" />
 
           <div class="relative">
             <button
-              class="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100"
+              class="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-700"
               @click.stop="dropdownOpen = !dropdownOpen"
             >
               <div
@@ -189,10 +203,10 @@
                 <span v-else>{{ userInitials }}</span>
               </div>
               <div class="hidden text-left md:block">
-                <p class="text-sm font-medium leading-tight text-gray-700">
+                <p class="text-sm font-medium leading-tight text-gray-700 dark:text-slate-300">
                   {{ user?.name }}
                 </p>
-                <p class="text-xs leading-tight text-gray-400">Company Representative</p>
+                <p class="text-xs leading-tight text-gray-400 dark:text-slate-500">Company Representative</p>
               </div>
               <svg
                 class="h-4 w-4 text-gray-400 transition-transform"
@@ -213,19 +227,19 @@
             <transition name="dropdown">
               <div
                 v-if="dropdownOpen"
-                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-gray-100 bg-white py-1 shadow-lg ring-1 ring-black/5"
+                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-gray-100 bg-white py-1 shadow-lg ring-1 ring-black/5 dark:border-slate-700 dark:bg-slate-800"
                 @click="dropdownOpen = false"
               >
-                <div class="border-b border-gray-100 px-4 py-3">
-                  <p class="text-sm font-medium text-gray-900">{{ user?.name }}</p>
-                  <p class="truncate text-xs text-gray-500">{{ user?.email }}</p>
+                <div class="border-b border-gray-100 px-4 py-3 dark:border-slate-700">
+                  <p class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ user?.name }}</p>
+                  <p class="truncate text-xs text-gray-500 dark:text-slate-400">{{ user?.email }}</p>
                 </div>
                 <router-link
                   to="/company/profile"
-                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
                 >
                   <svg
-                    class="h-4.5 w-4.5 text-gray-400"
+                    class="h-4.5 w-4.5 text-gray-400 dark:text-slate-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -245,10 +259,10 @@
                   </svg>
                   Profile Settings
                 </router-link>
-                <hr class="my-1 border-gray-100" />
+                <hr class="my-1 border-gray-100 dark:border-slate-700" />
                 <button
                   @click="openLogoutModal"
-                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
+                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50 dark:hover:bg-red-950/30"
                 >
                   <svg
                     class="h-4.5 w-4.5 text-red-500"
@@ -289,17 +303,17 @@
         @click="closeLogoutModal"
       >
         <div
-          class="w-[92%] max-w-md rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl"
+          class="w-[92%] max-w-md rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800"
           @click.stop
         >
-          <h3 id="logout-modal-title" class="text-base font-semibold text-gray-900">
+          <h3 id="logout-modal-title" class="text-base font-semibold text-gray-900 dark:text-slate-100">
             Are you sure you want to log out?
           </h3>
-          <p class="mt-1 text-sm text-gray-600">You can cancel if you changed your mind.</p>
+          <p class="mt-1 text-sm text-gray-600 dark:text-slate-400">You can cancel if you changed your mind.</p>
 
           <div class="mt-5 flex items-center justify-end gap-3">
             <button
-              class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+              class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
               @click="closeLogoutModal"
               :disabled="loggingOut"
             >
@@ -328,19 +342,19 @@
         aria-modal="true"
         aria-labelledby="password-required-title"
       >
-        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-slate-800">
           <div class="flex items-start gap-4">
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400">
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 21v-2a7 7 0 0114 0v2M12 14v3m0 3h.01" />
               </svg>
             </div>
             <div>
-              <h3 id="password-required-title" class="text-lg font-bold text-slate-900">
+              <h3 id="password-required-title" class="text-lg font-bold text-slate-900 dark:text-slate-100">
                 Change your temporary password
               </h3>
-              <p class="mt-1 text-sm leading-6 text-slate-600">
+              <p class="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-400">
                 For account security, company representatives must set a new password before continuing.
               </p>
             </div>
@@ -349,7 +363,7 @@
           <div v-if="!showPasswordChangeForm" class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <button
               type="button"
-              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
               @click="dismissPasswordReminder"
             >
               Maybe Later
@@ -365,18 +379,18 @@
 
           <form v-else class="mt-6 space-y-4" @submit.prevent="submitRequiredPasswordChange">
             <label class="block">
-              <span class="text-sm font-semibold text-slate-700">Current Password</span>
+              <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Current Password</span>
               <div class="relative mt-1.5">
                 <input
                   v-model="passwordForm.current_password"
                   :type="showCurrentPassword ? 'text' : 'password'"
                   autocomplete="current-password"
-                  class="block w-full rounded-xl border px-4 py-2.5 pr-11 text-sm text-slate-900 outline-none transition-all"
-                  :class="passwordErrors.current_password ? 'border-red-300 bg-red-50' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'"
+                  class="block w-full rounded-xl border px-4 py-2.5 pr-11 text-sm text-slate-900 outline-none transition-all dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-400"
+                  :class="passwordErrors.current_password ? 'border-red-300 bg-red-50 dark:bg-red-950/30 dark:border-red-500' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:focus:border-primary-400'"
                 />
                 <button
                   type="button"
-                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none dark:text-slate-500 dark:hover:text-slate-300"
                   :aria-label="showCurrentPassword ? 'Hide current password' : 'Show current password'"
                   @click="showCurrentPassword = !showCurrentPassword"
                 >
@@ -389,13 +403,13 @@
                   </svg>
                 </button>
               </div>
-              <span v-if="passwordErrors.current_password" class="mt-1 block text-xs font-medium text-red-600">
+              <span v-if="passwordErrors.current_password" class="mt-1 block text-xs font-medium text-red-600 dark:text-red-400">
                 {{ passwordErrors.current_password }}
               </span>
             </label>
 
             <label class="block">
-              <span class="text-sm font-semibold text-slate-700">New Password</span>
+              <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">New Password</span>
               <div class="relative mt-1.5">
                 <input
                   v-model="passwordForm.password"
@@ -406,7 +420,7 @@
                 />
                 <button
                   type="button"
-                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none dark:text-slate-500 dark:hover:text-slate-300"
                   :aria-label="showNewPassword ? 'Hide new password' : 'Show new password'"
                   @click="showNewPassword = !showNewPassword"
                 >
@@ -425,7 +439,7 @@
             </label>
 
             <label class="block">
-              <span class="text-sm font-semibold text-slate-700">Confirm New Password</span>
+              <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Confirm New Password</span>
               <div class="relative mt-1.5">
                 <input
                   v-model="passwordForm.password_confirmation"
@@ -436,7 +450,7 @@
                 />
                 <button
                   type="button"
-                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none dark:text-slate-500 dark:hover:text-slate-300"
                   :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
                   @click="showConfirmPassword = !showConfirmPassword"
                 >
@@ -454,14 +468,14 @@
               </span>
             </label>
 
-            <div v-if="passwordFormError" class="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            <div v-if="passwordFormError" class="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700 dark:bg-red-950/30 dark:text-red-400">
               {{ passwordFormError }}
             </div>
 
             <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
               <button
                 type="button"
-                class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
                 :disabled="passwordSubmitting"
                 @click="dismissPasswordReminder"
               >

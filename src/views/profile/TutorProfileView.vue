@@ -2,8 +2,8 @@
   <div class="animate-fade-in space-y-6">
     <!-- Page Header -->
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">My Profile</h1>
-      <p class="mt-1 text-sm text-slate-500">
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">My Profile</h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
         Manage your personal information, profile photo, and security settings.
       </p>
     </div>
@@ -15,7 +15,7 @@
     >
       <div class="flex flex-col items-center gap-3">
         <LoadingSpinner size="lg" color="primary" />
-        <p class="text-sm font-medium text-slate-500">Loading your profile...</p>
+        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Loading your profile...</p>
       </div>
     </div>
 
@@ -24,16 +24,16 @@
       <!-- Success Toast Notifications -->
       <div
         v-if="successMessage"
-        class="flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4"
+        class="flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4 dark:border-emerald-900/50 dark:bg-emerald-950/30"
         role="alert"
       >
         <svg class="h-5 w-5 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <p class="text-sm font-medium text-emerald-800">{{ successMessage }}</p>
+        <p class="text-sm font-medium text-emerald-800 dark:text-emerald-200">{{ successMessage }}</p>
         <button
           @click="successMessage = ''"
-          class="ml-auto -mr-1 flex h-6 w-6 items-center justify-center rounded-full text-emerald-500 transition-colors hover:bg-emerald-100"
+          class="ml-auto -mr-1 flex h-6 w-6 items-center justify-center rounded-full text-emerald-500 transition-colors hover:bg-emerald-100 dark:hover:bg-emerald-950/40"
           aria-label="Dismiss"
         >
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,13 +46,13 @@
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <!-- Left Column: Avatar & Quick Info -->
         <div class="lg:col-span-1">
-          <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-600 dark:bg-slate-800">
             <!-- Avatar Section -->
             <div class="flex flex-col items-center text-center">
               <div class="relative group cursor-pointer" @click="showLightbox = true" title="Click to view or change profile photo">
                 <div
-                  class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-shadow duration-200 group-hover:shadow-xl ring-4 ring-slate-100/80"
-                  :class="photoUploadError ? 'border-red-300' : 'border-slate-100'"
+                  class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-shadow duration-200 group-hover:shadow-xl ring-4 ring-slate-100/80 dark:border-slate-600 dark:ring-slate-700/80"
+                  :class="photoUploadError ? 'border-red-300 dark:border-red-600' : 'border-slate-100 dark:border-slate-600'"
                 >
                   <img
                     v-if="photoPreview || displayPhoto"
@@ -92,12 +92,12 @@
 
               <p v-if="photoUploadError" class="mt-2 text-xs text-red-500">{{ photoUploadError }}</p>
 
-              <h2 class="mt-4 text-lg font-bold text-slate-900">{{ fullName }}</h2>
-              <p class="text-sm text-slate-500 truncate max-w-[250px]">{{ user?.email }}</p>
+              <h2 class="mt-4 text-lg font-bold text-slate-900 dark:text-slate-100">{{ fullName }}</h2>
+              <p class="text-sm text-slate-500 truncate max-w-[250px] dark:text-slate-400">{{ user?.email }}</p>
 
               <!-- Role Badge -->
               <span
-                class="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-purple-50 text-purple-700"
+                class="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-purple-50 text-purple-700 dark:bg-purple-950/30 dark:text-purple-300"
               >
                 <span class="flex h-1.5 w-1.5 rounded-full bg-purple-500" />
                 {{ user?.role || 'N/A' }}
@@ -105,28 +105,28 @@
             </div>
 
             <!-- Quick Info Divider -->
-            <div class="mt-6 border-t border-slate-100 pt-5">
-              <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Account Info</h3>
+            <div class="mt-6 border-t border-slate-100 pt-5 dark:border-slate-700">
+              <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Account Info</h3>
               <dl class="mt-3 space-y-3">
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Email</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800 truncate max-w-[250px]">{{ user?.email }}</dd>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Email</dt>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800 truncate max-w-[250px] dark:text-slate-200">{{ user?.email }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Role</dt>
-                  <dd class="mt-0.5 text-sm font-medium capitalize text-slate-800">{{ user?.role || 'N/A' }}</dd>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Role</dt>
+                  <dd class="mt-0.5 text-sm font-medium capitalize text-slate-800 dark:text-slate-200">{{ user?.role || 'N/A' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">First Name</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ user?.first_name || '—' }}</dd>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">First Name</dt>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">{{ user?.first_name || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Last Name</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ user?.last_name || '—' }}</dd>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Last Name</dt>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">{{ user?.last_name || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Member Since</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ memberSince }}</dd>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Member Since</dt>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">{{ memberSince }}</dd>
                 </div>
               </dl>
             </div>
@@ -136,17 +136,17 @@
         <!-- Right Column: Forms -->
         <div class="space-y-6 lg:col-span-2">
           <!-- Personal Information Card -->
-          <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
-            <div class="border-b border-slate-100 px-6 py-4">
+          <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-600 dark:bg-slate-800">
+            <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-700">
               <div class="flex items-center justify-between">
                 <div>
-                  <h2 class="text-base font-bold text-slate-900">Personal Information</h2>
-                  <p class="mt-0.5 text-sm text-slate-500">Update your personal details</p>
+                  <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">Personal Information</h2>
+                  <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Update your personal details</p>
                 </div>
                 <button
                   v-if="!editingProfile"
                   @click="startEditing"
-                  class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3.5 py-2 text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-100"
+                  class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3.5 py-2 text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:hover:bg-primary-900/50"
                 >
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -160,20 +160,20 @@
               <!-- View Mode -->
               <dl v-if="!editingProfile" class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">First Name</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ user?.first_name || '—' }}</dd>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">First Name</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-200">{{ user?.first_name || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Last Name</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ user?.last_name || '—' }}</dd>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Last Name</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-200">{{ user?.last_name || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Email</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800 truncate max-w-[250px]">{{ user?.email || '—' }}</dd>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Email</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800 truncate max-w-[250px] dark:text-slate-200">{{ user?.email || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Last Updated</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ formatDate((user as any)?.updated_at) }}</dd>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Last Updated</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-200">{{ formatDate((user as any)?.updated_at) }}</dd>
                 </div>
               </dl>
 
@@ -185,7 +185,7 @@
                       v-model="editForm.first_name"
                       type="text"
                       placeholder="Enter your first name"
-                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
                       :class="inputErrorClass('first_name')"
                       @input="clearFieldError('first_name')"
                     />
@@ -196,7 +196,7 @@
                       v-model="editForm.last_name"
                       type="text"
                       placeholder="Enter your last name"
-                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
                       :class="inputErrorClass('last_name')"
                       @input="clearFieldError('last_name')"
                     />
@@ -207,7 +207,7 @@
                       v-model="editForm.email"
                       type="email"
                       placeholder="Enter your email"
-                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
                       :class="inputErrorClass('email')"
                       @input="clearFieldError('email')"
                     />
@@ -218,11 +218,11 @@
                 <ErrorAlert v-if="formErrors._form" :message="formErrors._form" />
 
                 <!-- Actions -->
-                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4 dark:border-slate-700">
                   <button
                     type="button"
                     :disabled="profileSubmitting"
-                    class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
+                    class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
                     @click="cancelEditing"
                   >
                     Cancel
@@ -241,17 +241,17 @@
           </div>
 
           <!-- Password Change Card -->
-          <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
-            <div class="border-b border-slate-100 px-6 py-4">
+          <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-600 dark:bg-slate-800">
+            <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-700">
               <div class="flex items-center justify-between">
                 <div>
-                  <h2 class="text-base font-bold text-slate-900">Security</h2>
-                  <p class="mt-0.5 text-sm text-slate-500">Update your password</p>
+                  <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">Security</h2>
+                  <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Update your password</p>
                 </div>
                 <button
                   v-if="!editingPassword"
                   @click="editingPassword = true"
-                  class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3.5 py-2 text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-100"
+                  class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3.5 py-2 text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:hover:bg-primary-900/50"
                 >
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
@@ -263,7 +263,7 @@
 
             <div class="p-6">
               <template v-if="!editingPassword">
-                <p class="text-sm text-slate-500">Keep your account secure by using a strong password and changing it regularly.</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Keep your account secure by using a strong password and changing it regularly.</p>
               </template>
 
               <form v-else @submit.prevent="savePassword" class="space-y-4">
@@ -299,12 +299,12 @@
                 </div>
 
                 <!-- Password requirements hint -->
-                <div class="rounded-lg bg-amber-50/60 border border-amber-100 px-4 py-3">
+                <div class="rounded-lg bg-amber-50/60 border border-amber-100 px-4 py-3 dark:bg-amber-950/30 dark:border-amber-900/50">
                   <div class="flex items-start gap-2">
                     <svg class="mt-0.5 h-4 w-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <p class="text-xs text-amber-800">Password must be at least 8 characters and include a mix of letters, numbers, and symbols for better security.</p>
+                    <p class="text-xs text-amber-800 dark:text-amber-200">Password must be at least 8 characters and include a mix of letters, numbers, and symbols for better security.</p>
                   </div>
                 </div>
 
@@ -312,11 +312,11 @@
                 <ErrorAlert v-if="passwordErrors._form" :message="passwordErrors._form" />
 
                 <!-- Actions -->
-                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4 dark:border-slate-700">
                   <button
                     type="button"
                     :disabled="passwordSubmitting"
-                    class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
+                    class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
                     @click="cancelPasswordChange"
                   >
                     Cancel

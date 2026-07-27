@@ -1,6 +1,6 @@
 <template>
   <div
-    class="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300"
+    class="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 dark:border-slate-700 dark:bg-slate-800"
   >
     <!-- Hero Header matching Detail View -->
     <div
@@ -67,7 +67,7 @@
         <!-- Error Banner -->
         <div
           v-if="formError"
-          class="flex items-start gap-3 rounded-xl border border-red-100 bg-red-50/60 p-4"
+          class="flex items-start gap-3 rounded-xl border border-red-100 bg-red-50/60 p-4 dark:border-red-900/50 dark:bg-red-950/30"
         >
           <svg
             class="h-5 w-5 shrink-0 text-red-500 mt-0.5"
@@ -82,24 +82,24 @@
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
             />
           </svg>
-          <div class="text-sm font-medium text-red-800">{{ formError }}</div>
+          <div class="text-sm font-medium text-red-800 dark:text-red-400">{{ formError }}</div>
         </div>
 
         <!-- Section 1: General Info -->
         <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
           <div class="lg:pt-1">
             <h3
-              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
+              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500"
             >
               <span class="h-1 w-1 rounded-full bg-indigo-500"></span>
               Core Information
             </h3>
-            <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">
+            <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               Provide identifying information used across internal system modules.
             </p>
           </div>
           <div
-            class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6"
+            class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6 dark:border-slate-600 dark:bg-slate-700/30"
           >
             <InputField
               v-model="form.companyName"
@@ -139,31 +139,31 @@
         <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
           <div class="lg:pt-1">
             <h3
-              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
+              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500"
             >
               <span class="h-1 w-1 rounded-full bg-violet-400"></span>
               Digital Presence
             </h3>
-            <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">
+            <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               Public external hyperlinks and media structures representing the entity brand.
             </p>
           </div>
 
-          <div class="lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6 space-y-5">
+          <div            class="lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6 space-y-5 dark:border-slate-600 dark:bg-slate-700/30">
             <!-- Company Logo Upload -->
             <div class="space-y-1.5">
-              <label class="flex items-center gap-1 text-sm font-medium text-slate-700">
+              <label class="flex items-center gap-1 text-sm font-medium text-slate-700 dark:text-slate-300">
                 Company Logo
-                <span class="text-xs font-normal text-slate-400">(PNG, JPG, max 2MB)</span>
+                <span class="text-xs font-normal text-slate-400 dark:text-slate-500">(PNG, JPG, max 2MB)</span>
               </label>
 
               <!-- Upload Dropzone -->
               <div
                 class="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 transition-all duration-200"
                 :class="{
-                  'border-indigo-300 bg-indigo-50/40': isDragOver,
-                  'border-slate-200 bg-slate-50/50 hover:border-indigo-200 hover:bg-indigo-50/20': !isDragOver,
-                  'border-red-300 bg-red-50': errors.companyImage,
+                  'border-indigo-300 bg-indigo-50/40 dark:border-indigo-600 dark:bg-indigo-950/20': isDragOver,
+                  'border-slate-200 bg-slate-50/50 hover:border-indigo-200 hover:bg-indigo-50/20 dark:border-slate-600 dark:bg-slate-700/30 dark:hover:border-indigo-500 dark:hover:bg-indigo-950/10': !isDragOver,
+                  'border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-950/20': errors.companyImage,
                 }"
                 @dragover.prevent="isDragOver = true"
                 @dragleave.prevent="isDragOver = false"
@@ -191,22 +191,22 @@
                   <p class="text-xs font-medium text-indigo-600">
                     {{ isFile(form.companyImage) ? form.companyImage.name : 'Logo uploaded' }}
                   </p>
-                  <p class="mt-0.5 text-[10px] text-slate-400">
+                  <p class="mt-0.5 text-[10px] text-slate-400 dark:text-slate-500">
                     Tap to replace
                   </p>
                 </template>
 
                 <!-- Empty state -->
                 <template v-else>
-                  <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100">
+                  <div                    class="mb-3 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
                     <svg class="h-7 w-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                     </svg>
                   </div>
-                  <p class="text-xs font-medium text-slate-500">
+                  <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
                     Drop your logo here or <span class="text-indigo-600 underline underline-offset-2">browse</span>
                   </p>
-                  <p class="mt-0.5 text-[10px] text-slate-400">
+                  <p class="mt-0.5 text-[10px] text-slate-400 dark:text-slate-500">
                     Supported: JPEG, PNG
                   </p>
                 </template>
@@ -219,13 +219,13 @@
                   @change="onFileSelected"
                 />
               </div>
-              <p v-if="errors.companyImage" class="text-xs font-medium text-red-500">{{ errors.companyImage }}</p>
+              <p v-if="errors.companyImage" class="text-xs font-medium text-red-500 dark:text-red-400">{{ errors.companyImage }}</p>
 
               <!-- URL Input -->
               <div class="mt-3">
                 <div class="relative">
                   <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                     </svg>
                   </div>
@@ -233,13 +233,13 @@
                     v-model="companyLogoUrlInput"
                     type="url"
                     placeholder="Or paste an image URL..."
-                    class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 transition-colors focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                    class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 transition-colors focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-indigo-500"
                     @input="onLogoUrlInput"
                   />
                   <button
                     v-if="companyLogoUrlInput"
                     type="button"
-                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
                     @click="clearLogoUrl"
                   >
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,18 +271,18 @@
 
       <!-- Action Panel Footer matching Detail View -->
       <div
-        class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-8 py-5 sm:flex-row"
+        class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-8 py-5 sm:flex-row dark:border-slate-700 dark:bg-slate-700/30"
       >
         <div class="flex items-center gap-2">
           <span class="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
-          <span class="text-xs font-medium text-slate-400">Complete all required fields</span>
+          <span class="text-xs font-medium text-slate-400 dark:text-slate-500">Complete all required fields</span>
         </div>
 
         <div class="flex items-center gap-2">
           <button
             v-if="showCancel"
             type="button"
-            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:text-slate-200"
             :disabled="submitting"
             @click="emit('cancel')"
           >
@@ -291,7 +291,7 @@
 
           <button
             type="button"
-            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:text-slate-200"
             :disabled="submitting"
             @click="reset"
           >

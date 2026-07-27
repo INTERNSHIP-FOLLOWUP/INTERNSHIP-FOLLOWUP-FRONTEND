@@ -1,10 +1,10 @@
 <template>
   <div v-if="filters.length > 0" class="flex flex-wrap items-center gap-2">
-    <span class="text-xs font-semibold text-slate-500">Filters:</span>
+    <span class="text-xs font-semibold dark:text-slate-400 text-slate-500">Filters:</span>
     <span
       v-for="f in filters"
       :key="f.label"
-      class="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700"
+      class="inline-flex items-center gap-1.5 rounded-full dark:bg-indigo-900/30 bg-indigo-50 px-3 py-1 text-xs font-semibold dark:text-indigo-400 text-indigo-700"
     >
       {{ f.label }}: {{ f.value }}
       <button
@@ -24,7 +24,7 @@
     </span>
     <button
       @click="$emit('clearAll')"
-      class="text-xs font-semibold text-red-600 hover:text-red-800 transition-colors"
+      class="text-xs font-semibold dark:text-red-400 text-red-600 dark:hover:text-red-300 hover:text-red-800 transition-colors"
     >
       Clear all
     </button>

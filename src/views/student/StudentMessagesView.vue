@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+  <div class="flex h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-2xl border dark:border-slate-600 border-gray-200 dark:bg-slate-800 bg-white shadow-sm">
     <!-- Loading State -->
     <div v-if="loading" class="flex flex-1 items-center justify-center">
       <svg class="h-8 w-8 animate-spin text-emerald-500" fill="none" viewBox="0 0 24 24">
@@ -16,7 +16,7 @@
         </svg>
       </div>
       <h3 class="mt-4 text-lg font-bold text-gray-800">No tutor assigned yet</h3>
-      <p class="mt-1 max-w-sm text-sm text-gray-500">
+      <p class="mt-1 max-w-sm text-sm dark:text-slate-400 text-gray-500">
         You'll be able to message your tutor once an admin assigns one to you.
       </p>
     </div>
@@ -29,19 +29,19 @@
           <span v-else>{{ getInitials(tutorName) }}</span>
         </div>
         <div class="min-w-0 flex-1">
-          <h3 class="truncate text-sm font-bold text-gray-900">{{ tutorName }}</h3>
-          <p class="text-xs text-gray-500">Your Tutor</p>
+          <h3 class="truncate text-sm font-bold dark:text-slate-100 text-gray-900">{{ tutorName }}</h3>
+          <p class="text-xs dark:text-slate-400 text-gray-500">Your Tutor</p>
         </div>
       </div>
 
       <!-- Messages -->
       <div ref="messagesContainer" class="flex-1 space-y-3 overflow-y-auto px-5 py-4">
         <div v-if="messages.length === 0" class="flex flex-col items-center justify-center py-16 text-center">
-          <svg class="h-10 w-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="h-10 w-10 dark:text-slate-500 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
           <h4 class="mt-3 text-sm font-bold text-gray-600">No messages yet</h4>
-          <p class="mt-1 text-xs text-gray-400">Send a message to your tutor to start the conversation.</p>
+          <p class="mt-1 text-xs dark:text-slate-500 text-gray-400">Send a message to your tutor to start the conversation.</p>
         </div>
 
         <template v-else>
@@ -56,11 +56,11 @@
               :class="
                 msg.sender_type === 'student'
                   ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-br-md'
-                  : 'bg-gray-100 text-gray-800 rounded-bl-md'
+                  : 'dark:bg-slate-600 bg-gray-100 text-gray-800 rounded-bl-md'
               "
             >
               <p class="whitespace-pre-wrap text-sm leading-relaxed">{{ msg.message }}</p>
-              <div class="mt-1 flex items-center justify-end gap-1" :class="msg.sender_type === 'student' ? '' : 'text-gray-400'">
+              <div class="mt-1 flex items-center justify-end gap-1" :class="msg.sender_type === 'student' ? '' : 'dark:text-slate-500 text-gray-400'">
                 <span class="text-[10px]" :class="msg.sender_type === 'student' ? 'text-emerald-200' : ''">
                   {{ formatTime(msg.created_at) }}
                 </span>
@@ -83,7 +83,7 @@
               v-model="newMessage"
               placeholder="Type your message..."
               rows="1"
-              class="block w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 transition-all focus:border-emerald-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              class="block w-full resize-none rounded-xl border dark:border-slate-600 border-gray-200 dark:bg-slate-700 bg-gray-50 px-4 py-2.5 text-sm dark:text-slate-200 text-gray-700 placeholder-gray-400 transition-all focus:border-emerald-300 focus:dark:bg-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
               @keydown.enter.exact="handleSend"
               @input="autoResize"
             />

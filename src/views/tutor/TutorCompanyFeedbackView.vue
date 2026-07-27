@@ -1,27 +1,27 @@
 <template>
-  <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+  <div class="rounded-2xl border dark:border-slate-700 border-gray-100 dark:bg-slate-800 bg-white p-6 shadow-sm">
     <div class="mb-6 flex items-start justify-between gap-4">
       <div>
-        <h1 class="text-xl font-semibold text-gray-900">Company Feedback</h1>
-        <p class="mt-1 text-sm text-gray-500">
+        <h1 class="text-xl font-semibold dark:text-slate-100 text-gray-900">Company Feedback</h1>
+        <p class="mt-1 text-sm dark:text-slate-400 text-gray-500">
           View student performance feedback submitted by companies.
         </p>
       </div>
     </div>
 
-    <div v-if="meta" class="mb-6 text-xs text-gray-400">
+    <div v-if="meta" class="mb-6 text-xs dark:text-slate-500 text-gray-400">
       {{ meta.total }} feedback{{ meta.total !== 1 ? 's' : '' }}
     </div>
 
     <template v-if="loading">
       <div class="space-y-4">
-        <div v-for="n in 3" :key="n" class="animate-pulse rounded-xl border border-gray-100 bg-gray-50/50 p-5">
+        <div v-for="n in 3" :key="n" class="animate-pulse rounded-xl border dark:border-slate-700 border-gray-100 dark:bg-slate-700 bg-gray-50/50 p-5">
           <div class="flex items-start gap-3">
-            <div class="h-10 w-10 shrink-0 rounded-lg bg-gray-200" />
+            <div class="h-10 w-10 shrink-0 rounded-lg dark:bg-slate-600 bg-gray-200" />
             <div class="flex-1 space-y-2">
-              <div class="h-4 w-48 rounded bg-gray-200" />
-              <div class="h-3 w-32 rounded bg-gray-200" />
-              <div class="mt-3 h-12 w-full rounded bg-gray-200" />
+              <div class="h-4 w-48 rounded dark:bg-slate-600 bg-gray-200" />
+              <div class="h-3 w-32 rounded dark:bg-slate-600 bg-gray-200" />
+              <div class="mt-3 h-12 w-full rounded dark:bg-slate-600 bg-gray-200" />
             </div>
           </div>
         </div>
@@ -39,22 +39,22 @@
       <svg class="mb-4 h-16 w-16 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
       </svg>
-      <p class="text-sm font-medium text-gray-500">No feedback from companies yet.</p>
-      <p class="mt-1 text-xs text-gray-400">Feedback will appear here once companies submit them.</p>
+      <p class="text-sm font-medium dark:text-slate-400 text-gray-500">No feedback from companies yet.</p>
+      <p class="mt-1 text-xs dark:text-slate-500 text-gray-400">Feedback will appear here once companies submit them.</p>
     </div>
 
     <div v-else class="space-y-4">
       <div
         v-for="item in feedback"
         :key="item.id"
-        class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:border-gray-200 hover:shadow-md"
+        class="group rounded-xl border dark:border-slate-700 border-gray-100 dark:bg-slate-800 bg-white p-5 shadow-sm transition-all hover:dark:border-slate-600 border-gray-200 hover:shadow-md"
       >
         <!-- Header: Company + Date -->
         <div class="mb-3 flex items-start justify-between gap-3">
           <div class="flex items-center gap-3">
             <div
               v-if="getCompanyLogo(item)"
-              class="h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white"
+              class="h-10 w-10 shrink-0 overflow-hidden rounded-lg border dark:border-slate-600 border-gray-200 dark:bg-slate-800 bg-white"
             >
               <img
                 :src="getCompanyLogo(item)"
@@ -72,8 +72,8 @@
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
-                <h3 class="text-sm font-semibold text-gray-900 truncate">{{ getCompanyName(item) }}</h3>
-                <span class="shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">Feedback</span>
+                <h3 class="text-sm font-semibold dark:text-slate-100 text-gray-900 truncate">{{ getCompanyName(item) }}</h3>
+                <span class="shrink-0 rounded dark:bg-slate-600 bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium dark:text-slate-400 text-gray-500">Feedback</span>
               </div>
               <!-- Student info with photo -->
               <div class="mt-1.5 flex items-center gap-2">
@@ -82,18 +82,18 @@
                   :name="feedbackStudentName(item)"
                   size="sm"
                 />
-                <p class="truncate text-xs font-medium text-gray-700">
+                <p class="truncate text-xs font-medium dark:text-slate-200 text-gray-700">
                   {{ feedbackStudentName(item) }}
                 </p>
               </div>
             </div>
           </div>
-          <span class="shrink-0 whitespace-nowrap text-xs text-gray-400">{{ formatDate(item.created_at) }}</span>
+          <span class="shrink-0 whitespace-nowrap text-xs dark:text-slate-500 text-gray-400">{{ formatDate(item.created_at) }}</span>
         </div>
 
         <!-- Strengths -->
         <div v-if="item.strengths?.length" class="mb-2.5">
-          <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500">Strengths</p>
+          <p class="mb-1 text-xs font-semibold uppercase tracking-wider dark:text-slate-400 text-gray-500">Strengths</p>
           <div class="flex flex-wrap gap-1.5">
             <span
               v-for="s in item.strengths"
@@ -107,7 +107,7 @@
 
         <!-- Improvement Areas -->
         <div v-if="item.improvement_areas?.length" class="mb-2.5">
-          <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500">Areas for Improvement</p>
+          <p class="mb-1 text-xs font-semibold uppercase tracking-wider dark:text-slate-400 text-gray-500">Areas for Improvement</p>
           <div class="flex flex-wrap gap-1.5">
             <span
               v-for="a in item.improvement_areas"
@@ -120,24 +120,24 @@
         </div>
 
         <!-- Comment -->
-        <div v-if="item.message" class="relative mt-2 rounded-lg border border-gray-100 bg-gray-50/70 px-4 py-3">
-          <svg class="absolute left-3 top-3 h-4 w-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+        <div v-if="item.message" class="relative mt-2 rounded-lg border dark:border-slate-700 border-gray-100 dark:bg-slate-700 bg-gray-50/70 px-4 py-3">
+          <svg class="absolute left-3 top-3 h-4 w-4 dark:text-slate-500 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zm-4 0H9v2h2V9z" clip-rule="evenodd" />
           </svg>
-          <p class="pl-7 text-sm leading-relaxed text-gray-700">{{ item.message }}</p>
+          <p class="pl-7 text-sm leading-relaxed dark:text-slate-200 text-gray-700">{{ item.message }}</p>
         </div>
       </div>
 
       <!-- Pagination -->
-      <div v-if="meta && meta.last_page > 1" class="flex items-center justify-between border-t border-gray-100 pt-4">
-        <p class="text-xs text-gray-500">
+      <div v-if="meta && meta.last_page > 1" class="flex items-center justify-between border-t dark:border-slate-700 border-gray-100 pt-4">
+        <p class="text-xs dark:text-slate-400 text-gray-500">
           Page {{ meta.current_page }} of {{ meta.last_page }}
           ({{ meta.total }} total)
         </p>
         <div class="flex items-center gap-1.5">
           <button
             :disabled="meta.current_page <= 1"
-            class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            class="rounded-lg border dark:border-slate-600 border-gray-200 px-3 py-1.5 text-xs font-semibold dark:text-slate-200 text-gray-700 transition-colors hover:dark:bg-slate-700 bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
             @click="load(meta.current_page - 1)"
           >
             Previous
@@ -146,14 +146,14 @@
             v-for="p in visiblePages"
             :key="p"
             class="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-semibold transition-colors"
-            :class="p === meta.current_page ? 'bg-indigo-600 text-white shadow-sm' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'"
+            :class="p === meta.current_page ? 'bg-indigo-600 text-white shadow-sm' : 'border dark:border-slate-600 border-gray-200 dark:text-slate-200 text-gray-700 hover:dark:bg-slate-700 bg-gray-50'"
             @click="load(p)"
           >
             {{ p }}
           </button>
           <button
             :disabled="meta.current_page >= meta.last_page"
-            class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            class="rounded-lg border dark:border-slate-600 border-gray-200 px-3 py-1.5 text-xs font-semibold dark:text-slate-200 text-gray-700 transition-colors hover:dark:bg-slate-700 bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
             @click="load(meta.current_page + 1)"
           >
             Next

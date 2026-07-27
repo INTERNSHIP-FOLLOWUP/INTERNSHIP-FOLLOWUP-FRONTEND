@@ -2,20 +2,20 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-slate-900">Student Details</h1>
-        <p class="text-sm text-slate-500">{{ student?.name || 'Loading...' }}</p>
+        <h1 class="text-3xl font-bold dark:text-slate-100 text-slate-900">Student Details</h1>
+        <p class="text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">{{ student?.name || 'Loading...' }}</p>
       </div>
       <div class="flex items-center gap-2">
         <router-link
           to="/tutor/students"
-          class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
+          class="inline-flex items-center gap-2 rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-4 py-2.5 text-sm font-bold dark:text-slate-200 text-slate-700 hover:dark:bg-slate-700 bg-slate-50 transition"
           >Back</router-link
         >
       </div>
     </div>
 
     <!-- Tabs -->
-    <div class="flex items-center gap-2 border-b border-slate-100">
+    <div class="flex items-center gap-2 border-b dark:border-slate-700 border-slate-100">
       <button
         v-for="tab in tabs"
         :key="tab.key"
@@ -25,7 +25,7 @@
         :class="
           active === tab.key
             ? 'border-b-2 border-indigo-600 text-indigo-700'
-            : 'text-slate-500 hover:text-slate-700'
+            : 'dark:dark:text-slate-500 text-slate-400 text-slate-500 hover:dark:text-slate-200 text-slate-700'
         "
       >
         {{ tab.label }}
@@ -34,8 +34,8 @@
 
     <!-- Overview -->
     <div v-if="active === 'overview'" class="space-y-6">
-      <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-        <h3 class="text-sm font-bold text-slate-900">Internship Status</h3>
+      <div class="rounded-2xl border dark:border-slate-700 border-slate-100 dark:bg-slate-800 bg-white p-6 shadow-sm">
+        <h3 class="text-sm font-bold dark:text-slate-100 text-slate-900">Internship Status</h3>
         <div class="mt-4 flex flex-wrap items-center gap-3">
           <span
             class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold"
@@ -44,7 +44,7 @@
           >
           <select
             v-model="nextStatus"
-            class="h-9 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="h-9 rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-3 text-sm dark:text-slate-200 text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
             <option v-for="opt in statusOptions" :key="opt" :value="opt">{{ opt }}</option>
           </select>
@@ -60,38 +60,38 @@
       </div>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-          <h3 class="text-sm font-bold text-slate-900">Student</h3>
-          <div class="mt-3 space-y-2 text-sm text-slate-700">
+        <div class="rounded-2xl border dark:border-slate-700 border-slate-100 dark:bg-slate-800 bg-white p-5 shadow-sm">
+          <h3 class="text-sm font-bold dark:text-slate-100 text-slate-900">Student</h3>
+          <div class="mt-3 space-y-2 text-sm dark:text-slate-200 text-slate-700">
             <p>
-              <span class="text-xs font-semibold text-slate-500">Name:</span> {{ student?.name }}
+              <span class="text-xs font-semibold dark:dark:text-slate-500 text-slate-400 text-slate-500">Name:</span> {{ student?.name }}
             </p>
             <p class="truncate max-w-[300px]">
-              <span class="text-xs font-semibold text-slate-500">Email:</span> {{ student?.email }}
+              <span class="text-xs font-semibold dark:dark:text-slate-500 text-slate-400 text-slate-500">Email:</span> {{ student?.email }}
             </p>
             <p>
-              <span class="text-xs font-semibold text-slate-500">Phone:</span>
+              <span class="text-xs font-semibold dark:dark:text-slate-500 text-slate-400 text-slate-500">Phone:</span>
               {{ student?.phone || '—' }}
             </p>
             <p>
-              <span class="text-xs font-semibold text-slate-500">Code:</span>
+              <span class="text-xs font-semibold dark:dark:text-slate-500 text-slate-400 text-slate-500">Code:</span>
               {{ student?.student_code || '—' }}
             </p>
           </div>
         </div>
-        <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-          <h3 class="text-sm font-bold text-slate-900">Internship</h3>
-          <div class="mt-3 space-y-2 text-sm text-slate-700">
+        <div class="rounded-2xl border dark:border-slate-700 border-slate-100 dark:bg-slate-800 bg-white p-5 shadow-sm">
+          <h3 class="text-sm font-bold dark:text-slate-100 text-slate-900">Internship</h3>
+          <div class="mt-3 space-y-2 text-sm dark:text-slate-200 text-slate-700">
             <p>
-              <span class="text-xs font-semibold text-slate-500">Company:</span>
+              <span class="text-xs font-semibold dark:dark:text-slate-500 text-slate-400 text-slate-500">Company:</span>
               {{ student?.company_name || '—' }}
             </p>
             <p>
-              <span class="text-xs font-semibold text-slate-500">Position:</span>
+              <span class="text-xs font-semibold dark:dark:text-slate-500 text-slate-400 text-slate-500">Position:</span>
               {{ student?.position || '—' }}
             </p>
             <p>
-              <span class="text-xs font-semibold text-slate-500">Batch:</span>
+              <span class="text-xs font-semibold dark:dark:text-slate-500 text-slate-400 text-slate-500">Batch:</span>
               {{ student?.batch?.batch_name || student?.batch?.name || '—' }}
             </p>
           </div>
@@ -102,9 +102,9 @@
     <!-- Placeholder tabs: wire these to lazy-load endpoints later -->
     <div
       v-if="active !== 'overview'"
-      class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm"
+      class="rounded-2xl border dark:border-slate-700 border-slate-100 dark:bg-slate-800 bg-white p-6 shadow-sm"
     >
-      <p class="text-sm text-slate-500">
+      <p class="text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">
         This tab will be lazy-loaded from the backend in the next phase.
       </p>
     </div>
@@ -147,7 +147,7 @@ function statusColor(status?: string) {
     case 'Terminated':
       return 'bg-rose-50 text-rose-700'
     default:
-      return 'bg-slate-100 text-slate-700'
+      return 'dark:bg-slate-600 bg-slate-100 dark:text-slate-200 text-slate-700'
   }
 }
 

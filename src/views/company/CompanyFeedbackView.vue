@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+    <div class="rounded-2xl border border-gray-100 dark:bg-slate-800 bg-white p-6 shadow-sm">
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 class="text-xl font-semibold text-gray-900">Student Performance Feedback</h1>
@@ -19,7 +19,7 @@
           <div class="relative">
             <select
               v-model="form.student_id"
-              class="w-full appearance-none rounded-xl border border-gray-200 bg-white px-4 py-3 pr-10 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+              class="w-full appearance-none rounded-xl border border-gray-200 dark:bg-slate-800 bg-white px-4 py-3 pr-10 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
             >
               <option value="" disabled>Select a student...</option>
               <option
@@ -50,7 +50,7 @@
               class="rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-150"
               :class="form.strengths.includes(s)
                 ? 'border-emerald-300 bg-emerald-50 text-emerald-700 shadow-sm'
-                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'"
+                : 'border-gray-200 dark:bg-slate-800 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'"
               @click="toggleStrength(s)"
             >
               <span v-if="form.strengths.includes(s)" class="mr-1">✓</span>
@@ -73,7 +73,7 @@
               class="rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-150"
               :class="form.improvement_areas.includes(area)
                 ? 'border-amber-300 bg-amber-50 text-amber-700 shadow-sm'
-                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'"
+                : 'border-gray-200 dark:bg-slate-800 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50'"
               @click="toggleImprovement(area)"
             >
               <span v-if="form.improvement_areas.includes(area)" class="mr-1">✓</span>
@@ -90,7 +90,7 @@
           <textarea
             v-model="form.message"
             rows="4"
-            class="mt-1 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            class="mt-1 w-full rounded-xl border border-gray-200 dark:bg-slate-800 bg-white px-4 py-3 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
             placeholder="Share your detailed feedback about this student's performance..."
           />
         </div>
@@ -140,7 +140,7 @@
           <div
             v-for="item in feedback"
             :key="item.id"
-            class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+            class="rounded-xl border border-gray-100 dark:bg-slate-800 bg-white p-5 shadow-sm"
           >
             <div class="mb-3 flex items-start justify-between gap-3">
               <div class="flex items-center gap-3">

@@ -1,41 +1,41 @@
 <template>
-  <div class="rounded-2xl border border-slate-100 bg-white shadow-sm">
-    <div class="border-b border-slate-100 px-6 py-4">
-      <h2 class="text-lg font-semibold text-slate-900">Personal Information</h2>
-      <p class="text-xs text-slate-500">Update your account's profile information.</p>
+  <div class="rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+    <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-700">
+      <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Personal Information</h2>
+      <p class="text-xs text-slate-500 dark:text-slate-400">Update your account's profile information.</p>
     </div>
     <form @submit.prevent="onSubmit" class="space-y-5 px-6 py-5">
       <ErrorAlert :message="store.error" />
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">Name</label>
+          <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Name</label>
           <input
             v-model="form.name"
             type="text"
-            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20"
-            :class="{ 'border-red-400': errors.name }"
+            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+            :class="{ 'border-red-400 dark:border-red-600': errors.name }"
           />
-          <p v-if="errors.name" class="text-red-600 text-xs mt-1">{{ errors.name }}</p>
+          <p v-if="errors.name" class="text-red-600 dark:text-red-400 text-xs mt-1">{{ errors.name }}</p>
         </div>
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">Email</label>
+          <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
           <input
             v-model="form.email"
             type="email"
-            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20"
-            :class="{ 'border-red-400': errors.email }"
+            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+            :class="{ 'border-red-400 dark:border-red-600': errors.email }"
           />
-          <p v-if="errors.email" class="text-red-600 text-xs mt-1">{{ errors.email }}</p>
+          <p v-if="errors.email" class="text-red-600 dark:text-red-400 text-xs mt-1">{{ errors.email }}</p>
         </div>
       </div>
 
       <div>
-        <label class="mb-1 block text-sm font-medium text-slate-700">Phone</label>
+        <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Phone</label>
         <input
           v-model="form.phone"
           type="text"
-          class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20"
+          class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
         />
       </div>
 

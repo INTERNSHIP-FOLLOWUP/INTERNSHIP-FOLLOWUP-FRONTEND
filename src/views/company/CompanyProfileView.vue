@@ -3,8 +3,8 @@
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900">Company & Supervisor Profile</h1>
-        <p class="mt-1 text-sm text-slate-500">
+        <h1 class="text-2xl font-bold dark:text-slate-100 text-slate-900">Company & Supervisor Profile</h1>
+        <p class="mt-1 text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">
           Manage your personal supervisor details, profile avatar, company organization info, and security settings.
         </p>
       </div>
@@ -18,7 +18,7 @@
     <div v-if="loadingAll" class="flex items-center justify-center py-20">
       <div class="flex flex-col items-center gap-3">
         <LoadingSpinner size="lg" color="primary" />
-        <p class="text-sm font-medium text-slate-500">Loading profile details...</p>
+        <p class="text-sm font-medium dark:dark:text-slate-500 text-slate-400 text-slate-500">Loading profile details...</p>
       </div>
     </div>
 
@@ -49,13 +49,13 @@
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <!-- Left Column: Avatar & Quick Info -->
         <div class="lg:col-span-1 space-y-6">
-          <div class="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm">
+          <div class="rounded-3xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white p-6 shadow-sm">
             <!-- Supervisor Avatar Section -->
             <div class="flex flex-col items-center text-center">
               <div class="relative group">
                 <div
                   class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-shadow duration-200 group-hover:shadow-xl"
-                  :class="photoUploadError ? 'border-red-300' : 'border-slate-100'"
+                  :class="photoUploadError ? 'border-red-300' : 'dark:border-slate-700 border-slate-100'"
                 >
                   <img
                     v-if="photoPreview || displayPhoto"
@@ -104,8 +104,8 @@
 
               <p v-if="photoUploadError" class="mt-2 text-xs text-red-500">{{ photoUploadError }}</p>
 
-              <h2 class="mt-4 text-lg font-bold text-slate-900">{{ fullName }}</h2>
-              <p class="text-xs text-slate-500 truncate max-w-[240px]">{{ user?.email }}</p>
+              <h2 class="mt-4 text-lg font-bold dark:text-slate-100 text-slate-900">{{ fullName }}</h2>
+              <p class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500 truncate max-w-[240px]">{{ user?.email }}</p>
 
               <!-- Role Badge -->
               <span
@@ -117,23 +117,23 @@
             </div>
 
             <!-- Quick Info Divider -->
-            <div class="mt-6 border-t border-slate-100 pt-5">
-              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Account & Company Info</h3>
+            <div class="mt-6 border-t dark:border-slate-700 border-slate-100 pt-5">
+              <h3 class="text-xs font-bold uppercase tracking-wider dark:text-slate-500 text-slate-400">Account & Company Info</h3>
               <dl class="mt-3 space-y-3">
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Supervisor Email</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Supervisor Email</dt>
                   <dd class="mt-0.5 text-xs font-semibold text-slate-800 truncate max-w-[240px]">{{ user?.email || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Company Name</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Company Name</dt>
                   <dd class="mt-0.5 text-xs font-semibold text-slate-800">{{ currentCompany?.name || 'Assigned Company' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Industry Track</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Industry Track</dt>
                   <dd class="mt-0.5 text-xs font-semibold text-slate-800">{{ currentCompany?.industry || 'Technology & IT Services' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Member Since</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Member Since</dt>
                   <dd class="mt-0.5 text-xs font-semibold text-slate-800">{{ memberSince }}</dd>
                 </div>
               </dl>
@@ -144,12 +144,12 @@
         <!-- Right Column: Forms -->
         <div class="space-y-6 lg:col-span-2">
           <!-- Card 1: Supervisor Personal Information -->
-          <div class="rounded-3xl border border-slate-200/80 bg-white shadow-sm">
-            <div class="border-b border-slate-100 px-6 py-4">
+          <div class="rounded-3xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white shadow-sm">
+            <div class="border-b dark:border-slate-700 border-slate-100 px-6 py-4">
               <div class="flex items-center justify-between">
                 <div>
-                  <h2 class="text-base font-bold text-slate-900">Personal Information</h2>
-                  <p class="mt-0.5 text-xs text-slate-500">Update supervisor personal details and contact info</p>
+                  <h2 class="text-base font-bold dark:text-slate-100 text-slate-900">Personal Information</h2>
+                  <p class="mt-0.5 text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">Update supervisor personal details and contact info</p>
                 </div>
                 <button
                   v-if="!editingProfile"
@@ -168,19 +168,19 @@
               <!-- View Mode -->
               <dl v-if="!editingProfile" class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">First Name</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">First Name</dt>
                   <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ user?.first_name || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Last Name</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Last Name</dt>
                   <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ user?.last_name || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Email Address</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Email Address</dt>
                   <dd class="mt-0.5 text-sm font-semibold text-slate-800 truncate max-w-[240px]">{{ user?.email || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Phone Number</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Phone Number</dt>
                   <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ (user as any)?.phone || 'Not provided' }}</dd>
                 </div>
               </dl>
@@ -193,7 +193,7 @@
                       v-model="editForm.first_name"
                       type="text"
                       placeholder="Enter first name"
-                      class="block w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all"
+                      class="block w-full rounded-xl border dark:bg-slate-800 bg-white px-4 py-3 text-sm dark:text-slate-100 text-slate-900 outline-none transition-all"
                       :class="inputErrorClass('first_name')"
                       @input="clearFieldError('first_name')"
                     />
@@ -204,7 +204,7 @@
                       v-model="editForm.last_name"
                       type="text"
                       placeholder="Enter last name"
-                      class="block w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all"
+                      class="block w-full rounded-xl border dark:bg-slate-800 bg-white px-4 py-3 text-sm dark:text-slate-100 text-slate-900 outline-none transition-all"
                       :class="inputErrorClass('last_name')"
                       @input="clearFieldError('last_name')"
                     />
@@ -215,7 +215,7 @@
                       v-model="editForm.email"
                       type="email"
                       placeholder="Enter email address"
-                      class="block w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all"
+                      class="block w-full rounded-xl border dark:bg-slate-800 bg-white px-4 py-3 text-sm dark:text-slate-100 text-slate-900 outline-none transition-all"
                       :class="inputErrorClass('email')"
                       @input="clearFieldError('email')"
                     />
@@ -226,18 +226,18 @@
                       v-model="editForm.phone"
                       type="text"
                       placeholder="Enter phone number"
-                      class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all"
+                      class="block w-full rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-4 py-3 text-sm dark:text-slate-100 text-slate-900 outline-none transition-all"
                     />
                   </FormField>
                 </div>
 
                 <ErrorAlert v-if="formErrors._form" :message="formErrors._form" />
 
-                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                <div class="flex items-center justify-end gap-3 border-t dark:border-slate-700 border-slate-100 pt-4">
                   <button
                     type="button"
                     :disabled="profileSubmitting"
-                    class="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                    class="rounded-xl border dark:border-slate-600 border-slate-200 px-4 py-2.5 text-xs font-semibold dark:text-slate-200 text-slate-700 hover:dark:bg-slate-700 bg-slate-50 disabled:opacity-50"
                     @click="editingProfile = false"
                   >
                     Cancel
@@ -256,12 +256,12 @@
           </div>
 
           <!-- Card 2: Company Profile Information -->
-          <div class="rounded-3xl border border-slate-200/80 bg-white shadow-sm">
-            <div class="border-b border-slate-100 px-6 py-4">
+          <div class="rounded-3xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white shadow-sm">
+            <div class="border-b dark:border-slate-700 border-slate-100 px-6 py-4">
               <div class="flex items-center justify-between">
                 <div>
-                  <h2 class="text-base font-bold text-slate-900">Company Information</h2>
-                  <p class="mt-0.5 text-xs text-slate-500">Manage company name, industry, website, and contact details</p>
+                  <h2 class="text-base font-bold dark:text-slate-100 text-slate-900">Company Information</h2>
+                  <p class="mt-0.5 text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">Manage company name, industry, website, and contact details</p>
                 </div>
                 <button
                   v-if="!editingCompany"
@@ -280,28 +280,28 @@
               <!-- View Mode -->
               <dl v-if="!editingCompany" class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Company Name</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Company Name</dt>
                   <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ currentCompany?.name || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Industry / Sector</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Industry / Sector</dt>
                   <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ currentCompany?.industry || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Office Location / Address</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Office Location / Address</dt>
                   <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ currentCompany?.location || '—' }}</dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Website URL</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Website URL</dt>
                   <dd class="mt-0.5 text-sm font-semibold text-[#21BAEA] truncate">
                     <a v-if="currentCompany?.website" :href="currentCompany.website" target="_blank" class="hover:underline">
                       {{ currentCompany.website }}
                     </a>
-                    <span v-else class="text-slate-400">—</span>
+                    <span v-else class="dark:text-slate-500 text-slate-400">—</span>
                   </dd>
                 </div>
                 <div>
-                  <dt class="text-xs font-medium text-slate-400">Telegram Link / Contact</dt>
+                  <dt class="text-xs font-medium dark:text-slate-500 text-slate-400">Telegram Link / Contact</dt>
                   <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ currentCompany?.telegramLink || '—' }}</dd>
                 </div>
               </dl>
@@ -314,7 +314,7 @@
                       v-model="companyForm.companyName"
                       type="text"
                       placeholder="Enter official company name"
-                      class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all"
+                      class="block w-full rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-4 py-3 text-sm dark:text-slate-100 text-slate-900 outline-none transition-all"
                     />
                   </FormField>
 
@@ -323,7 +323,7 @@
                       v-model="companyForm.industry"
                       type="text"
                       placeholder="e.g. Software Development, IT Services"
-                      class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all"
+                      class="block w-full rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-4 py-3 text-sm dark:text-slate-100 text-slate-900 outline-none transition-all"
                     />
                   </FormField>
 
@@ -332,7 +332,7 @@
                       v-model="companyForm.location"
                       type="text"
                       placeholder="Phnom Penh, Cambodia"
-                      class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all"
+                      class="block w-full rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-4 py-3 text-sm dark:text-slate-100 text-slate-900 outline-none transition-all"
                     />
                   </FormField>
 
@@ -341,7 +341,7 @@
                       v-model="companyForm.website"
                       type="url"
                       placeholder="https://company.com"
-                      class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all"
+                      class="block w-full rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-4 py-3 text-sm dark:text-slate-100 text-slate-900 outline-none transition-all"
                     />
                   </FormField>
 
@@ -350,16 +350,16 @@
                       v-model="companyForm.telegramLink"
                       type="text"
                       placeholder="https://t.me/company"
-                      class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-all"
+                      class="block w-full rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-4 py-3 text-sm dark:text-slate-100 text-slate-900 outline-none transition-all"
                     />
                   </FormField>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                <div class="flex items-center justify-end gap-3 border-t dark:border-slate-700 border-slate-100 pt-4">
                   <button
                     type="button"
                     :disabled="companySubmitting"
-                    class="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                    class="rounded-xl border dark:border-slate-600 border-slate-200 px-4 py-2.5 text-xs font-semibold dark:text-slate-200 text-slate-700 hover:dark:bg-slate-700 bg-slate-50 disabled:opacity-50"
                     @click="editingCompany = false"
                   >
                     Cancel
@@ -378,17 +378,17 @@
           </div>
 
           <!-- Card 3: Password & Security -->
-          <div class="rounded-3xl border border-slate-200/80 bg-white shadow-sm">
-            <div class="border-b border-slate-100 px-6 py-4">
+          <div class="rounded-3xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white shadow-sm">
+            <div class="border-b dark:border-slate-700 border-slate-100 px-6 py-4">
               <div class="flex items-center justify-between">
                 <div>
-                  <h2 class="text-base font-bold text-slate-900">Security & Password</h2>
-                  <p class="mt-0.5 text-xs text-slate-500">Update your supervisor account password</p>
+                  <h2 class="text-base font-bold dark:text-slate-100 text-slate-900">Security & Password</h2>
+                  <p class="mt-0.5 text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">Update your supervisor account password</p>
                 </div>
                 <button
                   v-if="!editingPassword"
                   @click="editingPassword = true"
-                  class="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 px-3.5 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-200"
+                  class="inline-flex items-center gap-1.5 rounded-xl dark:bg-slate-600 bg-slate-100 px-3.5 py-2 text-xs font-bold dark:text-slate-200 text-slate-700 transition-colors hover:dark:bg-slate-600 bg-slate-200"
                 >
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
@@ -400,7 +400,7 @@
 
             <div class="p-6">
               <template v-if="!editingPassword">
-                <p class="text-xs text-slate-500">Keep your supervisor account secure by using a strong password.</p>
+                <p class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">Keep your supervisor account secure by using a strong password.</p>
               </template>
 
               <form v-else @submit.prevent="savePassword" class="space-y-4">
@@ -434,11 +434,11 @@
 
                 <ErrorAlert v-if="passwordErrors._form" :message="passwordErrors._form" />
 
-                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                <div class="flex items-center justify-end gap-3 border-t dark:border-slate-700 border-slate-100 pt-4">
                   <button
                     type="button"
                     :disabled="passwordSubmitting"
-                    class="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                    class="rounded-xl border dark:border-slate-600 border-slate-200 px-4 py-2.5 text-xs font-semibold dark:text-slate-200 text-slate-700 hover:dark:bg-slate-700 bg-slate-50 disabled:opacity-50"
                     @click="cancelPasswordChange"
                   >
                     Cancel
@@ -544,7 +544,7 @@ function startEditingProfile(): void {
 function inputErrorClass(field: string): string {
   return formErrors[field]
     ? 'border-red-300 ring-1 ring-red-200 focus:border-red-500'
-    : 'border-slate-200 focus:border-[#21BAEA] focus:ring-2 focus:ring-[#21BAEA]/20'
+    : 'dark:border-slate-600 border-slate-200 focus:border-[#21BAEA] focus:ring-2 focus:ring-[#21BAEA]/20'
 }
 
 function clearFieldError(field: string): void {

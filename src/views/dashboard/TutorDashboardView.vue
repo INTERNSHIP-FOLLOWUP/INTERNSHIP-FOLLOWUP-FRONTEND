@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-slate-900">Tutor Dashboard</h1>
-        <p class="text-sm text-slate-500">
+        <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">Tutor Dashboard</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">
           Overview of your assigned students, reviews, and follow-ups.
         </p>
       </div>
@@ -12,7 +12,7 @@
         type="button"
         @click="refresh"
         :disabled="store.loading"
-        class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
+        class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700/50"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -89,32 +89,32 @@
         empty-message="Once your students submit worklogs, they will appear here."
       >
         <template #default>
-          <div class="divide-y divide-slate-100">
+          <div class="divide-y divide-slate-100 dark:divide-slate-700">
             <div
               v-for="w in store.recentWorklogs"
               :key="w.id"
               class="flex items-start gap-3 py-3 last:pb-0"
             >
               <div
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-700"
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
               >
                 {{ initials(w.student?.name) }}
               </div>
               <div class="min-w-0 flex-1">
                 <div class="flex items-center justify-between gap-2">
-                  <p class="truncate text-sm font-semibold text-slate-900">
+                  <p class="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
                     {{ w.student?.name ?? '' }}
                   </p>
-                  <span class="text-xs text-slate-400">Week {{ w.week_number }}</span>
+                  <span class="text-xs text-slate-400 dark:text-slate-500">Week {{ w.week_number }}</span>
                 </div>
-                <p class="mt-0.5 truncate text-xs text-slate-500">{{ w.description }}</p>
+                <p class="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">{{ w.description }}</p>
                 <div class="mt-1 flex items-center gap-2">
                   <span
-                    class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700"
+                    class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300"
                   >
                     {{ w.status }}
                   </span>
-                  <span class="text-xs text-slate-400">
+                  <span class="text-xs text-slate-400 dark:text-slate-500">
                     {{ formatDate(w.submission_date || w.submitted_at) }}
                   </span>
                 </div>
@@ -134,23 +134,23 @@
         empty-message="Schedule follow-ups with your students to stay aligned."
       >
         <template #default>
-          <div class="divide-y divide-slate-100">
+          <div class="divide-y divide-slate-100 dark:divide-slate-700">
             <div
               v-for="f in store.upcomingFollowups"
               :key="f.id"
               class="flex items-start gap-3 py-3 last:pb-0"
             >
               <div
-                class="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"
+                class="flex h-10 w-10 shrink-0 flex-col items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
               >
                 <span class="text-[11px] font-bold leading-none">{{ monthLabel(f.date_label) }}</span>
                 <span class="text-md font-bold leading-tight">{{ dayLabel(f.date_label) }}</span>
               </div>
               <div class="flex-1">
-                <p class="text-sm font-semibold text-slate-900">{{ f.student?.name ?? '' }}</p>
-                <p class="text-xs text-slate-500">{{ f.type }} · {{ f.time_label }}</p>
+                <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ f.student?.name ?? '' }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ f.type }} · {{ f.time_label }}</p>
                 <span
-                  class="mt-1 inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700"
+                  class="mt-1 inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
                 >{{ f.relative }}</span>
               </div>
             </div>
@@ -168,15 +168,15 @@
         empty-message="When issues are opened, they will show up here."
       >
         <template #default>
-          <div class="divide-y divide-slate-100">
+          <div class="divide-y divide-slate-100 dark:divide-slate-700">
             <div
               v-for="issue in store.openIssues"
               :key="issue.id"
               class="flex items-start justify-between gap-3 py-3 last:pb-0"
             >
               <div>
-                <p class="text-sm font-semibold text-slate-900">{{ issue.title }}</p>
-                <p class="text-xs text-slate-500">{{ issue.student?.name ?? '' }}</p>
+                <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ issue.title }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ issue.student?.name ?? '' }}</p>
               </div>
               <span
                 class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold"
@@ -199,14 +199,14 @@
         empty-message="Actions like submissions, issues, and follow-ups will appear here."
       >
         <template #default>
-          <div class="divide-y divide-slate-100">
+          <div class="divide-y divide-slate-100 dark:divide-slate-700">
             <div
               v-for="item in store.recentActivity"
               :key="(item.reference_id ?? 'no-ref') + '-' + (item.type ?? 'no-type') + '-' + item.message"
               class="flex items-start gap-3 py-3 last:pb-0"
             >
               <div
-                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600"
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400"
               >
                 <svg
                   v-if="item.icon === 'worklog'"
@@ -255,8 +255,8 @@
                 </svg>
               </div>
               <div class="min-w-0 flex-1">
-                <p class="text-sm text-slate-700">{{ item.message }}</p>
-                <p class="text-xs text-slate-400">{{ relativeTimestamp(item.timestamp) }}</p>
+                <p class="text-sm text-slate-700 dark:text-slate-300">{{ item.message }}</p>
+                <p class="text-xs text-slate-400 dark:text-slate-500">{{ relativeTimestamp(item.timestamp) }}</p>
               </div>
             </div>
           </div>

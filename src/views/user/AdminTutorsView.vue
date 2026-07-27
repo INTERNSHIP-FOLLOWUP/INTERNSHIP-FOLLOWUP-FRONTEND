@@ -2,8 +2,8 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Tutors</h1>
-        <p class="mt-1 text-sm text-slate-500">{{ totalUsers }} registered tutor{{ totalUsers !== 1 ? 's' : '' }}</p>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Tutors</h1>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">{{ totalUsers }} registered tutor{{ totalUsers !== 1 ? 's' : '' }}</p>
       </div>
       <div class="flex items-center gap-2">
         <button @click="selectMode ? clearSelection() : enterSelectMode()"
@@ -35,17 +35,17 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         <input v-model="searchQuery" type="text" placeholder="Search tutors..."
-          class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
+          class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
       </div>
     </div>
 
-    <div class="rounded-xl border border-slate-200/80 bg-white shadow-sm">
+    <div class="rounded-xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <div v-if="loading" class="space-y-0 divide-y divide-slate-50">
         <div v-for="n in 3" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse">
-          <div class="h-8 w-8 rounded-full bg-slate-200" />
+          <div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-600" />
           <div class="flex-1 space-y-2">
-            <div class="h-3 w-1/3 rounded bg-slate-200" />
-            <div class="h-3 w-1/4 rounded bg-slate-100" />
+            <div class="h-3 w-1/3 rounded bg-slate-200 dark:bg-slate-600" />
+            <div class="h-3 w-1/4 rounded bg-slate-100 dark:bg-slate-600" />
           </div>
           <div class="flex gap-2">
             <div class="h-8 w-20 rounded-lg bg-slate-200" />
@@ -57,7 +57,7 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
             <thead>
-              <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-500">
                 <th v-if="selectMode" class="px-4 py-3.5 w-10">
                   <input type="checkbox" :checked="isAllSelected" :indeterminate="isIndeterminate"
                     @change="toggleSelectAll"
@@ -71,19 +71,19 @@
                 <th class="px-6 py-3.5 text-center font-medium">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
               <template v-for="(user, index) in users" :key="user.id">
-                <tr @click="toggleTutor(user.id)" class="cursor-pointer transition-colors hover:bg-slate-50/50"
+                <tr @click="toggleTutor(user.id)" class="cursor-pointer transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-700/30"
                   :class="{ 'bg-rose-50/40': selectedIds.has(user.id) }">
                   <td v-if="selectMode" class="px-4 py-4 w-10" @click.stop>
                     <input type="checkbox" :checked="selectedIds.has(user.id)"
                       @change="toggleSelect(user.id)"
                       class="h-4 w-4 rounded border-slate-300 cursor-pointer accent-rose-600" />
                   </td>
-                  <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ user.first_name }}</td>
-                  <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ user.last_name }}</td>
-                  <td class="whitespace-nowrap px-6 py-4 text-slate-500 max-w-[200px] truncate">{{ user.email }}</td>
-                  <td class="whitespace-nowrap px-6 py-4 text-slate-500">{{ user.students_count ?? '—' }}</td>
+                  <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900 dark:text-slate-100">{{ user.first_name }}</td>
+                  <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900 dark:text-slate-100">{{ user.last_name }}</td>
+                  <td class="whitespace-nowrap px-6 py-4 text-slate-500 max-w-[200px] truncate dark:text-slate-400">{{ user.email }}</td>
+                  <td class="whitespace-nowrap px-6 py-4 text-slate-500 dark:text-slate-400">{{ user.students_count ?? '—' }}</td>
                   <td class="whitespace-nowrap px-6 py-4">
                     <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
                       :class="user.deleted_at ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700'">
@@ -94,7 +94,7 @@
                   <td class="whitespace-nowrap px-6 py-4 text-center">
                     <div class="relative inline-block text-center">
                       <button type="button" @click.stop="toggleKebab(user.id)" title="Actions"
-                        class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 mx-auto">
+                        class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 mx-auto dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-slate-200">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                         </svg>
@@ -103,10 +103,10 @@
                       <!-- Kebab Dropdown Menu (Smart positioning: Top rows pop DOWN, Bottom rows pop UP) -->
                       <transition name="fade">
                         <div v-if="openKebabId === user.id"
-                          class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left"
+                          class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left dark:border-slate-700 dark:bg-slate-800"
                           :class="index < (users.length > 2 ? users.length - 2 : 1) && users.length > 1 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'">
                           <button type="button" @click.stop="openKebabId = null; goToProfile(user.id)"
-                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors dark:text-slate-200 dark:hover:bg-slate-700/50">
                             <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -115,7 +115,7 @@
                           </button>
 
                           <button type="button" @click.stop="openKebabId = null; editTutor(user.id)"
-                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors dark:text-slate-200 dark:hover:bg-slate-700/50">
                             <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
@@ -123,7 +123,7 @@
                           </button>
 
                           <button type="button" @click.stop="openKebabId = null; toggleTutor(user.id)"
-                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors dark:text-slate-200 dark:hover:bg-slate-700/50">
                             <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
@@ -146,7 +146,7 @@
                             Activate
                           </button>
 
-                          <div class="my-1 h-px bg-slate-100" />
+                          <div class="my-1 h-px bg-slate-100 dark:bg-slate-700" />
 
                           <button type="button" @click.stop="openKebabId = null; deleteUser(user)"
                             class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors">
@@ -161,7 +161,7 @@
                   </td>
                 </tr>
                 <tr v-if="expandedTutorId === user.id">
-                  <td colspan="6" class="bg-slate-50 px-6 py-4">
+                  <td colspan="6" class="bg-slate-50 px-6 py-4 dark:bg-slate-800/50">
                     <TutorRowDetails :activity="activityFor(user.id)" />
                   </td>
                 </tr>
@@ -171,23 +171,23 @@
         </div>
       </div>
 
-      <div v-else class="flex flex-col items-center justify-center px-6 py-16 text-center">
-        <h3 class="text-base font-bold text-slate-900">No tutors found</h3>
-        <p class="mt-1 text-sm text-slate-500">No registered tutors yet.</p>
+      <div v-else class="flex flex-col items-center justify-center px-6 py-16 text-center dark:bg-slate-800">
+        <h3 class="text-base font-bold text-slate-900 dark:text-slate-100">No tutors found</h3>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">No registered tutors yet.</p>
       </div>
     </div>
     <!-- ── Floating Bulk Action Bar ── -->
     <transition name="slide-up">
       <div v-if="selectedIds.size > 0"
         class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
-        <div class="flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3 shadow-2xl shadow-rose-100 ring-1 ring-rose-100">
+        <div class="flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3 shadow-2xl shadow-rose-100 ring-1 ring-rose-100 dark:border-rose-900/50 dark:bg-slate-800 dark:shadow-rose-900/10 dark:ring-rose-900/30">
           <span class="flex h-7 min-w-[28px] items-center justify-center rounded-full bg-rose-600 px-2 text-xs font-bold text-white">
             {{ selectedIds.size }}
           </span>
-          <span class="text-sm font-semibold text-slate-700">
+          <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">
             tutor{{ selectedIds.size !== 1 ? 's' : '' }} selected
           </span>
-          <div class="mx-1 h-5 w-px bg-slate-200" />
+          <div class="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-600" />
           <button @click="bulkDelete" :disabled="bulkDeleting"
             class="flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition-all hover:bg-rose-700 disabled:opacity-60 active:scale-95">
             <svg v-if="bulkDeleting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -200,7 +200,7 @@
             {{ bulkDeleting ? 'Deleting...' : 'Delete Selected' }}
           </button>
           <button @click="clearSelection"
-            class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 active:scale-95">
+            class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 active:scale-95 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-700/50">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -213,22 +213,22 @@
     <!-- ── Bulk Confirm Modal ── -->
     <transition name="fade">
       <div v-if="showBulkConfirm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" @click.self="showBulkConfirm = false">
-        <div class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl">
+        <div class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800">
           <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30">
               <svg class="h-5 w-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
             <div>
-              <h3 class="text-base font-semibold text-slate-900">Delete {{ selectedIds.size }} Tutor{{ selectedIds.size !== 1 ? 's' : '' }}</h3>
-              <p class="mt-0.5 text-sm text-slate-500">This action is permanent and cannot be undone.</p>
+              <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Delete {{ selectedIds.size }} Tutor{{ selectedIds.size !== 1 ? 's' : '' }}</h3>
+              <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">This action is permanent and cannot be undone.</p>
             </div>
           </div>
-          <div v-if="bulkError" class="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">{{ bulkError }}</div>
+          <div v-if="bulkError" class="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-400">{{ bulkError }}</div>
           <div class="mt-5 flex items-center justify-end gap-3">
             <button @click="showBulkConfirm = false" :disabled="bulkDeleting"
-              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
+              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700/50">
               Cancel
             </button>
             <button @click="confirmBulkDelete" :disabled="bulkDeleting"

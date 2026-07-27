@@ -2,10 +2,10 @@
   <form @submit.prevent="handleSubmit" class="space-y-6" novalidate>
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
           {{ isEdit ? 'Edit Student' : 'Add Student' }}
         </h2>
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {{
             isEdit
               ? 'Update the student record below.'
@@ -21,7 +21,7 @@
       <div class="relative group shrink-0" @click="fileInput?.click()">
         <div
           class="relative h-24 w-24 cursor-pointer overflow-hidden rounded-2xl shadow-md ring-4 transition-all duration-300"
-          :class="errors.photo ? 'ring-red-200' : 'ring-slate-100 group-hover:ring-blue-200'"
+          :class="errors.photo ? 'ring-red-200' : 'ring-slate-100 group-hover:ring-blue-200 dark:ring-slate-600'"
         >
           <!-- Photo or placeholder -->
           <img
@@ -32,7 +32,7 @@
           />
           <div
             v-else
-            class="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200"
+            class="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800"
           >
             <svg class="h-10 w-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -63,13 +63,13 @@
       <!-- Upload controls -->
       <div class="flex flex-col justify-center gap-2 pt-1">
         <div>
-          <p class="text-sm font-semibold text-slate-800">Profile Photo</p>
-          <p class="text-xs text-slate-400">JPG or PNG · Max 2 MB</p>
+          <p class="text-sm font-semibold text-slate-800 dark:text-slate-200">Profile Photo</p>
+          <p class="text-xs text-slate-400 dark:text-slate-500">JPG or PNG · Max 2 MB</p>
         </div>
         <div class="flex items-center gap-2">
           <label
             for="photo"
-            class="cursor-pointer inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:border-slate-300"
+            class="cursor-pointer inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:border-slate-500"
           >
             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -80,7 +80,7 @@
             v-if="photoPreview"
             type="button"
             @click="removePhoto"
-            class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-500 transition-colors hover:bg-red-50 hover:text-red-600"
+            class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-red-400 dark:hover:bg-red-950/30 dark:hover:text-red-300"
           >
             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -88,7 +88,7 @@
             Remove
           </button>
         </div>
-        <p v-if="errors.photo" class="text-xs text-red-500 font-medium">{{ errors.photo }}</p>
+        <p v-if="errors.photo" class="text-xs text-red-500 dark:text-red-400 font-medium">{{ errors.photo }}</p>
       </div>
 
       <!-- Hidden file input -->
@@ -109,7 +109,7 @@
           v-model="form.student_code"
           type="text"
           placeholder="PNC2026-001"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           :class="inputClass('student_code')"
           @input="clearFieldError('student_code')"
           @blur="validateField('student_code')"
@@ -121,7 +121,7 @@
           v-model="form.first_name"
           type="text"
           placeholder="Enter first name"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           :class="inputClass('first_name')"
           @input="clearFieldError('first_name')"
           @blur="validateField('first_name')"
@@ -133,7 +133,7 @@
           v-model="form.last_name"
           type="text"
           placeholder="Enter last name"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           :class="inputClass('last_name')"
           @input="clearFieldError('last_name')"
           @blur="validateField('last_name')"
@@ -145,7 +145,7 @@
           v-model="form.email"
           type="email"
           placeholder="Enter email address"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           :class="inputClass('email')"
           @input="clearFieldError('email')"
           @blur="validateField('email')"
@@ -157,7 +157,7 @@
           v-model="form.phone"
           type="tel"
           placeholder="Enter phone number"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           :class="inputClass('phone')"
           @input="clearFieldError('phone')"
           @blur="validateField('phone')"
@@ -167,7 +167,7 @@
       <FormField label="Gender" :error="errors.gender" required>
         <select
           v-model="form.gender"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           :class="inputClass('gender')"
           @change="clearFieldError('gender')"
           @blur="validateField('gender')"
@@ -181,7 +181,7 @@
       <FormField label="Batch" :error="errors.batch_id" required>
         <select
           v-model.number="form.batch_id"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           :class="inputClass('batch_id')"
           @change="clearFieldError('batch_id')"
           @blur="validateField('batch_id')"
@@ -197,7 +197,7 @@
       <FormField label="Tutor" :error="errors.tutor_id" required>
         <select
           v-model.number="form.tutor_id"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           :class="inputClass('tutor_id')"
           @change="clearFieldError('tutor_id')"
           @blur="validateField('tutor_id')"
@@ -214,7 +214,7 @@
       <FormField label="Status" :error="errors.status" required>
         <select
           v-model="form.status"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
           :class="inputClass('status')"
           @change="clearFieldError('status')"
           @blur="validateField('status')"
@@ -231,15 +231,15 @@
       v-if="formError"
       role="alert"
       aria-live="polite"
-      class="rounded-lg border border-error/20 bg-error/5 px-4 py-3 text-sm font-medium text-error"
+      class="rounded-lg border border-error/20 bg-error/5 px-4 py-3 text-sm font-medium text-error dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400"
     >
       {{ formError }}
     </div>
 
     <!-- Actions -->
-    <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-5">
+    <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-5 dark:border-slate-700">
       <button type="button" @click="$emit('cancel')"
-        class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
+        class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700">
         Cancel
       </button>
       <button
@@ -325,7 +325,7 @@ const PHONE_RE = /^[\d\s\-+()]{7,20}$/
 function inputClass(field: string): string {
   return errors[field]
     ? 'border-error ring-1 ring-error/20 focus:border-error focus:ring-2 focus:ring-error/30'
-    : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
+    : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-slate-600'
 }
 
 function clearFieldError(field: string): void {

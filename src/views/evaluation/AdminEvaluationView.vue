@@ -1,10 +1,10 @@
 <template>
   <div class="space-y-6">
-    <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+    <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 class="text-xl font-semibold text-gray-900">Student Evaluations</h1>
-          <p class="mt-1 text-sm text-gray-500">
+          <h1 class="text-xl font-semibold text-gray-900 dark:text-slate-100">Student Evaluations</h1>
+          <p class="mt-1 text-sm text-gray-500 dark:text-slate-400">
             View and filter evaluations submitted by companies.
           </p>
         </div>
@@ -14,7 +14,7 @@
         <div class="relative">
           <select
             v-model="selectedCompanyId"
-            class="appearance-none rounded-xl border border-gray-200 bg-white py-2.5 pl-4 pr-10 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            class="appearance-none rounded-xl border border-gray-200 bg-white py-2.5 pl-4 pr-10 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
             @change="onCompanyChange"
           >
             <option value="">All Companies</option>
@@ -22,38 +22,38 @@
               {{ c.company_name }}
             </option>
           </select>
-          <svg class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
         </div>
         <button
           v-if="selectedCompanyId"
-          class="rounded-lg bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-100"
+          class="rounded-lg bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-100 dark:bg-rose-950/30 dark:text-rose-400 dark:hover:bg-rose-950/50"
           @click="clearFilter"
         >
           Clear filter
         </button>
-        <span v-if="meta" class="text-xs text-gray-400">
+        <span v-if="meta" class="text-xs text-gray-400 dark:text-slate-500">
           {{ meta.total }} evaluation{{ meta.total !== 1 ? 's' : '' }}
         </span>
       </div>
 
       <template v-if="loading">
         <div class="space-y-4">
-          <div v-for="n in 3" :key="n" class="animate-pulse rounded-xl border border-gray-100 bg-gray-50/50 p-5">
+          <div v-for="n in 3" :key="n" class="animate-pulse rounded-xl border border-gray-100 bg-gray-50/50 p-5 dark:border-slate-700 dark:bg-slate-800/50">
             <div class="mb-3 flex items-center gap-3">
-              <div class="h-10 w-10 rounded-lg bg-gray-200" />
+              <div class="h-10 w-10 rounded-lg bg-gray-200 dark:bg-slate-700" />
               <div class="flex-1 space-y-2">
-                <div class="h-4 w-40 rounded bg-gray-200" />
-                <div class="h-3 w-24 rounded bg-gray-200" />
+                <div class="h-4 w-40 rounded bg-gray-200 dark:bg-slate-700" />
+                <div class="h-3 w-24 rounded bg-gray-200 dark:bg-slate-700" />
               </div>
             </div>
             <div class="mb-3 grid grid-cols-4 gap-3">
-              <div v-for="i in 4" :key="i" class="h-14 rounded-lg bg-gray-200" />
+              <div v-for="i in 4" :key="i" class="h-14 rounded-lg bg-gray-200 dark:bg-slate-700" />
             </div>
             <div class="flex items-center justify-between">
-              <div class="h-4 w-32 rounded bg-gray-200" />
-              <div class="h-4 w-48 rounded bg-gray-200" />
+              <div class="h-4 w-32 rounded bg-gray-200 dark:bg-slate-700" />
+              <div class="h-4 w-48 rounded bg-gray-200 dark:bg-slate-700" />
             </div>
           </div>
         </div>
@@ -61,19 +61,19 @@
 
       <div
         v-else-if="error"
-        class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3"
+        class="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 dark:border-rose-900/30 dark:bg-rose-950/20"
       >
-        <p class="text-sm text-rose-600">{{ error }}</p>
+        <p class="text-sm text-rose-600 dark:text-rose-400">{{ error }}</p>
       </div>
 
       <div v-else-if="!evaluations.length" class="flex flex-col items-center justify-center py-16">
-        <svg class="mb-4 h-16 w-16 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="mb-4 h-16 w-16 text-gray-200 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <p class="text-sm font-medium text-gray-500">
+        <p class="text-sm font-medium text-gray-500 dark:text-slate-400">
           No evaluations{{ selectedCompanyId ? ' for this company' : '' }} yet.
         </p>
-        <p class="mt-1 text-xs text-gray-400">
+        <p class="mt-1 text-xs text-gray-400 dark:text-slate-500">
           {{ selectedCompanyId ? 'Try selecting a different company.' : 'Evaluations will appear here once companies submit them.' }}
         </p>
       </div>
@@ -82,7 +82,7 @@
         <div
           v-for="item in evaluations"
           :key="item.id"
-          class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:border-gray-200 hover:shadow-md"
+          class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:border-gray-200 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600"
         >
           <div class="mb-4 flex items-start justify-between gap-3">
             <div class="flex items-center gap-3">
@@ -93,7 +93,7 @@
                 {{ studentInitials(item.student?.name) }}
               </div>
               <div>
-                <h3 class="text-sm font-semibold text-gray-900">{{ item.student?.name || 'Student #' + item.student_id }}</h3>
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-slate-100">{{ item.student?.name || 'Student #' + item.student_id }}</h3>
                 <div class="mt-0.5 flex items-center gap-1.5">
                   <div
                     v-if="item.company?.company_image_url || item.company?.company_profile_image_url"
@@ -107,11 +107,11 @@
                   </div>
                   <div
                     v-else
-                    class="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-gray-100 text-[8px] font-bold text-gray-500"
+                    class="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-gray-100 text-[8px] font-bold text-gray-500 dark:bg-slate-700 dark:text-slate-400"
                   >
                     {{ companyInitials(item.company?.company_name) }}
                   </div>
-                  <span class="text-xs font-medium text-gray-500">
+                  <span class="text-xs font-medium text-gray-500 dark:text-slate-400">
                     {{ item.company?.company_name || 'Company #' + item.company_id }}
                   </span>
                 </div>
@@ -127,17 +127,17 @@
                 </svg>
                 {{ item.overall_score }}/100
               </div>
-              <span class="text-[11px] text-gray-400">{{ formatDate(item.created_at) }}</span>
+              <span class="text-[11px] text-gray-400 dark:text-slate-500">{{ formatDate(item.created_at) }}</span>
             </div>
           </div>
 
           <div class="mb-4 grid grid-cols-4 gap-3">
-            <div v-for="s in skills" :key="s.key" class="rounded-lg bg-gray-50 px-3 py-2.5">
+            <div v-for="s in skills" :key="s.key" class="rounded-lg bg-gray-50 px-3 py-2.5 dark:bg-slate-700/50">
               <div class="mb-1.5 flex items-center justify-between">
-                <span class="text-[11px] font-medium text-gray-500">{{ s.label }}</span>
+                <span class="text-[11px] font-medium text-gray-500 dark:text-slate-400">{{ s.label }}</span>
                 <span class="text-xs font-bold" :class="skillScoreColor(item[s.key])">{{ item[s.key] }}</span>
               </div>
-              <div class="h-1.5 overflow-hidden rounded-full bg-gray-200">
+              <div class="h-1.5 overflow-hidden rounded-full bg-gray-200 dark:bg-slate-600">
                 <div
                   class="h-full rounded-full transition-all duration-500"
                   :class="skillBarColor(item[s.key])"
@@ -147,23 +147,23 @@
             </div>
           </div>
 
-          <div v-if="item.feedback" class="relative rounded-lg border border-amber-100 bg-amber-50/50 px-4 py-3">
-            <svg class="absolute left-3 top-3 h-4 w-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+          <div v-if="item.feedback" class="relative rounded-lg border border-amber-100 bg-amber-50/50 px-4 py-3 dark:border-amber-900/50 dark:bg-amber-950/30">
+            <svg class="absolute left-3 top-3 h-4 w-4 text-amber-400 dark:text-amber-300" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zm-4 0H9v2h2V9z" clip-rule="evenodd" />
             </svg>
-            <p class="pl-7 text-sm italic text-gray-600">"{{ item.feedback }}"</p>
+            <p class="pl-7 text-sm italic text-gray-600 dark:text-slate-300">"{{ item.feedback }}"</p>
           </div>
         </div>
 
-        <div v-if="meta && meta.last_page > 1" class="flex items-center justify-between border-t border-gray-100 pt-4">
-          <p class="text-xs text-gray-500">
+        <div v-if="meta && meta.last_page > 1" class="flex items-center justify-between border-t border-gray-100 pt-4 dark:border-slate-700">
+          <p class="text-xs text-gray-500 dark:text-slate-400">
             Page {{ meta.current_page }} of {{ meta.last_page }}
             ({{ meta.total }} total)
           </p>
           <div class="flex items-center gap-1.5">
             <button
               :disabled="meta.current_page <= 1"
-              class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
               @click="load(meta.current_page - 1)"
             >
               Previous
@@ -172,14 +172,14 @@
               v-for="p in visiblePages"
               :key="p"
               class="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-semibold transition-colors"
-              :class="p === meta.current_page ? 'bg-primary-600 text-white shadow-sm' : 'border border-gray-200 text-gray-700 hover:bg-gray-50'"
+              :class="p === meta.current_page ? 'bg-primary-600 text-white shadow-sm' : 'border border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50'"
               @click="load(p)"
             >
               {{ p }}
             </button>
             <button
               :disabled="meta.current_page >= meta.last_page"
-              class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
               @click="load(meta.current_page + 1)"
             >
               Next

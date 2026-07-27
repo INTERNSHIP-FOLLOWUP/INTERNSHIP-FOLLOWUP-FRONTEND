@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
     <svg
-      class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 pointer-events-none"
+      class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 pointer-events-none dark:text-slate-500"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -18,13 +18,13 @@
       @input="onInput"
       type="text"
       :placeholder="placeholder"
-      class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 text-sm text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+      class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 text-sm text-slate-700 placeholder-slate-400 transition-all focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-indigo-500"
       :class="clearable && modelValue ? 'pr-10' : 'pr-4'"
     />
     <button
       v-if="clearable && modelValue"
       type="button"
-      class="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+      class="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-600 dark:hover:text-slate-300"
       @click="onClear"
       :aria-label="'Clear search'"
     >

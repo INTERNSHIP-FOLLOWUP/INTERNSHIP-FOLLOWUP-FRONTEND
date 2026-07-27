@@ -5,12 +5,12 @@
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m7-7l-7 7 7 7" />
         </svg>
-        Back to Tutors
+        {{ $t('tutors.backToList') }}
       </router-link>
     </div>
 
     <div v-if="loading" class="flex items-center justify-center py-20">
-      <p class="text-sm text-slate-500">Loading profile...</p>
+      <p class="text-sm text-slate-500">{{ $t('tutors.loading') }}</p>
     </div>
 
     <template v-else-if="profile">
@@ -22,42 +22,42 @@
           <div class="flex-1 min-w-0">
             <h1 class="text-xl font-bold text-slate-900">{{ profile.tutor.name }}</h1>
             <p class="text-sm text-slate-500">{{ profile.tutor.email }}</p>
-            <p class="mt-1 text-sm font-semibold text-primary-600">{{ profile.tutor.students_count }} assigned student{{ profile.tutor.students_count !== 1 ? 's' : '' }}</p>
+            <p class="mt-1 text-sm font-semibold text-primary-600">{{ profile.tutor.students_count }} {{ profile.tutor.students_count === 1 ? $t('tutors.student_singular') : $t('tutors.student_plural') }}</p>
           </div>
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
-          <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Worklogs</p>
+          <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">{{ $t('tutors.worklogStats') }}</p>
           <div class="mt-3 flex gap-3 text-sm">
-            <span class="rounded-full bg-amber-50 px-3 py-1 font-bold text-amber-700">{{ profile.worklog_stats.submitted }} Submitted</span>
-            <span class="rounded-full bg-emerald-50 px-3 py-1 font-bold text-emerald-700">{{ profile.worklog_stats.approved }} Approved</span>
-            <span class="rounded-full bg-rose-50 px-3 py-1 font-bold text-rose-700">{{ profile.worklog_stats.rejected }} Rejected</span>
+            <span class="rounded-full bg-amber-50 px-3 py-1 font-bold text-amber-700">{{ profile.worklog_stats.submitted }} {{ $t('tutors.submitted') }}</span>
+            <span class="rounded-full bg-emerald-50 px-3 py-1 font-bold text-emerald-700">{{ profile.worklog_stats.approved }} {{ $t('tutors.approved') }}</span>
+            <span class="rounded-full bg-rose-50 px-3 py-1 font-bold text-rose-700">{{ profile.worklog_stats.rejected }} {{ $t('tutors.rejected') }}</span>
           </div>
         </div>
         <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
-          <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Issues</p>
+          <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">{{ $t('tutors.issues') }}</p>
           <p class="mt-3 text-2xl font-bold text-slate-900">{{ profile.issues.length }}</p>
         </div>
         <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm">
-          <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Assignments</p>
+          <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">{{ $t('tutors.assignments') }}</p>
           <p class="mt-3 text-2xl font-bold text-slate-900">{{ profile.assignments.length }}</p>
         </div>
       </div>
 
       <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-        <h2 class="text-base font-bold text-slate-900 mb-4">Assigned Students ({{ profile.students.length }})</h2>
+        <h2 class="text-base font-bold text-slate-900 mb-4">{{ $t('tutors.assignedStudents') }} ({{ profile.students.length }})</h2>
         <div v-if="profile.students.length > 0" class="overflow-x-auto">
           <table class="w-full text-left text-sm">
             <thead>
               <tr class="border-b border-slate-100 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                <th class="py-3 pr-4 font-medium">Name</th>
-                <th class="py-3 pr-4 font-medium">Code</th>
-                <th class="py-3 pr-4 font-medium">Batch</th>
-                <th class="py-3 pr-4 font-medium">Worklogs</th>
-                <th class="py-3 pr-4 font-medium">Issues</th>
-                <th class="py-3 pr-4 font-medium">Status</th>
+                <th class="py-3 pr-4 font-medium">{{ $t('tutors.nameCol') }}</th>
+                <th class="py-3 pr-4 font-medium">{{ $t('tutors.codeCol') }}</th>
+                <th class="py-3 pr-4 font-medium">{{ $t('tutors.batchCol') }}</th>
+                <th class="py-3 pr-4 font-medium">{{ $t('tutors.worklogsCol') }}</th>
+                <th class="py-3 pr-4 font-medium">{{ $t('tutors.issuesCol') }}</th>
+                <th class="py-3 pr-4 font-medium">{{ $t('tutors.statusCol') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -77,12 +77,12 @@
             </tbody>
           </table>
         </div>
-        <p v-else class="text-sm text-slate-400">No students assigned.</p>
+        <p v-else class="text-sm text-slate-400">{{ $t('tutors.noStudents') }}</p>
       </div>
 
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-          <h2 class="text-base font-bold text-slate-900 mb-4">Issues</h2>
+          <h2 class="text-base font-bold text-slate-900 mb-4">{{ $t('tutors.issues') }}</h2>
           <div v-if="profile.issues.length > 0" class="space-y-2">
             <div v-for="issue in profile.issues" :key="issue.id"
               class="flex items-center justify-between rounded-lg border border-slate-100 px-4 py-2.5 text-sm">
@@ -96,11 +96,11 @@
               </span>
             </div>
           </div>
-          <p v-else class="text-sm text-slate-400">No issues assigned.</p>
+          <p v-else class="text-sm text-slate-400">{{ $t('tutors.noIssues') }}</p>
         </div>
 
         <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-          <h2 class="text-base font-bold text-slate-900 mb-4">Supervised Assignments</h2>
+          <h2 class="text-base font-bold text-slate-900 mb-4">{{ $t('tutors.supervisedAssignments') }}</h2>
           <div v-if="profile.assignments.length > 0" class="space-y-2">
             <div v-for="a in profile.assignments" :key="a.id"
               class="rounded-lg border border-slate-100 px-4 py-3 text-sm">
@@ -114,13 +114,13 @@
               <p class="mt-1 text-xs text-slate-500">{{ a.company?.name }} &middot; {{ a.position }} &middot; {{ formatDate(a.start_date) }} — {{ formatDate(a.end_date) }}</p>
             </div>
           </div>
-          <p v-else class="text-sm text-slate-400">No supervised assignments.</p>
+          <p v-else class="text-sm text-slate-400">{{ $t('tutors.noAssignments') }}</p>
         </div>
       </div>
     </template>
 
     <div v-else-if="!loading" class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center">
-      <p class="text-sm text-slate-500">Tutor not found.</p>
+      <p class="text-sm text-slate-500">{{ $t('tutors.tutorNotFound') }}</p>
     </div>
   </div>
 </template>

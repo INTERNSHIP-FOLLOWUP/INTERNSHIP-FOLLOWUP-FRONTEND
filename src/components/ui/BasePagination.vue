@@ -13,10 +13,10 @@
       results
     </p>
 
-    <nav class="flex items-center gap-1" aria-label="Pagination">
+    <nav class="flex items-center gap-1" :aria-label="$t('common.pagination')">
       <button
         :disabled="meta.current_page <= 1"
-        :aria-label="`Go to page ${meta.current_page - 1}`"
+        :aria-label="$t('common.goToPage', { page: meta.current_page - 1 })"
         class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-all duration-200"
         :class="
           meta.current_page <= 1
@@ -43,7 +43,7 @@
         >
         <button
           v-else
-          :aria-label="`Go to page ${page}`"
+          :aria-label="$t('common.goToPage', { page: page })"
           :aria-current="page === meta.current_page ? 'page' : undefined"
           class="inline-flex h-8 min-w-[2rem] items-center justify-center rounded-lg px-2 text-sm font-medium transition-all duration-200"
           :class="
@@ -59,7 +59,7 @@
 
       <button
         :disabled="meta.current_page >= meta.last_page"
-        :aria-label="`Go to page ${meta.current_page + 1}`"
+        :aria-label="$t('common.goToPage', { page: meta.current_page + 1 })"
         class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-all duration-200"
         :class="
           meta.current_page >= meta.last_page

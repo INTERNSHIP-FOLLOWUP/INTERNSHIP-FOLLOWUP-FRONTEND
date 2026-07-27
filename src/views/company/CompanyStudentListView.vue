@@ -3,8 +3,8 @@
     <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 class="text-xl font-semibold text-gray-900">Assigned Students</h1>
-          <p class="mt-1 text-sm text-gray-500">Students assigned to your company.</p>
+          <h1 class="text-xl font-semibold text-gray-900">{{ $t('companies.assignedStudentsTitle') }}</h1>
+          <p class="mt-1 text-sm text-gray-500">{{ $t('companies.assignedStudentsSub') }}</p>
         </div>
       </div>
 
@@ -13,7 +13,7 @@
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
-        <span class="ml-3 text-sm text-gray-500">Loading students…</span>
+        <span class="ml-3 text-sm text-gray-500">{{ $t('companies.loadingStudents') }}</span>
       </div>
       <div
         v-else-if="error"
@@ -28,13 +28,13 @@
             <tr
               class="border-b border-gray-100 text-xs font-medium uppercase tracking-wider text-gray-400"
             >
-              <th class="px-4 py-3 font-medium">Student</th>
-              <th class="px-4 py-3 font-medium">Email</th>
-              <th class="px-4 py-3 font-medium">Batch</th>
-              <th class="px-4 py-3 font-medium">Position</th>
-              <th class="px-4 py-3 font-medium">Tutor</th>
-              <th class="px-4 py-3 font-medium">Period</th>
-              <th class="px-4 py-3 font-medium">Status</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.student') }}</th>
+              <th class="px-4 py-3 font-medium">{{ $t('common.email') }}</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.batch') }}</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.position') }}</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.tutor') }}</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.period') }}</th>
+              <th class="px-4 py-3 font-medium">{{ $t('companies.status') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
@@ -68,7 +68,7 @@
                   class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
                   :class="student.statusClass"
                 >
-                  {{ student.status }}
+                  {{ $t('internships.status' + student.status.replace(/ /g, '')) }}
                 </span>
               </td>
             </tr>
@@ -92,9 +92,9 @@
                 />
               </svg>
             </div>
-            <h3 class="mt-3 text-sm font-semibold text-gray-700">No assigned students yet</h3>
+            <h3 class="mt-3 text-sm font-semibold text-gray-700">{{ $t('companies.noAssignedStudents') }}</h3>
             <p class="mt-1 text-xs text-gray-400">
-              Students assigned to your company will appear here.
+              {{ $t('companies.noAssignedHint') }}
             </p>
           </div>
         </div>
@@ -105,7 +105,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCompanyStore } from '@/stores/company'
+
+const { t: $t_script } = useI18n()
 
 const store = useCompanyStore()
 
@@ -192,7 +195,7 @@ onMounted(async () => {
       statusClass: statusClassFor(item),
     }))
   } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Failed to load assigned students.'
+    error.value = err instanceof Error ? err.message : $t_script('companies.failedLoadAssigned')
     students.value = []
   } finally {
     loading.value = false

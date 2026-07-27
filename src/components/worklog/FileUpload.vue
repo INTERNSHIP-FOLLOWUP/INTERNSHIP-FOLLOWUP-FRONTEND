@@ -1,32 +1,22 @@
 <template>
-  <div class="rounded-2xl border-2 border-dashed bg-white p-4 transition-all duration-200"
-    :class="isDragging ? 'border-indigo-400 bg-indigo-50/30 scale-[1.01]' : 'border-slate-200 hover:border-indigo-300'">
-    
-    <!-- Upload Area -->
+  <div class="rounded-xl border border-dashed border-slate-300 bg-white p-4 transition-all duration-200 hover:border-indigo-300 hover:shadow-sm">
     <div
-      class="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl p-8 text-center transition-all duration-200"
-      :class="isDragging ? 'bg-indigo-50/50' : 'hover:bg-slate-50/50'"
+      class="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl bg-slate-50/50 p-8 text-center transition-all duration-200"
+      :class="isDragging ? 'border-2 border-indigo-400 bg-indigo-50/60 shadow-inner' : 'border-2 border-transparent hover:border-slate-200'"
       @dragover.prevent="onDragOver"
       @dragleave.prevent="onDragLeave"
       @drop.prevent="onDrop"
-      @click="inputRef?.click()"
+      @click="browse"
     >
-      <div class="flex h-14 w-14 items-center justify-center rounded-2xl transition-all duration-300"
-        :class="isDragging ? 'bg-indigo-100 scale-110 shadow-lg shadow-indigo-200/50' : 'bg-indigo-50'">
-        <svg class="h-6 w-6 text-indigo-500 transition-transform duration-300" :class="isDragging ? 'translate-y-1' : ''"
-          fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+      <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-sm">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V8a2 2 0 012-2h6a2 2 0 012 2v8M9 14l3-3 3 3M12 11v9" />
         </svg>
       </div>
-      
-      <div>
-        <p class="text-sm font-semibold text-slate-700">
-          <span class="text-indigo-600 hover:text-indigo-700 transition-colors">Click to upload files</span>
-          <span class="text-slate-400"> or drag & drop</span>
-        </p>
-        <p class="mt-1 text-xs text-slate-400">PDF, DOC/DOCX, PNG/JPG, ZIP — Max 10MB per file</p>
-      </div>
+      <p class="text-sm font-semibold text-slate-700">
+        Drag files here or <span class="text-indigo-600 hover:underline">browse</span>
+      </p>
+      <p class="text-xs text-slate-500">Allowed: PDF, DOC/DOCX, PNG/JPG, ZIP</p>
     </div>
 
     <input
@@ -38,23 +28,14 @@
       @change="onFileChange"
     />
 
-    <!-- Selected Files -->
-    <div v-if="internalFiles.length" class="mt-4 space-y-3">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-        <p class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-          </svg>
-          <span>{{ internalFiles.length }} file{{ internalFiles.length !== 1 ? 's' : '' }} selected</span>
-        </p>
+    <div v-if="internalFiles.length" class="mt-4 space-y-2">
+      <div class="flex items-center justify-between gap-3">
+        <p class="text-xs font-semibold text-slate-500">Selected files</p>
         <button
           type="button"
-          class="text-xs font-medium text-red-500 hover:text-red-700 transition-colors flex items-center gap-1"
-          @click="clear">
-          <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
+          class="text-xs font-semibold text-red-600 hover:text-red-800"
+          @click="clear"
+        >
           Remove all
         </button>
       </div>
@@ -63,85 +44,44 @@
         <div
           v-for="(f, idx) in internalFiles"
           :key="`${f.name}-${f.size}-${idx}`"
-          class="group flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 transition-all duration-200 hover:border-slate-200 hover:shadow-sm"
+          class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-white p-3 shadow-sm"
         >
-          <!-- File type icon -->
-          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-            :class="fileIconBgClass(f.name)">
-            <!-- PDF icon -->
-            <svg v-if="/\.pdf$/i.test(f.name)" class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-            </svg>
-            <!-- Image icon -->
-            <svg v-else-if="/\.(png|jpg|jpeg)$/i.test(f.name)" class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <!-- Document icon -->
-            <svg v-else-if="/\.(doc|docx)$/i.test(f.name)" class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <!-- ZIP icon -->
-            <svg v-else-if="/\.zip$/i.test(f.name)" class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-            </svg>
-            <!-- Generic file icon -->
-            <svg v-else class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-
-          <div class="min-w-0 flex-1">
+          <div class="min-w-0">
             <p class="truncate text-xs font-semibold text-slate-800">{{ f.name }}</p>
-            <div class="flex items-center gap-1.5 mt-0.5">
-              <span class="text-xs text-slate-400">{{ formatFileSize(f.size) }}</span>
-              <span v-if="isOverSize(f)" class="text-xs font-medium text-red-500">(too large)</span>
-            </div>
+            <p class="text-xs text-slate-500">{{ formatBytes(f.size) }}</p>
           </div>
-
           <button
             type="button"
-            class="shrink-0 rounded-lg p-1.5 text-slate-300 opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 transition-all duration-200"
+            class="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700 hover:bg-red-100"
             @click="remove(idx)"
-            :aria-label="`Remove ${f.name}`"
-            title="Remove file"
+            :aria-label="$t('common.removeFile', { name: f.name })"
           >
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            Remove
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Validation Error -->
-    <transition name="slide-fade">
-      <div v-if="validationError"
-        class="mt-3 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3.5 py-2.5 text-xs font-medium text-red-700">
-        <svg class="h-4 w-4 shrink-0 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-        </svg>
-        {{ validationError }}
-      </div>
-    </transition>
+    <div v-if="validationError" class="mt-3 text-xs font-semibold text-red-600">
+      {{ validationError }}
+    </div>
 
-    <!-- Uploading Spinner -->
-    <transition name="slide-fade">
-      <div v-if="submitting"
-        class="mt-3 flex items-center gap-2.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3.5 py-2.5 text-xs font-medium text-indigo-700">
-        <svg class="h-4 w-4 animate-spin text-indigo-500" viewBox="0 0 24 24" fill="none">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-        </svg>
-        Uploading files...
-      </div>
-    </transition>
+    <div v-if="submitting" class="mt-4 flex items-center gap-2 text-xs font-semibold text-slate-500">
+      <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+        />
+      </svg>
+      Uploading...
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { fileIconBgClass, formatFileSize, isAllowedFileType } from '@/utils/fileIcons'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: File[]): void
@@ -150,8 +90,6 @@ const emit = defineEmits<{
 const props = defineProps<{
   modelValue: File[]
 }>()
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
 const internalFiles = computed<File[]>(() => props.modelValue ?? [])
 
@@ -169,33 +107,38 @@ watch(
   },
 )
 
-function isOverSize(file: File): boolean {
-  return file.size > MAX_FILE_SIZE
+function formatBytes(bytes: number): string {
+  if (!Number.isFinite(bytes)) return '—'
+  const units = ['B', 'KB', 'MB', 'GB']
+  let i = 0
+  let v = bytes
+  while (v >= 1024 && i < units.length - 1) {
+    v /= 1024
+    i++
+  }
+  return `${v.toFixed(v >= 10 || i === 0 ? 0 : 1)} ${units[i]}`
 }
 
 function isAllowed(file: File): boolean {
-  return isAllowedFileType(file.name) && !isOverSize(file)
+  const name = file.name.toLowerCase()
+  return (
+    name.endsWith('.pdf') ||
+    name.endsWith('.doc') ||
+    name.endsWith('.docx') ||
+    name.endsWith('.png') ||
+    name.endsWith('.jpg') ||
+    name.endsWith('.jpeg') ||
+    name.endsWith('.zip')
+  )
 }
 
 function addFiles(files: File[]) {
   validationError.value = ''
-
-  // Check file size
-  const overSize = files.filter((f) => isOverSize(f))
   const allowed = files.filter((f) => isAllowed(f))
-  const rejectedType = files.length - allowed.length - overSize.length
-
-  const errors: string[] = []
-  if (overSize.length > 0) {
-    errors.push(`${overSize.length} file${overSize.length > 1 ? 's' : ''} exceed${overSize.length > 1 ? '' : 's'} the 10MB limit.`)
+  const rejected = files.length - allowed.length
+  if (rejected > 0) {
+    validationError.value = `Some files were rejected. Allowed types: PDF, DOC/DOCX, PNG/JPG, ZIP.`
   }
-  if (rejectedType > 0) {
-    errors.push(`${rejectedType} file${rejectedType > 1 ? 's' : ''} ha${rejectedType > 1 ? 've' : 's'} an unsupported format.`)
-  }
-  if (errors.length > 0) {
-    validationError.value = errors.join(' ') + ' Allowed: PDF, DOC/DOCX, PNG/JPG, ZIP.'
-  }
-
   const next = [...internalFiles.value, ...allowed]
   emit('update:modelValue', next)
 }
@@ -236,20 +179,3 @@ function clear() {
   emit('update:modelValue', [])
 }
 </script>
-
-<style scoped>
-.slide-fade-enter-active {
-  transition: all 0.25s ease-out;
-}
-.slide-fade-leave-active {
-  transition: all 0.15s ease-in;
-}
-.slide-fade-enter-from {
-  opacity: 0;
-  transform: translateY(-6px);
-}
-.slide-fade-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
-}
-</style>

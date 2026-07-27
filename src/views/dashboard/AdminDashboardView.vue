@@ -3,10 +3,9 @@
     <!-- Welcome Header -->
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Welcome back, Admin!</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ $t('dashboard.admin.title') }}</h1>
         <p class="text-sm text-slate-500">
-          Monitor your internship activities, student placements, and supervisor updates in
-          real-time.
+          {{ $t('dashboard.admin.subtitle') }}
         </p>
       </div>
 
@@ -15,10 +14,10 @@
     <!-- Overview Statistics Cards -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <StatCard
-        label="Total Students"
+        :label="$t('dashboard.admin.totalStudents')"
         :value="dashboardData.totalStudents"
         :trend="dashboardData.studentTrend"
-        description="from last semester"
+        :description="$t('dashboard.admin.fromLastSemester')"
         color-class="bg-gradient-to-br from-primary-500 to-primary-600 shadow-primary-500/20"
       >
         <template #icon>
@@ -40,10 +39,10 @@
       </StatCard>
 
       <StatCard
-        label="Total Companies"
+        :label="$t('dashboard.admin.totalCompanies')"
         :value="dashboardData.totalCompanies"
         :trend="companyTrendLabel"
-        description="new partners added"
+        :description="$t('dashboard.admin.newPartnersAdded')"
         color-class="bg-gradient-to-br from-purple-500 to-purple-600 shadow-purple-500/20"
       >
         <template #icon>
@@ -59,10 +58,10 @@
       </StatCard>
 
       <StatCard
-        label="Active Internships"
+        :label="$t('dashboard.admin.activeInternships')"
         :value="dashboardData.activeInternships"
         :trend="placementTrendLabel"
-        description="placement rate"
+        :description="$t('dashboard.admin.placementRate')"
         color-class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-emerald-500/20"
       >
         <template #icon>
@@ -78,10 +77,10 @@
       </StatCard>
 
       <StatCard
-        label="Pending Issues"
+        :label="$t('dashboard.admin.pendingIssues')"
         :value="dashboardData.pendingIssues"
         trend="-3"
-        description="resolved today"
+        :description="$t('dashboard.admin.resolvedToday')"
         color-class="bg-gradient-to-br from-rose-500 to-rose-600 shadow-rose-500/20"
       >
         <template #icon>
@@ -103,14 +102,14 @@
       <div :class="[panelClass, 'lg:col-span-2']">
         <div class="mb-5 flex items-center justify-between">
           <div>
-            <h3 class="text-base font-bold text-slate-950">Placement Distribution</h3>
-            <p class="text-xs text-slate-500">Student count by company placements</p>
+            <h3 class="text-base font-bold text-slate-950">{{ $t('dashboard.admin.placementDistribution') }}</h3>
+            <p class="text-xs text-slate-500">{{ $t('dashboard.admin.placementDistSubtitle') }}</p>
           </div>
           <router-link
             to="/admin/companies"
             class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800"
           >
-            Manage Companies →
+            {{ $t('dashboard.admin.manageCompanies') }}
           </router-link>
         </div>
 
@@ -127,7 +126,7 @@
                 <span class="h-2 w-2 rounded-full bg-primary-500"></span>
                 {{ placement.name }}
               </span>
-              <span>{{ placement.count }} Students ({{ getPercentage(placement.count) }}%)</span>
+              <span>{{ placement.count }} {{ $t('dashboard.admin.studentsCount') }} ({{ getPercentage(placement.count) }}%)</span>
             </div>
             <!-- Progress Bar -->
             <div class="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
@@ -153,7 +152,7 @@
             />
           </svg>
           <p class="mt-2 text-xs font-semibold text-slate-400">
-            No company placement records found.
+            {{ $t('dashboard.admin.noPlacements') }}
           </p>
         </div>
       </div>
@@ -162,14 +161,14 @@
       <div :class="panelClass">
         <div class="mb-5 flex items-center justify-between">
           <div>
-            <h3 class="text-base font-bold text-slate-950">Batch Statistics</h3>
-            <p class="text-xs text-slate-500">Student metrics per cohort batch</p>
+            <h3 class="text-base font-bold text-slate-950">{{ $t('dashboard.admin.batchStatistics') }}</h3>
+            <p class="text-xs text-slate-500">{{ $t('dashboard.admin.batchStatsSubtitle') }}</p>
           </div>
           <router-link
             to="/admin/batches"
             class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800"
           >
-            Details →
+            {{ $t('dashboard.admin.details') }}
           </router-link>
         </div>
 
@@ -201,7 +200,7 @@
               <span
                 class="inline-flex items-center rounded-md bg-primary-50 px-2.5 py-0.5 text-xs font-bold text-primary-700"
               >
-                {{ batch.count }} Students
+                {{ batch.count }} {{ $t('dashboard.admin.studentsCount') }}
               </span>
             </div>
           </div>
@@ -220,7 +219,7 @@
               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
-          <p class="mt-2 text-xs font-semibold text-slate-400">No batches registered.</p>
+          <p class="mt-2 text-xs font-semibold text-slate-400">{{ $t('dashboard.admin.noBatches') }}</p>
         </div>
       </div>
     </div>
@@ -229,8 +228,8 @@
     <div :class="panelClass">
       <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 class="text-base font-bold text-slate-950">Academic Tutors</h3>
-          <p class="text-xs text-slate-500">Supervisors tracking current internship progress</p>
+          <h3 class="text-base font-bold text-slate-950">{{ $t('dashboard.admin.academicTutors') }}</h3>
+          <p class="text-xs text-slate-500">{{ $t('dashboard.admin.tutorSubtitle') }}</p>
         </div>
         <button
           @click="handleQuickAction('assign-tutors')"
@@ -244,7 +243,7 @@
               d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          Assign Tutor
+          {{ $t('dashboard.admin.assignTutor') }}
         </button>
       </div>
 
@@ -255,10 +254,10 @@
             <tr
               class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
             >
-              <th class="px-4 py-3">Tutor Name</th>
-              <th class="px-4 py-3">Email Address</th>
-              <th class="px-4 py-3">Assigned Students</th>
-              <th class="px-4 py-3 text-right">Actions</th>
+              <th class="px-4 py-3">{{ $t('dashboard.admin.tutorName') }}</th>
+              <th class="px-4 py-3">{{ $t('dashboard.admin.emailAddress') }}</th>
+              <th class="px-4 py-3">{{ $t('dashboard.admin.assignedStudents') }}</th>
+              <th class="px-4 py-3 text-right">{{ $t('dashboard.admin.actions') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
@@ -287,7 +286,7 @@
                   >
                     {{ tutor.studentsCount }}
                   </span>
-                  <span class="text-xs text-slate-400">students supervised</span>
+                  <span class="text-xs text-slate-400">{{ $t('dashboard.admin.studentsSupervised') }}</span>
                 </div>
               </td>
               <td class="whitespace-nowrap px-4 py-3 text-right">
@@ -295,7 +294,7 @@
                   @click="handleTutorManage()"
                   class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800"
                 >
-                  Manage Assignments
+                  {{ $t('dashboard.admin.manageAssignments') }}
                 </button>
               </td>
             </tr>
@@ -319,16 +318,16 @@
             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
           />
         </svg>
-        <p class="mt-2 text-xs font-semibold text-slate-500">No academic tutors assigned yet.</p>
+        <p class="mt-2 text-xs font-semibold text-slate-500">{{ $t('dashboard.admin.noTutors') }}</p>
       </div>
     </div>
 
     <!-- Recent Activity Trail -->
     <div :class="panelClass">
       <div class="mb-5">
-        <h3 class="text-base font-bold text-slate-950">Recent System Activity</h3>
+        <h3 class="text-base font-bold text-slate-950">{{ $t('dashboard.admin.recentActivity') }}</h3>
         <p class="text-xs text-slate-500">
-          Live timeline of actions across company placements and logs
+          {{ $t('dashboard.admin.activitySubtitle') }}
         </p>
       </div>
 
@@ -384,7 +383,7 @@
             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <p class="mt-2 text-xs font-semibold text-slate-400">No recent system activities found.</p>
+        <p class="mt-2 text-xs font-semibold text-slate-400">{{ $t('dashboard.admin.noActivity') }}</p>
       </div>
     </div>
   </div>

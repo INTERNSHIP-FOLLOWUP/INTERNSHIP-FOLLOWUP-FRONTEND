@@ -5,10 +5,10 @@
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        Back to Batches
+        {{ $t('batches.backToList') }}
       </router-link>
       <span class="text-slate-300">/</span>
-      <span class="font-medium text-slate-900">{{ stats?.batch_name || 'Batch Details' }}</span>
+      <span class="font-medium text-slate-900">{{ stats?.batch_name || $t('batches.batchDetails') }}</span>
     </div>
 
     <div v-if="loading" class="flex items-center justify-center py-20">
@@ -23,14 +23,14 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
       </svg>
       <p class="mt-4 text-base font-semibold text-red-500">{{ error }}</p>
-      <button @click="fetchData" class="mt-4 rounded-lg bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-100">Try Again</button>
+      <button @click="fetchData" class="mt-4 rounded-lg bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-100">{{ $t('batches.retry') }}</button>
     </div>
 
     <template v-else-if="stats">
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{{ stats.batch_name }}</h1>
-          <p class="text-sm text-slate-500 dark:text-slate-400">Year {{ stats.year }} &middot; {{ stats.total_students }} {{ stats.total_students === 1 ? 'student' : 'students' }} enrolled</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('batches.year') }} {{ stats.year }} &middot; {{ stats.total_students }} {{ $t(stats.total_students === 1 ? 'batches.student' : 'batches.students') }} {{ $t('batches.enrolled') }}</p>
         </div>
         <div class="flex items-center gap-2">
           <button @click="exportPdf" :disabled="exporting"
@@ -38,44 +38,44 @@
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
-            {{ exporting ? 'Exporting...' : 'PDF' }}
+            {{ exporting ? $t('batches.exporting') : $t('reports.pdf') }}
           </button>
           <button @click="exportExcel" :disabled="exporting"
             class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 active:scale-95 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            Excel
+            {{ $t('reports.excel') }}
           </button>
           <router-link :to="`/admin/users/create?batch_id=${batchId}`"
             class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
             </svg>
-            Add Student
+            {{ $t('batches.addStudent') }}
           </router-link>
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-4 sm:grid-cols-5">
         <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <p class="text-xs font-semibold text-slate-400">Total</p>
+          <p class="text-xs font-semibold text-slate-400">{{ $t('batches.total') }}</p>
           <p class="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{{ stats.total_students }}</p>
         </div>
         <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <p class="text-xs font-semibold text-slate-400">Active</p>
+          <p class="text-xs font-semibold text-slate-400">{{ $t('batches.active') }}</p>
           <p class="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ stats.status_breakdown.active || 0 }}</p>
         </div>
         <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <p class="text-xs font-semibold text-slate-400">Graduated</p>
+          <p class="text-xs font-semibold text-slate-400">{{ $t('batches.graduated') }}</p>
           <p class="mt-1 text-2xl font-bold text-blue-600 dark:text-blue-400">{{ stats.status_breakdown.graduated || 0 }}</p>
         </div>
         <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <p class="text-xs font-semibold text-slate-400">Inactive</p>
+          <p class="text-xs font-semibold text-slate-400">{{ $t('batches.inactive') }}</p>
           <p class="mt-1 text-2xl font-bold text-slate-500 dark:text-slate-400">{{ stats.status_breakdown.inactive || 0 }}</p>
         </div>
         <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <p class="text-xs font-semibold text-slate-400">Suspended</p>
+          <p class="text-xs font-semibold text-slate-400">{{ $t('batches.suspended') }}</p>
           <p class="mt-1 text-2xl font-bold text-rose-600 dark:text-rose-400">{{ stats.status_breakdown.suspended || 0 }}</p>
         </div>
       </div>
@@ -86,24 +86,24 @@
             <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <input v-model="searchQuery" type="text" placeholder="Search students..."
+            <input v-model="searchQuery" type="text" :placeholder="$t('batches.searchStudents')"
               class="h-9 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 placeholder-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:placeholder-slate-500"
               @input="onSearch" />
           </div>
           <select v-model="statusFilter" @change="onFilterChange"
             class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
-            <option value="">All Statuses</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="graduated">Graduated</option>
-            <option value="suspended">Suspended</option>
+            <option value="">{{ $t('batches.allStatuses') }}</option>
+            <option value="active">{{ $t('batches.active') }}</option>
+            <option value="inactive">{{ $t('batches.inactive') }}</option>
+            <option value="graduated">{{ $t('batches.graduated') }}</option>
+            <option value="suspended">{{ $t('batches.suspended') }}</option>
           </select>
           <button v-if="hasActiveFilters" @click="clearFilters"
             class="flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-            Clear
+            {{ $t('batches.clearSearch') }}
           </button>
         </div>
 
@@ -118,11 +118,11 @@
           <table class="w-full text-left text-sm">
             <thead>
               <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:border-slate-800 dark:bg-slate-800/50">
-                <th class="px-5 py-3.5 font-medium">Student</th>
-                <th class="px-5 py-3.5 font-medium">Code</th>
-                <th class="px-5 py-3.5 font-medium">Email</th>
-                <th class="px-5 py-3.5 font-medium">Status</th>
-                <th class="px-5 py-3.5 text-right font-medium">Actions</th>
+                <th class="px-5 py-3.5 font-medium">{{ $t('batches.studentCol') }}</th>
+                <th class="px-5 py-3.5 font-medium">{{ $t('batches.code') }}</th>
+                <th class="px-5 py-3.5 font-medium">{{ $t('batches.email') }}</th>
+                <th class="px-5 py-3.5 font-medium">{{ $t('common.status') }}</th>
+                <th class="px-5 py-3.5 text-right font-medium">{{ $t('common.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
@@ -143,8 +143,8 @@
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-right">
                   <div class="flex items-center justify-end gap-1">
-                    <router-link :to="`/admin/users/${student.id}`" class="rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30">Edit</router-link>
-                    <button @click="deleteStudent(student.id)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-rose-600 transition-all hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-900/30">Delete</button>
+                    <router-link :to="`/admin/users/${student.id}`" class="rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30">{{ $t('common.edit') }}</router-link>
+                    <button @click="deleteStudent(student.id)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-rose-600 transition-all hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-900/30">{{ $t('common.delete') }}</button>
                   </div>
                 </td>
               </tr>
@@ -158,22 +158,23 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
             </svg>
           </div>
-          <h3 class="mt-4 text-sm font-semibold text-slate-700 dark:text-slate-300">No students found</h3>
-          <p class="mt-1 text-xs text-slate-400">{{ hasActiveFilters ? 'Try adjusting your search or filters.' : 'No students enrolled in this batch yet.' }}</p>
+          <h3 class="mt-4 text-sm font-semibold text-slate-700 dark:text-slate-300">{{ $t('batches.noStudentsFound') }}</h3>
+          <p class="mt-1 text-xs text-slate-400">{{ hasActiveFilters ? $t('batches.adjustFilters') : $t('batches.noStudentsEnrolled') }}</p>
         </div>
 
         <BasePagination v-if="pagination && pagination.last_page > 1" :meta="pagination" @page-change="setPage" />
       </div>
     </template>
 
-    <ConfirmDialog :show="confirm.show" title="Delete Student" message="Are you sure you want to delete this student? This action cannot be undone."
-      confirm-text="Delete" cancel-text="Cancel" :loading="confirm.loading" :error="confirm.error"
+    <ConfirmDialog :show="confirm.show" :title="$t('batches.deleteStudent')" :message="$t('batches.deleteStudentMessage')"
+      :confirm-text="$t('common.delete')" :cancel-text="$t('common.cancel')" :loading="confirm.loading" :error="confirm.error"
       @confirm="handleConfirmDelete" @cancel="confirm.cancel()" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { batchService, type BatchStatistics } from '@/services/batch'
 import { useStudentStore } from '@/stores/student'
@@ -183,6 +184,7 @@ import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import type { StudentPaginationMeta } from '@/types/student'
 
+const { t: $t_script } = useI18n()
 const route = useRoute()
 const studentStore = useStudentStore()
 const toast = useToastStore()
@@ -212,7 +214,7 @@ async function fetchStats() {
     const res = await batchService.getStatistics(batchId.value)
     stats.value = res.data
   } catch {
-    error.value = 'Failed to load batch statistics.'
+    error.value = $t_script('batches.failedLoadStats')
   } finally {
     loading.value = false
   }
@@ -253,9 +255,9 @@ async function exportPdf() {
   try {
     const blob = await batchService.exportPdf(batchId.value)
     downloadBlob(blob, `batch-${batchId.value}-students.pdf`)
-    toast.success('PDF exported successfully')
+    toast.success($t_script('batches.pdfExported'))
   } catch {
-    toast.error('Failed to export PDF')
+    toast.error($t_script('batches.pdfFailed'))
   } finally {
     exporting.value = false
   }
@@ -266,9 +268,9 @@ async function exportExcel() {
   try {
     const blob = await batchService.exportExcel(batchId.value)
     downloadBlob(blob, `batch-${batchId.value}-students.xlsx`)
-    toast.success('Excel exported successfully')
+    toast.success($t_script('batches.excelExported'))
   } catch {
-    toast.error('Failed to export Excel')
+    toast.error($t_script('batches.excelFailed'))
   } finally {
     exporting.value = false
   }
@@ -299,7 +301,7 @@ function statusDotClass(status?: string): string {
 }
 
 function formatStatus(status?: string): string {
-  if (!status) return 'Unknown'
+  if (!status) return $t_script('batches.unknown')
   return status.charAt(0).toUpperCase() + status.slice(1)
 }
 
@@ -308,8 +310,8 @@ let deleteTargetId: number | null = null
 async function deleteStudent(id: number) {
   deleteTargetId = id
   const confirmed = await confirm.open({
-    title: 'Delete Student',
-    message: 'Are you sure you want to delete this student? This action cannot be undone.',
+    title: $t_script('batches.deleteStudent'),
+    message: $t_script('batches.deleteStudentMessage'),
   })
   if (!confirmed) return
   await handleConfirmDelete()
@@ -319,7 +321,7 @@ async function handleConfirmDelete() {
   if (deleteTargetId === null) return
   await confirm.confirmAsync(async () => {
     await studentStore.deleteStudent(deleteTargetId!)
-    toast.success('Student deleted successfully.')
+    toast.success($t_script('batches.studentDeleted'))
   })
 }
 

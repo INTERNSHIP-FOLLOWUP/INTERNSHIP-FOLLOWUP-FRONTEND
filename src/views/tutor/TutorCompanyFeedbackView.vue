@@ -2,15 +2,15 @@
   <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
     <div class="mb-6 flex items-start justify-between gap-4">
       <div>
-        <h1 class="text-xl font-semibold text-gray-900">Company Feedback</h1>
+        <h1 class="text-xl font-semibold text-gray-900">{{ $t('tutors.companyFeedbackTitle') }}</h1>
         <p class="mt-1 text-sm text-gray-500">
-          View student performance feedback submitted by companies.
+          {{ $t('tutors.companyFeedbackSubtitle') }}
         </p>
       </div>
     </div>
 
     <div v-if="meta" class="mb-6 text-xs text-gray-400">
-      {{ meta.total }} feedback{{ meta.total !== 1 ? 's' : '' }}
+      {{ meta.total }} {{ meta.total === 1 ? $t('tutors.feedback_singular') : $t('tutors.feedback_plural') }}
     </div>
 
     <template v-if="loading">
@@ -39,8 +39,8 @@
       <svg class="mb-4 h-16 w-16 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
       </svg>
-      <p class="text-sm font-medium text-gray-500">No feedback from companies yet.</p>
-      <p class="mt-1 text-xs text-gray-400">Feedback will appear here once companies submit them.</p>
+      <p class="text-sm font-medium text-gray-500">{{ $t('tutors.noFeedbackYet') }}</p>
+      <p class="mt-1 text-xs text-gray-400">{{ $t('tutors.noFeedbackHint') }}</p>
     </div>
 
     <div v-else class="space-y-4">
@@ -71,8 +71,8 @@
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
-                <h3 class="text-sm font-semibold text-gray-900 truncate">{{ item.company?.company_name || 'Company' }}</h3>
-                <span class="shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">Feedback</span>
+                <h3 class="text-sm font-semibold text-gray-900 truncate">{{ item.company?.company_name || $t('tutors.companyFallback') }}</h3>
+                <span class="shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">{{ $t('tutors.feedbackBadge') }}</span>
               </div>
               <!-- Student info with photo -->
               <div class="mt-1.5 flex items-center gap-2">
@@ -81,7 +81,7 @@
                   :name="item.student?.name"
                   size="sm"
                 />
-                <p class="truncate text-xs font-medium text-gray-700">{{ item.student?.name || 'Student' }}</p>
+                <p class="truncate text-xs font-medium text-gray-700">{{ item.student?.name || $t('tutors.studentFallback') }}</p>
               </div>
             </div>
           </div>
@@ -90,7 +90,7 @@
 
         <!-- Strengths -->
         <div v-if="item.strengths?.length" class="mb-2.5">
-          <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500">Strengths</p>
+          <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500">{{ $t('tutors.strengths') }}</p>
           <div class="flex flex-wrap gap-1.5">
             <span
               v-for="s in item.strengths"
@@ -104,7 +104,7 @@
 
         <!-- Improvement Areas -->
         <div v-if="item.improvement_areas?.length" class="mb-2.5">
-          <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500">Areas for Improvement</p>
+          <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-500">{{ $t('tutors.improvementAreas') }}</p>
           <div class="flex flex-wrap gap-1.5">
             <span
               v-for="a in item.improvement_areas"
@@ -128,8 +128,8 @@
       <!-- Pagination -->
       <div v-if="meta && meta.last_page > 1" class="flex items-center justify-between border-t border-gray-100 pt-4">
         <p class="text-xs text-gray-500">
-          Page {{ meta.current_page }} of {{ meta.last_page }}
-          ({{ meta.total }} total)
+          {{ $t('common.page') }} {{ meta.current_page }} {{ $t('common.of') }} {{ meta.last_page }}
+          ({{ meta.total }} {{ $t('common.total') }})
         </p>
         <div class="flex items-center gap-1.5">
           <button
@@ -137,7 +137,7 @@
             class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
             @click="load(meta.current_page - 1)"
           >
-            Previous
+            {{ $t('common.previous') }}
           </button>
           <button
             v-for="p in visiblePages"
@@ -153,7 +153,7 @@
             class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
             @click="load(meta.current_page + 1)"
           >
-            Next
+            {{ $t('common.next') }}
           </button>
         </div>
       </div>
@@ -163,8 +163,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import api from '@/services/api'
 import UserAvatar from '@/components/common/UserAvatar.vue'
+
+const { t: $t_script } = useI18n()
 
 interface FeedbackItem {
   id: number
@@ -242,7 +245,7 @@ async function load(page = 1) {
       next_page_url: data.next_page_url,
     }
   } catch {
-    error.value = 'Failed to load feedback'
+    error.value = $t_script('tutors.failedLoadFeedback')
   } finally {
     loading.value = false
   }

@@ -1,7 +1,11 @@
 <template>
   <div class="animate-fade-in">
+    <div class="fixed right-6 top-6 z-50">
+      <LanguageSwitcher variant="standalone" />
+    </div>
     <AuthLayout>
-      <div class="rounded-[20px] p-8 transition-all duration-300">
+      <div class="relative rounded-[20px] p-8 transition-all duration-300">
+
         <div class="text-center mb-6">
           <div
             class="mx-auto w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-500 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20 mb-4"
@@ -16,18 +20,18 @@
             </svg>
           </div>
           <h1 class="text-[22px] sm:text-[24px] font-bold text-slate-900 leading-tight">
-            Reset Password
+            {{ $t('auth.resetPassword.title') }}
           </h1>
-          <p class="mt-1.5 text-[14px] text-slate-500">Enter your new password below.</p>
+          <p class="mt-1.5 text-[14px] text-slate-500">{{ $t('auth.resetPassword.subtitle') }}</p>
         </div>
 
         <form @submit.prevent="handleSubmit" novalidate>
           <div class="space-y-4">
             <InputField
               v-model="form.email"
-              label="Email Address"
+              :label="$t('auth.resetPassword.emailLabel')"
               type="email"
-              placeholder="Enter your email"
+              :placeholder="$t('auth.resetPassword.emailPlaceholder')"
               required
               :error="errors.email"
               autocomplete="email"
@@ -53,8 +57,8 @@
 
             <PasswordInput
               v-model="form.password"
-              label="New Password"
-              placeholder="Enter new password"
+              :label="$t('auth.resetPassword.newPasswordLabel')"
+              :placeholder="$t('auth.resetPassword.newPasswordPlaceholder')"
               required
               :error="errors.password"
               autocomplete="new-password"
@@ -64,8 +68,8 @@
 
             <PasswordInput
               v-model="form.passwordConfirmation"
-              label="Confirm Password"
-              placeholder="Confirm new password"
+              :label="$t('auth.resetPassword.confirmPasswordLabel')"
+              :placeholder="$t('auth.resetPassword.confirmPasswordPlaceholder')"
               required
               :error="errors.passwordConfirmation"
               autocomplete="new-password"
@@ -119,7 +123,7 @@
 
           <div class="mt-6">
             <PrimaryButton type="submit" :loading="loading" :disabled="loading || !canSubmit">
-              {{ successMessage ? 'Password Reset' : 'Reset Password' }}
+              {{ successMessage ? $t('auth.resetPassword.passwordReset') : $t('auth.resetPassword.resetButton') }}
             </PrimaryButton>
           </div>
         </form>
@@ -138,7 +142,7 @@
                   d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
               </svg>
-              Back to Sign In
+              {{ $t('auth.resetPassword.signIn') }}
             </span>
           </router-link>
         </div>
@@ -157,7 +161,7 @@
                   d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
               </svg>
-              Sign In
+              {{ $t('auth.resetPassword.signIn') }}
             </span>
           </router-link>
         </div>
@@ -169,12 +173,16 @@
 <script setup lang="ts">
 import { computed, reactive, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 import AuthLayout from '@/components/auth/AuthLayout.vue'
 import InputField from '@/components/ui/InputField.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
 import PrimaryButton from '@/components/ui/PrimaryButton.vue'
 import { authService } from '@/services/auth'
 import { parseApiError } from '@/utils/errorParser'
+
+const i18n = useI18n()
 
 const route = useRoute()
 
@@ -218,10 +226,10 @@ function validateField(field: 'email' | 'password' | 'passwordConfirmation'): bo
 
   if (field === 'email') {
     if (!form.email.trim()) {
-      errors.email = 'Please enter your email address.'
+      errors.email = i18n.t('auth.resetPassword.errors.emailRequired')
       valid = false
     } else if (!isValidEmail(form.email)) {
-      errors.email = 'Please enter a valid email address.'
+      errors.email = i18n.t('auth.resetPassword.errors.emailInvalid')
       valid = false
     } else {
       errors.email = ''
@@ -230,10 +238,10 @@ function validateField(field: 'email' | 'password' | 'passwordConfirmation'): bo
 
   if (field === 'password') {
     if (!form.password) {
-      errors.password = 'Please enter a new password.'
+      errors.password = i18n.t('auth.resetPassword.errors.passwordRequired')
       valid = false
     } else if (form.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters long.'
+      errors.password = i18n.t('auth.resetPassword.errors.passwordMin')
       valid = false
     } else {
       errors.password = ''
@@ -242,10 +250,10 @@ function validateField(field: 'email' | 'password' | 'passwordConfirmation'): bo
 
   if (field === 'passwordConfirmation') {
     if (!form.passwordConfirmation) {
-      errors.passwordConfirmation = 'Please confirm your password.'
+      errors.passwordConfirmation = i18n.t('auth.resetPassword.errors.confirmRequired')
       valid = false
     } else if (form.password !== form.passwordConfirmation) {
-      errors.passwordConfirmation = 'Passwords do not match.'
+      errors.passwordConfirmation = i18n.t('auth.resetPassword.errors.confirmMismatch')
       valid = false
     } else {
       errors.passwordConfirmation = ''
@@ -275,7 +283,7 @@ async function handleSubmit() {
 
   const token = route.query.token as string
   if (!token) {
-    errorMessage.value = 'Invalid or missing reset token. Please use the link from your email.'
+    errorMessage.value = i18n.t('auth.resetPassword.invalidToken')
     return
   }
 
@@ -292,7 +300,7 @@ async function handleSubmit() {
     })
     successMessage.value =
       response.message ||
-      'Your password has been reset successfully. You can now sign in with your new password.'
+      i18n.t('auth.resetPassword.successMessage')
   } catch (err: unknown) {
     const parsed = parseApiError(err)
     if (parsed.fields) {

@@ -33,9 +33,9 @@
           A
         </div>
         <div v-show="!sidebarCollapsed" class="min-w-0">
-          <h1 class="truncate text-base font-semibold tracking-tight text-white">Admin Portal</h1>
+          <h1 class="truncate text-base font-semibold tracking-tight text-white">{{ $t('layouts.admin.title') }}</h1>
           <p class="truncate text-xs" :style="{ color: 'var(--sidebar-logo-text)' }">
-            Internship Management
+            {{ $t('layouts.admin.subtitle') }}
           </p>
         </div>
         <!-- Collapse toggle -->
@@ -69,7 +69,7 @@
           class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider"
           :style="{ color: 'var(--sidebar-section-text)' }"
         >
-          Core Modules
+          {{ $t('layouts.admin.sectionTitle') }}
         </p>
 
         <div class="space-y-1">
@@ -94,7 +94,7 @@
               >
                 <component :is="item.icon" />
               </span>
-              <span v-show="!sidebarCollapsed" class="truncate">{{ item.label }}</span>
+              <span v-show="!sidebarCollapsed" class="truncate">{{ $t('nav.admin.' + item.name) }}</span>
             </router-link>
           </template>
 
@@ -122,7 +122,7 @@
                   <component :is="parent.icon" />
                 </span>
                 <span v-show="!sidebarCollapsed" class="flex-1 truncate text-left">{{
-                  parent.label
+                  $t('nav.admin.' + parent.name)
                 }}</span>
                 <!-- Chevron -->
                 <svg
@@ -167,7 +167,7 @@
                             : 'var(--sidebar-nav-text)',
                       }"
                     />
-                    <span class="truncate">{{ child.label }}</span>
+                    <span class="truncate">{{ $t('nav.admin.' + child.name) }}</span>
                   </router-link>
                 </div>
               </transition>
@@ -203,7 +203,7 @@
               {{ user?.name || 'Administrator' }}
             </p>
             <p class="truncate text-xs" :style="{ color: 'var(--sidebar-logo-text)' }">
-              System Admin
+              {{ $t('layouts.admin.role') }}
             </p>
           </div>
         </div>
@@ -220,7 +220,7 @@
           <button
             class="inline-flex items-center justify-center rounded-lg p-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700 lg:hidden"
             @click="sidebarOpen = !sidebarOpen"
-            aria-label="Toggle navigation"
+            :aria-label="$t('common.toggleNavigation')"
           >
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -280,6 +280,9 @@
             />
           </button>
 
+          <!-- Language Switcher -->
+          <LanguageSwitcher variant="header" />
+
           <!-- Notification Bell -->
           <div class="relative">
             <button
@@ -333,7 +336,7 @@
                 <p class="text-sm font-semibold leading-tight text-slate-800">
                   {{ user?.name || 'Admin User' }}
                 </p>
-                <p class="text-[11px] font-medium leading-tight text-slate-400">System Admin</p>
+                <p class="text-[11px] font-medium leading-tight text-slate-400">{{ $t('layouts.admin.role') }}</p>
               </div>
               <svg
                 class="h-4 w-4 text-slate-400 transition-transform duration-200"
@@ -389,7 +392,7 @@
                       d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                     />
                   </svg>
-                  Profile Settings
+                  {{ $t('layouts.admin.profile') }}
                 </router-link>
                 <hr class="my-1 border-slate-100" />
                 <button
@@ -409,7 +412,7 @@
                       d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                     />
                   </svg>
-                  Log Out
+                  {{ $t('layouts.admin.logout') }}
                 </button>
               </div>
             </transition>
@@ -443,9 +446,9 @@
           @click.stop
         >
           <h3 id="logout-modal-title" class="text-base font-semibold text-slate-900">
-            Are you sure you want to log out?
+            {{ $t('layouts.admin.logoutModalTitle') }}
           </h3>
-          <p class="mt-1 text-sm text-slate-600">You can cancel if you changed your mind.</p>
+          <p class="mt-1 text-sm text-slate-600">{{ $t('layouts.admin.logoutModalDescription') }}</p>
 
           <div class="mt-5 flex items-center justify-end gap-3">
             <button
@@ -453,14 +456,14 @@
               @click="closeLogoutModal"
               :disabled="loggingOut"
             >
-              Cancel
+              {{ $t('layouts.admin.cancel') }}
             </button>
             <button
               class="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
               @click="confirmLogout"
               :disabled="loggingOut"
             >
-              Logout
+              {{ $t('layouts.admin.logoutConfirm') }}
             </button>
           </div>
         </div>
@@ -472,10 +475,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import { NAV_ITEMS, type NavItem } from '@/composables/useNavigation'
 import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
+
+const { t: $t } = useI18n()
 
 const SIDEBAR_COLLAPSED_KEY = 'admin-sidebar-collapsed'
 

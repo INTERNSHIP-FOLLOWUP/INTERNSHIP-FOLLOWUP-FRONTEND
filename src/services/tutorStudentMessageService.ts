@@ -2,8 +2,8 @@ import api from '@/services/api'
 import type {
   TutorStudentConversationsResponse,
   TutorStudentMessagesResponse,
+  TutorStudentSendMessageResponse,
   SendMessagePayload,
-  SendMessageResponse,
 } from '@/types/message'
 
 export const tutorStudentMessageService = {
@@ -17,8 +17,8 @@ export const tutorStudentMessageService = {
     return res.data
   },
 
-  async sendMessage(studentId: number, payload: SendMessagePayload): Promise<SendMessageResponse> {
-    const res = await api.post<SendMessageResponse>(`/tutor/student-messages/${studentId}`, payload)
+  async sendMessage(studentId: number, payload: SendMessagePayload): Promise<TutorStudentSendMessageResponse> {
+    const res = await api.post<TutorStudentSendMessageResponse>(`/tutor/student-messages/${studentId}`, payload)
     return res.data
   },
 }

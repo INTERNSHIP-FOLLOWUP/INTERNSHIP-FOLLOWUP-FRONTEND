@@ -3,9 +3,9 @@
     <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
       <div class="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 class="text-xl font-semibold text-gray-900">Student Evaluations</h1>
+          <h1 class="text-xl font-semibold text-gray-900">{{ $t('evaluations.title') }}</h1>
           <p class="mt-1 text-sm text-gray-500">
-            View and filter evaluations submitted by companies.
+            {{ $t('evaluations.viewSubtitle') }}
           </p>
         </div>
       </div>
@@ -17,7 +17,7 @@
             class="appearance-none rounded-xl border border-gray-200 bg-white py-2.5 pl-4 pr-10 text-sm text-gray-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
             @change="onCompanyChange"
           >
-            <option value="">All Companies</option>
+            <option value="">{{ $t('evaluations.allCompanies') }}</option>
             <option v-for="c in companies" :key="c.id" :value="c.id">
               {{ c.company_name }}
             </option>
@@ -31,10 +31,10 @@
           class="rounded-lg bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-100"
           @click="clearFilter"
         >
-          Clear filter
+          {{ $t('evaluations.clearFilter') }}
         </button>
         <span v-if="meta" class="text-xs text-gray-400">
-          {{ meta.total }} evaluation{{ meta.total !== 1 ? 's' : '' }}
+          {{ meta.total }} {{ meta.total === 1 ? $t('evaluations.evaluation') : $t('evaluations.evaluations') }}
         </span>
       </div>
 
@@ -71,10 +71,10 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <p class="text-sm font-medium text-gray-500">
-          No evaluations{{ selectedCompanyId ? ' for this company' : '' }} yet.
+          {{ $t('evaluations.noEvalYet', { forCompany: selectedCompanyId ? $t('evaluations.forCompany') : '' }) }}
         </p>
         <p class="mt-1 text-xs text-gray-400">
-          {{ selectedCompanyId ? 'Try selecting a different company.' : 'Evaluations will appear here once companies submit them.' }}
+          {{ selectedCompanyId ? $t('evaluations.tryDifferent') : $t('evaluations.willAppear') }}
         </p>
       </div>
 
@@ -93,7 +93,7 @@
                 {{ studentInitials(item.student?.name) }}
               </div>
               <div>
-                <h3 class="text-sm font-semibold text-gray-900">{{ item.student?.name || 'Student #' + item.student_id }}</h3>
+                <h3 class="text-sm font-semibold text-gray-900">{{ item.student?.name || $t('evaluations.studentFallback') + item.student_id }}</h3>
                 <div class="mt-0.5 flex items-center gap-1.5">
                   <div
                     v-if="item.company?.company_image_url || item.company?.company_profile_image_url"
@@ -112,7 +112,7 @@
                     {{ companyInitials(item.company?.company_name) }}
                   </div>
                   <span class="text-xs font-medium text-gray-500">
-                    {{ item.company?.company_name || 'Company #' + item.company_id }}
+                    {{ item.company?.company_name || $t('evaluations.companyFallback') + item.company_id }}
                   </span>
                 </div>
               </div>
@@ -157,8 +157,8 @@
 
         <div v-if="meta && meta.last_page > 1" class="flex items-center justify-between border-t border-gray-100 pt-4">
           <p class="text-xs text-gray-500">
-            Page {{ meta.current_page }} of {{ meta.last_page }}
-            ({{ meta.total }} total)
+            {{ $t('common.page') }} {{ meta.current_page }} {{ $t('common.of') }} {{ meta.last_page }}
+            ({{ meta.total }} {{ $t('common.total') }})
           </p>
           <div class="flex items-center gap-1.5">
             <button
@@ -166,7 +166,7 @@
               class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
               @click="load(meta.current_page - 1)"
             >
-              Previous
+              {{ $t('common.previous') }}
             </button>
             <button
               v-for="p in visiblePages"
@@ -182,7 +182,7 @@
               class="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
               @click="load(meta.current_page + 1)"
             >
-              Next
+              {{ $t('common.next') }}
             </button>
           </div>
         </div>
@@ -193,6 +193,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import api from '@/services/api'
 
 interface EvaluationItem {
@@ -233,12 +234,14 @@ interface PaginationMeta {
   next_page_url: string | null
 }
 
-const skills = [
-  { key: 'technical_skill' as const, label: 'Technical' },
-  { key: 'communication' as const, label: 'Communication' },
-  { key: 'professionalism' as const, label: 'Professionalism' },
-  { key: 'attendance' as const, label: 'Attendance' },
-]
+const { t: $t_script } = useI18n()
+
+const skills = computed(() => [
+  { key: 'technical_skill' as const, label: $t_script('evaluations.technical') },
+  { key: 'communication' as const, label: $t_script('evaluations.communication') },
+  { key: 'professionalism' as const, label: $t_script('evaluations.professionalism') },
+  { key: 'attendance' as const, label: $t_script('evaluations.attendance') },
+])
 
 const evaluations = ref<EvaluationItem[]>([])
 const companies = ref<CompanyOption[]>([])
@@ -303,7 +306,7 @@ async function load(page = 1) {
         }
       : null
   } catch {
-    error.value = 'Failed to load evaluations'
+    error.value = $t_script('evaluations.failedLoad')
   } finally {
     loading.value = false
   }

@@ -15,7 +15,7 @@
         <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <p class="text-xs uppercase tracking-wider text-slate-400">Issues</p>
           <p class="mt-2 text-base font-semibold text-slate-900">{{ activity.issues.length }}</p>
-          <p class="mt-2 text-sm text-slate-500">Latest: {{ activity.issues[0]?.title ?? 'No issues' }}</p>
+          <p class="mt-2 text-sm text-slate-500">Latest: {{ activity.issues[0]?.title ?? $t('common.noIssues') }}</p>
         </div>
 
         <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">

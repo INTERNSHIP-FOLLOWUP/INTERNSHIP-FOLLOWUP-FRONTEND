@@ -7,8 +7,7 @@
     <div class="px-6 py-5">
       <ErrorAlert :message="store.error" />
       <div class="flex items-center gap-4">
-        <div class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-100">
-          <img v-if="avatarUrl" :src="avatarUrl" alt="Avatar" class="h-full w-full object-cover" />
+        <div class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-100">           <img v-if="avatarUrl" :src="avatarUrl" :alt="$t('common.avatar')" class="h-full w-full object-cover" />
           <svg v-else class="h-10 w-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
@@ -25,7 +24,7 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            {{ store.loading ? 'Uploading...' : 'Upload Avatar' }}
+            {{ store.loading ? $t('common.uploading') : $t('profile.uploadAvatar') }}
           </button>
           <p class="mt-2 text-xs text-slate-500">JPG, JPEG, PNG up to 2MB.</p>
         </div>
@@ -36,10 +35,12 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useProfileStore } from '@/stores/profile'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
 import { useToastStore } from '@/stores/toast'
 
+const { t: $t_script } = useI18n()
 const store = useProfileStore()
 const toast = useToastStore()
 const fileInput = ref(null)
@@ -58,11 +59,11 @@ function onFileChange(event) {
   if (!file) return
 
   if (!file.type.startsWith('image/')) {
-    toast.error('Please select a valid image file.', 'Invalid File')
+    toast.error($t_script('common.invalidImageFile'), $t_script('common.invalidFile'))
     return
   }
   if (file.size > 2 * 1024 * 1024) {
-    toast.error('Image must not exceed 2MB.', 'File Too Large')
+    toast.error($t_script('common.fileTooLarge'), $t_script('common.fileTooLargeTitle'))
     return
   }
 
@@ -70,7 +71,7 @@ function onFileChange(event) {
   formData.append('avatar', file)
 
   store.uploadAvatar(formData).then(() => {
-    toast.success('Avatar updated successfully.', 'Avatar')
+    toast.success($t_script('common.avatarUpdated'), $t_script('profile.uploadAvatar'))
   })
 }
 </script>

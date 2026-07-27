@@ -6,7 +6,7 @@
     <img
       v-if="src"
       :src="src"
-      alt="Avatar"
+      :alt="$t('common.avatar')"
       class="h-full w-full object-cover"
       @error="onError"
     />

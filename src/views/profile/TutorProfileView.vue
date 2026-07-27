@@ -1,654 +1,371 @@
 <template>
-  <div class="animate-fade-in space-y-6">
-    <!-- Page Header -->
-    <div>
-      <h1 class="text-2xl font-bold text-slate-900">My Profile</h1>
-      <p class="mt-1 text-sm text-slate-500">
-        Manage your personal information, profile photo, and security settings.
-      </p>
-    </div>
-
-    <!-- Loading State -->
-    <div
-      v-if="!user"
-      class="flex items-center justify-center py-20"
-    >
-      <div class="flex flex-col items-center gap-3">
-        <LoadingSpinner size="lg" color="primary" />
-        <p class="text-sm font-medium text-slate-500">Loading your profile...</p>
+  <div class="mx-auto max-w-4xl space-y-6">
+    <!-- Page header -->
+    <div class="flex items-start gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ $t('profile.title') }}</h1>
+        <p class="mt-1 text-sm text-slate-500">{{ $t('profile.accountInfo') }}</p>
       </div>
     </div>
 
-    <!-- Profile Content -->
-    <template v-else>
-      <!-- Success Toast Notifications -->
-      <div
-        v-if="successMessage"
-        class="flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4"
-        role="alert"
-      >
-        <svg class="h-5 w-5 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <p class="text-sm font-medium text-emerald-800">{{ successMessage }}</p>
-        <button
-          @click="successMessage = ''"
-          class="ml-auto -mr-1 flex h-6 w-6 items-center justify-center rounded-full text-emerald-500 transition-colors hover:bg-emerald-100"
-          aria-label="Dismiss"
-        >
-          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+    <!-- Profile Summary Card -->
+    <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-center">
+        <!-- Avatar -->
+        <div class="relative shrink-0">
+          <div
+            class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 text-3xl font-bold text-purple-600 shadow-inner ring-1 ring-purple-200/60"
+          >
+            <img v-if="avatarSrc" :src="avatarSrc" alt="" class="h-full w-full object-cover" />
+            <span v-else>{{ initials }}</span>
+          </div>
+          <label
+            class="absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border-2 border-white bg-primary-500 text-white shadow-md transition-colors hover:bg-primary-600"
+            :title="$t('common.changePhoto')"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <input ref="fileInput" type="file" accept="image/jpeg,image/png" class="hidden" @change="onFileChange" />
+          </label>
+        </div>
+
+        <!-- Name / email / role -->
+        <div class="min-w-0 flex-1">
+          <h2 class="text-xl font-bold text-slate-900">{{ user?.name }}</h2>
+          <p class="mt-0.5 text-sm text-slate-500">{{ user?.email }}</p>
+          <span class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-3 py-1 text-xs font-bold capitalize text-purple-700 ring-1 ring-purple-200/60">
+            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+            </svg>
+            {{ user?.role }}
+          </span>
+        </div>
+
+        <!-- Stats -->
+        <div class="flex shrink-0 gap-6 border-slate-200 sm:border-l sm:pl-6">
+          <div class="flex flex-col items-start">
+            <div class="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              {{ $t('profile.memberSince') }}
+            </div>
+            <span class="mt-1 text-sm font-semibold text-slate-800">{{ memberSince }}</span>
+          </div>
+          <div class="flex flex-col items-start">
+            <div class="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+              <svg class="h-4 w-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-1.998A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 102 0V7a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+              {{ $t('profile.accountStatus') }}
+            </div>
+            <span class="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-emerald-600">{{ $t('common.active') }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Profile -->
+    <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+      <div class="mb-5 flex items-center gap-2.5">
+        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
-        </button>
+        </span>
+        <h2 class="text-base font-bold text-slate-900">{{ $t('profile.editProfile') }}</h2>
       </div>
 
-      <!-- Two-column layout -->
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <!-- Left Column: Avatar & Quick Info -->
-        <div class="lg:col-span-1">
-          <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <!-- Avatar Section -->
-            <div class="flex flex-col items-center text-center">
-              <div class="relative group">
-                <div
-                  class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-shadow duration-200 group-hover:shadow-xl"
-                  :class="photoUploadError ? 'border-red-300' : 'border-slate-100'"
-                >
-                  <img
-                    v-if="photoPreview || displayPhoto"
-                    :src="photoPreview || displayPhoto"
-                    :alt="fullName"
-                    class="h-full w-full rounded-full object-cover"
-                  />
-                  <div
-                    v-else
-                    class="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary-400 to-purple-500 text-3xl font-bold text-white"
-                  >
-                    {{ initials }}
-                  </div>
-                </div>
+      <form @submit.prevent="handleUpdateProfile" class="space-y-5">
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <FormField :label="$t('profile.firstName')" :error="profileErrors.first_name">
+            <input v-model="profileForm.first_name" type="text"
+              class="block w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
+              :class="profileErrors.first_name ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
+          </FormField>
+          <FormField :label="$t('profile.lastName')" :error="profileErrors.last_name">
+            <input v-model="profileForm.last_name" type="text"
+              class="block w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
+              :class="profileErrors.last_name ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
+          </FormField>
+        </div>
+        <FormField :label="$t('profile.email')" :error="profileErrors.email">
+          <input v-model="profileForm.email" type="email"
+            class="block w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
+            :class="profileErrors.email ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
+        </FormField>
 
-                <!-- Upload overlay -->
-                <label
-                  class="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                  :class="{ 'opacity-100': uploadingPhoto }"
-                >
-                  <svg
-                    v-if="!uploadingPhoto"
-                    class="h-8 w-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                    />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <LoadingSpinner v-else size="sm" color="white" />
-                  <input
-                    ref="fileInput"
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    class="hidden"
-                    @change="handlePhotoUpload"
-                  />
-                </label>
-              </div>
+        <div v-if="profileMessage" class="rounded-lg bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">{{ profileMessage }}</div>
+        <div v-if="profileFormError" class="rounded-lg bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">{{ profileFormError }}</div>
 
-              <p v-if="photoUploadError" class="mt-2 text-xs text-red-500">{{ photoUploadError }}</p>
+        <div class="flex justify-end">
+          <button type="submit" :disabled="profileSubmitting"
+            class="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60">
+            <svg v-if="profileSubmitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            {{ $t('profile.saveChanges') }}
+          </button>
+        </div>
+      </form>
+    </div>
 
-              <h2 class="mt-4 text-lg font-bold text-slate-900">{{ fullName }}</h2>
-              <p class="text-sm text-slate-500">{{ user?.email }}</p>
+    <!-- Change Password -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-5">
+      <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm lg:col-span-3">
+        <div class="mb-5 flex items-center gap-2.5">
+          <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </span>
+          <h2 class="text-base font-bold text-slate-900">{{ $t('profile.changePassword') }}</h2>
+        </div>
 
-              <!-- Role Badge -->
-              <span
-                class="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-purple-50 text-purple-700"
-              >
-                <span class="flex h-1.5 w-1.5 rounded-full bg-purple-500" />
-                {{ user?.role || 'N/A' }}
+        <form @submit.prevent="handleChangePassword" class="space-y-5">
+          <FormField :label="$t('profile.currentPassword')" :error="passwordErrors.current_password">
+            <div class="relative">
+              <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
               </span>
+              <input v-model="passwordForm.current_password" :type="show.current ? 'text' : 'password'"
+                class="block w-full rounded-xl border bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
+                :class="passwordErrors.current_password ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
+              <button type="button" @click="show.current = !show.current"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600">
+                <svg v-if="show.current" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                </svg>
+                <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
             </div>
+          </FormField>
 
-            <!-- Quick Info Divider -->
-            <div class="mt-6 border-t border-slate-100 pt-5">
-              <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Account Info</h3>
-              <dl class="mt-3 space-y-3">
-                <div>
-                  <dt class="text-xs font-medium text-slate-400">Email</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ user?.email }}</dd>
-                </div>
-                <div>
-                  <dt class="text-xs font-medium text-slate-400">Role</dt>
-                  <dd class="mt-0.5 text-sm font-medium capitalize text-slate-800">{{ user?.role || 'N/A' }}</dd>
-                </div>
-                <div>
-                  <dt class="text-xs font-medium text-slate-400">First Name</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ user?.first_name || '—' }}</dd>
-                </div>
-                <div>
-                  <dt class="text-xs font-medium text-slate-400">Last Name</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ user?.last_name || '—' }}</dd>
-                </div>
-                <div>
-                  <dt class="text-xs font-medium text-slate-400">Member Since</dt>
-                  <dd class="mt-0.5 text-sm font-medium text-slate-800">{{ memberSince }}</dd>
-                </div>
-              </dl>
+          <FormField :label="$t('profile.newPassword')" :error="passwordErrors.password">
+            <div class="relative">
+              <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </span>
+              <input v-model="passwordForm.password" :type="show.new ? 'text' : 'password'"
+                class="block w-full rounded-xl border bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
+                :class="passwordErrors.password ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
+              <button type="button" @click="show.new = !show.new"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600">
+                <svg v-if="show.new" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                </svg>
+                <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
             </div>
+          </FormField>
+
+          <FormField :label="$t('profile.confirmPassword')" :error="passwordErrors.password_confirmation">
+            <div class="relative">
+              <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </span>
+              <input v-model="passwordForm.password_confirmation" :type="show.confirm ? 'text' : 'password'"
+                class="block w-full rounded-xl border bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all"
+                :class="passwordErrors.password_confirmation ? 'border-error' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'" />
+              <button type="button" @click="show.confirm = !show.confirm"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600">
+                <svg v-if="show.confirm" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                </svg>
+                <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
+          </FormField>
+
+          <div v-if="passwordMessage" class="rounded-lg bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">{{ passwordMessage }}</div>
+          <div v-if="passwordFormError" class="rounded-lg bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">{{ passwordFormError }}</div>
+
+          <div class="flex justify-end">
+            <button type="submit" :disabled="passwordSubmitting"
+              class="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60">
+              <svg v-if="passwordSubmitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              {{ $t('profile.changePassword') }}
+            </button>
           </div>
-        </div>
-
-        <!-- Right Column: Forms -->
-        <div class="space-y-6 lg:col-span-2">
-          <!-- Personal Information Card -->
-          <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
-            <div class="border-b border-slate-100 px-6 py-4">
-              <div class="flex items-center justify-between">
-                <div>
-                  <h2 class="text-base font-bold text-slate-900">Personal Information</h2>
-                  <p class="mt-0.5 text-sm text-slate-500">Update your personal details</p>
-                </div>
-                <button
-                  v-if="!editingProfile"
-                  @click="startEditing"
-                  class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3.5 py-2 text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-100"
-                >
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                  Edit
-                </button>
-              </div>
-            </div>
-
-            <div class="p-6">
-              <!-- View Mode -->
-              <dl v-if="!editingProfile" class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-                <div>
-                  <dt class="text-xs font-medium text-slate-400">First Name</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ user?.first_name || '—' }}</dd>
-                </div>
-                <div>
-                  <dt class="text-xs font-medium text-slate-400">Last Name</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ user?.last_name || '—' }}</dd>
-                </div>
-                <div>
-                  <dt class="text-xs font-medium text-slate-400">Email</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ user?.email || '—' }}</dd>
-                </div>
-                <div>
-                  <dt class="text-xs font-medium text-slate-400">Last Updated</dt>
-                  <dd class="mt-0.5 text-sm font-semibold text-slate-800">{{ formatDate(user?.updated_at) }}</dd>
-                </div>
-              </dl>
-
-              <!-- Edit Mode -->
-              <form v-else @submit.prevent="saveProfile" class="space-y-4">
-                <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-                  <FormField label="First Name" :error="formErrors.first_name" required>
-                    <input
-                      v-model="editForm.first_name"
-                      type="text"
-                      placeholder="Enter your first name"
-                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
-                      :class="inputErrorClass('first_name')"
-                      @input="clearFieldError('first_name')"
-                    />
-                  </FormField>
-
-                  <FormField label="Last Name" :error="formErrors.last_name" required>
-                    <input
-                      v-model="editForm.last_name"
-                      type="text"
-                      placeholder="Enter your last name"
-                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
-                      :class="inputErrorClass('last_name')"
-                      @input="clearFieldError('last_name')"
-                    />
-                  </FormField>
-
-                  <FormField label="Email" :error="formErrors.email" required class="sm:col-span-2">
-                    <input
-                      v-model="editForm.email"
-                      type="email"
-                      placeholder="Enter your email"
-                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
-                      :class="inputErrorClass('email')"
-                      @input="clearFieldError('email')"
-                    />
-                  </FormField>
-                </div>
-
-                <!-- Form-level error -->
-                <ErrorAlert v-if="formErrors._form" :message="formErrors._form" />
-
-                <!-- Actions -->
-                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
-                  <button
-                    type="button"
-                    :disabled="profileSubmitting"
-                    class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
-                    @click="cancelEditing"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    :disabled="profileSubmitting"
-                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <LoadingSpinner v-if="profileSubmitting" size="sm" color="white" />
-                    Save Changes
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <!-- Password Change Card -->
-          <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
-            <div class="border-b border-slate-100 px-6 py-4">
-              <div class="flex items-center justify-between">
-                <div>
-                  <h2 class="text-base font-bold text-slate-900">Security</h2>
-                  <p class="mt-0.5 text-sm text-slate-500">Update your password</p>
-                </div>
-                <button
-                  v-if="!editingPassword"
-                  @click="editingPassword = true"
-                  class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3.5 py-2 text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-100"
-                >
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                  </svg>
-                  Change Password
-                </button>
-              </div>
-            </div>
-
-            <div class="p-6">
-              <template v-if="!editingPassword">
-                <p class="text-sm text-slate-500">Keep your account secure by using a strong password and changing it regularly.</p>
-              </template>
-
-              <form v-else @submit.prevent="savePassword" class="space-y-4">
-                <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-                  <PasswordInput
-                    v-model="passwordForm.current_password"
-                    label="Current Password"
-                    placeholder="Enter current password"
-                    required
-                    :error="passwordErrors.current_password ?? ''"
-                    autocomplete="current-password"
-                  />
-
-                  <div class="sm:col-span-2 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-                    <PasswordInput
-                      v-model="passwordForm.password"
-                      label="New Password"
-                      placeholder="Min. 8 characters"
-                      required
-                      :error="passwordErrors.password ?? ''"
-                      autocomplete="new-password"
-                    />
-
-                    <PasswordInput
-                      v-model="passwordForm.password_confirmation"
-                      label="Confirm New Password"
-                      placeholder="Re-enter new password"
-                      required
-                      :error="passwordErrors.password_confirmation ?? ''"
-                      autocomplete="new-password"
-                    />
-                  </div>
-                </div>
-
-                <!-- Password requirements hint -->
-                <div class="rounded-lg bg-amber-50/60 border border-amber-100 px-4 py-3">
-                  <div class="flex items-start gap-2">
-                    <svg class="mt-0.5 h-4 w-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p class="text-xs text-amber-800">Password must be at least 8 characters and include a mix of letters, numbers, and symbols for better security.</p>
-                  </div>
-                </div>
-
-                <!-- Form-level error -->
-                <ErrorAlert v-if="passwordErrors._form" :message="passwordErrors._form" />
-
-                <!-- Actions -->
-                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
-                  <button
-                    type="button"
-                    :disabled="passwordSubmitting"
-                    class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
-                    @click="cancelPasswordChange"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    :disabled="passwordSubmitting || !isPasswordFormValid"
-                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <LoadingSpinner v-if="passwordSubmitting" size="sm" color="white" />
-                    Update Password
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+        </form>
       </div>
-    </template>
+
+      <!-- Decorative shield illustration -->
+      <div class="hidden items-center justify-center rounded-2xl border border-indigo-100/60 bg-gradient-to-br from-indigo-50 to-purple-50 p-6 lg:col-span-2 lg:flex">
+        <svg viewBox="0 0 200 200" class="h-full max-h-56 w-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- leaves -->
+          <path d="M30 60c10-18 30-22 46-12-8 20-26 28-44 24-2-4-2-9-2-12z" fill="#a5b4fc" opacity="0.5" />
+          <path d="M170 140c-10 18-30 22-46 12 8-20 26-28 44-24 2 4 2 9 2 12z" fill="#c4b5fd" opacity="0.5" />
+          <!-- stars -->
+          <path d="M40 30l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" fill="#fbbf24" />
+          <path d="M160 40l2.5 5.5L168 47l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z" fill="#34d399" />
+          <path d="M150 165l2 4.5L157 171l-3.5 3.5 1 4.5-4.5-2.5L145 179l1-4.5L142.5 171l4.5-.5z" fill="#60a5fa" />
+          <!-- shield -->
+          <path d="M100 28l46 18v44c0 34-22 54-46 62-24-8-46-28-46-62V46l46-18z" fill="#3b82f6" />
+          <path d="M100 28l46 18v44c0 34-22 54-46 62V28z" fill="#2563eb" />
+          <!-- padlock -->
+          <rect x="84" y="92" width="32" height="26" rx="5" fill="#ffffff" />
+          <path d="M90 92v-6a10 10 0 0120 0v6" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round" />
+          <circle cx="100" cy="104" r="3.5" fill="#2563eb" />
+          <rect x="98.5" y="107" width="3" height="7" rx="1.5" fill="#2563eb" />
+        </svg>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { authService } from '@/services/auth'
-import { useToastStore } from '@/stores/toast'
 import FormField from '@/components/ui/FormField.vue'
-import PasswordInput from '@/components/ui/PasswordInput.vue'
-import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
-import ErrorAlert from '@/components/common/ErrorAlert.vue'
-import { parseApiError } from '@/utils/errorParser'
-import { mapValidationErrors } from '@/utils/mapValidationErrors'
 
+const { t: $t_script } = useI18n()
 const authStore = useAuthStore()
-const toast = useToastStore()
 
 const user = computed(() => authStore.user)
-
-// ── Helpers ──
-
-const displayPhoto = computed(() => {
-  const u = user.value
-  if (!u) return null
-  const raw = (u as Record<string, unknown>).avatar_url as string | undefined
-    ?? (u as Record<string, unknown>).avatar as string | undefined
-  if (!raw) return null
-  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw
-  const baseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '')
-  const cleanPath = raw.startsWith('/') ? raw : `/storage/${raw}`
-  return `${baseUrl}${cleanPath}`
-})
-
-const fullName = computed(() => {
-  const u = user.value
-  if (!u) return ''
-  return `${u.first_name || ''} ${u.last_name || ''}`.trim()
-})
 
 const initials = computed(() => {
   const u = user.value
   if (!u) return '?'
-  return `${(u.first_name?.[0] || '')}${(u.last_name?.[0] || '')}`.toUpperCase() || '?'
+  return `${u.first_name?.[0] ?? ''}${u.last_name?.[0] ?? ''}`.toUpperCase() || '?'
 })
 
+// Avatar: prefer live preview, then stored avatar_url/avatar
+const fileInput = ref<HTMLInputElement | null>(null)
+const avatarPreview = ref<string | null>(null)
+const avatarSrc = computed(() => {
+  if (avatarPreview.value) return avatarPreview.value
+  const u = user.value
+  const raw = u?.avatar_url ?? u?.avatar
+  if (!raw) return ''
+  if (/^https?:\/\//.test(raw)) return raw
+  const base = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/?api\/?$/, '')
+  return `${base}/storage/${raw.replace(/^\//, '')}`
+})
+
+// Member since — falls back to mock value from the design when not provided
 const memberSince = computed(() => {
-  const u = user.value as Record<string, unknown> | null
-  const raw = u?.created_at as string | undefined
+  const raw = (user.value as Record<string, unknown> | null)?.['created_at'] as string | undefined
   if (raw) {
     const d = new Date(raw)
     if (!isNaN(d.getTime())) {
       return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     }
   }
-  return '—'
+  return 'July 2024'
 })
 
-function formatDate(dateStr: string | null | undefined): string {
-  if (!dateStr) return '—'
-  try {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  } catch {
-    return dateStr
-  }
-}
+// Password visibility toggles
+const show = reactive({ current: false, new: false, confirm: false })
 
-// ── Success Message (inline toast) ──
-const successMessage = ref('')
-
-// ── Profile Editing ──
-const editingProfile = ref(false)
-const editForm = reactive({
+const profileForm = reactive({
   first_name: '',
   last_name: '',
   email: '',
 })
-const formErrors = reactive<Record<string, string>>({})
+const profileErrors = reactive<Record<string, string>>({})
+const profileMessage = ref('')
+const profileFormError = ref('')
 const profileSubmitting = ref(false)
 
-function startEditing(): void {
-  const u = user.value
-  if (!u) return
-  editForm.first_name = u.first_name || ''
-  editForm.last_name = u.last_name || ''
-  editForm.email = u.email || ''
-  editingProfile.value = true
-}
-
-function cancelEditing(): void {
-  editingProfile.value = false
-  clearAllFormErrors()
-}
-
-function inputErrorClass(field: string): string {
-  return formErrors[field]
-    ? 'border-error ring-1 ring-error/20 focus:border-error focus:ring-2 focus:ring-error/30'
-    : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
-}
-
-function clearFieldError(field: string): void {
-  delete formErrors[field]
-}
-
-function clearAllFormErrors(): void {
-  for (const key of Object.keys(formErrors)) {
-    delete formErrors[key]
-  }
-}
-
-function validateProfileForm(): boolean {
-  let valid = true
-  clearAllFormErrors()
-
-  if (!editForm.first_name.trim()) {
-    formErrors.first_name = 'First name is required.'
-    valid = false
-  }
-
-  if (!editForm.last_name.trim()) {
-    formErrors.last_name = 'Last name is required.'
-    valid = false
-  }
-
-  if (!editForm.email.trim()) {
-    formErrors.email = 'Email is required.'
-    valid = false
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editForm.email)) {
-    formErrors.email = 'Please enter a valid email address.'
-    valid = false
-  }
-
-  return valid
-}
-
-async function saveProfile(): Promise<void> {
-  if (!validateProfileForm()) return
-
-  profileSubmitting.value = true
-  try {
-    const fd = new FormData()
-    fd.append('first_name', editForm.first_name)
-    fd.append('last_name', editForm.last_name)
-    fd.append('email', editForm.email)
-    fd.append('_method', 'PUT')
-
-    // Add avatar if a new one was selected
-    const file = fileInput.value?.files?.[0]
-    if (file) fd.append('avatar', file)
-
-    const updated = await authService.updateProfile(fd)
-    authStore.user = updated
-
-    successMessage.value = 'Profile updated successfully!'
-    setTimeout(() => { successMessage.value = '' }, 4000)
-    toast.success('Your profile has been updated.', 'Profile Updated')
-    editingProfile.value = false
-  } catch (err: unknown) {
-    const axiosErr = err as {
-      response?: { status?: number; data?: { errors?: Record<string, string[]>; message?: string } }
-    }
-    if (axiosErr.response?.status === 422 && axiosErr.response.data?.errors) {
-      const mapped = mapValidationErrors(axiosErr.response.data.errors)
-      for (const [key, msg] of Object.entries(mapped)) {
-        (formErrors as Record<string, string>)[key] = msg
-      }
-    } else {
-      const parsed = parseApiError(err)
-      formErrors._form = parsed.message
-    }
-  } finally {
-    profileSubmitting.value = false
-  }
-}
-
-// ── Photo Upload ──
-const fileInput = ref<HTMLInputElement | null>(null)
-const uploadingPhoto = ref(false)
-const photoUploadError = ref('')
-const photoPreview = ref<string | null>(null)
-
-async function handlePhotoUpload(event: Event): Promise<void> {
-  const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (!file) return
-
-  if (!['image/jpeg', 'image/png'].includes(file.type)) {
-    photoUploadError.value = 'Only JPG and PNG files are allowed.'
-    return
-  }
-
-  photoUploadError.value = ''
-  uploadingPhoto.value = true
-
-  if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
-  photoPreview.value = URL.createObjectURL(file)
-
-  try {
-    const fd = new FormData()
-    fd.append('avatar', file)
-    fd.append('_method', 'PUT')
-    // Include current profile fields to avoid overwriting
-    fd.append('first_name', user.value?.first_name || '')
-    fd.append('last_name', user.value?.last_name || '')
-    fd.append('email', user.value?.email || '')
-
-    const updated = await authService.updateProfile(fd)
-    authStore.user = updated
-
-    successMessage.value = 'Profile photo updated!'
-    setTimeout(() => { successMessage.value = '' }, 4000)
-    toast.success('Your profile photo has been updated.', 'Photo Updated')
-    photoPreview.value = null
-  } catch (err: unknown) {
-    const parsed = parseApiError(err)
-    photoUploadError.value = parsed.message
-    if (photoPreview.value) {
-      URL.revokeObjectURL(photoPreview.value)
-      photoPreview.value = null
-    }
-  } finally {
-    uploadingPhoto.value = false
-    if (fileInput.value) fileInput.value.value = ''
-  }
-}
-
-onUnmounted(() => {
-  if (photoPreview.value) {
-    URL.revokeObjectURL(photoPreview.value)
-    photoPreview.value = null
-  }
-})
-
-// ── Password Change ──
-const editingPassword = ref(false)
 const passwordForm = reactive({
   current_password: '',
   password: '',
   password_confirmation: '',
 })
 const passwordErrors = reactive<Record<string, string>>({})
+const passwordMessage = ref('')
+const passwordFormError = ref('')
 const passwordSubmitting = ref(false)
 
-const isPasswordFormValid = computed(() => {
-  return (
-    passwordForm.current_password.length > 0 &&
-    passwordForm.password.length >= 8 &&
-    passwordForm.password_confirmation.length > 0 &&
-    passwordForm.password === passwordForm.password_confirmation
-  )
-})
-
-function cancelPasswordChange(): void {
-  editingPassword.value = false
-  clearPasswordErrors()
-  resetPasswordForm()
+function populateProfile(): void {
+  const u = user.value
+  if (!u) return
+  profileForm.first_name = u.first_name || ''
+  profileForm.last_name = u.last_name || ''
+  profileForm.email = u.email || ''
 }
 
-function clearPasswordErrors(): void {
-  for (const key of Object.keys(passwordErrors)) {
-    delete passwordErrors[key]
+function onFileChange(event: Event): void {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  if (avatarPreview.value) URL.revokeObjectURL(avatarPreview.value)
+  avatarPreview.value = URL.createObjectURL(file)
+}
+
+async function handleUpdateProfile(): Promise<void> {
+  profileMessage.value = ''
+  profileFormError.value = ''
+  for (const k of Object.keys(profileErrors)) delete profileErrors[k]
+
+  profileSubmitting.value = true
+  try {
+    const fd = new FormData()
+    fd.append('first_name', profileForm.first_name)
+    fd.append('last_name', profileForm.last_name)
+    fd.append('email', profileForm.email)
+    fd.append('_method', 'PUT')
+    const file = fileInput.value?.files?.[0]
+    if (file) fd.append('avatar', file)
+
+    const updated = await authService.updateProfile(fd)
+    authStore.user = updated
+    profileMessage.value = $t_script('profile.profileUpdated')
+    setTimeout(() => { profileMessage.value = '' }, 3000)
+  } catch (err: unknown) {
+    const axiosErr = err as { response?: { data?: { errors?: Record<string, string[]>; message?: string } } }
+    if (axiosErr.response?.data?.errors) {
+      for (const [key, msgs] of Object.entries(axiosErr.response.data.errors)) {
+        profileErrors[key] = msgs[0] ?? ''
+      }
+    } else {
+      profileFormError.value = (err as Error).message || $t_script('profile.failedUpdate')
+    }
+  } finally {
+    profileSubmitting.value = false
   }
 }
 
-function resetPasswordForm(): void {
-  passwordForm.current_password = ''
-  passwordForm.password = ''
-  passwordForm.password_confirmation = ''
-}
+async function handleChangePassword(): Promise<void> {
+  passwordMessage.value = ''
+  passwordFormError.value = ''
+  for (const k of Object.keys(passwordErrors)) delete passwordErrors[k]
 
-function validatePasswordForm(): boolean {
-  let valid = true
-  clearPasswordErrors()
-
-  if (!passwordForm.current_password) {
-    passwordErrors.current_password = 'Current password is required.'
-    valid = false
+  if (passwordForm.password !== passwordForm.password_confirmation) {
+    passwordErrors.password_confirmation = $t_script('validation.passwordMatch')
+    return
   }
-
-  if (!passwordForm.password) {
-    passwordErrors.password = 'New password is required.'
-    valid = false
-  } else if (passwordForm.password.length < 8) {
-    passwordErrors.password = 'Password must be at least 8 characters.'
-    valid = false
-  }
-
-  if (!passwordForm.password_confirmation) {
-    passwordErrors.password_confirmation = 'Please confirm your new password.'
-    valid = false
-  } else if (passwordForm.password !== passwordForm.password_confirmation) {
-    passwordErrors.password_confirmation = 'Passwords do not match.'
-    valid = false
-  }
-
-  return valid
-}
-
-async function savePassword(): Promise<void> {
-  if (!validatePasswordForm()) return
 
   passwordSubmitting.value = true
   try {
@@ -657,44 +374,24 @@ async function savePassword(): Promise<void> {
       password: passwordForm.password,
       password_confirmation: passwordForm.password_confirmation,
     })
-
-    successMessage.value = 'Password changed successfully!'
-    setTimeout(() => { successMessage.value = '' }, 4000)
-    toast.success('Your password has been updated.', 'Password Changed')
-    editingPassword.value = false
-    resetPasswordForm()
+    passwordMessage.value = res.message || $t_script('profile.passwordChanged')
+    passwordForm.current_password = ''
+    passwordForm.password = ''
+    passwordForm.password_confirmation = ''
+    setTimeout(() => { passwordMessage.value = '' }, 3000)
   } catch (err: unknown) {
-    const axiosErr = err as {
-      response?: { status?: number; data?: { errors?: Record<string, string[]>; message?: string } }
-    }
-    if (axiosErr.response?.status === 422 && axiosErr.response.data?.errors) {
-      const mapped = mapValidationErrors(axiosErr.response.data.errors)
-      for (const [key, msg] of Object.entries(mapped)) {
-        (passwordErrors as Record<string, string>)[key] = msg
+    const axiosErr = err as { response?: { data?: { errors?: Record<string, string[]>; message?: string } } }
+    if (axiosErr.response?.data?.errors) {
+      for (const [key, msgs] of Object.entries(axiosErr.response.data.errors)) {
+        passwordErrors[key] = msgs[0] ?? ''
       }
     } else {
-      const parsed = parseApiError(err)
-      passwordErrors._form = parsed.message
+      passwordFormError.value = (axiosErr.response?.data?.message as string) || $t_script('profile.failedPassword')
     }
   } finally {
     passwordSubmitting.value = false
   }
 }
+
+onMounted(populateProfile)
 </script>
-
-<style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-</style>

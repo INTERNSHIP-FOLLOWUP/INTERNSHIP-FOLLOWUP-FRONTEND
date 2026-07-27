@@ -32,13 +32,13 @@
           />
         </svg>
       </div>
-      <p class="mt-3 text-sm font-semibold text-red-600">Unable to load.</p>
+      <p class="mt-3 text-sm font-semibold text-red-600">{{ $t('common.unableToLoad') }}</p>
       <button
         type="button"
         class="mt-3 rounded-xl bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 transition"
         @click="$emit('retry')"
       >
-        Retry
+        {{ $t('common.retry') }}
       </button>
     </div>
 
@@ -62,8 +62,8 @@
           />
         </svg>
       </div>
-      <p class="mt-3 text-sm font-semibold text-slate-500">{{ emptyTitle }}</p>
-      <p class="text-xs text-slate-400">{{ emptyMessage }}</p>
+      <p class="mt-3 text-sm font-semibold text-slate-500">{{ emptyTitle || $t('common.nothingHereYet') }}</p>
+      <p class="text-xs text-slate-400">{{ emptyMessage || $t('common.nothingHereYet') }}</p>
     </div>
 
     <slot v-else name="default" />
@@ -83,8 +83,8 @@ withDefaults(
   {
     loading: false,
     error: '',
-    emptyTitle: 'Nothing here yet',
-    emptyMessage: 'There is nothing to show at the moment.',
+    emptyTitle: '',
+    emptyMessage: '',
     emptyCheck: undefined,
   },
 )

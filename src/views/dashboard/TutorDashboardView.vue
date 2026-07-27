@@ -3,9 +3,9 @@
     <!-- Header -->
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-slate-900">Tutor Dashboard</h1>
+        <h1 class="text-3xl font-bold text-slate-900">{{ $t('dashboard.tutor.title') }}</h1>
         <p class="text-sm text-slate-500">
-          Overview of your assigned students, reviews, and follow-ups.
+          {{ $t('dashboard.tutor.subtitle') }}
         </p>
       </div>
       <button
@@ -28,7 +28,7 @@
             d="M16.023 9.348c4.183.626 6.977 3.26 6.977 7.053A7.5 7.5 0 119.75 1.5c4.232 0 7.273 2.527 7.273 5.848z"
           />
         </svg>
-        Refresh
+        {{ $t('dashboard.tutor.refresh') }}
       </button>
     </div>
 
@@ -38,40 +38,40 @@
       class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5"
     >
       <StatCard
-        label="Assigned Students"
+        :label="$t('dashboard.tutor.assignedStudents')"
         :value="store.stats?.assigned_students ?? 0"
         colorClass="bg-indigo-500"
-        description="Total students assigned to you"
+        :description="$t('dashboard.tutor.totalAssignedDesc')"
         href="/tutor/students"
       />
       <StatCard
-        label="Pending Reviews"
+        :label="$t('dashboard.tutor.pendingReviews')"
         :value="store.stats?.pending_reviews ?? 0"
         :colorClass="pendingColor"
-        description="Worklogs awaiting your feedback"
+        :description="$t('dashboard.tutor.pendingReviewsDesc')"
         :urgent="(store.stats?.pending_reviews ?? 0) > 0"
         href="/tutor/worklogs"
       />
       <StatCard
-        label="Follow-ups Due"
+        :label="$t('dashboard.tutor.followupsDue')"
         :value="store.stats?.followups_due ?? 0"
         colorClass="bg-emerald-500"
-        description="Scheduled in next 7–14 days"
+        :description="$t('dashboard.tutor.followupsDueDesc')"
         href="/tutor/followups"
       />
       <StatCard
-        label="Open Issues"
+        :label="$t('dashboard.tutor.openIssues')"
         :value="store.stats?.open_issues ?? 0"
         :colorClass="issuesColor"
-        description="Unresolved issues"
+        :description="$t('dashboard.tutor.openIssuesDesc')"
         :urgent="(store.stats?.open_issues ?? 0) > 0"
         href="/tutor/issues"
       />
       <StatCard
-        label="Inactive Students"
+        :label="$t('dashboard.tutor.inactiveStudents')"
         :value="store.stats?.inactive_students ?? 0"
         colorClass="bg-amber-500"
-        description="No worklog in 2+ weeks"
+        :description="$t('dashboard.tutor.inactiveDesc')"
         :urgent="(store.stats?.inactive_students ?? 0) > 0"
         href="/tutor/students"
       />
@@ -81,12 +81,12 @@
     <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
       <!-- Recent Worklogs -->
       <Panel
-        title="Recent Worklogs"
+        :title="$t('dashboard.tutor.recentWorklogs')"
         :loading="store.loading"
         :error="store.error"
         :emptyCheck="store.recentWorklogs"
-        empty-title="No recent worklogs"
-        empty-message="Once your students submit worklogs, they will appear here."
+        :empty-title="$t('dashboard.tutor.noRecentWorklogs')"
+        :empty-message="$t('dashboard.tutor.noRecentWorklogsMessage')"
       >
         <template #default>
           <div class="divide-y divide-slate-100">
@@ -105,14 +105,14 @@
                   <p class="truncate text-sm font-semibold text-slate-900">
                     {{ w.student?.name ?? '' }}
                   </p>
-                  <span class="text-xs text-slate-400">Week {{ w.week_number }}</span>
+                  <span class="text-xs text-slate-400">{{ $t('dashboard.tutor.week') }} {{ w.week_number }}</span>
                 </div>
                 <p class="mt-0.5 truncate text-xs text-slate-500">{{ w.description }}</p>
                 <div class="mt-1 flex items-center gap-2">
                   <span
                     class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700"
                   >
-                    {{ w.status }}
+                    {{ worklogStatusLabel(w.status) }}
                   </span>
                   <span class="text-xs text-slate-400">
                     {{ formatDate(w.submission_date || w.submitted_at) }}
@@ -126,12 +126,12 @@
 
       <!-- Upcoming Follow-ups -->
       <Panel
-        title="Upcoming Follow-ups"
+        :title="$t('dashboard.tutor.upcomingFollowups')"
         :loading="store.loading"
         :error="store.error"
         :emptyCheck="store.upcomingFollowups"
-        empty-title="No upcoming follow-ups"
-        empty-message="Schedule follow-ups with your students to stay aligned."
+        :empty-title="$t('dashboard.tutor.noUpcomingFollowups')"
+        :empty-message="$t('dashboard.tutor.noUpcomingFollowupsMessage')"
       >
         <template #default>
           <div class="divide-y divide-slate-100">
@@ -160,12 +160,12 @@
 
       <!-- Open Issues -->
       <Panel
-        title="Open Issues"
+        :title="$t('dashboard.tutor.openIssuesPanel')"
         :loading="store.loading"
         :error="store.error"
         :emptyCheck="store.openIssues"
-        empty-title="No open issues"
-        empty-message="When issues are opened, they will show up here."
+        :empty-title="$t('dashboard.tutor.noOpenIssues')"
+        :empty-message="$t('dashboard.tutor.noOpenIssuesMessage')"
       >
         <template #default>
           <div class="divide-y divide-slate-100">
@@ -182,7 +182,7 @@
                 class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold"
                 :class="priorityColor(issue.priority)"
               >
-                {{ issue.priority }}
+                {{ issuePriorityLabel(issue.priority) }}
               </span>
             </div>
           </div>
@@ -191,12 +191,12 @@
 
       <!-- Recent Activity -->
       <Panel
-        title="Recent Activity"
+        :title="$t('dashboard.tutor.recentActivity')"
         :loading="store.loading"
         :error="store.error"
         :emptyCheck="store.recentActivity"
-        empty-title="No recent activity"
-        empty-message="Actions like submissions, issues, and follow-ups will appear here."
+        :empty-title="$t('dashboard.tutor.noRecentActivity')"
+        :empty-message="$t('dashboard.tutor.noRecentActivityMessage')"
       >
         <template #default>
           <div class="divide-y divide-slate-100">
@@ -268,10 +268,12 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import StatCard from '@/components/dashboard/StatCard.vue'
 import Panel from '@/components/dashboard/Panel.vue'
 import { useTutorDashboardStore } from '@/stores/tutorDashboard'
 
+const { t: $t_script } = useI18n()
 const store = useTutorDashboardStore()
 
 const pendingColor = computed(() =>
@@ -334,18 +336,37 @@ function priorityColor(priority?: string) {
   }
 }
 
+function issuePriorityLabel(priority?: string): string {
+  const map: Record<string, string> = {
+    Critical: 'issues.critical',
+    High: 'issues.high',
+    Medium: 'issues.medium',
+    Low: 'issues.low',
+  }
+  return $t_script(map[priority ?? ''] || 'common.noData')
+}
+
+function worklogStatusLabel(status?: string): string {
+  const map: Record<string, string> = {
+    Pending: 'worklogs.pending',
+    Approved: 'worklogs.approved',
+    Rejected: 'worklogs.rejected',
+  }
+  return $t_script(map[status ?? ''] || 'common.noData')
+}
+
 function relativeTimestamp(iso?: string) {
   if (!iso) return ''
   const timestamp = new Date(iso).getTime()
   if (Number.isNaN(timestamp)) return ''
   const seconds = Math.floor((Date.now() - timestamp) / 1000)
-  if (seconds < 60) return seconds <= 0 ? 'just now' : `${seconds}s ago`
+  if (seconds < 60) return seconds <= 0 ? $t_script('common.justNow') : $t_script('common.secondsAgo', { s: seconds })
   const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
+  if (minutes < 60) return $t_script('common.minutesAgo', { m: minutes })
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
+  if (hours < 24) return $t_script('common.hoursAgo', { h: hours })
   const days = Math.floor(hours / 24)
-  if (days < 7) return `${days}d ago`
+  if (days < 7) return $t_script('common.daysAgo', { d: days })
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 </script>

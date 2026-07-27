@@ -26,7 +26,7 @@
           id="firstName"
           v-model="form.first_name"
           type="text"
-          placeholder="e.g. Sokha"
+          :placeholder="$t('forms.tutorFirstNamePlaceholder')"
           :aria-invalid="!!errors.first_name"
           :aria-describedby="errors.first_name ? 'firstName-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
@@ -46,7 +46,7 @@
           id="lastName"
           v-model="form.last_name"
           type="text"
-          placeholder="e.g. Mao"
+          :placeholder="$t('forms.tutorLastNamePlaceholder')"
           :aria-invalid="!!errors.last_name"
           :aria-describedby="errors.last_name ? 'lastName-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
@@ -66,7 +66,7 @@
           id="email"
           v-model="form.email"
           type="email"
-          placeholder="e.g. sokha.mao@example.com"
+          :placeholder="$t('forms.tutorEmailPlaceholder')"
           :aria-invalid="!!errors.email"
           :aria-describedby="errors.email ? 'email-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
@@ -86,7 +86,7 @@
           id="password"
           v-model="form.password"
           type="password"
-          placeholder="Min. 8 characters"
+          :placeholder="$t('forms.minPassword')"
           :aria-invalid="!!errors.password"
           :aria-describedby="errors.password ? 'password-error' : undefined"
           class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
@@ -147,6 +147,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useTutorStore } from '@/stores/tutorStore'
 import type { Student } from '@/types/student'
 
@@ -163,6 +164,7 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
+const { t: $t_script } = useI18n()
 const tutorStore = useTutorStore()
 
 const isEdit = computed(() => !!props.tutorId)
@@ -198,17 +200,17 @@ function validateField(field: string): boolean {
   const value = (form as Record<string, unknown>)[field]
 
   if (requiredFields.includes(field as (typeof requiredFields)[number]) && !value) {
-    errors[field] = 'This field is required.'
+    errors[field] = $t_script('validation.required')
     return false
   }
 
   if (field === 'email' && value && !EMAIL_RE.test(value as string)) {
-    errors[field] = 'Please enter a valid email address.'
+    errors[field] = $t_script('validation.email')
     return false
   }
 
   if (field === 'password' && value && (value as string).length < 8) {
-    errors[field] = 'Password must be at least 8 characters.'
+    errors[field] = $t_script('validation.minLength', { n: 8 })
     return false
   }
 
@@ -264,7 +266,7 @@ async function handleSubmit(): Promise<void> {
         }
       }
     } else {
-      formError.value = err instanceof Error ? err.message : 'Failed to save tutor.'
+      formError.value = err instanceof Error ? err.message : $t_script('validation.saveTutorFailed')
     }
   } finally {
     submitting.value = false

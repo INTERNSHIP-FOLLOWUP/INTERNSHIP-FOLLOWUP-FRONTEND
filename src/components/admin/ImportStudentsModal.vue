@@ -4,7 +4,7 @@
       <div class="w-[92%] max-w-2xl rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl">
         <div class="flex items-center justify-between mb-5">
           <div>
-            <h3 class="text-lg font-bold text-slate-900">Import Students</h3>
+            <h3 class="text-lg font-bold text-slate-900">{{ $t('common.importStudents') }}</h3>
             <p class="text-sm text-slate-500 mt-1">Bulk import students from Excel file</p>
           </div>
           <button @click="$emit('close')" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
@@ -69,7 +69,7 @@
             </svg>
             <p class="text-sm font-semibold text-slate-700">{{ file.name }}</p>
             <p class="mt-1 text-xs text-slate-400">{{ formatFileSize(file.size) }}</p>
-            <button @click.stop="removeFile" class="mt-2 text-xs text-red-600 hover:text-red-700 underline">Remove</button>
+            <button @click.stop="removeFile" class="mt-2 text-xs text-red-600 hover:text-red-700 underline">{{ $t('common.remove') }}</button>
           </div>
         </div>
 
@@ -96,7 +96,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div class="flex-1">
-                <p class="text-sm font-bold text-emerald-800">Import Successful!</p>
+                <p class="text-sm font-bold text-emerald-800">{{ $t('common.importSuccessful') }}</p>
                 <p class="text-sm text-emerald-700">{{ result.imported }} student(s) imported successfully</p>
                 <p class="text-xs text-emerald-600 mt-1">Default password: 12345678</p>
               </div>
@@ -110,7 +110,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               <div class="flex-1">
-                <p class="text-sm font-bold text-amber-800">{{ result.imported > 0 ? 'Partial Success' : 'Import Failed' }}</p>
+                <p class="text-sm font-bold text-amber-800">{{ result.imported > 0 ? $t('common.partialSuccess') : $t('common.importFailed') }}</p>
                 <p class="text-sm text-amber-700">{{ result.failed }} row(s) could not be imported</p>
                 <div v-if="result.errors && result.errors.length > 0" class="mt-3">
                   <button @click="showErrors = !showErrors" class="text-xs font-semibold text-amber-800 hover:text-amber-900 underline">
@@ -153,7 +153,7 @@
         <!-- Action Buttons -->
         <div class="mt-5 flex justify-end gap-2">
           <button @click="$emit('close')" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
-            {{ result && result.imported > 0 ? 'Done' : 'Cancel' }}
+            {{ result && result.imported > 0 ? $t('common.done') : $t('common.cancel') }}
           </button>
           <button 
             @click="upload" 
@@ -163,7 +163,7 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
             </svg>
-            {{ uploading ? 'Importing...' : 'Import Students' }}
+            {{ uploading ? $t('common.importing') : $t('common.importStudents') }}
           </button>
         </div>
       </div>
@@ -173,11 +173,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import api from '@/services/api'
 
 defineProps<{ show: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
+const { t: $t_script } = useI18n()
 const templateUrl = `${api.defaults.baseURL}/admin/students/import/template`
 const fileInput = ref<HTMLInputElement | null>(null)
 const file = ref<File | null>(null)
@@ -196,7 +198,7 @@ function handleDrop(e: DragEvent) {
     result.value = null
     showErrors.value = false
   } else {
-    uploadError.value = 'Please select a valid .xlsx or .xls file.'
+    uploadError.value = $t_script('validation.invalidXlsxFile')
   }
 }
 

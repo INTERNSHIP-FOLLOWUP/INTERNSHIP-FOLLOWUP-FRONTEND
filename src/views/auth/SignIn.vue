@@ -1,7 +1,11 @@
 <template>
   <div class="animate-fade-in">
+    <div class="fixed right-6 top-6 z-50">
+      <LanguageSwitcher variant="standalone" />
+    </div>
     <AuthLayout>
-      <div class="rounded-[20px] p-8 transition-all duration-300">
+      <div class="relative rounded-[20px] p-8 transition-all duration-300">
+
         <div class="text-center mb-6">
           <div
             class="mx-auto w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-500 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20 mb-4"
@@ -21,11 +25,10 @@
               />
             </svg>
           </div>
-          <h1 class="text-[22px] sm:text-[24px] font-bold text-slate-900 leading-tight">
-            Student Internship<br />Follow-up System
+          <h1 class="text-[22px] sm:text-[24px] font-bold text-slate-900 leading-tight" v-html="$t('auth.signIn.title')">
           </h1>
           <p class="mt-1.5 text-[14px] text-slate-500">
-            Sign in to access your internship management dashboard.
+            {{ $t('auth.signIn.subtitle') }}
           </p>
         </div>
 
@@ -54,9 +57,9 @@
           <div class="space-y-4">
             <InputField
               v-model="form.email"
-              label="Email Address"
+              :label="$t('auth.signIn.emailLabel')"
               type="email"
-              placeholder="Enter your email"
+              :placeholder="$t('auth.signIn.emailPlaceholder')"
               required
               :error="errors.email"
               autocomplete="email"
@@ -81,8 +84,8 @@
 
             <PasswordInput
               v-model="form.password"
-              label="Password"
-              placeholder="Enter your password"
+              :label="$t('auth.signIn.passwordLabel')"
+              :placeholder="$t('auth.signIn.passwordPlaceholder')"
               required
               :error="errors.password"
               autocomplete="current-password"
@@ -100,7 +103,7 @@
               <span
                 class="text-sm text-slate-600 group-hover:text-slate-800 transition-colors select-none"
               >
-                Remember me
+                {{ $t('auth.signIn.rememberMe') }}
               </span>
             </label>
 
@@ -108,13 +111,13 @@
               to="/forgot-password"
               class="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors focus:outline-none focus:underline underline-offset-2"
             >
-              Forgot Password?
+              {{ $t('auth.signIn.forgotPassword') }}
             </router-link>
           </div>
 
           <div class="mt-6">
             <PrimaryButton type="submit" :loading="authStore.loading" :disabled="authStore.loading">
-              {{ authStore.loading ? 'Loading...' : 'Log In' }}
+              {{ authStore.loading ? $t('auth.signIn.loading') : $t('auth.signIn.loginButton') }}
             </PrimaryButton>
           </div>
         </form>
@@ -125,12 +128,16 @@
 
 <script setup lang="ts">
 import { reactive, ref, nextTick, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 import AuthLayout from '@/components/auth/AuthLayout.vue'
 import InputField from '@/components/ui/InputField.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
 import PrimaryButton from '@/components/ui/PrimaryButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import { parseApiError } from '@/utils/errorParser'
+
+const i18n = useI18n()
 
 const authStore = useAuthStore()
 
@@ -152,10 +159,10 @@ function validateField(field: 'email' | 'password'): boolean {
 
   if (field === 'email') {
     if (!form.email.trim()) {
-      errors.email = 'Please enter your email address.'
+      errors.email = i18n.t('auth.signIn.errors.emailRequired')
       valid = false
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      errors.email = 'Please enter a valid email address.'
+      errors.email = i18n.t('auth.signIn.errors.emailInvalid')
       valid = false
     } else {
       errors.email = ''
@@ -164,10 +171,10 @@ function validateField(field: 'email' | 'password'): boolean {
 
   if (field === 'password') {
     if (!form.password) {
-      errors.password = 'Please enter your password.'
+      errors.password = i18n.t('auth.signIn.errors.passwordRequired')
       valid = false
     } else if (form.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters long.'
+      errors.password = i18n.t('auth.signIn.errors.passwordMin')
       valid = false
     } else {
       errors.password = ''

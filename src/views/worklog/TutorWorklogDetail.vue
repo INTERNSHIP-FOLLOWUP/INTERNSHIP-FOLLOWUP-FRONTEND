@@ -2,14 +2,14 @@
     <div class="p-6 space-y-6">
         <div class="flex items-start justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Tutor Review</h1>
-                <p class="text-sm text-slate-500 dark:text-slate-400">Review and update status.</p>
+                <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{{ $t('worklogs.reviewWorklog') }}</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('worklogs.reviewAndUpdate') }}</p>
             </div>
       <router-link
         to="/tutor/worklogs"
         class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
       >
-                Back
+                {{ $t('worklogs.back') }}
             </router-link>
         </div>
 
@@ -25,41 +25,41 @@
         </div>
 
         <div v-else-if="!store.tutorWorklog" class="flex flex-col items-center justify-center py-16 text-center">
-            <p class="text-sm font-semibold text-slate-500">Worklog not found.</p>
+            <p class="text-sm font-semibold text-slate-500">{{ $t('worklogs.worklogNotFound') }}</p>
         </div>
 
         <div v-else class="space-y-6">
       <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-                <h2 class="text-sm font-bold text-slate-900">Student</h2>
+                <h2 class="text-sm font-bold text-slate-900">{{ $t('worklogs.student') }}</h2>
                 <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
                     <div>
-                        <p class="text-xs font-semibold text-slate-500">Name</p>
+                        <p class="text-xs font-semibold text-slate-500">{{ $t('worklogs.name') }}</p>
                         <p class="text-sm font-bold text-slate-900">{{ store.tutorWorklog.student?.name || '—' }}</p>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-slate-500">Company</p>
+                        <p class="text-xs font-semibold text-slate-500">{{ $t('worklogs.company') }}</p>
                         <p class="text-sm font-bold text-slate-900">{{ (store.tutorWorklog.student as any)?.company_name || '—' }}</p>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-slate-500">Position</p>
+                        <p class="text-xs font-semibold text-slate-500">{{ $t('worklogs.position') }}</p>
                         <p class="text-sm font-bold text-slate-900">{{ (store.tutorWorklog.student as any)?.position || '—' }}</p>
                     </div>
                 </div>
             </section>
 
       <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-                <h2 class="text-sm font-bold text-slate-900">Worklog</h2>
+                <h2 class="text-sm font-bold text-slate-900">{{ $t('worklogs.title') }}</h2>
                 <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
                     <div>
-                        <p class="text-xs font-semibold text-slate-500">Week</p>
+                        <p class="text-xs font-semibold text-slate-500">{{ $t('worklogs.week') }}</p>
                         <p class="text-sm font-bold text-slate-900">{{ store.tutorWorklog.week_number }}</p>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-slate-500">Submitted</p>
+                        <p class="text-xs font-semibold text-slate-500">{{ $t('worklogs.submitted') }}</p>
                         <p class="text-sm font-bold text-slate-900">{{ formatDate(store.tutorWorklog.submitted_at) }}</p>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-slate-500">Current Status</p>
+                        <p class="text-xs font-semibold text-slate-500">{{ $t('worklogs.currentStatus') }}</p>
                         <div class="mt-1">
                             <WorklogStatusBadge :status="store.tutorWorklog.status" />
                         </div>
@@ -67,17 +67,17 @@
                 </div>
 
                 <div class="mt-4">
-                    <p class="text-xs font-semibold text-slate-500">Description</p>
+                    <p class="text-xs font-semibold text-slate-500">{{ $t('worklogs.description') }}</p>
                     <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.description }}</p>
                 </div>
 
                 <div class="mt-4" v-if="store.tutorWorklog.challenges">
-                    <p class="text-xs font-semibold text-slate-500">Challenges</p>
+                    <p class="text-xs font-semibold text-slate-500">{{ $t('worklogs.challenges') }}</p>
                     <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.challenges }}</p>
                 </div>
 
                 <div class="mt-4">
-                    <p class="text-xs font-semibold text-slate-500">Attachments</p>
+                    <p class="text-xs font-semibold text-slate-500">{{ $t('worklogs.attachments') }}</p>
                     <div class="mt-2">
                         <AttachmentList :attachments="store.tutorWorklog.attachments || []" />
                     </div>
@@ -85,16 +85,16 @@
             </section>
 
       <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-                <h2 class="text-sm font-bold text-slate-900">Tutor Review</h2>
+                <h2 class="text-sm font-bold text-slate-900">{{ $t('worklogs.tutorReview') }}</h2>
 
                 <div class="mt-4 space-y-4">
                     <div>
-                        <label class="text-sm font-semibold text-slate-700">Feedback</label>
+                        <label class="text-sm font-semibold text-slate-700">{{ $t('worklogs.feedback') }}</label>
             <textarea
               v-model="feedback"
               rows="5"
                             class="mt-2 w-full resize-none rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-              placeholder="Good progress. Continue improving documentation."
+              :placeholder="$t('worklogs.feedbackPlaceholder')"
             />
                     </div>
 
@@ -105,7 +105,7 @@
               @click="submitReview('Reviewed')"
               class="rounded-xl bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-700 hover:bg-blue-100 disabled:opacity-60"
             >
-                            Mark Reviewed
+                            {{ $t('worklogs.markReviewed') }}
                         </button>
             <button
               type="button"
@@ -113,7 +113,7 @@
               @click="submitReview('Approved')"
               class="rounded-xl bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 disabled:opacity-60"
             >
-                            Approve
+                            {{ $t('worklogs.approve') }}
                         </button>
             <button
               type="button"
@@ -121,7 +121,7 @@
               @click="submitReview('Rejected')"
               class="rounded-xl bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
             >
-                            Reject
+                            {{ $t('worklogs.reject') }}
                         </button>
             <button
               type="button"
@@ -129,7 +129,7 @@
               @click="submitReview('Pending')"
               class="rounded-xl bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-60"
             >
-                            Pending
+                            {{ $t('worklogs.pending') }}
                         </button>
                     </div>
 
@@ -144,10 +144,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useWorklogStore } from '@/stores/worklogStore'
 import WorklogStatusBadge from '@/components/worklog/WorklogStatusBadge.vue'
 import AttachmentList from '@/components/worklog/AttachmentList.vue'
+
+const { t: $t_script } = useI18n()
 import type { WorklogStatus } from '@/types/worklog'
 
 const route = useRoute()
@@ -185,7 +188,7 @@ async function submitReview(status: WorklogStatus) {
         })
         router.push('/tutor/worklogs')
     } catch (e) {
-        serverError.value = 'Failed to submit review.'
+        serverError.value = $t_script('common.failedSubmitReview')
     } finally {
         submitting.value = false
     }

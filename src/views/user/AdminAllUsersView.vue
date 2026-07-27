@@ -2,9 +2,9 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">All Users</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ $t('users.allUsersTitle') }}</h1>
         <p class="mt-1 text-sm text-slate-500">
-          {{ totalUsers }} registered user{{ totalUsers !== 1 ? 's' : '' }} across all roles
+          {{ totalUsers }} {{ $t('users.registeredUsers') }}
         </p>
       </div>
       <div class="flex gap-2">
@@ -13,14 +13,14 @@
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
-          Import Excel
+          {{ $t('users.importExcel') }}
         </button>
         <button @click="exportUsers"
           class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-emerald-200 hover:bg-emerald-50">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Export Excel
+          {{ $t('users.exportExcel') }}
         </button>
         <button @click="selectMode ? clearSelection() : enterSelectMode()"
           class="flex h-10 items-center gap-2 rounded-xl border px-4 text-sm font-semibold transition-all"
@@ -33,7 +33,7 @@
           <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-          {{ selectMode ? 'Cancel' : 'Select All' }}
+          {{ selectMode ? $t('common.cancel') : $t('common.selectAll') }}
         </button>
       </div>
     </div>
@@ -42,27 +42,26 @@
       <div class="relative min-w-0 flex-1 basis-[200px]">
         <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <input v-model="searchQuery" type="text" placeholder="Search by name or email..."
+        </svg>         <input v-model="searchQuery" type="text" :placeholder="$t('users.searchByNameEmail')"
           class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 transition-all duration-200 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
       </div>
       <select v-model="roleFilter"
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100">
-        <option value="">All Roles</option>
-        <option value="admin">Admin</option>
-        <option value="tutor">Tutor</option>
-        <option value="student">Student</option>
-        <option value="company">Company</option>
+        <option value="">{{ $t('users.allRoles') }}</option>
+        <option value="admin">{{ $t('common.admin') }}</option>
+        <option value="tutor">{{ $t('common.tutor') }}</option>
+        <option value="student">{{ $t('common.student') }}</option>
+        <option value="company">{{ $t('common.company') }}</option>
       </select>
       <select v-model="statusFilter"
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100">
-        <option value="">All Status</option>
-        <option value="active">Active</option>
-        <option value="deactivated">Deactivated</option>
+        <option value="">{{ $t('users.allStatus') }}</option>
+        <option value="active">{{ $t('common.active') }}</option>
+        <option value="deactivated">{{ $t('users.deactivated') }}</option>
       </select>
       <button v-if="searchQuery || roleFilter || statusFilter" @click="clearFilters"
         class="flex h-10 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700">
-        Clear
+        {{ $t('users.clear') }}
       </button>
     </div>
 
@@ -102,11 +101,11 @@
                     @change="toggleSelectAll"
                     class="h-4 w-4 rounded border-slate-300 text-rose-600 cursor-pointer accent-rose-600" />
                 </th>
-                <th class="px-6 py-3.5 font-medium">User</th>
-                <th class="px-6 py-3.5 font-medium">Email</th>
-                <th class="px-6 py-3.5 font-medium">Role</th>
-                <th class="px-6 py-3.5 font-medium">Status</th>
-                <th class="px-6 py-3.5 text-right font-medium">Actions</th>
+                <th class="px-6 py-3.5 font-medium">{{ $t('users.userCol') }}</th>
+                <th class="px-6 py-3.5 font-medium">{{ $t('common.email') }}</th>
+                <th class="px-6 py-3.5 font-medium">{{ $t('common.role', 'Role') }}</th>
+                <th class="px-6 py-3.5 font-medium">{{ $t('common.status') }}</th>
+                <th class="px-6 py-3.5 text-right font-medium">{{ $t('common.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -136,22 +135,22 @@
                 <td class="whitespace-nowrap px-6 py-4">
                   <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold" :class="user.deleted_at ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700'">
                     <span class="h-1.5 w-1.5 rounded-full" :class="user.deleted_at ? 'bg-rose-500' : 'bg-emerald-500'" />
-                    {{ user.deleted_at ? 'Deactivated' : 'Active' }}
+                    {{ user.deleted_at ? $t('users.deactivated') : $t('common.active') }}
                   </span>
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 text-right">
                   <div class="flex items-center justify-end gap-1">
                     <router-link :to="`/admin/users/${user.id}/edit`" class="rounded-lg px-3 py-1.5 text-xs font-bold text-indigo-600 transition-all hover:bg-indigo-50 hover:text-indigo-800">
-                      Edit
+                      {{ $t('common.edit') }}
                     </router-link>
                     <button v-if="user.deleted_at" @click="activateUser(user)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-emerald-600 transition-all hover:bg-emerald-50 hover:text-emerald-800">
-                      Activate
+                      {{ $t('users.activate') }}
                     </button>
                     <button v-else @click="deactivateUser(user)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-amber-600 transition-all hover:bg-amber-50 hover:text-amber-800">
-                      Deactivate
+                      {{ $t('users.deactivate') }}
                     </button>
                     <button @click="deleteUser(user)" class="rounded-lg px-3 py-1.5 text-xs font-bold text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-800">
-                      Delete
+                      {{ $t('common.delete') }}
                     </button>
                   </div>
                 </td>
@@ -163,7 +162,7 @@
         <!-- Pagination -->
         <div v-if="pagination && pagination.last_page > 1" class="flex flex-col gap-3 border-t border-slate-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
           <p class="text-xs font-medium text-slate-500">
-            Showing <span class="font-semibold text-slate-700">{{ pagination.from }}</span> – <span class="font-semibold text-slate-700">{{ pagination.to }}</span> of <span class="font-semibold text-slate-700">{{ pagination.total }}</span> user{{ pagination.total !== 1 ? 's' : '' }}
+            {{ $t('common.showing') }} <span class="font-semibold text-slate-700">{{ pagination.from }}</span> – <span class="font-semibold text-slate-700">{{ pagination.to }}</span> {{ $t('common.of') }} <span class="font-semibold text-slate-700">{{ pagination.total }}</span>
           </p>
           <div class="flex items-center gap-1">
             <button @click="goToPage(currentPage - 1)" :disabled="currentPage <= 1"
@@ -186,9 +185,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
           </svg>
         </div>
-        <h3 class="mt-5 text-base font-bold text-slate-900">No users found</h3>
+        <h3 class="mt-5 text-base font-bold text-slate-900">{{ $t('users.noUsers') }}</h3>
         <p class="mt-1.5 text-sm text-slate-500 max-w-sm">
-          {{ searchQuery || roleFilter || statusFilter ? 'Try adjusting your filters.' : 'No registered users yet.' }}
+          {{ searchQuery || roleFilter || statusFilter ? $t('users.adjustFilters') : $t('users.noRegisteredUsersYet') }}
         </p>
       </div>
     </div>
@@ -203,7 +202,7 @@
             {{ selectedIds.size }}
           </span>
           <span class="text-sm font-semibold text-slate-700">
-            user{{ selectedIds.size !== 1 ? 's' : '' }} selected
+            {{ selectedIds.size }} {{ $t('users.usersSelected') }}
           </span>
           <div class="mx-1 h-5 w-px bg-slate-200" />
           <button @click="bulkDelete"
@@ -216,7 +215,7 @@
             <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
-            {{ bulkDeleting ? 'Deleting...' : 'Delete Selected' }}
+            {{ bulkDeleting ? $t('users.deleting') : $t('users.deleteSelected') }}
           </button>
           <button @click="clearSelection"
             class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 active:scale-95">
@@ -240,9 +239,9 @@
               </svg>
             </div>
             <div>
-              <h3 class="text-base font-semibold text-slate-900">Delete {{ selectedIds.size }} User{{ selectedIds.size !== 1 ? 's' : '' }}</h3>
+              <h3 class="text-base font-semibold text-slate-900">{{ $t('users.bulkDeleteTitle', { count: selectedIds.size }) }}</h3>
               <p class="mt-0.5 text-sm text-slate-500">
-                This action is permanent and cannot be undone.
+                {{ $t('users.bulkDeleteMessage') }}
               </p>
             </div>
           </div>
@@ -250,7 +249,7 @@
           <div class="mt-5 flex items-center justify-end gap-3">
             <button @click="showBulkConfirm = false" :disabled="bulkDeleting"
               class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
-              Cancel
+              {{ $t('common.cancel') }}
             </button>
             <button @click="confirmBulkDelete" :disabled="bulkDeleting"
               class="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-rose-700 disabled:opacity-60">
@@ -258,7 +257,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
-              {{ bulkDeleting ? 'Deleting...' : `Delete ${selectedIds.size}` }}
+              {{ bulkDeleting ? $t('users.deleting') : $t('common.delete') + ' ' + selectedIds.size }}
             </button>
           </div>
         </div>
@@ -272,7 +271,7 @@
       :title="confirmTitle"
       :message="confirmMessage"
       :confirm-text="confirmButtonText"
-      cancel-text="Cancel"
+      :cancel-text="$t('common.cancel')"
       :loading="confirmLoading"
       :error="confirmError"
       @confirm="handleConfirmAction"
@@ -317,7 +316,9 @@ const roleFilter = ref('')
 const statusFilter = ref('')
 const confirmTitle = ref('')
 const confirmMessage = ref('')
-const confirmButtonText = ref('Confirm')
+import { useI18n } from 'vue-i18n'
+const { t: $t_script } = useI18n()
+const confirmButtonText = ref($t_script('common.confirm'))
 type ActionType = 'delete' | 'deactivate' | 'activate'
 const pendingAction = ref<{ type: ActionType; user: User } | null>(null)
 
@@ -374,7 +375,7 @@ async function confirmBulkDelete() {
   try {
     const ids = Array.from(selectedIds.value)
     await api.post('/admin/users/bulk-delete', { ids })
-    toast.success(`Deleted ${ids.length} user${ids.length !== 1 ? 's' : ''} successfully.`)
+    toast.success($t_script('users.bulkDeleted', { count: ids.length }))
     showBulkConfirm.value = false
     clearSelection()
     fetchUsers()
@@ -417,7 +418,7 @@ async function fetchUsers(): Promise<void> {
     pagination.value = body.meta ?? null
     if (body.counts) roleStats.value = body.counts
   } catch (err: unknown) {
-    error.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load users.'
+    error.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || $t_script('common.failedLoadUsers')
   } finally {
     loading.value = false
   }
@@ -463,13 +464,13 @@ async function handleConfirmAction() {
   await confirmAsyncFn(async () => {
     if (type === 'delete') {
       await api.delete(`/admin/users/${user.id}`)
-      toast.success(`User "${user.name}" deleted.`)
+      toast.success($t_script('users.userDeletedToast', { name: user.name }))
     } else if (type === 'deactivate') {
       await api.put(`/admin/users/${user.id}/deactivate`)
-      toast.success(`User "${user.name}" deactivated.`)
+      toast.success($t_script('users.userDeactivatedToast', { name: user.name }))
     } else if (type === 'activate') {
       await api.put(`/admin/users/${user.id}/activate`)
-      toast.success(`User "${user.name}" activated.`)
+      toast.success($t_script('users.userActivatedToast', { name: user.name }))
     }
     pendingAction.value = null
     fetchUsers()
@@ -489,9 +490,9 @@ async function exportUsers() {
     a.download = `users-${new Date().toISOString().slice(0, 10)}.xlsx`
     a.click()
     window.URL.revokeObjectURL(url)
-    toast.success('Users exported successfully.')
+    toast.success($t_script('common.usersExported'))
   } catch {
-    toast.error('Failed to export users.')
+    toast.error($t_script('common.usersExportFailed'))
   }
 }
 

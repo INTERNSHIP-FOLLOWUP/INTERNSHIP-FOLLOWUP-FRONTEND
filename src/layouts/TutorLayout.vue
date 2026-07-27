@@ -22,14 +22,14 @@
           S
         </div>
         <div>
-          <h1 class="text-base font-semibold tracking-tight text-white">Tutor Panel</h1>
-          <p class="text-xs text-slate-400">Internship System</p>
+          <h1 class="text-base font-semibold tracking-tight text-white">{{ $t('layouts.tutor.title') }}</h1>
+          <p class="text-xs text-slate-400">{{ $t('layouts.tutor.subtitle') }}</p>
         </div>
       </div>
 
       <!-- Navigation -->
       <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Menu</p>
+        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">{{ $t('layouts.tutor.menuTitle') }}</p>
         <router-link
           v-for="item in navItems"
           :key="item.name"
@@ -48,7 +48,7 @@
           >
             <component :is="item.icon" />
           </span>
-          {{ item.label }}
+          {{ $t(item.label) }}
         </router-link>
 
         <!-- Messages submenu -->
@@ -75,7 +75,7 @@
                 />
               </svg>
             </span>
-            <span class="flex-1 text-left">Messages</span>
+            <span class="flex-1 text-left">{{ $t('nav.tutor.messages') }}</span>
             <svg
               class="h-4 w-4 transition-transform duration-200"
               :class="{ 'rotate-180': messagesSubmenuOpen }"
@@ -109,7 +109,7 @@
                       : 'bg-slate-500'
                   "
                 />
-                {{ sub.label }}
+                {{ $t(sub.label) }}
               </router-link>
             </div>
           </transition>
@@ -122,7 +122,7 @@
           <UserAvatar :avatar="user?.avatar" :name="user?.name" size="sm" />
           <div class="min-w-0 flex-1">
             <p class="truncate text-sm font-medium text-white">{{ user?.name }}</p>
-            <p class="truncate text-xs text-slate-400">Tutor</p>
+            <p class="truncate text-xs text-slate-400">{{ $t('layouts.tutor.role') }}</p>
           </div>
         </div>
       </div>
@@ -138,7 +138,7 @@
           <button
             class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden"
             @click="sidebarOpen = !sidebarOpen"
-            aria-label="Toggle navigation"
+            :aria-label="$t('common.toggleNavigation')"
           >
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -161,6 +161,9 @@
         </div>
 
         <div class="flex items-center gap-2">
+          <!-- Language Switcher -->
+          <LanguageSwitcher variant="header" />
+
           <!-- Notifications -->
           <button
             class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
@@ -192,7 +195,7 @@
                 <p class="text-sm font-medium leading-tight text-gray-700">
                   {{ user?.name }}
                 </p>
-                <p class="text-xs leading-tight text-gray-400">Tutor</p>
+                <p class="text-xs leading-tight text-gray-400">{{ $t('layouts.tutor.role') }}</p>
               </div>
               <svg
                 class="h-4 w-4 text-gray-400 transition-transform"
@@ -243,7 +246,7 @@
                       d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                     />
                   </svg>
-                  Profile Settings
+                  {{ $t('layouts.tutor.profile') }}
                 </router-link>
                 <hr class="my-1 border-gray-100" />
                 <button
@@ -263,7 +266,7 @@
                       d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                     />
                   </svg>
-                  Log Out
+                  {{ $t('layouts.tutor.logout') }}
                 </button>
               </div>
             </transition>
@@ -294,9 +297,9 @@
           @click.stop
         >
           <h3 id="logout-modal-title" class="text-base font-semibold text-gray-900">
-            Are you sure you want to log out?
+            {{ $t('layouts.tutor.logoutModalTitle') }}
           </h3>
-          <p class="mt-1 text-sm text-gray-600">You can cancel if you changed your mind.</p>
+          <p class="mt-1 text-sm text-gray-600">{{ $t('layouts.tutor.logoutModalDescription') }}</p>
 
           <div class="mt-5 flex items-center justify-end gap-3">
             <button
@@ -304,14 +307,14 @@
               @click="closeLogoutModal"
               :disabled="loggingOut"
             >
-              Cancel
+              {{ $t('layouts.tutor.cancel') }}
             </button>
             <button
               class="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
               @click="confirmLogout"
               :disabled="loggingOut"
             >
-              Logout
+              {{ $t('layouts.tutor.logoutConfirm') }}
             </button>
           </div>
         </div>
@@ -323,8 +326,12 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, h, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import UserAvatar from '@/components/common/UserAvatar.vue'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
+
+const { t: $t } = useI18n()
 
 const route = useRoute()
 const auth = useAuthStore()
@@ -380,21 +387,37 @@ watch(
 const messagesSubItems = [
   {
     name: 'company-messages',
-    label: 'Company',
+    label: 'nav.tutor.company',
     to: '/tutor/messages?type=company',
     type: 'company',
   },
   {
     name: 'student-messages',
-    label: 'Students',
+    label: 'nav.tutor.students',
     to: '/tutor/messages?type=students',
     type: 'students',
   },
 ]
 
+const pageTitleKey = computed(() => {
+  const map: Record<string, string> = {
+    TutorDashboard: 'nav.tutor.dashboard',
+    TutorStudents: 'nav.tutor.myStudents',
+    TutorStudentDetail: 'page.studentDetails',
+    TutorWorklogs: 'nav.tutor.worklogs',
+    TutorWorklogDetail: 'page.reviewWorklog',
+    TutorFollowups: 'nav.tutor.followups',
+    TutorIssues: 'nav.tutor.issues',
+    TutorFeedback: 'nav.tutor.companyFeedback',
+    TutorMessages: 'nav.tutor.messages',
+    TutorSelfProfile: 'nav.tutor.profile',
+  }
+  const name = route.name
+  return typeof name === 'string' ? map[name] ?? '' : ''
+})
+
 const pageTitle = computed(() => {
-  const title = route.meta?.title
-  return typeof title === 'string' ? title : 'Dashboard'
+  return pageTitleKey.value ? $t(pageTitleKey.value) : ''
 })
 
 function isActive(path: string) {
@@ -459,10 +482,10 @@ interface NavItem {
   icon: ReturnType<typeof defineComponent>
 }
 
-const navItems: NavItem[] = [
+const navItems = computed<NavItem[]>(() => [
   {
     name: 'dashboard',
-    label: 'Dashboard',
+    label: 'nav.tutor.dashboard',
     to: '/tutor',
     icon: createIcon(
       'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
@@ -470,7 +493,7 @@ const navItems: NavItem[] = [
   },
   {
     name: 'students',
-    label: 'My Students',
+    label: 'nav.tutor.myStudents',
     to: '/tutor/students',
     icon: createIcon(
       'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',
@@ -478,7 +501,7 @@ const navItems: NavItem[] = [
   },
   {
     name: 'worklogs',
-    label: 'Worklogs',
+    label: 'nav.tutor.worklogs',
     to: '/tutor/worklogs',
     icon: createIcon(
       'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
@@ -486,7 +509,7 @@ const navItems: NavItem[] = [
   },
   {
     name: 'followups',
-    label: 'Follow-ups',
+    label: 'nav.tutor.followups',
     to: '/tutor/followups',
     icon: createIcon(
       'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
@@ -494,7 +517,7 @@ const navItems: NavItem[] = [
   },
   {
     name: 'issues',
-    label: 'Issues',
+    label: 'nav.tutor.issues',
     to: '/tutor/issues',
     icon: createIcon(
       'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z',
@@ -502,7 +525,7 @@ const navItems: NavItem[] = [
   },
   {
     name: 'feedback',
-    label: 'Company Feedback',
+    label: 'nav.tutor.companyFeedback',
     to: '/tutor/feedback',
     icon: createIcon(
       'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z',
@@ -511,11 +534,11 @@ const navItems: NavItem[] = [
   // Messages is rendered separately as a submenu item below
   {
     name: 'profile',
-    label: 'Profile',
+    label: 'nav.tutor.profile',
     to: '/tutor/profile',
     icon: createIcon('M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'),
   },
-]
+])
 </script>
 
 <style scoped>

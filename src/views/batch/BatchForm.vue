@@ -16,13 +16,13 @@
         >
           <div class="flex items-center justify-between mb-5">
             <h3 :id="titleId" class="text-base font-semibold text-slate-900 dark:text-white">
-              {{ isEdit ? 'Edit Batch' : 'Create Batch' }}
+              {{ isEdit ? $t('batches.editBatch') : $t('batches.createBatch') }}
             </h3>
             <button
               type="button"
               class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
               @click="$emit('close')"
-              aria-label="Close"
+              :aria-label="$t('batches.close')"
             >
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -42,14 +42,14 @@
                   for="batch_name"
                   class="block text-xs font-semibold text-slate-600 mb-1.5 dark:text-slate-400"
                 >
-                  Batch Name
+                  {{ $t('batches.batchName') }}
                 </label>
                 <input
                   id="batch_name"
                   ref="nameInput"
                   v-model="form.batch_name"
                   type="text"
-                  placeholder="e.g. Batch 2026-A"
+                  :placeholder="$t('batches.placeholderName')"
                   maxlength="100"
                   :aria-invalid="!!errors.batch_name"
                   :aria-describedby="errors.batch_name ? 'batch-name-error' : undefined"
@@ -71,14 +71,14 @@
                   for="year"
                   class="block text-xs font-semibold text-slate-600 mb-1.5 dark:text-slate-400"
                 >
-                  Year
+                  {{ $t('batches.year') }}
                 </label>
                 <input
                   id="year"
                   v-model="form.year"
                   type="text"
                   inputmode="numeric"
-                  placeholder="e.g. 2026"
+                  :placeholder="$t('batches.placeholderYear')"
                   maxlength="4"
                   :aria-invalid="!!errors.year"
                   :aria-describedby="errors.year ? 'year-error' : undefined"
@@ -111,7 +111,7 @@
                 class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                 @click="$emit('close')"
               >
-                Cancel
+                {{ $t('common.cancel') }}
               </button>
               <button
                 type="submit"
@@ -133,7 +133,7 @@
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   />
                 </svg>
-                {{ submitting ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Batch' }}
+                {{ submitting ? $t('batches.saving') : isEdit ? $t('batches.saveChanges') : $t('batches.createBatch') }}
               </button>
             </div>
           </form>
@@ -145,6 +145,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, computed, nextTick, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useBatchStore } from '@/stores/batchStore'
 import { useToastStore } from '@/stores/toast'
 import { mapValidationErrors, type ApiFieldErrors } from '@/utils/mapValidationErrors'
@@ -172,6 +173,7 @@ const titleId = 'batch-form-title'
 const dialogRef = ref<HTMLElement | null>(null)
 const nameInput = ref<HTMLInputElement | null>(null)
 
+const { t: $t_script } = useI18n()
 const batchStore = useBatchStore()
 const toast = useToastStore()
 
@@ -221,30 +223,30 @@ function validate(): boolean {
 
   const name = form.batch_name.trim()
   if (!name) {
-    errors.batch_name = 'Batch name is required.'
+    errors.batch_name = $t_script('batches.batchNameRequired')
     valid = false
   } else if (name.length < 2) {
-    errors.batch_name = 'Batch name must be at least 2 characters.'
+    errors.batch_name = $t_script('batches.batchNameMinLength')
     valid = false
   } else if (name.length > 100) {
-    errors.batch_name = 'Batch name must not exceed 100 characters.'
+    errors.batch_name = $t_script('batches.batchNameMaxLength')
     valid = false
   } else if (!/^[a-zA-Z0-9\s\-_./()]+$/.test(name)) {
-    errors.batch_name = 'Batch name contains invalid characters.'
+    errors.batch_name = $t_script('batches.batchNameInvalid')
     valid = false
   }
 
   const year = form.year.trim()
   if (!year) {
-    errors.year = 'Year is required.'
+    errors.year = $t_script('batches.yearRequired')
     valid = false
   } else if (!/^\d{4}$/.test(year)) {
-    errors.year = 'Enter a valid 4-digit year.'
+    errors.year = $t_script('batches.yearInvalid')
     valid = false
   } else {
     const y = parseInt(year, 10)
     if (y < 2000 || y > 2100) {
-      errors.year = 'Year must be between 2000 and 2100.'
+      errors.year = $t_script('batches.yearRange')
       valid = false
     }
   }
@@ -266,10 +268,10 @@ async function submit() {
   try {
     if (isEdit.value) {
       await batchStore.updateBatch(props.batch!.id!, payload)
-      toast.success('Batch updated successfully.')
+      toast.success($t_script('batches.updateSuccess'))
     } else {
       await batchStore.createBatch(payload)
-      toast.success('Batch created successfully.')
+      toast.success($t_script('batches.createSuccess'))
     }
     emit('saved')
     emit('close')
@@ -280,7 +282,7 @@ async function submit() {
       Object.assign(errors, serverErrors)
     } else {
       submitError.value =
-        axiosErr?.response?.data?.message || 'Failed to save batch. Please try again.'
+        axiosErr?.response?.data?.message || $t_script('batches.failedSave')
     }
   } finally {
     submitting.value = false

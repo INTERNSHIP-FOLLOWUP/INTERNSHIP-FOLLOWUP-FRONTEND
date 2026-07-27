@@ -14,11 +14,11 @@
             d="M10 19l-7-7m0 0l7-7m-7 7h18"
           />
         </svg>
-        Back to Companies
+        {{ $t('companies.backToList') }}
       </button>
       <span class="text-slate-300">/</span>
       <span class="font-medium text-slate-900">{{
-        company?.companyName || 'Company Details'
+        company?.companyName || $t('companies.title')
       }}</span>
     </div>
 
@@ -49,7 +49,7 @@
         @click="fetchData"
         class="mt-4 rounded-lg bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-600 transition-colors hover:bg-indigo-100"
       >
-        Try Again
+        {{ $t('companies.tryAgain') }}
       </button>
     </div>
 
@@ -114,7 +114,7 @@
               class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
             >
               <span class="h-1 w-1 rounded-full bg-indigo-500"></span>
-              Contact Details
+              {{ $t('companies.contactDetails') }}
             </h3>
 
             <div v-if="company.contactPerson" class="flex items-start gap-3">
@@ -131,7 +131,7 @@
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-medium text-slate-400">Contact Person</p>
+                <p class="text-xs font-medium text-slate-400">{{ $t('companies.contactPerson') }}</p>
                 <p class="text-sm font-semibold text-slate-900">{{ company.contactPerson }}</p>
               </div>
             </div>
@@ -156,7 +156,7 @@
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-medium text-slate-400">Address</p>
+                <p class="text-xs font-medium text-slate-400">{{ $t('companies.address') }}</p>
                 <p class="text-sm font-semibold text-slate-900">{{ company.address }}</p>
               </div>
             </div>
@@ -167,7 +167,7 @@
               class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
             >
               <span class="h-1 w-1 rounded-full bg-sky-400"></span>
-              Communication
+              {{ $t('companies.communication') }}
             </h3>
 
             <div v-if="company.email" class="flex items-start gap-3">
@@ -184,7 +184,7 @@
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-medium text-slate-400">Email</p>
+                <p class="text-xs font-medium text-slate-400">{{ $t('common.email') }}</p>
                 <a
                   :href="`mailto:${company.email}`"
                   class="text-sm font-semibold text-sky-600 transition-colors hover:text-sky-800"
@@ -207,7 +207,7 @@
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-medium text-slate-400">Phone</p>
+                <p class="text-xs font-medium text-slate-400">{{ $t('common.phone') }}</p>
                 <p class="text-sm font-semibold text-slate-900">{{ company.phone }}</p>
               </div>
             </div>
@@ -223,7 +223,7 @@
             class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400"
           >
             <span class="h-1 w-1 rounded-full bg-violet-400"></span>
-            Digital Presence
+            {{ $t('companies.digitalPresence') }}
           </h3>
 
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -244,7 +244,7 @@
                 </svg>
               </div>
               <div class="min-w-0">
-                <p class="text-xs font-medium text-slate-400">Website</p>
+                <p class="text-xs font-medium text-slate-400">{{ $t('companies.website') }}</p>
                 <a
                   :href="normalizeUrl(company.website)"
                   target="_blank"
@@ -270,7 +270,7 @@
                 </svg>
               </div>
               <div class="min-w-0">
-                <p class="text-xs font-medium text-slate-400">Telegram</p>
+                <p class="text-xs font-medium text-slate-400">{{ $t('companies.telegram') }}</p>
                 <a
                   :href="normalizeUrl(company.telegramLink)"
                   target="_blank"
@@ -287,7 +287,7 @@
             v-if="!company.website && !company.telegramLink"
             class="rounded-xl border border-dashed border-slate-200 py-6 text-center text-sm text-slate-400"
           >
-            No digital presence links provided.
+            {{ $t('companies.noDigitalPresence') }}
           </div>
         </div>
 
@@ -297,19 +297,19 @@
         <!-- Section: Metadata -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div v-if="company.createdAt" class="rounded-xl bg-slate-50/60 p-4">
-            <p class="text-xs font-medium text-slate-400">Created</p>
+            <p class="text-xs font-medium text-slate-400">{{ $t('companies.created') }}</p>
             <p class="mt-1 text-sm font-semibold text-slate-700">
               {{ formatDate(company.createdAt) }}
             </p>
           </div>
           <div v-if="company.updatedAt" class="rounded-xl bg-slate-50/60 p-4">
-            <p class="text-xs font-medium text-slate-400">Last Updated</p>
+            <p class="text-xs font-medium text-slate-400">{{ $t('companies.lastUpdated') }}</p>
             <p class="mt-1 text-sm font-semibold text-slate-700">
               {{ formatDate(company.updatedAt) }}
             </p>
           </div>
           <div class="rounded-xl bg-slate-50/60 p-4">
-            <p class="text-xs font-medium text-slate-400">Company ID</p>
+            <p class="text-xs font-medium text-slate-400">{{ $t('companies.companyId') }}</p>
             <p class="mt-1 text-sm font-semibold text-slate-700">#{{ company.id }}</p>
           </div>
         </div>
@@ -321,7 +321,7 @@
       >
         <div class="flex items-center gap-2">
           <span class="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
-          <span class="text-xs font-medium text-slate-400">Active company record</span>
+          <span class="text-xs font-medium text-slate-400">{{ $t('companies.activeRecord') }}</span>
         </div>
         <div class="flex items-center gap-2">
           <router-link
@@ -336,7 +336,7 @@
                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
               />
             </svg>
-            Edit
+            {{ $t('common.edit') }}
           </router-link>
           <button
             @click="deleteCompany"
@@ -351,7 +351,7 @@
                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
               />
             </svg>
-            {{ deleting ? 'Deleting...' : 'Delete' }}
+            {{ deleting ? $t('companies.deleting') || $t('common.loading') : $t('common.delete') }}
           </button>
         </div>
       </div>
@@ -374,12 +374,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { companyService } from '@/services/company'
 import { useCompanyStore } from '@/stores/company'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import { useToastStore } from '@/stores/toast'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import type { Company } from '@/types/company'
+
+const { t: $t_script } = useI18n()
 
 const route = useRoute()
 const router = useRouter()
@@ -425,7 +428,7 @@ function formatDate(dateStr: string): string {
 async function fetchData() {
   const id = getCompanyId()
   if (!Number.isFinite(id)) {
-    error.value = 'Invalid company ID.'
+    error.value = 'Invalid company ID.' // Keep this as it's a dev error
     return
   }
 
@@ -436,7 +439,7 @@ async function fetchData() {
     const data = await companyService.get(id)
     company.value = data
   } catch (err: unknown) {
-    error.value = err instanceof Error ? err.message : 'Failed to load company details.'
+    error.value = err instanceof Error ? err.message : $t_script('companies.failedLoadDetails')
   } finally {
     loading.value = false
   }
@@ -447,18 +450,18 @@ async function deleteCompany() {
   if (!Number.isFinite(id)) return
 
   const confirmed = await dialog.open({
-    title: 'Delete Company',
-    message: `Are you sure you want to delete "${company.value?.companyName}"? This action cannot be undone.`,
+    title: $t_script('companies.confirmDelete'),
+    message: $t_script('companies.deleteConfirmBody', { name: company.value?.companyName || '' }),
   })
   if (!confirmed) return
 
   deleting.value = true
   try {
     await store.deleteCompany(id)
-    toast.success('Company deleted successfully.')
+    toast.success($t_script('companies.deleted'))
     goBack()
   } catch {
-    toast.error('Failed to delete company.')
+    toast.error($t_script('companies.failedDelete'))
   } finally {
     deleting.value = false
   }

@@ -183,11 +183,13 @@
               <span
                 class="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75"
               />
-              <span class="relative inline-flex h-2 w-2 rounded-full bg-indigo-500" />
-            </span>
-          </button>
+              <span class="relative inline-flex h-2 w-2 rounded-full bg-indigo-500"></span>
+              </span>
+              </button>
 
-          <!-- Dark Mode Toggle -->
+              <!-- Language Switcher -->
+              <LanguageSwitcher variant="header" />
+              <!-- Dark Mode Toggle -->
           <button
             @click="themeStore.setDarkMode(!themeStore.darkMode)"
             class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
@@ -346,6 +348,7 @@ import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import UserAvatar from '@/components/common/UserAvatar.vue'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 
 const route = useRoute()
 const auth = useAuthStore()

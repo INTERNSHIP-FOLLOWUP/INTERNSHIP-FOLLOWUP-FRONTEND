@@ -246,6 +246,8 @@
 
         <!-- User Controls / Notifications -->
         <div class="flex items-center gap-3">
+          <!-- Language Switcher -->
+          <LanguageSwitcher variant="header" />
           <!-- Dark Mode Toggle -->
           <button
             @click="themeStore.setDarkMode(!themeStore.darkMode)"
@@ -476,6 +478,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import { NAV_ITEMS, type NavItem } from '@/composables/useNavigation'
 import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 
 const SIDEBAR_COLLAPSED_KEY = 'admin-sidebar-collapsed'
 

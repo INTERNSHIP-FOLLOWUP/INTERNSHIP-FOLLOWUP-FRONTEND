@@ -126,6 +126,8 @@
         </div>
 
         <div class="flex items-center gap-2">
+          <!-- Language Switcher -->
+          <LanguageSwitcher variant="header" />
           <!-- Dark Mode Toggle -->
           <button
             @click="themeStore.setDarkMode(!themeStore.darkMode)"
@@ -508,6 +510,7 @@ import { useCompanyStore } from '@/stores/company'
 import { useThemeStore } from '@/stores/theme'
 import { authService } from '@/services/auth'
 import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 
 const route = useRoute()
 const auth = useAuthStore()

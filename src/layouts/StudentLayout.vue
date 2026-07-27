@@ -135,11 +135,13 @@
             <span class="absolute right-2 top-2 flex h-2 w-2">
               <span
                 class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"
-              />
-              <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+              ></span>
+              <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
             </span>
           </button>
 
+          <!-- Language Switcher -->
+          <LanguageSwitcher variant="header" />
           <!-- Dark Mode Toggle -->
           <button
             @click="themeStore.setDarkMode(!themeStore.darkMode)"
@@ -313,6 +315,7 @@ import { ref, computed, onMounted, onUnmounted, h, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 
 const route = useRoute()
 const auth = useAuthStore()

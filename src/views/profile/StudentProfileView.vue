@@ -56,7 +56,7 @@
           <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <!-- Avatar Section -->
             <div class="flex flex-col items-center text-center">
-              <div class="relative group cursor-pointer" @click="triggerFileInput" title="Click to change profile picture">
+              <div class="relative group cursor-pointer" @click="showLightbox = true" title="Click to view or change profile photo">
                 <div
                   class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-all duration-200 group-hover:shadow-xl ring-4 ring-slate-100/80"
                   :class="photoUploadError ? 'border-red-300' : 'border-slate-100'"
@@ -100,14 +100,17 @@
                 </div>
 
                 <!-- Camera badge button -->
-                <div
-                  class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 text-white shadow-md transition-all hover:bg-primary-700 hover:scale-110 active:scale-95 ring-2 ring-white"
+                <button
+                  type="button"
+                  @click.stop="triggerFileInput"
+                  title="Upload New Photo"
+                  class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 text-white shadow-md transition-all hover:bg-primary-700 hover:scale-110 active:scale-95 ring-2 ring-white cursor-pointer"
                 >
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                </div>
+                </button>
 
                 <input
                   ref="fileInput"
@@ -377,11 +380,32 @@
         </div>
       </div>
     </template>
+    <!-- Photo Crop & Confirm Modal -->
+    <PhotoCropModal
+      :show="showCropModal"
+      :file="selectedFileForEdit"
+      :saving="uploadingPhoto"
+      @confirm="onCropConfirmed"
+      @cancel="onCropCancelled"
+    />
+
+    <!-- Avatar Lightbox Modal -->
+    <AvatarLightboxModal
+      :show="showLightbox"
+      :image-url="photoPreview || displayPhoto"
+      :title="store.profile?.name || 'Student Photo'"
+      :subtitle="formatStudentId(store.profile?.student_code, store.profile?.batch)"
+      :editable="true"
+      @close="showLightbox = false"
+      @upload="triggerFileInput"
+      @delete="removePhoto"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import api from '@/services/api'
 import { useStudentProfileStore } from '@/stores/studentProfile'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
@@ -389,6 +413,8 @@ import FormField from '@/components/ui/FormField.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
+import AvatarLightboxModal from '@/components/common/AvatarLightboxModal.vue'
+import PhotoCropModal from '@/components/common/PhotoCropModal.vue'
 import { parseApiError } from '@/utils/errorParser'
 import { mapValidationErrors } from '@/utils/mapValidationErrors'
 import { formatStudentId } from '@/utils/studentUtils'
@@ -409,12 +435,16 @@ onMounted(async () => {
 
 // ── Helpers ──
 const photoError = ref(false)
+const showLightbox = ref(false)
 
 function triggerFileInput(): void {
   if (fileInput.value) {
     fileInput.value.click()
   }
 }
+
+// Cache-bust timestamp — bumped after every photo upload/delete to force browser refresh
+const cacheBust = ref(Date.now())
 
 /**
  * Construct a displayable photo URL from the profile object.
@@ -433,10 +463,16 @@ const displayPhoto = computed(() => {
     null
 
   if (!photo) return null
-  if (photo.startsWith('http://') || photo.startsWith('https://')) return photo
-  const baseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '')
-  const cleanPath = photo.startsWith('/') ? photo : `/storage/${photo}`
-  return `${baseUrl}${cleanPath}`
+  let url: string
+  if (photo.startsWith('http://') || photo.startsWith('https://')) {
+    url = photo
+  } else {
+    const baseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '')
+    const cleanPath = photo.startsWith('/') ? photo : `/storage/${photo}`
+    url = `${baseUrl}${cleanPath}`
+  }
+  // Append cache-bust so browser always fetches the latest image
+  return `${url}?v=${cacheBust.value}`
 })
 
 const firstName = computed(() => {
@@ -571,16 +607,13 @@ function validateProfileForm(): boolean {
 async function saveProfile(): Promise<void> {
   if (!validateProfileForm()) return
 
-  const payload: StudentProfileUpdatePayload = {}
-  const fullName = `${editForm.first_name} ${editForm.last_name}`.trim()
-  if (fullName !== store.profile?.name) payload.name = fullName
-  if (editForm.phone !== (store.profile?.user?.phone || store.profile?.phone)) payload.phone = editForm.phone || undefined
-  if (editForm.gender !== (store.profile?.user?.gender || store.profile?.gender)) payload.gender = editForm.gender || undefined
-
-  // Only send if something changed
-  if (Object.keys(payload).length === 0) {
-    editingProfile.value = false
-    return
+  const fullName = `${editForm.first_name.trim()} ${editForm.last_name.trim()}`.trim()
+  const payload: any = {
+    first_name: editForm.first_name.trim(),
+    last_name: editForm.last_name.trim(),
+    name: fullName,
+    phone: editForm.phone ? editForm.phone.trim() : null,
+    gender: editForm.gender ? editForm.gender : null,
   }
 
   try {
@@ -616,8 +649,10 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const uploadingPhoto = ref(false)
 const photoUploadError = ref('')
 const photoPreview = ref<string | null>(null)
+const showCropModal = ref(false)
+const selectedFileForEdit = ref<File | null>(null)
 
-async function handlePhotoUpload(event: Event): Promise<void> {
+function handlePhotoUpload(event: Event): void {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
@@ -630,35 +665,56 @@ async function handlePhotoUpload(event: Event): Promise<void> {
 
   photoUploadError.value = ''
   photoError.value = false
+  selectedFileForEdit.value = file
+  showLightbox.value = false
+  showCropModal.value = true
+  if (fileInput.value) fileInput.value.value = ''
+}
+
+function onCropCancelled(): void {
+  showCropModal.value = false
+  selectedFileForEdit.value = null
+}
+
+async function onCropConfirmed(editedFile: File): Promise<void> {
   uploadingPhoto.value = true
-
-  // Show local preview immediately
-  if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
-  photoPreview.value = URL.createObjectURL(file)
-
   try {
-    await store.uploadPhoto(file)
-    // Sync sidebar avatar with updated profile photo
+    await store.uploadPhoto(editedFile)
     try {
       await authStore.refreshUser()
     } catch {
-      // Silently ignore — photo was uploaded successfully
+      // Silently ignore
     }
+    // Force browser to re-fetch the new photo (clear cache)
+    photoError.value = false
+    cacheBust.value = Date.now()
     successMessage.value = 'Profile photo updated!'
     setTimeout(() => { successMessage.value = '' }, 4000)
     toast.success('Your profile photo has been updated.', 'Photo Updated')
-    photoPreview.value = null
+    showCropModal.value = false
+    selectedFileForEdit.value = null
   } catch (err: unknown) {
     const parsed = parseApiError(err)
     photoUploadError.value = parsed.message
-    // Revert preview on failure
-    if (photoPreview.value) {
-      URL.revokeObjectURL(photoPreview.value)
-      photoPreview.value = null
-    }
+    toast.error(parsed.message || 'Failed to upload photo.')
   } finally {
     uploadingPhoto.value = false
-    if (fileInput.value) fileInput.value.value = ''
+  }
+}
+
+async function removePhoto(): Promise<void> {
+  try {
+    await api.delete('/profile/avatar')
+    await store.fetchProfile()
+    try {
+      await authStore.refreshUser()
+    } catch {
+      // Silently ignore
+    }
+    cacheBust.value = Date.now()
+    toast.success('Profile photo removed.', 'Photo Removed')
+  } catch {
+    toast.error('Failed to remove photo.')
   }
 }
 

@@ -96,7 +96,7 @@ const router = createRouter({
         {
           path: 'tutor-profile/:id',
           name: 'AdminTutorProfileDetail',
-          component: () => import('@/views/student_profile/TutorProfileView.vue'),
+          component: () => import('@/views/tutor/TutorDetailView.vue'),
           meta: { title: 'Tutor Profile' } as AppRouteMeta,
         },
         {
@@ -134,6 +134,12 @@ const router = createRouter({
           name: 'AdminBatches',
           component: () => import('@/views/batch/BatchListView.vue'),
           meta: { adminOnly: true, title: 'Batches' } as AppRouteMeta,
+        },
+        {
+          path: 'batches/:id',
+          name: 'AdminBatchDetail',
+          component: () => import('@/views/batch/BatchDetailView.vue'),
+          meta: { adminOnly: true, title: 'Batch Details' } as AppRouteMeta,
         },
         {
           path: 'assignments',
@@ -182,6 +188,12 @@ const router = createRouter({
           name: 'AdminTutorsCreate',
           component: () => import('@/views/tutor/TutorFormView.vue'),
           meta: { adminOnly: true, title: 'Add Tutor' } as AppRouteMeta,
+        },
+        {
+          path: 'tutors/:id',
+          name: 'AdminTutorsDetail',
+          component: () => import('@/views/tutor/TutorDetailView.vue'),
+          meta: { title: 'Tutor Details' } as AppRouteMeta,
         },
         {
           path: 'tutors/:id/edit',

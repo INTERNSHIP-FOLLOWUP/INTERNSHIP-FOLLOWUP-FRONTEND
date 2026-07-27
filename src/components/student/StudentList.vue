@@ -201,11 +201,11 @@
               <th class="px-6 py-3.5 font-medium">Email</th>
               <th class="px-6 py-3.5 font-medium">Batch</th>
               <th class="px-6 py-3.5 font-medium">Status</th>
-              <th class="px-6 py-3.5 text-right font-medium">Actions</th>
+              <th class="px-6 py-3.5 text-center font-medium">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
-            <tr v-for="(student, index) in store.students" :key="student.id" class="transition-colors hover:bg-slate-50/50">
+            <tr v-for="(student, index) in store.students" :key="student.id" @click="goToStudent(student)" class="cursor-pointer transition-colors hover:bg-slate-50/70">
               <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.first_name }}</td>
               <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{{ student.last_name }}</td>
               <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-500">{{ student.email }}</td>
@@ -221,65 +221,13 @@
                   {{ formatStatus(student.status) }}
                 </span>
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-right">
-                <div class="relative inline-block text-left">
-                  <button type="button" @click.stop="toggleKebab(student.id)" title="Actions"
-                    class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                    </svg>
-                  </button>
-
-                  <!-- Kebab Dropdown Menu (Smart positioning: Top rows pop DOWN, Bottom rows pop UP) -->
-                  <transition name="fade">
-                    <div v-if="openKebabId === student.id"
-                      class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none"
-                      :class="index < 2 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'">
-                      <router-link v-if="student.user_id" :to="`/admin/student-profile/${student.user_id}`" @click.stop="openKebabId = null"
-                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
-                        <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        View Profile
-                      </router-link>
-
-                      <button type="button" @click.stop="openKebabId = null; $emit('edit', student.id)"
-                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
-                        <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                        Edit Student
-                      </button>
-
-                      <button v-if="student.status !== 'inactive' && student.status !== 'deactivated'" type="button" @click.stop="openKebabId = null; confirmAction('deactivate', student)"
-                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
-                        <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                        </svg>
-                        Deactivate
-                      </button>
-
-                      <button v-else type="button" @click.stop="openKebabId = null; confirmAction('activate', student)"
-                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors">
-                        <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Activate
-                      </button>
-
-                      <div class="my-1 h-px bg-slate-100" />
-
-                      <button type="button" @click.stop="openKebabId = null; confirmAction('delete', student)"
-                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors">
-                        <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                        Delete Student
-                      </button>
-                    </div>
-                  </transition>
-                </div>
+              <td class="whitespace-nowrap px-6 py-4 text-center">
+                <button type="button" @click.stop="toggleKebab(student, $event)" title="Actions"
+                  class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 mx-auto">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                  </svg>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -381,17 +329,73 @@
 
     <!-- Import Excel Modal -->
     <ImportStudentsModal :show="showImportModal" @close="handleImportClose" />
+
+    <!-- Teleported Floating Action Menu (Guaranteed No Clipping) -->
+    <Teleport to="body">
+      <transition name="fade">
+        <div v-if="openKebabId && selectedStudentForKebab"
+          class="fixed z-[9999] w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-2xl ring-1 ring-black/5 focus:outline-none text-left"
+          :style="{ top: kebabPos.top + 'px', right: kebabPos.right + 'px' }"
+          @click.stop>
+          <router-link v-if="selectedStudentForKebab.user_id" :to="`/admin/student-profile/${selectedStudentForKebab.user_id}`" @click.stop="closeKebab()"
+            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            View Profile
+          </router-link>
+
+          <button type="button" @click.stop="handleKebabEdit"
+            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit Student
+          </button>
+
+          <button v-if="selectedStudentForKebab.status !== 'inactive' && selectedStudentForKebab.status !== 'deactivated'" type="button" @click.stop="handleKebabDeactivate"
+            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
+            <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+            Deactivate
+          </button>
+
+          <button v-if="selectedStudentForKebab.status === 'inactive' || selectedStudentForKebab.status === 'deactivated'" type="button" @click.stop="handleKebabReactivate"
+            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors">
+            <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Reactivate
+          </button>
+
+          <div class="my-1 border-t border-slate-100"></div>
+
+          <button type="button" @click.stop="handleKebabDelete"
+            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors">
+            <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Delete Student
+          </button>
+        </div>
+      </transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStudentStore } from '@/stores/student'
 import { useToastStore } from '@/stores/toast'
 import { studentService } from '@/services/student'
 import type { Student } from '@/types/student'
 import api from '@/services/api'
 import ImportStudentsModal from '@/components/admin/ImportStudentsModal.vue'
+
+const router = useRouter()
 
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
@@ -412,11 +416,20 @@ const { show: confirmShow, loading: confirmLoading, error: confirmError, open: c
 
 const showImportModal = ref(false)
 const openKebabId = ref<number | null>(null)
+const selectedStudentForKebab = ref<Student | null>(null)
+const kebabPos = ref<{ top: number; right: number }>({ top: 0, right: 0 })
 const confirmTitle = ref('')
 const confirmMessage = ref('')
 const confirmButtonText = ref('Confirm')
-type ActionType = 'delete' | 'deactivate' | 'activate'
+type ActionType = 'delete' | 'deactivate' | 'activate' | 'reactivate'
 const pendingAction = ref<{ type: ActionType; student: Student } | null>(null)
+
+function goToStudent(student: Student) {
+  const id = student.user_id || student.id
+  if (id) {
+    router.push(`/admin/student-profile/${id}`)
+  }
+}
 
 function openImportModal() {
   showImportModal.value = true
@@ -460,12 +473,60 @@ async function handleExportExcel() {
   }
 }
 
-function toggleKebab(id: number) {
-  openKebabId.value = openKebabId.value === id ? null : id
+function toggleKebab(student: Student, event: MouseEvent) {
+  if (openKebabId.value === student.id) {
+    closeKebab()
+    return
+  }
+  const target = event.currentTarget as HTMLElement
+  const rect = target.getBoundingClientRect()
+  const menuHeight = 220
+  const spaceBelow = window.innerHeight - rect.bottom
+
+  let top = rect.bottom + window.scrollY + 4
+  if (spaceBelow < menuHeight && rect.top > menuHeight) {
+    top = rect.top + window.scrollY - menuHeight - 4
+  }
+
+  kebabPos.value = {
+    top,
+    right: Math.max(8, window.innerWidth - rect.right)
+  }
+  openKebabId.value = student.id
+  selectedStudentForKebab.value = student
 }
 
-function handleWindowClick() {
+function closeKebab() {
   openKebabId.value = null
+  selectedStudentForKebab.value = null
+}
+
+function handleKebabEdit() {
+  if (!selectedStudentForKebab.value) return
+  const id = selectedStudentForKebab.value.id
+  closeKebab()
+  emit('edit', id)
+}
+
+function handleKebabDeactivate() {
+  if (!selectedStudentForKebab.value) return
+  const s = selectedStudentForKebab.value
+  closeKebab()
+  confirmAction('deactivate', s)
+}
+
+function handleKebabReactivate() {
+  if (!selectedStudentForKebab.value) return
+  const s = selectedStudentForKebab.value
+  closeKebab()
+  confirmAction('reactivate', s)
+}
+
+function handleKebabDelete() {
+  if (!selectedStudentForKebab.value) return
+  const s = selectedStudentForKebab.value
+  closeKebab()
+  confirmAction('delete', s)
 }
 
 async function confirmAction(type: ActionType, student: Student) {
@@ -479,7 +540,7 @@ async function confirmAction(type: ActionType, student: Student) {
     confirmTitle.value = 'Deactivate Student'
     confirmMessage.value = `Are you sure you want to deactivate ${displayName}?`
     confirmButtonText.value = 'Deactivate'
-  } else if (type === 'activate') {
+  } else if (type === 'activate' || type === 'reactivate') {
     confirmTitle.value = 'Activate Student'
     confirmMessage.value = `Are you sure you want to activate ${displayName}?`
     confirmButtonText.value = 'Activate'
@@ -502,7 +563,7 @@ async function handleConfirmAction() {
     } else if (type === 'deactivate') {
       await api.put(`/admin/users/${targetId}/deactivate`)
       toast.success(`Student "${displayName}" deactivated successfully.`)
-    } else if (type === 'activate') {
+    } else if (type === 'activate' || type === 'reactivate') {
       await api.put(`/admin/users/${targetId}/activate`)
       toast.success(`Student "${displayName}" activated successfully.`)
     }
@@ -532,26 +593,6 @@ async function fetchBatches(): Promise<void> {
   } catch { /* ignore */ }
 }
 
-const filteredStudents = computed(() => {
-  let list = store.students
-  if (searchQuery.value) {
-    const q = searchQuery.value.toLowerCase()
-    list = list.filter(
-      (s: Student) => s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q),
-    )
-  }
-  if (statusFilter.value) {
-    list = list.filter((s: Student) => s.status === statusFilter.value)
-  }
-  if (batchFilter.value) {
-    list = list.filter((s: Student) => String(s.batch_id || (typeof s.batch === 'object' && s.batch ? (s.batch as { id?: number }).id : '')) === String(batchFilter.value))
-  }
-  if (genderFilter.value) {
-    list = list.filter((s: Student) => (s.gender || '').toLowerCase() === genderFilter.value.toLowerCase())
-  }
-  return list
-})
-
 const activeCount = computed(
   () => store.students.filter((s: Student) => s.status === 'active').length,
 )
@@ -560,7 +601,7 @@ const graduatedCount = computed(
 )
 const inactiveCount = computed(
   () =>
-    store.students.filter((s: Student) => s.status === 'inactive' || s.status === 'suspended')
+    store.students.filter((s: Student) => s.status === 'inactive' || s.status === 'deactivated' || s.status === 'suspended')
       .length,
 )
 
@@ -583,24 +624,6 @@ const visiblePages = computed(() => {
   pages.push(last)
   return pages
 })
-
-function firstName(name: string): string {
-  return (name || '').split(' ')[0] || ''
-}
-
-function lastName(name: string): string {
-  const parts = (name || '').split(' ')
-  return parts.slice(1).join(' ') || ''
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-}
 
 function formatStatus(status?: string): string {
   if (!status) return 'Unknown'
@@ -676,11 +699,13 @@ watch(searchQuery, () => {
 onMounted(() => {
   fetchBatches()
   fetchStudents()
-  window.addEventListener('click', handleWindowClick)
+  window.addEventListener('click', closeKebab)
+  window.addEventListener('scroll', closeKebab, true)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('click', handleWindowClick)
+  window.removeEventListener('click', closeKebab)
+  window.removeEventListener('scroll', closeKebab, true)
 })
 </script>
 

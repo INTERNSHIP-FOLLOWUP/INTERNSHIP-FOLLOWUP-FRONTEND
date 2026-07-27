@@ -84,6 +84,24 @@
         <option value="deactivated">Deactivated</option>
       </select>
 
+      <select
+        v-model="selectedGender"
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition-colors focus:border-primary-500 focus:outline-none"
+      >
+        <option value="">All Genders</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+
+      <select
+        v-model="selectedAssignment"
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition-colors focus:border-primary-500 focus:outline-none"
+      >
+        <option value="">All Assignments</option>
+        <option value="assigned">Has Students</option>
+        <option value="unassigned">No Students</option>
+      </select>
+
       <button
         v-if="hasActiveFilters"
         @click="clearFilters"
@@ -148,7 +166,7 @@
                 <th class="px-6 py-3.5 font-medium">Gender</th>
                 <th class="px-6 py-3.5 font-medium">Status</th>
                 <th class="px-6 py-3.5 font-medium">Assigned Students</th>
-                <th class="px-6 py-3.5 text-right font-medium">Actions</th>
+                <th class="px-6 py-3.5 text-center font-medium">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -175,7 +193,7 @@
                 <td class="whitespace-nowrap px-6 py-4">
                   <div>
                     <router-link
-                      :to="`/admin/tutors/${tutor.id}`"
+                      :to="`/admin/tutors/${tutor.user_id || tutor.id}`"
                       class="font-semibold text-slate-900 hover:text-primary-600 transition-colors"
                     >
                       {{ tutor.name }}
@@ -226,13 +244,13 @@
                     {{ getTutorStudentCount(tutor.id) }} Students
                   </span>
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 text-right">
-                  <div class="relative inline-block text-left">
+                <td class="whitespace-nowrap px-6 py-4 text-center">
+                  <div class="relative inline-block text-center">
                     <button
                       type="button"
                       @click.stop="toggleKebab(tutor.id)"
                       title="Actions"
-                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95"
+                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 mx-auto"
                     >
                       <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -243,11 +261,11 @@
                     <transition name="fade">
                       <div
                         v-if="openKebabId === tutor.id"
-                        class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none"
-                        :class="index < 2 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'"
+                        class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left"
+                        :class="index < (filteredTutors.length > 2 ? filteredTutors.length - 2 : 1) && filteredTutors.length > 1 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'"
                       >
                         <router-link
-                          :to="`/admin/tutors/${tutor.id}`"
+                          :to="`/admin/tutors/${tutor.user_id || tutor.id}`"
                           @click.stop="openKebabId = null"
                           class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors"
                         >
@@ -315,7 +333,7 @@
               </div>
               <div>
                 <router-link
-                  :to="`/admin/tutors/${tutor.id}`"
+                  :to="`/admin/tutors/${tutor.user_id || tutor.id}`"
                   class="font-semibold text-slate-900 hover:text-primary-600"
                 >
                   {{ tutor.name }}
@@ -348,7 +366,7 @@
 
           <div class="flex items-center gap-2 pt-1">
             <router-link
-              :to="`/admin/tutors/${tutor.id}`"
+              :to="`/admin/tutors/${tutor.user_id || tutor.id}`"
               class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-center text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
             >
               Details
@@ -419,6 +437,8 @@ const toast = useToastStore()
 
 const searchQuery = ref('')
 const selectedStatus = ref('')
+const selectedGender = ref('')
+const selectedAssignment = ref('')
 const openKebabId = ref<number | null>(null)
 const failedPhotos = ref<Set<number>>(new Set())
 let deleteTargetId: number | null = null
@@ -454,6 +474,15 @@ const filteredTutors = computed(() => {
       const status = (tutor.status || tutor.user?.status || 'active').toLowerCase()
       if (status !== selectedStatus.value.toLowerCase()) return false
     }
+    if (selectedGender.value) {
+      const gender = (tutor.gender || tutor.user?.gender || '').toLowerCase()
+      if (gender !== selectedGender.value.toLowerCase()) return false
+    }
+    if (selectedAssignment.value === 'assigned') {
+      if ((tutor.students_count || 0) === 0) return false
+    } else if (selectedAssignment.value === 'unassigned') {
+      if ((tutor.students_count || 0) > 0) return false
+    }
     return true
   })
 })
@@ -473,16 +502,17 @@ function getInitials(name?: string): string {
 }
 
 function getTutorStudentCount(tutorId: number): number {
-  // Use students_count from backend (via withCount) if available; otherwise fall back to 0
   const tutor = store.tutors.find((t: any) => t.id === tutorId)
   return tutor?.students_count ?? 0
 }
 
-const hasActiveFilters = computed(() => !!searchQuery.value || !!selectedStatus.value)
+const hasActiveFilters = computed(() => !!searchQuery.value || !!selectedStatus.value || !!selectedGender.value || !!selectedAssignment.value)
 const activeFilterList = computed<ActiveFilter[]>(() => {
   const list: ActiveFilter[] = []
   if (searchQuery.value) list.push({ key: 'search', label: 'Search', value: searchQuery.value })
   if (selectedStatus.value) list.push({ key: 'status', label: 'Status', value: selectedStatus.value })
+  if (selectedGender.value) list.push({ key: 'gender', label: 'Gender', value: selectedGender.value })
+  if (selectedAssignment.value) list.push({ key: 'assignment', label: 'Assignment', value: selectedAssignment.value })
   return list
 })
 
@@ -502,12 +532,16 @@ function onSearch(): void {
 function removeFilter(key: string): void {
   if (key === 'search') searchQuery.value = ''
   if (key === 'status') selectedStatus.value = ''
+  if (key === 'gender') selectedGender.value = ''
+  if (key === 'assignment') selectedAssignment.value = ''
   store.fetchTutors({ search: searchQuery.value || undefined }, true)
 }
 
 function clearFilters(): void {
   searchQuery.value = ''
   selectedStatus.value = ''
+  selectedGender.value = ''
+  selectedAssignment.value = ''
   store.fetchTutors({ search: undefined }, true)
 }
 

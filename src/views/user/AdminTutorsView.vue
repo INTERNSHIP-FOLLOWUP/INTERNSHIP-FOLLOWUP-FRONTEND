@@ -68,7 +68,7 @@
                 <th class="px-6 py-3.5 font-medium">Email</th>
                 <th class="px-6 py-3.5 font-medium">Students</th>
                 <th class="px-6 py-3.5 font-medium">Status</th>
-                <th class="px-6 py-3.5 text-right font-medium">Actions</th>
+                <th class="px-6 py-3.5 text-center font-medium">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -91,10 +91,10 @@
                       {{ user.deleted_at ? 'Deactivated' : 'Active' }}
                     </span>
                   </td>
-                  <td class="whitespace-nowrap px-6 py-4 text-right">
-                    <div class="relative inline-block text-left">
+                  <td class="whitespace-nowrap px-6 py-4 text-center">
+                    <div class="relative inline-block text-center">
                       <button type="button" @click.stop="toggleKebab(user.id)" title="Actions"
-                        class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95">
+                        class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 mx-auto">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                         </svg>
@@ -103,8 +103,8 @@
                       <!-- Kebab Dropdown Menu (Smart positioning: Top rows pop DOWN, Bottom rows pop UP) -->
                       <transition name="fade">
                         <div v-if="openKebabId === user.id"
-                          class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none"
-                          :class="index < 2 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'">
+                          class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left"
+                          :class="index < (users.length > 2 ? users.length - 2 : 1) && users.length > 1 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'">
                           <button type="button" @click.stop="openKebabId = null; goToProfile(user.id)"
                             class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
                             <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -141,9 +141,10 @@
             <tr
               v-for="f in followupStore.followups"
               :key="f.id"
-              class="hover:bg-slate-50/30 transition-colors"
+              @click="openViewDetail(f)"
+              class="cursor-pointer hover:bg-slate-50/70 transition-colors"
             >
-              <td class="whitespace-nowrap px-5 py-4 text-slate-700">
+              <td class="whitespace-nowrap px-5 py-4 text-slate-700 font-semibold">
                 {{ studentLabel(f) }}
               </td>
               <td class="whitespace-nowrap px-5 py-4 text-slate-600">
@@ -155,11 +156,11 @@
               <td class="whitespace-nowrap px-5 py-4 text-slate-600">
                 {{ f.next_followup ? formatDate(f.next_followup) : '—' }}
               </td>
-              <td class="whitespace-nowrap px-5 py-4 text-right">
+              <td class="whitespace-nowrap px-5 py-4 text-right" @click.stop>
                 <div class="flex items-center justify-end gap-1.5">
                   <!-- View Detail -->
                   <button
-                    @click="openViewDetail(f)"
+                    @click.stop="openViewDetail(f)"
                     class="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
                     title="View details"
                   >
@@ -176,7 +177,7 @@
 
                   <!-- Edit -->
                   <button
-                    @click="openEditForm(f)"
+                    @click.stop="openEditForm(f)"
                     class="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
                     title="Edit"
                   >

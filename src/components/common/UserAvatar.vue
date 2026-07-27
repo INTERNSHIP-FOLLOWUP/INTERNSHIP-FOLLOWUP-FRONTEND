@@ -1,27 +1,56 @@
 <template>
   <div
     class="flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-100"
-    :class="sizeClass"
+    :class="[sizeClass, clickable ? 'cursor-pointer hover:opacity-90 transition-opacity' : '']"
+    @click="handleClick"
   >
     <img
-      v-if="src"
+      v-if="src && hasImage"
       :src="src"
       alt="Avatar"
       class="h-full w-full object-cover"
       @error="onError"
     />
     <span v-else class="text-xs font-bold text-slate-500">{{ initials }}</span>
+
+    <AvatarLightboxModal
+      v-if="clickable"
+      :show="showLightbox"
+      :image-url="src"
+      :title="name || 'User Avatar'"
+      :editable="editable"
+      @close="showLightbox = false"
+      @upload="$emit('upload')"
+      @delete="$emit('delete')"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import AvatarLightboxModal from '@/components/common/AvatarLightboxModal.vue'
 
 const props = defineProps<{
   avatar?: string | null
   name?: string | null
   size?: 'sm' | 'md' | 'lg'
+  clickable?: boolean
+  editable?: boolean
 }>()
+
+const emit = defineEmits<{
+  upload: []
+  delete: []
+}>()
+
+const showLightbox = ref(false)
+const hasImage = ref(true)
+
+function handleClick() {
+  if (props.clickable) {
+    showLightbox.value = true
+  }
+}
 
 const sizeMap: Record<string, string> = {
   sm: 'h-8 w-8 text-[10px]',
@@ -49,7 +78,6 @@ const initials = computed(() => {
     .slice(0, 2)
 })
 
-const hasImage = ref(true)
 function onError() {
   hasImage.value = false
 }

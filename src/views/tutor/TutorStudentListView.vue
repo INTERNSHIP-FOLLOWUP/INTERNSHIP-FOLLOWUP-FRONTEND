@@ -151,7 +151,7 @@
               <th class="px-6 py-3.5">Feedback</th>
               <th class="px-6 py-3.5">Issues</th>
               <th class="px-6 py-3.5">Next Follow-up</th>
-              <th class="px-6 py-3.5 text-right">Actions</th>
+              <th class="px-6 py-3.5 text-center">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
@@ -205,7 +205,7 @@
               <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-600">
                 {{ nextFollowup(student) }}
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-right">
+              <td class="whitespace-nowrap px-6 py-4 text-center">
                 <button
                   type="button"
                   @click="goToDetail(student.id)"

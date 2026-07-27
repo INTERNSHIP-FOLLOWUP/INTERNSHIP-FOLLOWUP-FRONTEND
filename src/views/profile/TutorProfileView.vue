@@ -49,9 +49,9 @@
           <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <!-- Avatar Section -->
             <div class="flex flex-col items-center text-center">
-              <div class="relative group">
+              <div class="relative group cursor-pointer" @click="showLightbox = true" title="Click to view or change profile photo">
                 <div
-                  class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-shadow duration-200 group-hover:shadow-xl"
+                  class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-shadow duration-200 group-hover:shadow-xl ring-4 ring-slate-100/80"
                   :class="photoUploadError ? 'border-red-300' : 'border-slate-100'"
                 >
                   <img
@@ -68,35 +68,26 @@
                   </div>
                 </div>
 
-                <!-- Upload overlay -->
-                <label
-                  class="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                  :class="{ 'opacity-100': uploadingPhoto }"
+                <!-- Camera badge button -->
+                <button
+                  type="button"
+                  @click.stop="triggerFileInput"
+                  title="Upload New Photo"
+                  class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 text-white shadow-md transition-all hover:bg-primary-700 hover:scale-110 active:scale-95 ring-2 ring-white cursor-pointer"
                 >
-                  <svg
-                    v-if="!uploadingPhoto"
-                    class="h-8 w-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                    />
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  <LoadingSpinner v-else size="sm" color="white" />
-                  <input
-                    ref="fileInput"
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    class="hidden"
-                    @change="handlePhotoUpload"
-                  />
-                </label>
+                </button>
+
+                <input
+                  ref="fileInput"
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg,image/webp"
+                  class="hidden"
+                  @change="handlePhotoUpload"
+                />
               </div>
 
               <p v-if="photoUploadError" class="mt-2 text-xs text-red-500">{{ photoUploadError }}</p>
@@ -345,6 +336,25 @@
         </div>
       </div>
     </template>
+    <!-- Photo Crop & Confirm Modal -->
+    <PhotoCropModal
+      :show="showCropModal"
+      :file="selectedFileForEdit"
+      :saving="uploadingPhoto"
+      @confirm="onCropConfirmed"
+      @cancel="onCropCancelled"
+    />
+
+    <!-- Avatar Lightbox Modal -->
+    <AvatarLightboxModal
+      :show="showLightbox"
+      :image-url="photoPreview || displayPhoto"
+      :title="fullName || 'Tutor Photo'"
+      :subtitle="user?.email || 'Tutor Profile'"
+      :editable="true"
+      @close="showLightbox = false"
+      @upload="triggerFileInput"
+    />
   </div>
 </template>
 
@@ -357,6 +367,8 @@ import FormField from '@/components/ui/FormField.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import ErrorAlert from '@/components/common/ErrorAlert.vue'
+import AvatarLightboxModal from '@/components/common/AvatarLightboxModal.vue'
+import PhotoCropModal from '@/components/common/PhotoCropModal.vue'
 import { parseApiError } from '@/utils/errorParser'
 import { mapValidationErrors } from '@/utils/mapValidationErrors'
 
@@ -529,28 +541,44 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const uploadingPhoto = ref(false)
 const photoUploadError = ref('')
 const photoPreview = ref<string | null>(null)
+const showLightbox = ref(false)
+const showCropModal = ref(false)
+const selectedFileForEdit = ref<File | null>(null)
 
-async function handlePhotoUpload(event: Event): Promise<void> {
+function triggerFileInput(): void {
+  if (fileInput.value) {
+    fileInput.value.click()
+  }
+}
+
+function handlePhotoUpload(event: Event): void {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
 
-  if (!['image/jpeg', 'image/png'].includes(file.type)) {
-    photoUploadError.value = 'Only JPG and PNG files are allowed.'
+  if (!['image/jpeg', 'image/png', 'image/jpg', 'image/webp'].includes(file.type)) {
+    photoUploadError.value = 'Only JPG, PNG, and WEBP files are allowed.'
     return
   }
 
   photoUploadError.value = ''
+  selectedFileForEdit.value = file
+  showLightbox.value = false
+  showCropModal.value = true
+  if (fileInput.value) fileInput.value.value = ''
+}
+
+function onCropCancelled(): void {
+  showCropModal.value = false
+  selectedFileForEdit.value = null
+}
+
+async function onCropConfirmed(editedFile: File): Promise<void> {
   uploadingPhoto.value = true
-
-  if (photoPreview.value) URL.revokeObjectURL(photoPreview.value)
-  photoPreview.value = URL.createObjectURL(file)
-
   try {
     const fd = new FormData()
-    fd.append('avatar', file)
+    fd.append('avatar', editedFile)
     fd.append('_method', 'PUT')
-    // Include current profile fields to avoid overwriting
     fd.append('first_name', user.value?.first_name || '')
     fd.append('last_name', user.value?.last_name || '')
     fd.append('email', user.value?.email || '')
@@ -561,17 +589,14 @@ async function handlePhotoUpload(event: Event): Promise<void> {
     successMessage.value = 'Profile photo updated!'
     setTimeout(() => { successMessage.value = '' }, 4000)
     toast.success('Your profile photo has been updated.', 'Photo Updated')
-    photoPreview.value = null
+    showCropModal.value = false
+    selectedFileForEdit.value = null
   } catch (err: unknown) {
     const parsed = parseApiError(err)
     photoUploadError.value = parsed.message
-    if (photoPreview.value) {
-      URL.revokeObjectURL(photoPreview.value)
-      photoPreview.value = null
-    }
+    toast.error(parsed.message || 'Failed to upload photo.')
   } finally {
     uploadingPhoto.value = false
-    if (fileInput.value) fileInput.value.value = ''
   }
 }
 

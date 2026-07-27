@@ -24,10 +24,10 @@ export function isGuestRoute(meta: AppRouteMeta, path: string): boolean {
 
 export function getDashboardForRole(role: string | null): string {
   const map: Record<string, string> = {
-    admin: '/admin/dashboard',
-    tutor: '/tutor/dashboard',
-    student: '/student/dashboard',
-    supervisor: '/company/dashboard',
+    admin: '/admin',
+    tutor: '/tutor',
+    student: '/student',
+    supervisor: '/company',
   }
   return map[role || ''] || '/login'
 }

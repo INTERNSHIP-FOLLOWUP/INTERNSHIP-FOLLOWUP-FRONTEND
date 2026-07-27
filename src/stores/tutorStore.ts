@@ -63,7 +63,7 @@ export const useTutorStore = defineStore('tutor', {
       await this.fetchTutors({}, force)
     },
 
-    async createTutor(data: { first_name: string; last_name: string; email: string; password?: string }): Promise<Student> {
+    async createTutor(data: { first_name: string; last_name: string; email: string; phone?: string; password?: string; gender?: string }): Promise<Student> {
       this.loading = true
       this.error = null
 
@@ -82,7 +82,7 @@ export const useTutorStore = defineStore('tutor', {
 
     async updateTutor(
       id: number,
-      data: Partial<{ first_name: string; last_name: string; email: string }>,
+      data: Partial<{ first_name: string; last_name: string; email: string; phone?: string; gender?: string }>,
     ): Promise<Student> {
       this.loading = true
       this.error = null

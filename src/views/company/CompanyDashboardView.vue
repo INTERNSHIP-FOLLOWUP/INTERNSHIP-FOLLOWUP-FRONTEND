@@ -1,17 +1,66 @@
 <template>
-  <div class="space-y-6">
-    <!-- Welcome Header -->
-    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">
-          Welcome back, {{ displayName }}!
-        </h1>
-        <p class="text-sm text-slate-500">
-          Manage your assigned interns, submit evaluations, and track internship progress in
-          real-time.
-        </p>
+  <!-- ─── FORCED: Inactive supervisor must change password to access dashboard ─── -->
+  <div v-if="auth.user?.status === 'inactive'" class="flex items-center justify-center min-h-[70vh]">
+    <div class="w-full max-w-lg animate-fade-in">
+      <div class="rounded-2xl border border-slate-200 bg-white shadow-lg overflow-hidden">
+        <div class="h-2 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+
+        <div class="p-8 text-center">
+          <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 ring-8 ring-amber-50/50">
+            <svg class="h-8 w-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+          </div>
+
+          <h1 class="text-xl font-bold text-slate-900">Account Activation Required</h1>
+          <p class="mt-2 text-sm text-slate-500 leading-relaxed max-w-sm mx-auto">
+            Your company account is currently inactive. You must set a new password to activate your account and access the company dashboard.
+          </p>
+        </div>
+
+        <div class="px-8 pb-8">
+          <form @submit.prevent="handlePasswordSubmit" class="space-y-5">
+            <PasswordInput v-model="passwordForm.current_password" label="Current Password" placeholder="Enter current password" required :error="passwordErrors.current_password ?? ''" autocomplete="current-password" />
+            <PasswordInput v-model="passwordForm.password" label="New Password" placeholder="Min. 8 characters" required :error="passwordErrors.password ?? ''" autocomplete="new-password" />
+            <PasswordInput v-model="passwordForm.password_confirmation" label="Confirm New Password" placeholder="Re-enter new password" required :error="passwordErrors.password_confirmation ?? ''" autocomplete="new-password" />
+
+            <div class="rounded-lg bg-amber-50/60 border border-amber-100 px-4 py-3">
+              <div class="flex items-start gap-2">
+                <svg class="mt-0.5 h-4 w-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-xs text-amber-800">Password must be at least 8 characters and should include a mix of letters, numbers, and symbols for better security.</p>
+              </div>
+            </div>
+
+            <ErrorAlert :message="passwordErrors._form" />
+
+            <button type="submit" :disabled="passwordSubmitting || !isPasswordFormValid"
+              class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 px-5 py-3 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:from-amber-700 hover:to-amber-600 hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60">
+              <LoadingSpinner v-if="passwordSubmitting" size="sm" color="white" />
+              {{ passwordSubmitting ? 'Activating...' : 'Activate Account' }}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- ─── NORMAL: Active supervisor dashboard ─── -->
+  <template v-else>
+    <div class="space-y-6">
+      <!-- Welcome Header -->
+      <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+            Welcome back, {{ displayName }}!
+          </h1>
+          <p class="text-sm text-slate-500">
+            Manage your assigned interns, submit evaluations, and track internship progress in
+            real-time.
+          </p>
+        </div>
+      </div>
 
     <!-- Overview Statistics Cards -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -295,11 +344,20 @@
     </div>
   </div>
 </template>
+</template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { authService } from '@/services/auth'
+import { useToastStore } from '@/stores/toast'
 import { useCompanyStore } from '@/stores/company'
 import StatCard from '@/components/dashboard/StatCard.vue'
+import PasswordInput from '@/components/ui/PasswordInput.vue'
+import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import ErrorAlert from '@/components/common/ErrorAlert.vue'
+import { parseApiError } from '@/utils/errorParser'
+import { mapValidationErrors } from '@/utils/mapValidationErrors'
 
 const store = useCompanyStore()
 
@@ -445,5 +503,95 @@ async function load() {
   }
 }
 
+const auth = useAuthStore()
+const toast = useToastStore()
+
+// ── Password Change ──
+const passwordSubmitting = ref(false)
+const passwordForm = reactive({
+  current_password: '',
+  password: '',
+  password_confirmation: '',
+})
+const passwordErrors = reactive<Record<string, string>>({})
+
+const isPasswordFormValid = computed(() => {
+  return (
+    passwordForm.current_password.length > 0 &&
+    passwordForm.password.length >= 8 &&
+    passwordForm.password_confirmation.length > 0 &&
+    passwordForm.password === passwordForm.password_confirmation
+  )
+})
+
+function clearPasswordErrors(): void {
+  for (const key of Object.keys(passwordErrors)) {
+    delete passwordErrors[key]
+  }
+}
+
+function validatePasswordForm(): boolean {
+  let valid = true
+  clearPasswordErrors()
+  if (!passwordForm.current_password) {
+    passwordErrors.current_password = 'Current password is required.'
+    valid = false
+  }
+  if (!passwordForm.password) {
+    passwordErrors.password = 'New password is required.'
+    valid = false
+  } else if (passwordForm.password.length < 8) {
+    passwordErrors.password = 'Password must be at least 8 characters.'
+    valid = false
+  }
+  if (!passwordForm.password_confirmation) {
+    passwordErrors.password_confirmation = 'Please confirm your new password.'
+    valid = false
+  } else if (passwordForm.password !== passwordForm.password_confirmation) {
+    passwordErrors.password_confirmation = 'Passwords do not match.'
+    valid = false
+  }
+  return valid
+}
+
+async function handlePasswordSubmit(): Promise<void> {
+  if (!validatePasswordForm()) return
+  passwordSubmitting.value = true
+  try {
+    await authService.changePassword({
+      current_password: passwordForm.current_password,
+      password: passwordForm.password,
+      password_confirmation: passwordForm.password_confirmation,
+    })
+    toast.success('Your password has been updated successfully.', 'Password Changed')
+    await auth.refreshUser()
+  } catch (err: unknown) {
+    const axiosErr = err as {
+      response?: { status?: number; data?: { errors?: Record<string, string[]>; message?: string } }
+    }
+    if (axiosErr.response?.status === 422 && axiosErr.response.data?.errors) {
+      const mapped = mapValidationErrors(axiosErr.response.data.errors)
+      for (const [key, msg] of Object.entries(mapped)) {
+        (passwordErrors as Record<string, string>)[key] = msg
+      }
+    } else {
+      const parsed = parseApiError(err)
+      passwordErrors._form = parsed.message
+    }
+  } finally {
+    passwordSubmitting.value = false
+  }
+}
+
 onMounted(load)
 </script>
+
+<style scoped>
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>

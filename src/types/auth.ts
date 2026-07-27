@@ -8,6 +8,7 @@ export interface User {
   email: string
   role: UserRole
   avatar: string | null
+  status?: string
   theme: 'light' | 'dark'
   must_change_password?: boolean
   avatar_url?: string | null
@@ -49,12 +50,12 @@ export interface RefreshResponse {
 export type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'unauthenticated'
 
 export const ROLE_ROUTES: Record<UserRole, string> = {
-  admin: '/admin/dashboard',
-  tutor: '/tutor/dashboard',
-  student: '/student/dashboard',
-  supervisor: '/company/dashboard',
-  company: '/company/dashboard',
-  'company representative': '/company/dashboard',
+  admin: '/admin',
+  tutor: '/tutor',
+  student: '/student',
+  supervisor: '/company',
+  company: '/company',
+  'company representative': '/company',
 }
 
 export const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/403', '/404']

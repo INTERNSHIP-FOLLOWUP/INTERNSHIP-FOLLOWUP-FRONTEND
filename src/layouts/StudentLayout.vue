@@ -28,7 +28,7 @@
       </div>
 
       <!-- Navigation -->
-      <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+      <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" :class="{ 'pointer-events-none opacity-40 select-none': isInactive }">
         <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Menu</p>
         <router-link
           v-for="item in navItems"
@@ -51,6 +51,14 @@
           {{ item.label }}
         </router-link>
       </nav>
+
+      <!-- Inactive overlay message on sidebar -->
+      <div v-if="isInactive" class="px-4 pb-4">
+        <div class="rounded-lg bg-amber-500/10 border border-amber-500/20 px-3 py-2.5 text-center">
+          <p class="text-xs font-medium text-amber-300">Activate your account</p>
+          <p class="text-[10px] text-amber-400/70 mt-0.5">Set a new password to unlock all features</p>
+        </div>
+      </div>
 
       <!-- Bottom user card -->
       <div class="border-t border-slate-700/50 p-4">
@@ -322,6 +330,8 @@ const userAvatar = computed(() => {
   const cleanPath = avatar.startsWith('/') ? avatar : `/storage/${avatar}`
   return `${baseUrl}${cleanPath}`
 })
+
+const isInactive = computed(() => auth.user?.status === 'inactive')
 
 const userInitials = computed(() => {
   if (!user.value?.name) return '?'

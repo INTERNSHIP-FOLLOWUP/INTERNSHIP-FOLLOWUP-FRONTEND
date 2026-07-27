@@ -211,19 +211,7 @@
         <p v-if="tutorStore.error" class="mt-1 text-xs text-error">{{ tutorStore.error }}</p>
       </FormField>
 
-      <FormField label="Status" :error="errors.status" required>
-        <select
-          v-model="form.status"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
-          :class="inputClass('status')"
-          @change="clearFieldError('status')"
-          @blur="validateField('status')"
-        >
-          <option value="" disabled>Select status</option>
-          <option value="active">Active</option>
-          <option value="deactivated">Deactivated</option>
-        </select>
-      </FormField>
+
     </div>
 
     <!-- Form error -->
@@ -273,9 +261,8 @@ import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStudentStore } from '@/stores/student'
 import { useBatchStore } from '@/stores/batchStore'
 import { useTutorStore } from '@/stores/tutorStore'
-import api from '@/services/api'
 import FormField from '@/components/ui/FormField.vue'
-import type { StudentFormData, StudentStatus } from '@/types/student'
+import type { StudentFormData } from '@/types/student'
 
 const props = withDefaults(
   defineProps<{
@@ -296,7 +283,7 @@ const tutorStore = useTutorStore()
 
 const isEdit = computed(() => !!props.studentId)
 
-const form = reactive<StudentFormData & { status: string; photo: File | null }>({
+const form = reactive<StudentFormData & { photo: File | null }>({
   student_code: '',
   name: '',
   first_name: '',
@@ -306,7 +293,7 @@ const form = reactive<StudentFormData & { status: string; photo: File | null }>(
   phone: '',
   batch_id: null,
   tutor_id: null,
-  status: '',
+
   password: '12345678',
   password_confirmation: '12345678',
   photo: null,
@@ -391,7 +378,6 @@ function validateAll(): boolean {
     'gender',
     'batch_id',
     'tutor_id',
-    'status',
   ]
   if (!isEdit.value) fieldsToValidate.push('password')
   return fieldsToValidate.every((field) => validateField(field))
@@ -445,14 +431,6 @@ async function handleSubmit(): Promise<void> {
       delete basePayload.photo
     }
 
-    if (isEdit.value && props.studentId) {
-      if (form.status === 'deactivated') {
-        await api.put(`/admin/users/${props.studentId}/deactivate`).catch(() => {})
-      } else {
-        await api.put(`/admin/users/${props.studentId}/activate`).catch(() => {})
-      }
-    }
-
     const result = isEdit.value
       ? await studentStore.updateStudent(props.studentId!, omitPassword(basePayload))
       : await studentStore.createStudent(basePayload)
@@ -495,11 +473,7 @@ function populateForm(data?: unknown): void {
   form.phone = user.phone || s.phone || ''
   form.batch_id = s.batch_id ?? s.batch?.id ?? profile.batch_id ?? null
   form.tutor_id = s.tutor_id ?? s.tutor?.id ?? profile.tutor_id ?? null
-  if (s.deleted_at || user.deleted_at) {
-    form.status = 'deactivated'
-  } else {
-    form.status = (user.status || s.status || profile.status || 'active') as StudentStatus | ''
-  }
+
   form.password = ''
   form.password_confirmation = ''
   form.photo = null
@@ -518,7 +492,7 @@ function resetForm(): void {
   form.phone = ''
   form.batch_id = null
   form.tutor_id = null
-  form.status = 'active'
+
   form.password = '12345678'
   form.password_confirmation = '12345678'
   form.photo = null

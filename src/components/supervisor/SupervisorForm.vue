@@ -64,6 +64,20 @@
         />
       </FormField>
 
+      <FormField label="Gender" :error="errors.gender">
+        <select
+          v-model="form.gender"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
+          :class="inputClass('gender')"
+          @change="clearFieldError('gender')"
+        >
+          <option value="">Select gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </FormField>
+
       <FormField :label="isEdit ? 'Password (leave blank to keep current)' : 'Password'" :error="errors.password" :required="!isEdit">
         <input
           v-model="form.password"
@@ -159,6 +173,7 @@ const form = reactive({
   last_name: '',
   email: '',
   phone: '',
+  gender: '',
   password: '',
   company_id: null as number | null,
 })
@@ -241,6 +256,7 @@ async function handleSubmit(): Promise<void> {
         last_name: form.last_name,
         email: form.email,
         phone: form.phone || undefined,
+        gender: form.gender || undefined,
         company_id: form.company_id || undefined,
       }
       if (form.password) {
@@ -254,6 +270,7 @@ async function handleSubmit(): Promise<void> {
         last_name: form.last_name,
         email: form.email,
         phone: form.phone || undefined,
+        gender: form.gender || undefined,
         password: form.password,
       })
     }
@@ -308,6 +325,7 @@ onMounted(async () => {
       form.last_name = user.last_name || ''
       form.email = user.email || ''
       form.phone = user.phone || ''
+      form.gender = user.gender || ''
       if (user.supervisor_profile?.company?.id) {
         form.company_id = user.supervisor_profile.company.id
       }

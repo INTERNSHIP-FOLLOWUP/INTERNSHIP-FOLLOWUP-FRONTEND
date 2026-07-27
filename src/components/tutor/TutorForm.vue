@@ -77,6 +77,45 @@
         <p v-if="errors.email" id="email-error" class="text-sm text-error">{{ errors.email }}</p>
       </div>
 
+      <!-- Phone -->
+      <div class="space-y-1.5">
+        <label for="phone" class="block text-sm font-medium text-slate-700">
+          Phone Number
+        </label>
+        <input
+          id="phone"
+          v-model="form.phone"
+          type="tel"
+          placeholder="e.g. +855 12 345 678"
+          :aria-invalid="!!errors.phone"
+          :aria-describedby="errors.phone ? 'phone-error' : undefined"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          :class="inputClass('phone')"
+          @input="clearFieldError('phone')"
+        />
+        <p v-if="errors.phone" id="phone-error" class="text-sm text-error">{{ errors.phone }}</p>
+      </div>
+
+      <!-- Gender -->
+      <div class="space-y-1.5">
+        <label for="gender" class="block text-sm font-medium text-slate-700">
+          Gender
+        </label>
+        <select
+          id="gender"
+          v-model="form.gender"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-all duration-200"
+          :class="inputClass('gender')"
+          @change="clearFieldError('gender')"
+        >
+          <option value="">Select gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+        <p v-if="errors.gender" id="gender-error" class="text-sm text-error">{{ errors.gender }}</p>
+      </div>
+
       <!-- Password (create only) -->
       <div v-if="!isEdit" class="space-y-1.5 sm:col-span-2">
         <label for="password" class="block text-sm font-medium text-slate-700">
@@ -171,6 +210,8 @@ const form = reactive({
   first_name: '',
   last_name: '',
   email: '',
+  phone: '',
+  gender: '',
   password: '',
 })
 
@@ -179,6 +220,7 @@ const formError = ref('')
 const submitting = ref(false)
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PHONE_RE = /^[\d\s\-+()]{7,20}$/
 
 const requiredFields = ['first_name', 'last_name', 'email'] as const
 const conditionalFields = ['password'] as const
@@ -212,6 +254,15 @@ function validateField(field: string): boolean {
     return false
   }
 
+  if (field === 'phone' && value) {
+    if (!PHONE_RE.test(value as string)) {
+      errors[field] = 'Please enter a valid phone number.'
+      return false
+    }
+    delete errors[field]
+    return true
+  }
+
   if (field === 'first_name' || field === 'last_name') {
     return true
   }
@@ -235,10 +286,18 @@ async function handleSubmit(): Promise<void> {
   formError.value = ''
 
   try {
-    const payload: { first_name: string; last_name: string; email: string; password?: string } = {
+    const payload: { first_name: string; last_name: string; email: string; phone?: string; gender?: string; password?: string } = {
       first_name: form.first_name,
       last_name: form.last_name,
       email: form.email,
+    }
+
+    if (form.phone) {
+      payload.phone = form.phone
+    }
+
+    if (form.gender) {
+      payload.gender = form.gender
     }
 
     if (!isEdit.value && form.password) {
@@ -272,12 +331,14 @@ async function handleSubmit(): Promise<void> {
 }
 
 function populateForm(): void {
-  const tutor = tutorStore.tutors.find((t) => t.id === props.tutorId)
+  const tutor = tutorStore.tutors.find((t) => t.user_id === props.tutorId || t.id === props.tutorId)
   if (!tutor) return
 
   form.first_name = tutor.first_name ?? ''
   form.last_name = tutor.last_name ?? ''
   form.email = tutor.email
+  form.phone = tutor.phone ?? ''
+  form.gender = tutor.gender ?? ''
   form.password = ''
 }
 

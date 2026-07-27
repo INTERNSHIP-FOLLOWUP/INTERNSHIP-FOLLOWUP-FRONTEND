@@ -451,6 +451,15 @@ router.beforeEach(async (to, _from, next) => {
       next(fallback)
       return
     }
+
+    // Block inactive users from accessing any page except their dashboard
+    if (store.user?.status === 'inactive') {
+      const dashboardPath = getDashboardForRole(store.userRole)
+      if (to.path !== dashboardPath) {
+        next(dashboardPath)
+        return
+      }
+    }
   }
 
   next()

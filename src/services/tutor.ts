@@ -19,13 +19,13 @@ export const tutorService = {
     return response.data
   },
 
-  async create(data: { first_name: string; last_name: string; email: string; password?: string }): Promise<Student> {
+  async create(data: { first_name: string; last_name: string; email: string; phone?: string; password?: string; gender?: string }): Promise<Student> {
     const payload = { ...data, role: 'tutor' as const }
     const response = await api.post<Student>('/admin/users', payload)
     return response.data
   },
 
-  async update(id: number, data: Partial<{ first_name: string; last_name: string; email: string }>): Promise<Student> {
+  async update(id: number, data: Partial<{ first_name: string; last_name: string; email: string; phone?: string; gender?: string }>): Promise<Student> {
     const response = await api.put<{ user: Student }>(`/admin/users/${id}`, data)
     return response.data.user
   },

@@ -496,8 +496,8 @@ function isParentActive(parent: NavItem): boolean {
 }
 
 function isActive(path: string): boolean {
-  if (path === '/admin/dashboard') {
-    return route.path === '/admin/dashboard'
+  if (path === '/admin') {
+    return route.path === '/admin'
   }
   return route.path.startsWith(path)
 }

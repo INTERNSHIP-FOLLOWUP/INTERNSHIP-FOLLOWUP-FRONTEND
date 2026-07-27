@@ -832,8 +832,8 @@ function getInitials(name: string | null | undefined): string {
     .slice(0, 2)
 }
 
-function getStudentPhoto(assignment: Assignment): string | null {
-  return assignment.student_photo_url || assignment.student?.photo_url || null
+function getStudentPhoto(assignment: Assignment): string | undefined {
+  return assignment.student_photo_url || assignment.student?.photo_url || undefined
 }
 
 function formatDate(date?: string): string {

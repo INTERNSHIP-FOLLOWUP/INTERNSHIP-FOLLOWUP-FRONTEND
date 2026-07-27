@@ -9,6 +9,8 @@ export interface TutorStudent {
   phone?: string
   batch_id?: number | null
   tutor_id?: number | null
+  first_name?: string
+  last_name?: string
   batch?: {
     id: number
     batch_name?: string

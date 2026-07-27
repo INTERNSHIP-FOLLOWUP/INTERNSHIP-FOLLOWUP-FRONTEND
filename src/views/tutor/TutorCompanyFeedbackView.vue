@@ -362,12 +362,12 @@ function getCompanyName(item: FeedbackItem): string {
 }
 
 /** Extract and resolve company logo URL from either nested `company` object or flat fields */
-function getCompanyLogo(item: FeedbackItem): string | null {
+function getCompanyLogo(item: FeedbackItem): string | undefined {
   const raw = item.company?.company_image_url
     || item.company?.company_profile_image_url
     || item.company_image_url
     || item.company_profile_image_url
-  if (!raw) return null
+  if (!raw) return undefined
   // Strip duplicate /storage/ prefix
   const cleaned = normalizeImageUrl(raw) ?? raw
   if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) return cleaned

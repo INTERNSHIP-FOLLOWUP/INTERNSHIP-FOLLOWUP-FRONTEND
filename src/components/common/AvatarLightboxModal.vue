@@ -3,7 +3,7 @@
     <transition name="fade">
       <div
         v-if="show"
-        class="fixed inset-0 z-50 flex flex-col bg-black text-white select-none"
+        class="fixed inset-0 z-50 flex flex-col bg-black text-white select-none dark:bg-black dark:text-white"
         tabindex="0"
         @keydown.esc="close"
         @click.self="close"

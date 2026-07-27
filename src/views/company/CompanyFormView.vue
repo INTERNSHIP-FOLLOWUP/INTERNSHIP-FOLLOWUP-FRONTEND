@@ -128,6 +128,7 @@
                   :apiErrors="apiErrors"
                   :onSubmit="onSubmit"
                   :showCancel="false"
+                  hideHeader
                 />
               </div>
             </div>

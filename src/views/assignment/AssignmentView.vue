@@ -396,57 +396,126 @@
 
     <!-- Admin/Tutor view: Full assignment management -->
     <template v-else>
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900">
             Internship Assignments
           </h1>
-          <p class="text-sm text-slate-500 dark:text-slate-400">
+          <p class="mt-1 text-sm text-slate-500">
             Manage student internship assignments to companies.
           </p>
         </div>
-        <div class="flex items-center gap-3">
-          <button
-            @click="openCreate"
-            class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95"
-          >
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            New Assignment
-          </button>
-          <select
-            v-model="statusFilter"
-            @change="onFilterChange"
-            class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
-          >
-            <option value="">All Statuses</option>
-            <option value="Assigned">Assigned</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Completed">Completed</option>
-            <option value="Terminated">Terminated</option>
-          </select>
-          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button
+          @click="openCreate"
+          class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-500/20 transition-all duration-200 hover:from-indigo-700 hover:to-indigo-600 hover:shadow-md active:scale-95"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2.5"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          New Assignment
+        </button>
+      </div>
+
+      <!-- Summary Stats Bar -->
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div class="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total</p>
+              <p class="text-xl font-bold text-slate-900">{{ store.assignmentCount }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg" :class="statusIconBgClass('Assigned')">
+              <svg class="h-5 w-5" :class="statusIconColorClass('Assigned')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Assigned</p>
+              <p class="text-xl font-bold text-slate-900">{{ assignedCount }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg" :class="statusIconBgClass('In Progress')">
+              <svg class="h-5 w-5" :class="statusIconColorClass('In Progress')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">In Progress</p>
+              <p class="text-xl font-bold text-slate-900">{{ inProgressCount }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg" :class="statusIconBgClass('Completed')">
+              <svg class="h-5 w-5" :class="statusIconColorClass('Completed')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Completed</p>
+              <p class="text-xl font-bold text-slate-900">{{ completedCount }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex flex-wrap items-center gap-3">
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search by student, company, or tutor..."
+          class="h-10 w-full min-w-0 flex-1 basis-[220px] rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-700 placeholder-slate-400 transition-colors focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+        />
+
+        <select
+          v-model="statusFilter"
+          @change="onFilterChange"
+          class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+        >
+          <option value="">All Statuses</option>
+          <option value="Assigned">Assigned</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+          <option value="Terminated">Terminated</option>
+        </select>
+
+        <button
+          v-if="hasActiveFilters"
+          @click="clearFilters"
+          class="flex h-10 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+        >
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              d="M6 18L18 6M6 6l12 12"
             />
           </svg>
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search by student, company, or tutor..."
-            class="h-10 w-60 rounded-xl border border-slate-200 bg-white pl-9 pr-3.5 text-sm text-slate-700 placeholder-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:placeholder-slate-500"
-          />
-        </div>
+          Clear
+        </button>
       </div>
+
+      <ActiveFilters :filters="activeFilterList" @remove="removeFilter" @clear-all="clearFilters" />
 
       <div
         v-if="store.loading && store.assignments.length === 0"
@@ -553,61 +622,59 @@
         </div>
       </div>
 
-      <div v-else>
+      <div v-else class="rounded-xl border border-slate-200/80 bg-white shadow-sm">
         <div class="overflow-x-auto">
-          <table class="hidden w-full border-collapse text-left text-sm md:table">
+          <table class="hidden w-full text-left text-sm md:table">
             <thead>
               <tr
-                class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400 dark:border-slate-800 dark:bg-slate-800/50"
+                class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400"
               >
-                <th class="px-5 py-3.5">Student</th>
-                <th class="px-5 py-3.5">Company</th>
-                <th class="px-5 py-3.5">Tutor</th>
-                <th class="px-5 py-3.5">Position</th>
-                <th class="px-5 py-3.5">Duration</th>
-                <th class="px-5 py-3.5">Status</th>
-                <th class="px-5 py-3.5 text-right">Actions</th>
+                <th class="px-6 py-3.5 font-medium">Photo</th>
+                <th class="px-6 py-3.5 font-medium">Full Name</th>
+                <th class="px-6 py-3.5 font-medium">Company</th>
+                <th class="px-6 py-3.5 font-medium">Tutor</th>
+                <th class="px-6 py-3.5 font-medium">Position</th>
+                <th class="px-6 py-3.5 font-medium">Duration</th>
+                <th class="px-6 py-3.5 font-medium">Status</th>
+                <th class="px-6 py-3.5 text-center font-medium">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
+            <tbody class="divide-y divide-slate-50">
               <tr
-                v-for="a in filteredAssignments"
+                v-for="(a, index) in filteredAssignments"
                 :key="a.id"
-                class="hover:bg-slate-50/30 transition-colors dark:hover:bg-slate-800/30"
+                class="transition-colors hover:bg-slate-50/50"
               >
-                <td class="whitespace-nowrap px-5 py-4">
-                  <div class="flex items-center gap-3">
-                    <div
-                      class="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-indigo-50 text-xs font-bold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400"
-                    >
-                      <img
-                        v-if="getStudentPhoto(a)"
-                        :src="getStudentPhoto(a)"
-                        :alt="a.student_name"
-                        class="h-full w-full object-cover"
-                      />
-                      <span v-else>{{ getInitials(a.student_name) }}</span>
-                    </div>
-                    <span class="font-semibold text-slate-900 dark:text-white">{{
-                      a.student_name
-                    }}</span>
+                <td class="whitespace-nowrap px-6 py-4">
+                  <img
+                    v-if="getStudentPhoto(a)"
+                    :src="getStudentPhoto(a)"
+                    :alt="a.student_name"
+                    class="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-xs"
+                  />
+                  <div
+                    v-else
+                    class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-indigo-100 to-blue-50 text-xs font-bold text-indigo-700 ring-2 ring-white shadow-xs"
+                  >
+                    {{ getInitials(a.student_name) }}
                   </div>
                 </td>
-                <td
-                  class="whitespace-nowrap px-5 py-4 font-medium text-slate-500 dark:text-slate-400"
-                >
+                <td class="whitespace-nowrap px-6 py-4">
+                  <span class="font-semibold text-slate-900">{{ a.student_name }}</span>
+                </td>
+                <td class="whitespace-nowrap px-6 py-4 font-medium text-slate-500">
                   {{ a.company_name }}
                 </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400">
+                <td class="whitespace-nowrap px-6 py-4 text-slate-500">
                   {{ a.tutor_name }}
                 </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400">
+                <td class="whitespace-nowrap px-6 py-4 text-slate-500">
                   {{ a.position }}
                 </td>
-                <td class="whitespace-nowrap px-5 py-4 text-xs text-slate-500 dark:text-slate-400">
+                <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-500">
                   {{ formatDate(a.start_date) }} &ndash; {{ formatDate(a.end_date) }}
                 </td>
-                <td class="whitespace-nowrap px-5 py-4">
+                <td class="whitespace-nowrap px-6 py-4">
                   <span
                     class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
                     :class="statusBadgeClass(a.status)"
@@ -616,97 +683,109 @@
                     {{ a.status }}
                   </span>
                 </td>
-                <td class="whitespace-nowrap px-5 py-4 text-right">
-                  <button
-                    @click="openEdit(a)"
-                    class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-all dark:text-indigo-400 dark:hover:bg-indigo-900/30"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    @click="deleteAssignment(a)"
-                    class="ml-1 rounded-lg px-2.5 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-all dark:text-red-400 dark:hover:bg-red-900/30"
-                  >
-                    Delete
-                  </button>
+                <td class="whitespace-nowrap px-6 py-4 text-center">
+                  <div class="relative inline-block text-center">
+                    <button
+                      type="button"
+                      @click.stop="toggleKebab(a.id)"
+                      title="Actions"
+                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 mx-auto"
+                    >
+                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                      </svg>
+                    </button>
+
+                    <transition name="fade">
+                      <div
+                        v-if="openKebabId === a.id"
+                        class="absolute right-0 z-30 w-40 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left"
+                        :class="index < (filteredAssignments.length > 2 ? filteredAssignments.length - 2 : 1) && filteredAssignments.length > 1 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'"
+                      >
+                        <button
+                          type="button"
+                          @click.stop="openKebabId = null; openEdit(a)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors"
+                        >
+                          <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          @click.stop="openKebabId = null; deleteAssignment(a)"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
+                        >
+                          <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          Delete
+                        </button>
+                      </div>
+                    </transition>
+                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <div class="divide-y divide-slate-100 md:hidden dark:divide-slate-800">
+        <div class="divide-y divide-slate-100 md:hidden">
           <div
             v-for="a in filteredAssignments"
             :key="a.id"
-            class="px-4 py-4 hover:bg-slate-50/30 transition-colors dark:hover:bg-slate-800/30"
+            class="p-4 transition-colors hover:bg-slate-50/50 space-y-3"
           >
-            <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start justify-between">
               <div class="flex items-center gap-3 min-w-0">
+                <img
+                  v-if="getStudentPhoto(a)"
+                  :src="getStudentPhoto(a)"
+                  :alt="a.student_name"
+                  class="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-white shadow-xs"
+                />
                 <div
-                  class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-indigo-50 text-xs font-bold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400"
+                  v-else
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-sm font-bold text-indigo-600"
                 >
-                  <img
-                    v-if="getStudentPhoto(a)"
-                    :src="getStudentPhoto(a)"
-                    :alt="a.student_name"
-                    class="h-full w-full object-cover"
-                  />
-                  <span v-else>{{ getInitials(a.student_name) }}</span>
+                  {{ getInitials(a.student_name) }}
                 </div>
                 <div class="min-w-0">
-                  <p class="text-sm font-semibold text-slate-900 truncate dark:text-white">
-                    {{ a.student_name }}
-                  </p>
-                  <p class="text-xs text-slate-500 truncate dark:text-slate-400">
-                    {{ a.company_name }} &middot; {{ a.position }}
-                  </p>
+                  <p class="font-semibold text-slate-900 truncate">{{ a.student_name }}</p>
+                  <p class="text-xs text-slate-500 truncate">{{ a.company_name }} &middot; {{ a.position }}</p>
                 </div>
-                <span class="shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold" :class="statusBadgeClass(a.status)">
-                  <span class="h-1.5 w-1.5 rounded-full" :class="statusDotClass(a.status)"></span>
-                  {{ a.status === 'In Progress' ? 'Active' : a.status }}
-                </span>
-              </div>
-              <div class="mt-2 flex items-center gap-4 text-xs text-slate-400 dark:text-slate-500">
-                <span>Tutor: {{ a.tutor_name }}</span>
-                <span>{{ formatDate(a.start_date) }} &ndash; {{ formatDate(a.end_date) }}</span>
-              </div>
-              <div class="mt-3 flex items-center gap-2">
-                <button
-                  @click="openEdit(a)"
-                  class="flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
-                >
-                  Edit
-                </button>
-                <button
-                  @click="deleteAssignment(a)"
-                  class="flex-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50 dark:border-red-900/30 dark:text-red-400 dark:hover:bg-red-900/20"
-                >
-                  Delete
-                </button>
               </div>
               <span
-                class="shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold"
+                class="shrink-0 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
                 :class="statusBadgeClass(a.status)"
               >
                 <span class="h-1.5 w-1.5 rounded-full" :class="statusDotClass(a.status)"></span>
                 {{ a.status === 'In Progress' ? 'Active' : a.status }}
               </span>
             </div>
-            <div class="mt-2 flex items-center gap-4 text-xs text-slate-400 dark:text-slate-500">
-              <span>Tutor: {{ a.tutor_name }}</span>
-              <span>{{ formatDate(a.start_date) }} &ndash; {{ formatDate(a.end_date) }}</span>
+
+            <div class="grid grid-cols-2 gap-2 rounded-lg bg-slate-50 p-2.5 text-xs text-slate-600">
+              <div>
+                <span class="font-medium text-slate-500">Tutor:</span>
+                {{ a.tutor_name }}
+              </div>
+              <div>
+                <span class="font-medium text-slate-500">Duration:</span>
+                {{ formatDate(a.start_date) }} &ndash; {{ formatDate(a.end_date) }}
+              </div>
             </div>
-            <div class="mt-3 flex items-center gap-2">
+
+            <div class="flex items-center gap-2">
               <button
                 @click="openEdit(a)"
-                class="flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+                class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-center text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
               >
                 Edit
               </button>
               <button
                 @click="deleteAssignment(a)"
-                class="flex-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50 dark:border-red-900/30 dark:text-red-400 dark:hover:bg-red-900/20"
+                class="flex-1 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-100"
               >
                 Delete
               </button>
@@ -740,7 +819,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAssignmentStore } from '@/stores/assignment'
 import { useAuthStore } from '@/stores/auth'
@@ -751,6 +830,8 @@ import type { Assignment } from '@/types/assignment'
 import AssignmentForm from '@/components/assignment/AssignmentForm.vue'
 import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import ActiveFilters from '@/components/ui/ActiveFilters.vue'
+import type { ActiveFilter } from '@/components/ui/ActiveFilters.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -764,6 +845,7 @@ const searchQuery = ref('')
 const statusFilter = ref('')
 const showForm = ref(false)
 const editingId = ref<number | undefined>(undefined)
+const openKebabId = ref<number | null>(null)
 
 // Student internship state
 const myInternship = ref<Assignment | null>(null)
@@ -822,6 +904,32 @@ const filteredAssignments = computed(() => {
   return list
 })
 
+const assignedCount = computed(() => store.assignments.filter((a) => a.status === 'Assigned').length)
+const inProgressCount = computed(() => store.assignments.filter((a) => a.status === 'In Progress').length)
+const completedCount = computed(() => store.assignments.filter((a) => a.status === 'Completed').length)
+
+const hasActiveFilters = computed(() => !!searchQuery.value || !!statusFilter.value)
+const activeFilterList = computed<ActiveFilter[]>(() => {
+  const list: ActiveFilter[] = []
+  if (searchQuery.value) list.push({ key: 'search', label: 'Search', value: searchQuery.value })
+  if (statusFilter.value) list.push({ key: 'status', label: 'Status', value: statusFilter.value })
+  return list
+})
+
+function removeFilter(key: string): void {
+  if (key === 'search') searchQuery.value = ''
+  if (key === 'status') statusFilter.value = ''
+  setPage(1)
+}
+
+function toggleKebab(id: number): void {
+  openKebabId.value = openKebabId.value === id ? null : id
+}
+
+function handleWindowClick(): void {
+  openKebabId.value = null
+}
+
 function getInitials(name: string | null | undefined): string {
   if (!name) return ''
   return name
@@ -832,8 +940,8 @@ function getInitials(name: string | null | undefined): string {
     .slice(0, 2)
 }
 
-function getStudentPhoto(assignment: Assignment): string | null {
-  return assignment.student_photo_url || assignment.student?.photo_url || null
+function getStudentPhoto(assignment: Assignment): string | undefined {
+  return assignment.student_photo_url || assignment.student?.photo_url || undefined
 }
 
 function formatDate(date?: string): string {
@@ -865,15 +973,15 @@ function formatRelativeDate(date?: string): string {
 function statusBadgeClass(status: string): string {
   switch (status) {
     case 'Assigned':
-      return 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400'
+      return 'bg-indigo-50 text-indigo-700'
     case 'In Progress':
-      return 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+      return 'bg-amber-50 text-amber-700'
     case 'Completed':
-      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+      return 'bg-emerald-50 text-emerald-700'
     case 'Terminated':
-      return 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+      return 'bg-red-50 text-red-700'
     default:
-      return 'bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+      return 'bg-slate-50 text-slate-600'
   }
 }
 
@@ -995,7 +1103,23 @@ onMounted(() => {
     fetchMyInternship()
     return
   }
+  window.addEventListener('click', handleWindowClick)
   const page = Number(route.query.page) || 1
   store.fetchAssignments({ page })
 })
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleWindowClick)
+})
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

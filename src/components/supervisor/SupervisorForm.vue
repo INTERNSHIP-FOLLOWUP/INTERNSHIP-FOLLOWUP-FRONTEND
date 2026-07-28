@@ -78,18 +78,6 @@
         </select>
       </FormField>
 
-      <FormField :label="isEdit ? 'Password (leave blank to keep current)' : 'Password'" :error="errors.password" :required="!isEdit">
-        <input
-          v-model="form.password"
-          type="password"
-          :placeholder="isEdit ? 'Leave blank to keep current' : 'Min. 8 characters'"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
-          :class="inputClass('password')"
-          @input="clearFieldError('password')"
-          @blur="validateField('password')"
-        />
-      </FormField>
-
       <FormField label="Company" :error="errors.company_id" required>
         <select
           v-model.number="form.company_id"
@@ -174,7 +162,6 @@ const form = reactive({
   email: '',
   phone: '',
   gender: '',
-  password: '',
   company_id: null as number | null,
 })
 
@@ -208,14 +195,8 @@ function validateField(field: string): boolean {
     return true
   }
 
-  if (field === 'password' && value && (value as string).length < 8) {
-    errors[field] = 'Password must be at least 8 characters.'
-    return false
-  }
-
   if (!value || (typeof value === 'string' && !value.trim())) {
     if (field === 'phone') return true
-    if (field === 'password' && isEdit.value) return true
     errors[field] = 'This field is required.'
     return false
   }
@@ -231,11 +212,6 @@ function validateField(field: string): boolean {
 
 function validateAll(): boolean {
   const fieldsToValidate = ['first_name', 'last_name', 'email', 'company_id']
-  if (!isEdit.value) {
-    fieldsToValidate.push('password')
-  } else if (form.password) {
-    fieldsToValidate.push('password')
-  }
   if (form.phone) {
     fieldsToValidate.push('phone')
   }
@@ -251,18 +227,14 @@ async function handleSubmit(): Promise<void> {
   try {
     if (isEdit.value) {
       // Edit supervisor — update via admin endpoint
-      const payload: Record<string, unknown> = {
+      await api.put(`/admin/users/${props.supervisorId}`, {
         first_name: form.first_name,
         last_name: form.last_name,
         email: form.email,
         phone: form.phone || undefined,
         gender: form.gender || undefined,
         company_id: form.company_id || undefined,
-      }
-      if (form.password) {
-        payload.password = form.password
-      }
-      await api.put(`/admin/users/${props.supervisorId}`, payload)
+      })
     } else {
       // Create supervisor via the company endpoint
       await api.post(`/admin/companies/${form.company_id}/supervisors`, {
@@ -271,7 +243,6 @@ async function handleSubmit(): Promise<void> {
         email: form.email,
         phone: form.phone || undefined,
         gender: form.gender || undefined,
-        password: form.password,
       })
     }
 

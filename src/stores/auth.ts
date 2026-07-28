@@ -107,10 +107,17 @@ export const useAuthStore = defineStore('auth', () => {
       // Strip "/api" suffix from the API URL to get the base Sanctum URL
       const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'
       const baseUrl = apiUrl.replace(/\/api\/?$/, '')
-      await axios.get(`${baseUrl}/sanctum/csrf-cookie`, {
-        withCredentials: true,
-        headers: { Accept: 'application/json' },
-      })
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 3000)
+      try {
+        await axios.get(`${baseUrl}/sanctum/csrf-cookie`, {
+          signal: controller.signal,
+          withCredentials: true,
+          headers: { Accept: 'application/json' },
+        })
+      } finally {
+        clearTimeout(timeoutId)
+      }
     } catch {
       // Bearer-token APIs don't need the CSRF cookie
     }

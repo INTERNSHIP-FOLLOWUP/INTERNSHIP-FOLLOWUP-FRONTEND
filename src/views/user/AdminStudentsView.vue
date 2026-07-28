@@ -711,9 +711,8 @@ async function confirmAction(type: ActionType, student: Student) {
     confirmMessage.value = `Are you sure you want to activate ${student.first_name} ${student.last_name}?`
     confirmButtonText.value = 'Activate'
   }
-  const confirmed = await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value })
-  if (!confirmed) return
-  await handleConfirmAction()
+  await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value, confirmText: confirmButtonText.value })
+  // handleConfirmAction is called from the @confirm event handler
 }
 
 async function handleConfirmAction() {

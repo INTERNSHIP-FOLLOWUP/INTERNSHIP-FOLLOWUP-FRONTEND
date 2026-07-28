@@ -344,12 +344,14 @@ import api from '@/services/api'
 import { studentService } from '@/services/student'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import { useDeactivatedUsersStore } from '@/stores/deactivatedUsers'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import ImportUsersModal from '@/components/admin/ImportUsersModal.vue'
 
 const router = useRouter()
 const toast = useToastStore()
 const { show: confirmShow, loading: confirmLoading, error: confirmError, open: confirmOpen, cancel: confirmCancel, confirmAsync: confirmAsyncFn } = useConfirmDialog()
+const deactivatedUsersStore = useDeactivatedUsersStore()
 
 interface Role { id: number; name: string }
 interface User {
@@ -472,15 +474,27 @@ async function fetchUsers(): Promise<void> {
   loading.value = true
   error.value = ''
   try {
-    const params: Record<string, string | number> = { page: currentPage.value, per_page: 15 }
-    if (searchQuery.value) params.search = searchQuery.value
-    if (roleFilter.value) params.role = roleFilter.value
-    if (statusFilter.value) params.status = statusFilter.value
-    const res = await api.get('/admin/users', { params })
-    const body = res.data
-    users.value = body.data ?? []
-    pagination.value = body.meta ?? null
-    if (body.counts) roleStats.value = body.counts
+    if (statusFilter.value === 'deactivated') {
+      await deactivatedUsersStore.fetchDeactivated({
+        page: currentPage.value,
+        per_page: 15,
+        search: searchQuery.value || undefined,
+        role: roleFilter.value || undefined,
+      })
+      users.value = deactivatedUsersStore.users as unknown as User[]
+      pagination.value = deactivatedUsersStore.pagination as unknown as PaginationMeta | null
+      error.value = deactivatedUsersStore.error || ''
+    } else {
+      const params: Record<string, string | number> = { page: currentPage.value, per_page: 15 }
+      if (searchQuery.value) params.search = searchQuery.value
+      if (roleFilter.value) params.role = roleFilter.value
+      if (statusFilter.value) params.status = statusFilter.value
+      const res = await api.get('/admin/users', { params })
+      const body = res.data
+      users.value = body.data ?? []
+      pagination.value = body.meta ?? null
+      if (body.counts) roleStats.value = body.counts
+    }
   } catch (err: unknown) {
     error.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load users.'
   } finally {
@@ -531,10 +545,18 @@ async function handleConfirmAction() {
       await api.delete(`/admin/users/${user.id}`)
       toast.success(`User "${user.name}" deleted.`)
     } else if (type === 'deactivate') {
-      await api.put(`/admin/users/${user.id}/deactivate`)
+      if (statusFilter.value === 'deactivated') {
+        await deactivatedUsersStore.deactivateUser(user.id)
+      } else {
+        await api.put(`/admin/users/${user.id}/deactivate`)
+      }
       toast.success(`User "${user.name}" deactivated.`)
     } else if (type === 'activate') {
-      await api.put(`/admin/users/${user.id}/activate`)
+      if (statusFilter.value === 'deactivated') {
+        await deactivatedUsersStore.reactivateUser(user.id)
+      } else {
+        await api.put(`/admin/users/${user.id}/activate`)
+      }
       toast.success(`User "${user.name}" activated.`)
     }
     pendingAction.value = null

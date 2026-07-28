@@ -69,6 +69,21 @@
         </div>
       </div>
 
+      <!-- Inactive Supervisors -->
+      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Inactive</p>
+            <p class="mt-1 text-2xl font-black text-amber-600">{{ inactiveCount }}</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
       <!-- Deactivated Supervisors -->
       <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
         <div class="flex items-center justify-between">
@@ -143,6 +158,7 @@
         >
           <option value="all">All Statuses</option>
           <option value="active">Active Only</option>
+          <option value="inactive">Inactive Only</option>
           <option value="deactivated">Deactivated Only</option>
         </select>
       </div>
@@ -485,6 +501,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import { useDeactivatedUsersStore } from '@/stores/deactivatedUsers'
 import SupervisorForm from '@/components/supervisor/SupervisorForm.vue'
 import SupervisorDetailsModal from '@/components/supervisor/SupervisorDetailsModal.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
@@ -532,10 +549,11 @@ const {
   cancel: confirmCancel,
   confirmAsync: confirmAsyncFn,
 } = useConfirmDialog()
+const deactivatedUsersStore = useDeactivatedUsersStore()
 
 const supervisors = ref<Supervisor[]>([])
 const companies = ref<Company[]>([])
-const loading = ref(false)
+const loading = ref(true)
 const error = ref('')
 
 const searchQuery = ref('')
@@ -547,6 +565,7 @@ const currentPage = ref(1)
 const pagination = ref<PaginationMeta | null>(null)
 const totalSupervisors = ref(0)
 const activeCount = ref(0)
+const inactiveCount = ref(0)
 const deactivatedCount = ref(0)
 
 const showFormModal = ref(false)
@@ -644,6 +663,7 @@ function closeFormModal() {
 function onSupervisorSaved() {
   closeFormModal()
   fetchSupervisors()
+  fetchSupervisorStats()
   toast.success('Supervisor saved successfully.')
 }
 
@@ -674,9 +694,7 @@ async function confirmAction(type: ActionType, supervisor: Supervisor) {
     confirmButtonText.value = 'Activate'
   }
 
-  const confirmed = await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value })
-  if (!confirmed) return
-  await handleConfirmAction()
+  await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value, confirmText: confirmButtonText.value })
 }
 
 async function handleConfirmAction() {
@@ -689,14 +707,23 @@ async function handleConfirmAction() {
       await api.delete(`/admin/users/${supervisor.id}`)
       toast.success(`Supervisor "${name}" deleted successfully.`)
     } else if (type === 'deactivate') {
-      await api.put(`/admin/users/${supervisor.id}/deactivate`)
+      if (statusFilter.value === 'deactivated') {
+        await deactivatedUsersStore.deactivateUser(supervisor.id)
+      } else {
+        await api.put(`/admin/users/${supervisor.id}/deactivate`)
+      }
       toast.success(`Supervisor "${name}" deactivated.`)
     } else if (type === 'activate') {
-      await api.put(`/admin/users/${supervisor.id}/activate`)
+      if (statusFilter.value === 'deactivated') {
+        await deactivatedUsersStore.reactivateUser(supervisor.id)
+      } else {
+        await api.put(`/admin/users/${supervisor.id}/activate`)
+      }
       toast.success(`Supervisor "${name}" activated.`)
     }
     pendingAction.value = null
     fetchSupervisors()
+    fetchSupervisorStats()
   })
 }
 
@@ -722,29 +749,76 @@ function refresh() {
   fetchSupervisors()
 }
 
+/**
+ * Fetch supervisor counts from the backend to compute accurate stat card totals.
+ * Fetches total, inactive, and deactivated counts separately to avoid relying
+ * on unsupported query params.
+ */
+async function fetchSupervisorStats(): Promise<void> {
+  try {
+    const res = await api.get('/admin/users', {
+      params: { role: 'supervisor', per_page: 1 },
+    })
+    totalSupervisors.value = res.data.counts?.supervisor ?? res.data.meta?.total ?? 0
+
+    // Fetch deactivated count
+    try {
+      const deactivatedRes = await api.get('/admin/users', {
+        params: { role: 'supervisor', per_page: 1, status: 'deactivated' },
+      })
+      deactivatedCount.value = deactivatedRes.data.meta?.total ?? 0
+    } catch {
+      deactivatedCount.value = 0
+    }
+
+    // Fetch inactive count
+    try {
+      const inactiveRes = await api.get('/admin/users', {
+        params: { role: 'supervisor', per_page: 1, status: 'inactive' },
+      })
+      inactiveCount.value = inactiveRes.data.meta?.total ?? 0
+    } catch {
+      inactiveCount.value = 0
+    }
+
+    // Active = total - (deactivated + inactive)
+    activeCount.value = totalSupervisors.value - deactivatedCount.value - inactiveCount.value
+    if (activeCount.value < 0) activeCount.value = 0
+  } catch {
+    // Stats fetch failed silently — table data still works
+  }
+}
+
 async function fetchSupervisors() {
   loading.value = true
   error.value = ''
   try {
-    const params: Record<string, string | number> = {
-      role: 'supervisor',
-      per_page: 15,
-      page: currentPage.value,
+    if (statusFilter.value === 'deactivated') {
+      await deactivatedUsersStore.fetchDeactivated({
+        page: currentPage.value,
+        per_page: 15,
+        search: searchQuery.value || undefined,
+        role: 'supervisor',
+      })
+      supervisors.value = deactivatedUsersStore.users as unknown as Supervisor[]
+      pagination.value = deactivatedUsersStore.pagination as unknown as PaginationMeta | null
+      error.value = deactivatedUsersStore.error || ''
+    } else {
+      const params: Record<string, string | number> = {
+        role: 'supervisor',
+        per_page: 15,
+        page: currentPage.value,
+      }
+
+      if (searchQuery.value) params.search = searchQuery.value
+      if (companyFilter.value) params.company_id = companyFilter.value
+      if (statusFilter.value !== 'all') params.status = statusFilter.value
+      if (sortOrder.value) params.sort = sortOrder.value
+
+      const res = await api.get('/admin/users', { params })
+      supervisors.value = res.data.data ?? []
+      pagination.value = res.data.meta ?? null
     }
-
-    if (searchQuery.value) params.search = searchQuery.value
-    if (companyFilter.value) params.company_id = companyFilter.value
-    if (statusFilter.value !== 'all') params.status = statusFilter.value
-    if (sortOrder.value) params.sort = sortOrder.value
-
-    const res = await api.get('/admin/users', { params })
-    supervisors.value = res.data.data ?? []
-    pagination.value = res.data.meta ?? null
-    totalSupervisors.value = res.data.counts?.supervisor ?? res.data.meta?.total ?? 0
-
-    // Compute stats
-    activeCount.value = supervisors.value.filter((s) => !s.deleted_at).length
-    deactivatedCount.value = supervisors.value.filter((s) => !!s.deleted_at).length
   } catch (err: unknown) {
     error.value =
       (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -787,6 +861,7 @@ onMounted(async () => {
     companies.value = []
   }
   fetchSupervisors()
+  fetchSupervisorStats()
 })
 
 onUnmounted(() => {

@@ -622,17 +622,25 @@ async function deleteStudent(id: number): Promise<void> {
   const confirmed = await dialog.open({
     title: 'Delete Student',
     message: 'Are you sure you want to delete this student? This action cannot be undone.',
+    confirmText: 'Delete',
   })
   if (!confirmed) return
   await handleConfirm()
 }
 
 async function handleConfirm(): Promise<void> {
-  if (deleteTargetId === null) return
-  await dialog.confirmAsync(async () => {
-    await store.deleteStudent(deleteTargetId!)
-    toast.success('Student deleted successfully.')
-  })
+  // Direct delete flow (from mobile card or deleteStudent function)
+  if (deleteTargetId !== null) {
+    await dialog.confirmAsync(async () => {
+      await store.deleteStudent(deleteTargetId!)
+      toast.success('Student deleted successfully.')
+    })
+    return
+  }
+  // Kebab-triggered flows: deactivate / activate / delete via confirmAction
+  if (pendingAction.value) {
+    await handleConfirmAction()
+  }
 }
 
 const showImportModal = ref(false)
@@ -779,9 +787,8 @@ async function confirmAction(type: ActionType, student: Student) {
     confirmMessage.value = `Are you sure you want to activate ${displayName}?`
     confirmButtonText.value = 'Activate'
   }
-  const confirmed = await dialog.open({ title: confirmTitle.value, message: confirmMessage.value })
-  if (!confirmed) return
-  await handleConfirmAction()
+  await dialog.open({ title: confirmTitle.value, message: confirmMessage.value, confirmText: confirmButtonText.value })
+  // handleConfirmAction is called from the @confirm event handler
 }
 
 async function handleConfirmAction() {

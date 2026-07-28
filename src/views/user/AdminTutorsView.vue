@@ -264,6 +264,7 @@ import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import { useDeactivatedUsersStore } from '@/stores/deactivatedUsers'
 import TutorRowDetails from '@/components/admin/TutorRowDetails.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
@@ -287,6 +288,7 @@ interface TutorActivity {
 const router = useRouter()
 const toast = useToastStore()
 const { show: confirmShow, loading: confirmLoading, error: confirmError, open: confirmOpen, cancel: confirmCancel, confirmAsync: confirmAsyncFn } = useConfirmDialog()
+const deactivatedUsersStore = useDeactivatedUsersStore()
 const confirmTitle = ref('')
 const confirmMessage = ref('')
 const confirmButtonText = ref('Confirm')
@@ -401,10 +403,10 @@ async function handleConfirmAction() {
       await api.delete(`/admin/users/${user.id}`)
       toast.success(`Tutor "${name}" deleted.`)
     } else if (type === 'deactivate') {
-      await api.put(`/admin/users/${user.id}/deactivate`)
+      await deactivatedUsersStore.deactivateUser(user.id)
       toast.success(`Tutor "${name}" deactivated.`)
     } else if (type === 'activate') {
-      await api.put(`/admin/users/${user.id}/activate`)
+      await deactivatedUsersStore.reactivateUser(user.id)
       toast.success(`Tutor "${name}" activated.`)
     }
     pendingAction.value = null

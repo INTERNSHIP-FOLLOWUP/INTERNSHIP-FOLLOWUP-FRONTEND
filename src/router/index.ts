@@ -354,7 +354,7 @@ const router = createRouter({
     {
       path: '/company',
       component: () => import('@/layouts/CompanyLayout.vue'),
-      meta: { roles: ['supervisor'] as UserRole[], title: 'Company' } as AppRouteMeta,
+      meta: { roles: ['supervisor', 'company'] as UserRole[], title: 'Company' } as AppRouteMeta,
       children: [
         {
           path: '',

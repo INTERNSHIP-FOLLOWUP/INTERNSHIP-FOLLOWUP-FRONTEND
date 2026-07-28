@@ -4,7 +4,7 @@
     <div class="flex items-center gap-3 text-sm">
       <router-link
         to="/admin/students"
-        class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+        class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -16,20 +16,20 @@
         </svg>
         Back to Students
       </router-link>
-      <span class="text-slate-300">/</span>
-      <span class="font-medium text-slate-900">Student Profile</span>
+      <span class="text-slate-300 dark:text-slate-600">/</span>
+      <span class="font-medium text-slate-900 dark:text-slate-100">Student Profile</span>
     </div>
 
     <!-- Loading -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-24 gap-3">
       <div class="h-8 w-8 animate-spin rounded-full border-[3px] border-primary-200 border-t-primary-600"></div>
-      <p class="text-sm text-slate-400">Loading profile…</p>
+      <p class="text-sm text-slate-400 dark:text-slate-500">Loading profile…</p>
     </div>
 
     <template v-else-if="profile">
 
       <!-- ── Header Card ── -->
-      <div class="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
+      <div class="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-800">
         <div class="h-2 bg-gradient-to-r from-primary-500 via-indigo-500 to-violet-500"></div>
         <div class="flex flex-col sm:flex-row sm:items-center gap-5 p-6">
 
@@ -52,8 +52,8 @@
           <div class="flex-1 min-w-0">
             <div class="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ profile.student.name }}</h1>
-                <p class="mt-0.5 text-sm text-slate-400 truncate max-w-[250px]">{{ profile.student.email }}</p>
+                <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{{ profile.student.name }}</h1>
+                <p class="mt-0.5 text-sm text-slate-400 dark:text-slate-500 truncate max-w-[250px]">{{ profile.student.email }}</p>
               </div>
               <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ring-1"
                 :class="profile.student.status === 'active'
@@ -75,15 +75,15 @@
                 {{ formatStudentId(profile.student.student_code, profile.student.batch) }}
               </span>
               <span v-if="profile.student.phone"
-                class="inline-flex items-center gap-1.5 rounded-lg bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-100">
-                <svg class="h-3 w-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="inline-flex items-center gap-1.5 rounded-lg bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-100 dark:bg-slate-700 dark:text-slate-300 dark:ring-slate-600">
+                <svg class="h-3 w-3 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 {{ profile.student.phone }}
               </span>
               <span v-if="profile.student.batch"
-                class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700 ring-1 ring-primary-100">
-                <svg class="h-3 w-3 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700 ring-1 ring-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:ring-primary-800">
+                <svg class="h-3 w-3 text-primary-400 dark:text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
                 {{ profile.student.batch.name }}
@@ -95,35 +95,35 @@
 
       <div class="flex flex-col lg:flex-row gap-6 items-start">
         <!-- ── Internship Assignment ── -->
-        <div v-if="profile.assignment" class="flex-1 w-full rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-50">
+        <div v-if="profile.assignment" class="flex-1 w-full rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-50 dark:border-slate-700">
           <div class="flex items-center gap-2.5">
-            <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50">
-              <svg class="h-4 w-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/30">
+              <svg class="h-4 w-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </span>
-            <h2 class="text-base font-bold text-slate-900">Internship Assignment</h2>
+            <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">Internship Assignment</h2>
           </div>
           <span class="rounded-full px-3 py-1 text-xs font-bold ring-1"
             :class="assignmentStatusClass(profile.assignment.status)">
             {{ profile.assignment.status || 'Unknown' }}
           </span>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-0 divide-y sm:divide-y-0 sm:divide-x divide-slate-50 px-6 py-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-0 divide-y sm:divide-y-0 sm:divide-x divide-slate-50 dark:divide-slate-700 px-6 py-4">
           <div class="py-3 sm:py-2 sm:pr-6">
-            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Company</p>
-            <p class="mt-1 text-sm font-semibold text-slate-800">{{ profile.assignment.company?.name || '—' }}</p>
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Company</p>
+            <p class="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-200">{{ profile.assignment.company?.name || '—' }}</p>
           </div>
           <div class="py-3 sm:py-2 sm:px-6">
-            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Position</p>
-            <p class="mt-1 text-sm font-semibold text-slate-800">{{ profile.assignment.position || '—' }}</p>
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Position</p>
+            <p class="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-200">{{ profile.assignment.position || '—' }}</p>
           </div>
           <div class="py-3 sm:py-2 sm:pl-6">
-            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Duration</p>
-            <p class="mt-1 text-sm font-semibold text-slate-800">
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Duration</p>
+            <p class="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-200">
               {{ formatDate(profile.assignment.start_date) }}
-              <span class="text-slate-400 mx-1">→</span>
+              <span class="text-slate-400 dark:text-slate-500 mx-1">→</span>
               {{ formatDate(profile.assignment.end_date) }}
             </p>
           </div>
@@ -133,48 +133,48 @@
 
       
       <!-- ── Total Worklogs Card ── -->
-      <div class="flex-1 w-full rounded-2xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between">
-        <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-50">
+      <div class="flex-1 w-full rounded-2xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-50 dark:border-slate-700">
           <div class="flex items-center gap-2.5">
-            <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50">
-              <svg class="h-4 w-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/30">
+              <svg class="h-4 w-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </span>
-            <h2 class="text-base font-bold text-slate-900">Total Worklogs</h2>
+            <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">Total Worklogs</h2>
           </div>
         </div>
         <div class="px-6 py-5 flex items-center justify-between">
           <div>
-            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Total Submitted</p>
-            <p class="mt-1 text-3xl font-extrabold text-slate-800">{{ profile.worklog_stats.submitted }}</p>
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Total Submitted</p>
+            <p class="mt-1 text-3xl font-extrabold text-slate-800 dark:text-slate-100">{{ profile.worklog_stats.submitted }}</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ── Worklogs ── -->
-    <div class="rounded-2xl border border-slate-100 bg-white shadow-sm">
+    <div class="rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
         <!-- Header -->
-        <div class="flex flex-wrap items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-slate-50">
+        <div class="flex flex-wrap items-center justify-between gap-4 px-6 pt-5 pb-4 border-b border-slate-50 dark:border-slate-700">
           <div class="flex items-center gap-2.5">
-            <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50">
-              <svg class="h-4 w-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/30">
+              <svg class="h-4 w-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </span>
-            <h2 class="text-base font-bold text-slate-900">Worklogs</h2>
+            <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">Worklogs</h2>
           </div>
 
 
         </div>
 
         <!-- Progress bar -->
-        <div v-if="profile.worklog_stats.submitted > 0" class="px-6 py-3 border-b border-slate-50">
-          <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5">
+        <div v-if="profile.worklog_stats.submitted > 0" class="px-6 py-3 border-b border-slate-50 dark:border-slate-700">
+          <div class="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 mb-1.5">
             <span>Approval Progress</span>
-            <span class="font-semibold text-slate-600">
+            <span class="font-semibold text-slate-600 dark:text-slate-300">
               {{ profile.worklog_stats.approved }}/{{ profile.worklog_stats.submitted }}
             </span>
           </div>
@@ -188,15 +188,15 @@
         <div class="px-6 py-4">
           <div v-if="profile.worklogs.length > 0" class="space-y-2">
             <div v-for="wl in profile.worklogs" :key="wl.id"
-              class="group flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 transition-all hover:border-slate-200 hover:bg-white hover:shadow-sm">
+              class="group flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 transition-all hover:border-slate-200 hover:bg-white hover:shadow-sm dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:bg-slate-800 dark:hover:shadow-black/10">
               <div class="flex items-center gap-3">
-                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold"
-                  :class="worklogWeekClass(wl.status)">
+                <div              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold"
+                  :class="[worklogWeekClass(wl.status), 'dark:bg-opacity-30 dark:text-opacity-80']">
                   W{{ wl.week_number }}
                 </div>
                 <div>
-                  <p class="text-sm font-semibold text-slate-700">Week {{ wl.week_number }}</p>
-                  <p class="text-xs text-slate-400">{{ formatDate(wl.submission_date) }}</p>
+                  <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Week {{ wl.week_number }}</p>
+                  <p class="text-xs text-slate-400 dark:text-slate-500">{{ formatDate(wl.submission_date) }}</p>
                 </div>
               </div>
               <span class="rounded-full px-2.5 py-0.5 text-xs font-bold ring-1"
@@ -208,12 +208,12 @@
 
           <!-- Empty state -->
           <div v-else class="flex flex-col items-center justify-center py-12 gap-3">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100">
-              <svg class="h-6 w-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-700">
+              <svg class="h-6 w-6 text-slate-300 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
-            <p class="text-sm font-medium text-slate-400">No worklogs submitted yet</p>
+            <p class="text-sm font-medium text-slate-400 dark:text-slate-500">No worklogs submitted yet</p>
           </div>
         </div>
       </div>
@@ -221,13 +221,13 @@
     </template>
 
     <!-- Not found -->
-    <div v-else-if="!loading" class="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white py-20 gap-3 shadow-sm">
-      <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
-        <svg class="h-7 w-7 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div v-else-if="!loading" class="flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-white py-20 gap-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-700">
+        <svg class="h-7 w-7 text-slate-300 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
       </div>
-      <p class="text-sm font-semibold text-slate-400">Student not found</p>
+      <p class="text-sm font-semibold text-slate-400 dark:text-slate-500">Student not found</p>
     </div>
 
   </div>

@@ -1,18 +1,18 @@
 <template>
-  <div class="rounded-2xl border-2 border-dashed bg-white p-4 transition-all duration-200"
-    :class="isDragging ? 'border-indigo-400 bg-indigo-50/30 scale-[1.01]' : 'border-slate-200 hover:border-indigo-300'">
+  <div class="rounded-2xl border-2 border-dashed bg-white p-4 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800/50"
+    :class="isDragging ? 'border-indigo-400 bg-indigo-50/30 scale-[1.01] dark:bg-indigo-950/20' : 'border-slate-200 hover:border-indigo-300 dark:border-slate-600 dark:hover:border-indigo-500'">
     
     <!-- Upload Area -->
     <div
       class="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl p-8 text-center transition-all duration-200"
-      :class="isDragging ? 'bg-indigo-50/50' : 'hover:bg-slate-50/50'"
+      :class="isDragging ? 'bg-indigo-50/50 dark:bg-indigo-950/20' : 'hover:bg-slate-50/50 dark:hover:bg-slate-800/50'"
       @dragover.prevent="onDragOver"
       @dragleave.prevent="onDragLeave"
       @drop.prevent="onDrop"
       @click="inputRef?.click()"
     >
       <div class="flex h-14 w-14 items-center justify-center rounded-2xl transition-all duration-300"
-        :class="isDragging ? 'bg-indigo-100 scale-110 shadow-lg shadow-indigo-200/50' : 'bg-indigo-50'">
+        :class="isDragging ? 'bg-indigo-100 scale-110 shadow-lg shadow-indigo-200/50 dark:bg-indigo-900/50' : 'bg-indigo-50 dark:bg-indigo-950/30'">
         <svg class="h-6 w-6 text-indigo-500 transition-transform duration-300" :class="isDragging ? 'translate-y-1' : ''"
           fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -21,11 +21,11 @@
       </div>
       
       <div>
-        <p class="text-sm font-semibold text-slate-700">
+        <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">
           <span class="text-indigo-600 hover:text-indigo-700 transition-colors">Click to upload files</span>
-          <span class="text-slate-400"> or drag & drop</span>
+          <span class="text-slate-400 dark:text-slate-500"> or drag & drop</span>
         </p>
-        <p class="mt-1 text-xs text-slate-400">PDF, DOC/DOCX, PNG/JPG, ZIP — Max 10MB per file</p>
+        <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">PDF, DOC/DOCX, PNG/JPG, ZIP — Max 10MB per file</p>
       </div>
     </div>
 
@@ -40,8 +40,8 @@
 
     <!-- Selected Files -->
     <div v-if="internalFiles.length" class="mt-4 space-y-3">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-        <p class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2 dark:border-slate-700">
+        <p class="text-xs font-semibold text-slate-500 flex items-center gap-1.5 dark:text-slate-400">
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
@@ -63,7 +63,7 @@
         <div
           v-for="(f, idx) in internalFiles"
           :key="`${f.name}-${f.size}-${idx}`"
-          class="group flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 transition-all duration-200 hover:border-slate-200 hover:shadow-sm"
+          class="group flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 transition-all duration-200 hover:border-slate-200 hover:shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600"
         >
           <!-- File type icon -->
           <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
@@ -91,16 +91,16 @@
           </div>
 
           <div class="min-w-0 flex-1">
-            <p class="truncate text-xs font-semibold text-slate-800">{{ f.name }}</p>
+            <p class="truncate text-xs font-semibold text-slate-800 dark:text-slate-200">{{ f.name }}</p>
             <div class="flex items-center gap-1.5 mt-0.5">
-              <span class="text-xs text-slate-400">{{ formatFileSize(f.size) }}</span>
+              <span class="text-xs text-slate-400 dark:text-slate-500">{{ formatFileSize(f.size) }}</span>
               <span v-if="isOverSize(f)" class="text-xs font-medium text-red-500">(too large)</span>
             </div>
           </div>
 
           <button
             type="button"
-            class="shrink-0 rounded-lg p-1.5 text-slate-300 opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 transition-all duration-200"
+            class="shrink-0 rounded-lg p-1.5 text-slate-300 opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 transition-all duration-200 dark:text-slate-600 dark:hover:bg-red-950/30 dark:hover:text-red-400"
             @click="remove(idx)"
             :aria-label="`Remove ${f.name}`"
             title="Remove file"
@@ -116,7 +116,7 @@
     <!-- Validation Error -->
     <transition name="slide-fade">
       <div v-if="validationError"
-        class="mt-3 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3.5 py-2.5 text-xs font-medium text-red-700">
+        class="mt-3 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-3.5 py-2.5 text-xs font-medium text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400">
         <svg class="h-4 w-4 shrink-0 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
@@ -128,7 +128,7 @@
     <!-- Uploading Spinner -->
     <transition name="slide-fade">
       <div v-if="submitting"
-        class="mt-3 flex items-center gap-2.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3.5 py-2.5 text-xs font-medium text-indigo-700">
+        class="mt-3 flex items-center gap-2.5 rounded-xl border border-indigo-100 bg-indigo-50 px-3.5 py-2.5 text-xs font-medium text-indigo-700 dark:border-indigo-900/50 dark:bg-indigo-950/30 dark:text-indigo-400">
         <svg class="h-4 w-4 animate-spin text-indigo-500" viewBox="0 0 24 24" fill="none">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />

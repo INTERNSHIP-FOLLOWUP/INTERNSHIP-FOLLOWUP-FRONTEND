@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="dark:bg-slate-900 dark:text-slate-100 min-h-screen">
     <router-view />
     <AppToast />
   </div>

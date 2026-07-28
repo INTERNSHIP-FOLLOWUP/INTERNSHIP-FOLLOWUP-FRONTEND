@@ -7,8 +7,8 @@
           Manage partner companies and their details.
         </p>
       </div>
-      <router-link
-        to="/admin/companies/create"
+      <button
+        @click="openCreateModal"
         class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,7 +20,7 @@
           />
         </svg>
         Add Company
-      </router-link>
+      </button>
     </div>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
@@ -86,8 +86,8 @@
           v-for="company in store.companies"
           :key="company.id"
           :company="company"
-          @view="router.push(`/admin/companies/${company.id}`)"
-          @edit="router.push(`/admin/companies/${company.id}/edit`)"
+          @view="openDetailsModal(company.id)"
+          @edit="openEditModal(company.id)"
           @delete="deleteCompany(company.id)"
         />
       </div>
@@ -114,6 +114,44 @@
       <BasePagination :meta="store.pagination" @page-change="setPage" />
     </div>
 
+    <!-- Company Form Modal -->
+    <transition name="fade">
+      <div
+        v-if="showFormModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm overflow-y-auto"
+        @click.self="closeFormModal"
+      >
+        <div class="my-8 max-h-[90vh] w-full max-w-3xl overflow-y-auto">
+          <CompanyForm
+            :mode="modalMode"
+            :initialData="modalInitialData"
+            :apiErrors="modalApiErrors"
+            :onSubmit="onCompanySubmit"
+            showCancel
+            @cancel="closeFormModal"
+          />
+        </div>
+      </div>
+    </transition>
+
+    <!-- Company Details Modal -->
+    <transition name="fade">
+      <div
+        v-if="showDetailsModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm overflow-y-auto"
+        @click.self="closeDetailsModal"
+      >
+        <div class="my-8 max-h-[90vh] w-full max-w-3xl overflow-y-auto">
+          <CompanyDetailsModal
+            :company="viewingCompany"
+            :loading="detailsLoading"
+            @close="closeDetailsModal"
+            @edit="editFromDetails"
+          />
+        </div>
+      </div>
+    </transition>
+
     <ConfirmDialog
       :show="dialog.show.value"
       :title="dialog.title.value"
@@ -130,24 +168,49 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useCompanyStore } from '@/stores/company'
+import type { CompanyFormData as StoreCompanyFormData } from '@/stores/company'
+import { companyService } from '@/services/company'
+import type { Company } from '@/types/company'
 import { useToastStore } from '@/stores/toast'
 import { usePagination } from '@/composables/usePagination'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import CompanyCard from '@/components/company/CompanyCard.vue'
+import CompanyForm from '@/components/company/CompanyForm.vue'
+import type { CompanyFormData } from '@/components/company/CompanyForm.vue'
+import CompanyDetailsModal from '@/components/company/CompanyDetailsModal.vue'
 import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import DebouncedInput from '@/components/ui/DebouncedInput.vue'
+import { mapValidationErrors } from '@/utils/mapValidationErrors'
+import { parseApiError } from '@/utils/errorParser'
 
 
 const store = useCompanyStore()
-const router = useRouter()
 const dialog = useConfirmDialog()
 const toast = useToastStore()
 const searchQuery = ref('')
 const industryFilter = ref('')
 let deleteTargetId: number | null = null
+
+const showFormModal = ref(false)
+const modalMode = ref<'create' | 'edit'>('create')
+const editingCompanyId = ref<number | undefined>(undefined)
+const modalApiErrors = ref<Record<string, string>>({})
+const emptyFormData: Partial<CompanyFormData> = {
+  companyName: '',
+  companyEmail: '',
+  location: '',
+  industry: '',
+  website: '',
+  companyImage: null,
+  telegramLink: '',
+}
+const modalInitialData = ref<Partial<CompanyFormData>>({ ...emptyFormData })
+
+const showDetailsModal = ref(false)
+const viewingCompany = ref<Company | null>(null)
+const detailsLoading = ref(false)
 
 const industries = [
   'Technology',
@@ -158,6 +221,101 @@ const industries = [
   'Retail',
   'Consulting',
 ]
+
+function openCreateModal() {
+  modalMode.value = 'create'
+  editingCompanyId.value = undefined
+  modalApiErrors.value = {}
+  modalInitialData.value = { ...emptyFormData }
+  showFormModal.value = true
+}
+
+function openEditModal(id: number) {
+  const company = store.companies.find((c) => c.id === id)
+  if (!company) return
+
+  modalMode.value = 'edit'
+  editingCompanyId.value = id
+  modalApiErrors.value = {}
+  modalInitialData.value = {
+    companyName: company.name,
+    companyEmail: company.email ?? '',
+    location: company.location ?? '',
+    industry: company.industry ?? '',
+    website: company.website ?? '',
+    companyImage: company.companyImageUrl ?? company.companyImage ?? null,
+    telegramLink: company.telegramLink ?? '',
+  }
+  showFormModal.value = true
+}
+
+function closeFormModal() {
+  showFormModal.value = false
+  editingCompanyId.value = undefined
+  modalApiErrors.value = {}
+}
+
+async function openDetailsModal(id: number) {
+  showDetailsModal.value = true
+  detailsLoading.value = true
+  viewingCompany.value = null
+  try {
+    viewingCompany.value = await companyService.get(id)
+  } catch {
+    toast.error('Failed to load company details.')
+    showDetailsModal.value = false
+  } finally {
+    detailsLoading.value = false
+  }
+}
+
+function closeDetailsModal() {
+  showDetailsModal.value = false
+  viewingCompany.value = null
+}
+
+function editFromDetails() {
+  if (!viewingCompany.value) return
+  const id = viewingCompany.value.id
+  closeDetailsModal()
+  openEditModal(id)
+}
+
+async function onCompanySubmit(formData: CompanyFormData) {
+  const payload = store.mapFromForm(formData as unknown as StoreCompanyFormData)
+  modalApiErrors.value = {}
+
+  try {
+    if (modalMode.value === 'create') {
+      await store.createCompany(payload)
+      toast.success('Company created successfully.')
+    } else {
+      if (editingCompanyId.value === undefined) return
+      await store.updateCompany(editingCompanyId.value, payload)
+      toast.success('Company updated successfully.')
+    }
+    await store.fetchCompanies({
+      search: searchQuery.value || undefined,
+      industry: industryFilter.value || undefined,
+    })
+    closeFormModal()
+  } catch (err: unknown) {
+    const axiosErr = err as {
+      response?: { status?: number; data?: { errors?: Record<string, string[]> } }
+    }
+    if (axiosErr.response?.status === 422) {
+      modalApiErrors.value = mapValidationErrors(axiosErr.response.data?.errors)
+      toast.error('Please fix the highlighted errors.', 'Validation Error')
+    } else if (axiosErr.response?.status && axiosErr.response.status >= 500) {
+      const parsed = parseApiError(err)
+      toast.error(parsed.message, 'Server Error')
+      throw new Error(parsed.message)
+    } else {
+      toast.error('Failed to save. Please try again.', 'Error')
+      throw err
+    }
+  }
+}
 
 function fetchPage({ page }: { page: number }) {
   store.fetchCompanies({
@@ -203,3 +361,14 @@ async function handleConfirm() {
   })
 }
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

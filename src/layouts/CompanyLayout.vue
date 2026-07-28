@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen overflow-hidden bg-gray-50">
+  <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-slate-900">
     <transition name="fade">
       <div
         v-if="sidebarOpen"
@@ -40,7 +40,7 @@
         </div>
       </div>
 
-      <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" :class="{ 'pointer-events-none opacity-40 select-none': isInactive }">
+      <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
         <p
           class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider"
           :style="{ color: 'var(--sidebar-section-title)' }"
@@ -64,12 +64,6 @@
           </span>
           {{ item.label }}
         </router-link>
-
-        <!-- Inactive overlay on sidebar nav -->
-        <div v-if="isInactive" class="rounded-lg bg-amber-500/10 border border-amber-500/20 px-3 py-2.5 text-center mt-4">
-          <p class="text-xs font-medium text-amber-300">Activate your account</p>
-          <p class="text-[10px] text-amber-400/70 mt-0.5">Set a new password to unlock all features</p>
-        </div>
       </nav>
 
       <div class="p-4" :style="{ borderTop: '1px solid var(--sidebar-border)' }">
@@ -103,11 +97,11 @@
 
     <div class="flex flex-1 flex-col lg:pl-0">
       <header
-        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6"
+        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6 dark:border-slate-700 dark:bg-slate-800/80"
       >
         <div class="flex items-center gap-3">
           <button
-            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden"
+            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-300"
             @click="sidebarOpen = !sidebarOpen"
             aria-label="Toggle navigation"
           >
@@ -128,14 +122,30 @@
               />
             </svg>
           </button>
-          <h2 class="text-lg font-semibold text-gray-800">{{ pageTitle }}</h2>
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-slate-100">{{ pageTitle }}</h2>
         </div>
 
         <div class="flex items-center gap-2">
+          <!-- Language Switcher -->
+          <LanguageSwitcher variant="header" />
+          <!-- Dark Mode Toggle -->
+          <button
+            @click="themeStore.setDarkMode(!themeStore.darkMode)"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+            :title="themeStore.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+          >
+            <svg v-if="!themeStore.darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <svg v-else class="h-5 w-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </button>
+
           <!-- Theme Settings Button -->
           <button
             @click.stop="themeSettingsOpen = !themeSettingsOpen"
-            class="relative flex h-9 w-9 items-center justify-center rounded-xl text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            class="relative flex h-9 w-9 items-center justify-center rounded-xl text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
             title="Theme Settings"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,7 +163,7 @@
           </button>
 
           <button
-            class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -175,11 +185,11 @@
             </span>
           </button>
 
-          <div class="h-6 w-[1px] bg-gray-200" />
+          <div class="h-6 w-[1px] bg-gray-200 dark:bg-slate-700" />
 
           <div class="relative">
             <button
-              class="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100"
+              class="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-700"
               @click.stop="dropdownOpen = !dropdownOpen"
             >
               <div
@@ -195,10 +205,10 @@
                 <span v-else>{{ userInitials }}</span>
               </div>
               <div class="hidden text-left md:block">
-                <p class="text-sm font-medium leading-tight text-gray-700">
+                <p class="text-sm font-medium leading-tight text-gray-700 dark:text-slate-300">
                   {{ user?.name }}
                 </p>
-                <p class="text-xs leading-tight text-gray-400">Company Representative</p>
+                <p class="text-xs leading-tight text-gray-400 dark:text-slate-500">Company Representative</p>
               </div>
               <svg
                 class="h-4 w-4 text-gray-400 transition-transform"
@@ -219,19 +229,19 @@
             <transition name="dropdown">
               <div
                 v-if="dropdownOpen"
-                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-gray-100 bg-white py-1 shadow-lg ring-1 ring-black/5"
+                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-gray-100 bg-white py-1 shadow-lg ring-1 ring-black/5 dark:border-slate-700 dark:bg-slate-800"
                 @click="dropdownOpen = false"
               >
-                <div class="border-b border-gray-100 px-4 py-3">
-                  <p class="text-sm font-medium text-gray-900">{{ user?.name }}</p>
-                  <p class="truncate text-xs text-gray-500">{{ user?.email }}</p>
+                <div class="border-b border-gray-100 px-4 py-3 dark:border-slate-700">
+                  <p class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ user?.name }}</p>
+                  <p class="truncate text-xs text-gray-500 dark:text-slate-400">{{ user?.email }}</p>
                 </div>
                 <router-link
                   to="/company/profile"
-                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
                 >
                   <svg
-                    class="h-4.5 w-4.5 text-gray-400"
+                    class="h-4.5 w-4.5 text-gray-400 dark:text-slate-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -251,10 +261,10 @@
                   </svg>
                   Profile Settings
                 </router-link>
-                <hr class="my-1 border-gray-100" />
+                <hr class="my-1 border-gray-100 dark:border-slate-700" />
                 <button
                   @click="openLogoutModal"
-                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
+                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50 dark:hover:bg-red-950/30"
                 >
                   <svg
                     class="h-4.5 w-4.5 text-red-500"
@@ -295,17 +305,17 @@
         @click="closeLogoutModal"
       >
         <div
-          class="w-[92%] max-w-md rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl"
+          class="w-[92%] max-w-md rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800"
           @click.stop
         >
-          <h3 id="logout-modal-title" class="text-base font-semibold text-gray-900">
+          <h3 id="logout-modal-title" class="text-base font-semibold text-gray-900 dark:text-slate-100">
             Are you sure you want to log out?
           </h3>
-          <p class="mt-1 text-sm text-gray-600">You can cancel if you changed your mind.</p>
+          <p class="mt-1 text-sm text-gray-600 dark:text-slate-400">You can cancel if you changed your mind.</p>
 
           <div class="mt-5 flex items-center justify-end gap-3">
             <button
-              class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+              class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
               @click="closeLogoutModal"
               :disabled="loggingOut"
             >
@@ -325,6 +335,170 @@
 
     <!-- Theme Settings Panel -->
     <ThemeSettingsPanel :is-open="themeSettingsOpen" @close="themeSettingsOpen = false" />
+
+    <transition name="fade">
+      <div
+        v-if="showPasswordRequiredModal"
+        class="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/60 px-4 backdrop-blur-sm"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="password-required-title"
+      >
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-slate-800">
+          <div class="flex items-start gap-4">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 21v-2a7 7 0 0114 0v2M12 14v3m0 3h.01" />
+              </svg>
+            </div>
+            <div>
+              <h3 id="password-required-title" class="text-lg font-bold text-slate-900 dark:text-slate-100">
+                Change your temporary password
+              </h3>
+              <p class="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-400">
+                For account security, company representatives must set a new password before continuing.
+              </p>
+            </div>
+          </div>
+
+          <div v-if="!showPasswordChangeForm" class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+              @click="dismissPasswordReminder"
+            >
+              Maybe Later
+            </button>
+            <button
+              type="button"
+              class="rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-700"
+              @click="openPasswordChangeForm"
+            >
+              Change Password
+            </button>
+          </div>
+
+          <form v-else class="mt-6 space-y-4" @submit.prevent="submitRequiredPasswordChange">
+            <label class="block">
+              <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Current Password</span>
+              <div class="relative mt-1.5">
+                <input
+                  v-model="passwordForm.current_password"
+                  :type="showCurrentPassword ? 'text' : 'password'"
+                  autocomplete="current-password"
+                  class="block w-full rounded-xl border px-4 py-2.5 pr-11 text-sm text-slate-900 outline-none transition-all dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-400"
+                  :class="passwordErrors.current_password ? 'border-red-300 bg-red-50 dark:bg-red-950/30 dark:border-red-500' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:focus:border-primary-400'"
+                />
+                <button
+                  type="button"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none dark:text-slate-500 dark:hover:text-slate-300"
+                  :aria-label="showCurrentPassword ? 'Hide current password' : 'Show current password'"
+                  @click="showCurrentPassword = !showCurrentPassword"
+                >
+                  <svg v-if="!showCurrentPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                  </svg>
+                </button>
+              </div>
+              <span v-if="passwordErrors.current_password" class="mt-1 block text-xs font-medium text-red-600 dark:text-red-400">
+                {{ passwordErrors.current_password }}
+              </span>
+            </label>
+
+            <label class="block">
+              <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">New Password</span>
+              <div class="relative mt-1.5">
+                <input
+                  v-model="passwordForm.password"
+                  :type="showNewPassword ? 'text' : 'password'"
+                  autocomplete="new-password"
+                  class="block w-full rounded-xl border px-4 py-2.5 pr-11 text-sm text-slate-900 outline-none transition-all"
+                  :class="passwordErrors.password ? 'border-red-300 bg-red-50' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'"
+                />
+                <button
+                  type="button"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none dark:text-slate-500 dark:hover:text-slate-300"
+                  :aria-label="showNewPassword ? 'Hide new password' : 'Show new password'"
+                  @click="showNewPassword = !showNewPassword"
+                >
+                  <svg v-if="!showNewPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                  </svg>
+                </button>
+              </div>
+              <span v-if="passwordErrors.password" class="mt-1 block text-xs font-medium text-red-600">
+                {{ passwordErrors.password }}
+              </span>
+            </label>
+
+            <label class="block">
+              <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Confirm New Password</span>
+              <div class="relative mt-1.5">
+                <input
+                  v-model="passwordForm.password_confirmation"
+                  :type="showConfirmPassword ? 'text' : 'password'"
+                  autocomplete="new-password"
+                  class="block w-full rounded-xl border px-4 py-2.5 pr-11 text-sm text-slate-900 outline-none transition-all"
+                  :class="passwordErrors.password_confirmation ? 'border-red-300 bg-red-50' : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'"
+                />
+                <button
+                  type="button"
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 transition-colors hover:text-slate-600 focus:text-primary-600 focus:outline-none dark:text-slate-500 dark:hover:text-slate-300"
+                  :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
+                  @click="showConfirmPassword = !showConfirmPassword"
+                >
+                  <svg v-if="!showConfirmPassword" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <svg v-else class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                  </svg>
+                </button>
+              </div>
+              <span v-if="passwordErrors.password_confirmation" class="mt-1 block text-xs font-medium text-red-600">
+                {{ passwordErrors.password_confirmation }}
+              </span>
+            </label>
+
+            <div v-if="passwordFormError" class="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700 dark:bg-red-950/30 dark:text-red-400">
+              {{ passwordFormError }}
+            </div>
+
+            <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+                :disabled="passwordSubmitting"
+                @click="dismissPasswordReminder"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                :disabled="passwordSubmitting"
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <svg v-if="passwordSubmitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Update Password
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -334,7 +508,9 @@ import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useCompanyStore } from '@/stores/company'
 import { useThemeStore } from '@/stores/theme'
+import { authService } from '@/services/auth'
 import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 
 const route = useRoute()
 const auth = useAuthStore()
@@ -344,6 +520,25 @@ const themeStore = useThemeStore()
 const themeSettingsOpen = ref(false)
 const sidebarOpen = ref(false)
 const dropdownOpen = ref(false)
+const passwordSubmitting = ref(false)
+const passwordFormError = ref('')
+const passwordErrors = ref<Record<string, string>>({})
+const passwordReminderDismissed = ref(false)
+const showPasswordChangeForm = ref(false)
+const showCurrentPassword = ref(false)
+const showNewPassword = ref(false)
+const showConfirmPassword = ref(false)
+const passwordForm = ref({
+  current_password: '',
+  password: '',
+  password_confirmation: '',
+})
+
+function resetPasswordVisibility() {
+  showCurrentPassword.value = false
+  showNewPassword.value = false
+  showConfirmPassword.value = false
+}
 
 function handleClickOutside() {
   if (dropdownOpen.value) {
@@ -372,8 +567,9 @@ const companyLogoUrl = computed(() => {
 })
 
 const user = computed(() => auth.user)
-
-const isInactive = computed(() => auth.user?.status === 'inactive')
+const showPasswordRequiredModal = computed(
+  () => Boolean(user.value?.must_change_password) && !passwordReminderDismissed.value,
+)
 
 const userAvatar = computed(() => auth.userAvatar)
 
@@ -432,6 +628,62 @@ async function confirmLogout() {
   } finally {
     loggingOut.value = false
     logoutModalOpen.value = false
+  }
+}
+
+function openPasswordChangeForm() {
+  showPasswordChangeForm.value = true
+  passwordFormError.value = ''
+  passwordErrors.value = {}
+  resetPasswordVisibility()
+}
+
+function dismissPasswordReminder() {
+  passwordReminderDismissed.value = true
+  showPasswordChangeForm.value = false
+  passwordFormError.value = ''
+  passwordErrors.value = {}
+  passwordForm.value = {
+    current_password: '',
+    password: '',
+    password_confirmation: '',
+  }
+  resetPasswordVisibility()
+}
+
+async function submitRequiredPasswordChange() {
+  passwordFormError.value = ''
+  passwordErrors.value = {}
+
+  if (passwordForm.value.password !== passwordForm.value.password_confirmation) {
+    passwordErrors.value = { password_confirmation: 'Passwords do not match.' }
+    return
+  }
+
+  passwordSubmitting.value = true
+  try {
+    await authService.changePassword(passwordForm.value)
+    auth.updateUser({ must_change_password: false })
+    showPasswordChangeForm.value = false
+    passwordReminderDismissed.value = false
+    passwordForm.value = {
+      current_password: '',
+      password: '',
+      password_confirmation: '',
+    }
+    resetPasswordVisibility()
+  } catch (err: unknown) {
+    const axiosErr = err as { response?: { data?: { errors?: Record<string, string[]>; message?: string } } }
+    const fields = axiosErr.response?.data?.errors
+    if (fields) {
+      passwordErrors.value = Object.fromEntries(
+        Object.entries(fields).map(([key, messages]) => [key, messages[0] ?? '']),
+      )
+    } else {
+      passwordFormError.value = axiosErr.response?.data?.message || 'Failed to update password.'
+    }
+  } finally {
+    passwordSubmitting.value = false
   }
 }
 

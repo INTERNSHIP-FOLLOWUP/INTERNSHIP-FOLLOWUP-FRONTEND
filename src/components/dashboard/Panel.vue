@@ -1,22 +1,22 @@
 <template>
-  <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+  <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
     <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-base font-bold text-slate-900">{{ title }}</h2>
+      <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">{{ title }}</h2>
       <slot name="action" />
     </div>
 
     <div v-if="loading" class="space-y-3">
       <div v-for="n in 4" :key="n" class="flex items-start gap-3">
-        <div class="h-8 w-8 rounded-full bg-slate-200 animate-pulse" />
+        <div class="h-8 w-8 rounded-full bg-slate-200 animate-pulse dark:bg-slate-700" />
         <div class="flex-1 space-y-2">
-          <div class="h-3 w-1/3 rounded bg-slate-200 animate-pulse" />
-          <div class="h-3 w-2/3 rounded bg-slate-100 animate-pulse" />
+          <div class="h-3 w-1/3 rounded bg-slate-200 animate-pulse dark:bg-slate-700" />
+          <div class="h-3 w-2/3 rounded bg-slate-100 animate-pulse dark:bg-slate-700" />
         </div>
       </div>
     </div>
 
     <div v-else-if="error" class="flex flex-col items-center justify-center py-10 text-center">
-      <div class="rounded-full bg-red-50 p-3 text-red-600">
+      <div class="rounded-full bg-red-50 p-3 text-red-600 dark:bg-red-950/30 dark:text-red-400">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-6 w-6"
@@ -32,10 +32,10 @@
           />
         </svg>
       </div>
-      <p class="mt-3 text-sm font-semibold text-red-600">Unable to load.</p>
+      <p class="mt-3 text-sm font-semibold text-red-600 dark:text-red-400">Unable to load.</p>
       <button
         type="button"
-        class="mt-3 rounded-xl bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 transition"
+        class="mt-3 rounded-xl bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 transition dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-900/40"
         @click="$emit('retry')"
       >
         Retry
@@ -46,7 +46,7 @@
       v-else-if="emptyCheck === null || emptyCheck === undefined || (Array.isArray(emptyCheck) && emptyCheck.length === 0)"
       class="flex flex-col items-center justify-center py-10 text-center"
     >
-      <div class="rounded-2xl bg-slate-50 p-3 text-slate-300">
+      <div class="rounded-2xl bg-slate-50 p-3 text-slate-300 dark:bg-slate-700 dark:text-slate-500">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-6 w-6"
@@ -62,8 +62,8 @@
           />
         </svg>
       </div>
-      <p class="mt-3 text-sm font-semibold text-slate-500">{{ emptyTitle }}</p>
-      <p class="text-xs text-slate-400">{{ emptyMessage }}</p>
+      <p class="mt-3 text-sm font-semibold text-slate-500 dark:text-slate-400">{{ emptyTitle }}</p>
+      <p class="text-xs text-slate-400 dark:text-slate-500">{{ emptyMessage }}</p>
     </div>
 
     <slot v-else name="default" />

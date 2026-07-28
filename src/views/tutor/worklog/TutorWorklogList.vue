@@ -12,7 +12,7 @@
 
     <!-- Stats -->
     <div v-if="!store.loading && !store.error" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+      <div class="rounded-2xl border border-slate-100 dark:bg-slate-800 bg-white p-4 shadow-sm">
         <div class="flex items-center gap-3">
           <div class="rounded-xl bg-blue-50 p-2.5 text-blue-600">
             <svg
@@ -36,7 +36,7 @@
           </div>
         </div>
       </div>
-      <div class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+      <div class="rounded-2xl border border-slate-100 dark:bg-slate-800 bg-white p-4 shadow-sm">
         <div class="flex items-center gap-3">
           <div class="rounded-xl bg-amber-50 p-2.5 text-amber-600">
             <svg
@@ -60,7 +60,7 @@
           </div>
         </div>
       </div>
-      <div class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+      <div class="rounded-2xl border border-slate-100 dark:bg-slate-800 bg-white p-4 shadow-sm">
         <div class="flex items-center gap-3">
           <div class="rounded-xl bg-emerald-50 p-2.5 text-emerald-600">
             <svg
@@ -80,7 +80,7 @@
           </div>
         </div>
       </div>
-      <div class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+      <div class="rounded-2xl border border-slate-100 dark:bg-slate-800 bg-white p-4 shadow-sm">
         <div class="flex items-center gap-3">
           <div class="rounded-xl bg-orange-50 p-2.5 text-orange-600">
             <svg
@@ -107,7 +107,7 @@
     </div>
 
     <!-- Filters -->
-    <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+    <div class="rounded-2xl border border-slate-100 dark:bg-slate-800 bg-white p-5 shadow-sm">
       <div class="grid gap-3 md:grid-cols-4">
         <div class="md:col-span-2">
           <label class="text-xs font-semibold text-slate-500">Student Name</label>
@@ -115,7 +115,7 @@
             v-model="search"
             type="text"
             placeholder="Search student..."
-            class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="mt-1 h-10 w-full rounded-xl border border-slate-200 dark:bg-slate-800 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
         </div>
         <div>
@@ -123,7 +123,7 @@
           <select
             v-model="statusFilter"
             @change="onFilterChange"
-            class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="mt-1 h-10 w-full rounded-xl border border-slate-200 dark:bg-slate-800 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
             <option value="">All Statuses</option>
             <option value="Submitted">Pending</option>
@@ -136,7 +136,7 @@
           <select
             v-model="weekFilter"
             @change="onFilterChange"
-            class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="mt-1 h-10 w-full rounded-xl border border-slate-200 dark:bg-slate-800 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
             <option value="">All Weeks</option>
             <option v-for="w in weeks" :key="w" :value="String(w)">Week {{ w }}</option>
@@ -168,7 +168,7 @@
         <button
           type="button"
           @click="resetFilters"
-          class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
+          class="inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:bg-slate-800 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
         >
           Reset Filters
         </button>
@@ -176,7 +176,7 @@
     </div>
 
     <!-- Cards grid / loading/error/empty -->
-    <div class="rounded-2xl border border-slate-100 bg-white shadow-sm">
+    <div class="rounded-2xl border border-slate-100 dark:bg-slate-800 bg-white shadow-sm">
       <SkeletonGrid v-if="store.loading" />
       <div
         v-else-if="store.error"
@@ -240,7 +240,7 @@
           <div
             v-for="w in paged"
             :key="w.id"
-            class="rounded-2xl border border-slate-100 bg-white transition hover:shadow-md hover:-translate-y-0.5"
+            class="rounded-2xl border border-slate-100 dark:bg-slate-800 bg-white transition hover:shadow-md hover:-translate-y-0.5"
           >
             <div class="p-5">
               <div class="flex items-start justify-between gap-3">
@@ -353,7 +353,7 @@
               <button
                 :disabled="currentPage === 1"
                 @click="go(currentPage - 1)"
-                class="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition"
+                class="rounded-xl border border-slate-200 dark:bg-slate-800 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition"
               >
                 Previous
               </button>
@@ -366,7 +366,7 @@
                     'min-w-[2rem] rounded-xl px-3 py-2.5 text-sm font-semibold transition',
                     p === currentPage
                       ? 'bg-indigo-600 text-white'
-                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50',
+                      : 'dark:bg-slate-800 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50',
                   ]"
                 >
                   {{ p }}
@@ -375,7 +375,7 @@
               <button
                 :disabled="currentPage >= lastPage"
                 @click="go(currentPage + 1)"
-                class="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition"
+                class="rounded-xl border border-slate-200 dark:bg-slate-800 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition"
               >
                 Next
               </button>
@@ -394,7 +394,7 @@
       role="dialog"
     >
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="closeDetails"></div>
-      <div class="relative w-full max-w-2xl overflow-visible rounded-2xl bg-white shadow-2xl">
+      <div class="relative w-full max-w-2xl overflow-visible rounded-2xl dark:bg-slate-800 bg-white shadow-2xl">
         <div class="flex items-start justify-between gap-3 border-b border-slate-100 p-5">
           <div class="flex items-center gap-3">
             <div class="flex h-11 w-11 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
@@ -425,7 +425,7 @@
               <button
                 type="button"
                 @click="toggleExport"
-                class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
+                class="inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:bg-slate-800 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -451,7 +451,7 @@
               </button>
               <div
                 v-if="showExport"
-                class="absolute right-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg"
+                class="absolute right-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-slate-200 dark:bg-slate-800 bg-white py-1 shadow-lg"
               >
                 <button
                   type="button"
@@ -548,7 +548,7 @@
           </section>
 
           <!-- Worklog Information -->
-          <section class="rounded-2xl border border-slate-100 bg-white p-5">
+          <section class="rounded-2xl border border-slate-100 dark:bg-slate-800 bg-white p-5">
             <div class="mb-3 flex items-center gap-2">
               <span class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-100 text-blue-600">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -626,7 +626,7 @@
                 Attachments ({{ (detailsWorklog.attachments || []).length }})
               </h2>
             </div>
-            <div class="rounded-2xl border border-slate-100 bg-white p-5">
+            <div class="rounded-2xl border border-slate-100 dark:bg-slate-800 bg-white p-5">
               <AttachmentList :attachments="detailsWorklog.attachments || []" />
             </div>
           </section>
@@ -670,7 +670,7 @@
           <button
             type="button"
             @click="closeDetails"
-            class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
+            class="rounded-xl border border-slate-200 dark:bg-slate-800 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition"
           >
             Close
           </button>

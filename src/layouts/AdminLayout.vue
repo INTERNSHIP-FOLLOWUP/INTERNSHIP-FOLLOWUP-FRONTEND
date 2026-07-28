@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen overflow-hidden bg-slate-50/50">
+  <div class="flex h-screen overflow-hidden bg-slate-50/50 dark:bg-slate-900">
     <!-- Mobile overlay -->
     <transition name="fade">
       <div
@@ -214,11 +214,11 @@
     <div class="flex flex-1 flex-col lg:pl-0">
       <!-- Header -->
       <header
-        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-slate-100 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6"
+        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-slate-100 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6 dark:border-slate-700 dark:bg-slate-800/80"
       >
         <div class="flex items-center gap-3">
           <button
-            class="inline-flex items-center justify-center rounded-lg p-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700 lg:hidden"
+            class="inline-flex items-center justify-center rounded-lg p-2 text-slate-500 hover:bg-slate-50 hover:text-slate-700 lg:hidden dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-300"
             @click="sidebarOpen = !sidebarOpen"
             aria-label="Toggle navigation"
           >
@@ -240,16 +240,18 @@
             </svg>
           </button>
           <div class="flex flex-col">
-            <h2 class="text-lg font-bold text-slate-900">{{ pageTitle }}</h2>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100">{{ pageTitle }}</h2>
           </div>
         </div>
 
         <!-- User Controls / Notifications -->
         <div class="flex items-center gap-3">
+          <!-- Language Switcher -->
+          <LanguageSwitcher variant="header" />
           <!-- Dark Mode Toggle -->
           <button
             @click="themeStore.setDarkMode(!themeStore.darkMode)"
-            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-50 hover:text-slate-600"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-50 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
             :title="themeStore.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
           >
             <svg v-if="!themeStore.darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -262,7 +264,7 @@
           <!-- Theme Settings Button -->
           <button
             @click.stop="themeSettingsOpen = !themeSettingsOpen"
-            class="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-50 hover:text-slate-600"
+            class="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-50 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
             :class="{ 'bg-slate-50 text-slate-700 ring-2 ring-slate-200': themeSettingsOpen }"
             title="Theme Settings"
           >
@@ -275,7 +277,7 @@
               />
             </svg>
             <span
-              class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white shadow-sm"
+              class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white shadow-sm dark:border-slate-700"
               :style="{ backgroundColor: themeStore.currentTheme().shades[500] }"
             />
           </button>
@@ -283,7 +285,7 @@
           <!-- Notification Bell -->
           <div class="relative">
             <button
-              class="relative rounded-xl p-2.5 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600 focus:outline-none"
+              class="relative rounded-xl p-2.5 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600 focus:outline-none dark:hover:bg-slate-700 dark:hover:text-slate-300"
             >
               <svg class="h-5.5 w-5.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -307,12 +309,12 @@
           </div>
 
           <!-- Vertical Separator -->
-          <div class="h-6 w-[1px] bg-slate-200" />
+          <div class="h-6 w-[1px] bg-slate-200 dark:bg-slate-700" />
 
           <!-- Dropdown Profile -->
           <div class="relative">
             <button
-              class="flex items-center gap-2.5 rounded-xl p-1.5 transition-colors hover:bg-slate-50"
+              class="flex items-center gap-2.5 rounded-xl p-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-700"
               @click.stop="dropdownOpen = !dropdownOpen"
             >
               <div
@@ -330,10 +332,10 @@
                 <span v-else>{{ userInitials }}</span>
               </div>
               <div class="hidden text-left md:block">
-                <p class="text-sm font-semibold leading-tight text-slate-800">
+                <p class="text-sm font-semibold leading-tight text-slate-800 dark:text-slate-200">
                   {{ user?.name || 'Admin User' }}
                 </p>
-                <p class="text-[11px] font-medium leading-tight text-slate-400">System Admin</p>
+                <p class="text-[11px] font-medium leading-tight text-slate-400 dark:text-slate-500">System Admin</p>
               </div>
               <svg
                 class="h-4 w-4 text-slate-400 transition-transform duration-200"
@@ -355,23 +357,23 @@
             <transition name="dropdown">
               <div
                 v-if="dropdownOpen"
-                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-2xl border border-slate-100 bg-white py-1.5 shadow-xl ring-1 ring-black/5"
+                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-2xl border border-slate-100 bg-white py-1.5 shadow-xl ring-1 ring-black/5 dark:border-slate-700 dark:bg-slate-800"
                 @click="dropdownOpen = false"
               >
-                <div class="border-b border-slate-50 px-4 py-3">
-                  <p class="text-sm font-semibold text-slate-900">
+                <div class="border-b border-slate-50 px-4 py-3 dark:border-slate-700">
+                  <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">
                     {{ user?.name || 'Admin User' }}
                   </p>
-                  <p class="truncate text-xs text-slate-500">
+                  <p class="truncate text-xs text-slate-500 dark:text-slate-400">
                     {{ user?.email || 'admin@example.com' }}
                   </p>
                 </div>
                 <router-link
                   to="/admin/profile"
-                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-50"
+                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
                 >
                   <svg
-                    class="h-4.5 w-4.5 text-slate-400"
+                    class="h-4.5 w-4.5 text-slate-400 dark:text-slate-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -391,10 +393,10 @@
                   </svg>
                   Profile Settings
                 </router-link>
-                <hr class="my-1 border-slate-100" />
+                <hr class="my-1 border-slate-100 dark:border-slate-700" />
                 <button
                   @click="openLogoutModal"
-                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
+                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50 dark:hover:bg-red-950/30"
                 >
                   <svg
                     class="h-4.5 w-4.5 text-red-500"
@@ -439,17 +441,17 @@
         @click="closeLogoutModal"
       >
         <div
-          class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl"
+          class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800"
           @click.stop
         >
-          <h3 id="logout-modal-title" class="text-base font-semibold text-slate-900">
+          <h3 id="logout-modal-title" class="text-base font-semibold text-slate-900 dark:text-slate-100">
             Are you sure you want to log out?
           </h3>
-          <p class="mt-1 text-sm text-slate-600">You can cancel if you changed your mind.</p>
+          <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">You can cancel if you changed your mind.</p>
 
           <div class="mt-5 flex items-center justify-end gap-3">
             <button
-              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
               @click="closeLogoutModal"
               :disabled="loggingOut"
             >
@@ -476,6 +478,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import { NAV_ITEMS, type NavItem } from '@/composables/useNavigation'
 import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 
 const SIDEBAR_COLLAPSED_KEY = 'admin-sidebar-collapsed'
 

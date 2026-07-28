@@ -3,8 +3,8 @@
     <!-- Welcome Header -->
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Welcome back, Admin!</h1>
-        <p class="text-sm text-slate-500">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Welcome back, Admin!</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">
           Monitor your internship activities, student placements, and supervisor updates in
           real-time.
         </p>
@@ -103,12 +103,12 @@
       <div :class="[panelClass, 'lg:col-span-2']">
         <div class="mb-5 flex items-center justify-between">
           <div>
-            <h3 class="text-base font-bold text-slate-950">Placement Distribution</h3>
-            <p class="text-xs text-slate-500">Student count by company placements</p>
+            <h3 class="text-base font-bold text-slate-950 dark:text-slate-100">Placement Distribution</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Student count by company placements</p>
           </div>
           <router-link
             to="/admin/companies"
-            class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800"
+            class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300"
           >
             Manage Companies →
           </router-link>
@@ -118,10 +118,10 @@
           <div
             v-for="placement in dashboardData.companyPlacements"
             :key="placement.name"
-            class="group rounded-lg border border-slate-100 bg-slate-50/40 p-3 transition-colors hover:bg-slate-50"
+            class="group rounded-lg border border-slate-100 bg-slate-50/40 p-3 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-700/30 dark:hover:bg-slate-700/50"
           >
             <div
-              class="mb-2 flex items-center justify-between text-xs font-semibold text-slate-800"
+              class="mb-2 flex items-center justify-between text-xs font-semibold text-slate-800 dark:text-slate-200"
             >
               <span class="flex items-center gap-2">
                 <span class="h-2 w-2 rounded-full bg-primary-500"></span>
@@ -130,7 +130,7 @@
               <span>{{ placement.count }} Students ({{ getPercentage(placement.count) }}%)</span>
             </div>
             <!-- Progress Bar -->
-            <div class="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
+            <div class="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden dark:bg-slate-700">
               <div
                 class="h-full rounded-full bg-gradient-to-r from-primary-500 to-sky-500 transition-all duration-1000"
                 :style="{ width: `${getPercentage(placement.count)}%` }"
@@ -140,7 +140,7 @@
         </div>
         <div v-else class="flex flex-col items-center justify-center py-10 text-center">
           <svg
-            class="mx-auto h-8 w-8 text-slate-300"
+            class="mx-auto h-8 w-8 text-slate-300 dark:text-slate-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -152,7 +152,7 @@
               d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2-2H5a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
             />
           </svg>
-          <p class="mt-2 text-xs font-semibold text-slate-400">
+          <p class="mt-2 text-xs font-semibold text-slate-400 dark:text-slate-500">
             No company placement records found.
           </p>
         </div>
@@ -162,12 +162,12 @@
       <div :class="panelClass">
         <div class="mb-5 flex items-center justify-between">
           <div>
-            <h3 class="text-base font-bold text-slate-950">Batch Statistics</h3>
-            <p class="text-xs text-slate-500">Student metrics per cohort batch</p>
+            <h3 class="text-base font-bold text-slate-950 dark:text-slate-100">Batch Statistics</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Student metrics per cohort batch</p>
           </div>
           <router-link
             to="/admin/batches"
-            class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800"
+            class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300"
           >
             Details →
           </router-link>
@@ -177,11 +177,11 @@
           <div
             v-for="batch in dashboardData.batchEnrollments"
             :key="batch.name"
-            class="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/60 p-3 transition-colors hover:bg-slate-50"
+            class="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/60 p-3 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-700/40 dark:hover:bg-slate-700/60"
           >
             <div class="flex items-center gap-3">
               <div
-                class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600"
+                class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
               >
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -193,13 +193,13 @@
                 </svg>
               </div>
               <div>
-                <h4 class="text-xs font-bold text-slate-900">{{ batch.name }}</h4>
-                <p class="text-[10px] font-semibold text-slate-400">{{ batch.duration }}</p>
+                <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100">{{ batch.name }}</h4>
+                <p class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">{{ batch.duration }}</p>
               </div>
             </div>
             <div class="text-right">
               <span
-                class="inline-flex items-center rounded-md bg-primary-50 px-2.5 py-0.5 text-xs font-bold text-primary-700"
+                class="inline-flex items-center rounded-md bg-primary-50 px-2.5 py-0.5 text-xs font-bold text-primary-700 dark:bg-primary-900/30 dark:text-primary-400"
               >
                 {{ batch.count }} Students
               </span>
@@ -208,7 +208,7 @@
         </div>
         <div v-else class="flex flex-col items-center justify-center py-10 text-center">
           <svg
-            class="mx-auto h-8 w-8 text-slate-300"
+            class="mx-auto h-8 w-8 text-slate-300 dark:text-slate-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -220,7 +220,7 @@
               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
-          <p class="mt-2 text-xs font-semibold text-slate-400">No batches registered.</p>
+          <p class="mt-2 text-xs font-semibold text-slate-400 dark:text-slate-500">No batches registered.</p>
         </div>
       </div>
     </div>
@@ -229,12 +229,12 @@
     <div :class="panelClass">
       <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 class="text-base font-bold text-slate-950">Academic Tutors</h3>
-          <p class="text-xs text-slate-500">Supervisors tracking current internship progress</p>
+          <h3 class="text-base font-bold text-slate-950 dark:text-slate-100">Academic Tutors</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Supervisors tracking current internship progress</p>
         </div>
         <button
           @click="handleQuickAction('assign-tutors')"
-          class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-primary-50 px-3 text-xs font-semibold text-primary-700 transition-colors hover:bg-primary-100"
+          class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-primary-50 px-3 text-xs font-semibold text-primary-700 transition-colors hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/50"
         >
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -253,7 +253,7 @@
         <table class="w-full border-collapse text-left text-sm">
           <thead>
             <tr
-              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
+              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-500"
             >
               <th class="px-4 py-3">Tutor Name</th>
               <th class="px-4 py-3">Email Address</th>
@@ -261,39 +261,39 @@
               <th class="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-50">
+          <tbody class="divide-y divide-slate-50 dark:divide-slate-700/50">
             <tr
               v-for="tutor in dashboardData.tutors"
               :key="tutor.id"
-              class="hover:bg-slate-50/30 transition-colors"
+              class="hover:bg-slate-50/30 transition-colors dark:hover:bg-slate-700/30"
             >
-              <td class="whitespace-nowrap px-4 py-3 font-semibold text-slate-900">
+              <td class="whitespace-nowrap px-4 py-3 font-semibold text-slate-900 dark:text-slate-100">
                 <div class="flex items-center gap-3">
                   <div
-                    class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-600 text-xs"
+                    class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-600 text-xs dark:bg-slate-700 dark:text-slate-400"
                   >
                     {{ getInitials(tutor.name) }}
                   </div>
                   {{ tutor.name }}
                 </div>
               </td>
-              <td class="whitespace-nowrap px-4 py-3 text-slate-500 font-medium max-w-[200px] truncate">
+              <td class="whitespace-nowrap px-4 py-3 text-slate-500 font-medium max-w-[200px] truncate dark:text-slate-400">
                 {{ tutor.email }}
               </td>
               <td class="whitespace-nowrap px-4 py-3">
                 <div class="flex items-center gap-2">
                   <span
-                    class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary-50 text-xs font-bold text-primary-700"
+                    class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary-50 text-xs font-bold text-primary-700 dark:bg-primary-900/30 dark:text-primary-400"
                   >
                     {{ tutor.studentsCount }}
                   </span>
-                  <span class="text-xs text-slate-400">students supervised</span>
+                  <span class="text-xs text-slate-400 dark:text-slate-500">students supervised</span>
                 </div>
               </td>
               <td class="whitespace-nowrap px-4 py-3 text-right">
                 <button
                   @click="handleTutorManage()"
-                  class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800"
+                  class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800 dark:text-primary-400 dark:hover:bg-primary-900/30 dark:hover:text-primary-300"
                 >
                   Manage Assignments
                 </button>
@@ -304,10 +304,10 @@
       </div>
       <div
         v-else
-        class="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 py-10 text-center"
+        class="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 py-10 text-center dark:border-slate-700 dark:bg-slate-800/50"
       >
         <svg
-          class="mx-auto h-10 w-10 text-slate-300"
+          class="mx-auto h-10 w-10 text-slate-300 dark:text-slate-600"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -319,22 +319,22 @@
             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
           />
         </svg>
-        <p class="mt-2 text-xs font-semibold text-slate-500">No academic tutors assigned yet.</p>
+        <p class="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">No academic tutors assigned yet.</p>
       </div>
     </div>
 
     <!-- Recent Activity Trail -->
     <div :class="panelClass">
       <div class="mb-5">
-        <h3 class="text-base font-bold text-slate-950">Recent System Activity</h3>
-        <p class="text-xs text-slate-500">
+        <h3 class="text-base font-bold text-slate-950 dark:text-slate-100">Recent System Activity</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
           Live timeline of actions across company placements and logs
         </p>
       </div>
 
       <!-- Activities Timeline -->
       <div
-        class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100"
+        class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100 dark:before:bg-slate-700"
         v-if="dashboardData.recentActivity.length > 0"
       >
         <div
@@ -350,14 +350,14 @@
           </div>
 
           <div class="space-y-0.5">
-            <p class="text-xs text-slate-700 font-semibold">
-              <span class="font-bold text-slate-900">{{ activity.actor }}</span>
+            <p class="text-xs text-slate-700 font-semibold dark:text-slate-300">
+              <span class="font-bold text-slate-900 dark:text-slate-100">{{ activity.actor }}</span>
               {{ activity.action }}
-              <span class="font-bold text-slate-900" v-if="activity.target">{{
+              <span class="font-bold text-slate-900 dark:text-slate-100" v-if="activity.target">{{
                 activity.target
               }}</span>
             </p>
-            <p class="text-[10px] text-slate-400 font-semibold">{{ activity.time }}</p>
+            <p class="text-[10px] text-slate-400 font-semibold dark:text-slate-500">{{ activity.time }}</p>
           </div>
 
           <div>
@@ -372,7 +372,7 @@
       </div>
       <div v-else class="flex flex-col items-center justify-center py-10 text-center">
         <svg
-          class="mx-auto h-8 w-8 text-slate-300"
+          class="mx-auto h-8 w-8 text-slate-300 dark:text-slate-600"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -384,7 +384,7 @@
             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <p class="mt-2 text-xs font-semibold text-slate-400">No recent system activities found.</p>
+        <p class="mt-2 text-xs font-semibold text-slate-400 dark:text-slate-500">No recent system activities found.</p>
       </div>
     </div>
   </div>
@@ -400,7 +400,7 @@ const router = useRouter()
 
 const loading = ref(false)
 const panelClass =
-  'rounded-lg border border-slate-200/80 bg-white p-5 shadow-sm ring-1 ring-white/70 transition-shadow duration-200 hover:shadow-md'
+  'rounded-lg border border-slate-200/80 bg-white p-5 shadow-sm ring-1 ring-white/70 transition-shadow duration-200 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:ring-slate-800/70'
 
 interface DashboardData {
   totalStudents: number

@@ -24,15 +24,15 @@ const props = withDefaults(
 const badgeClass = computed(() => {
   switch (props.status) {
     case 'Pending':
-      return 'bg-yellow-50 text-yellow-700'
+      return 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950/30 dark:text-yellow-400'
     case 'Reviewed':
-      return 'bg-blue-50 text-blue-700'
+      return 'bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400'
     case 'Approved':
-      return 'bg-green-50 text-green-700'
+      return 'bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400'
     case 'Rejected':
-      return 'bg-red-50 text-red-700'
+      return 'bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400'
     default:
-      return 'bg-slate-50 text-slate-600'
+      return 'bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
   }
 })
 

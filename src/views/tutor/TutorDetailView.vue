@@ -3,7 +3,7 @@
     <div class="flex items-center gap-3 text-sm mb-4">
       <router-link
         to="/admin/tutors"
-        class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+        class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 dark:text-slate-400 text-slate-600 transition-colors hover:dark:bg-slate-600 bg-slate-100 hover:dark:text-slate-100 text-slate-900"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -15,26 +15,26 @@
         </svg>
         Back to Tutors
       </router-link>
-      <span class="text-slate-300">/</span>
-      <span class="font-medium text-slate-900">Tutor Profile</span>
+      <span class="dark:text-slate-500 text-slate-300">/</span>
+      <span class="font-medium dark:text-slate-100 text-slate-900">Tutor Profile</span>
     </div>
 
     <div v-if="loading" class="flex items-center justify-center py-20">
-      <p class="text-sm text-slate-500">Loading...</p>
+      <p class="text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">Loading...</p>
     </div>
 
     <template v-else-if="data">
-      <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="rounded-2xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div class="flex items-center gap-5">
           <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary-100 to-blue-100 text-xl font-bold text-primary-700 shadow-xs ring-2 ring-white">
             {{ initials }}
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
-              <h1 class="text-xl font-bold text-slate-900">{{ data.tutor.name }}</h1>
+              <h1 class="text-xl font-bold dark:text-slate-100 text-slate-900">{{ data.tutor.name }}</h1>
               <span
                 class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
-                :class="(data.tutor.status || data.tutor.user?.status) === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'"
+                :class="(data.tutor.status || data.tutor.user?.status) === 'active' ? 'bg-emerald-50 text-emerald-700' : 'dark:bg-slate-600 bg-slate-100 dark:text-slate-400 text-slate-600'"
               >
                 <span class="h-1.5 w-1.5 rounded-full" :class="(data.tutor.status || data.tutor.user?.status) === 'active' ? 'bg-emerald-500' : 'bg-slate-400'"></span>
                 {{ data.tutor.status || data.tutor.user?.status || 'active' }}
@@ -47,9 +47,9 @@
                 {{ data.tutor.gender || data.tutor.user?.gender }}
               </span>
             </div>
-            <p class="mt-1 text-sm text-slate-500 flex items-center gap-2 flex-wrap">
+            <p class="mt-1 text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500 flex items-center gap-2 flex-wrap">
               <span>{{ data.tutor.email }}</span>
-              <span class="text-slate-300">&middot;</span>
+              <span class="dark:text-slate-500 text-slate-300">&middot;</span>
               <span>{{ data.tutor.phone || data.tutor.user?.phone || 'No phone' }}</span>
             </p>
             <p class="mt-1.5 text-sm font-semibold text-primary-600">
@@ -72,36 +72,36 @@
       </div>
 
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm flex items-center gap-4">
+        <div class="rounded-xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white p-5 shadow-sm flex items-center gap-4">
           <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
           </div>
           <div>
-            <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Assigned Students</p>
-            <p class="text-2xl font-bold text-slate-900 mt-0.5">{{ data.students.length }}</p>
+            <p class="text-xs dark:text-slate-500 text-slate-400 uppercase tracking-wider font-semibold">Assigned Students</p>
+            <p class="text-2xl font-bold dark:text-slate-100 text-slate-900 mt-0.5">{{ data.students.length }}</p>
           </div>
         </div>
-        <div class="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm flex items-center gap-4">
+        <div class="rounded-xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white p-5 shadow-sm flex items-center gap-4">
           <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
           <div>
-            <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Supervised Assignments</p>
-            <p class="text-2xl font-bold text-slate-900 mt-0.5">{{ data.assignments.length }}</p>
+            <p class="text-xs dark:text-slate-500 text-slate-400 uppercase tracking-wider font-semibold">Supervised Assignments</p>
+            <p class="text-2xl font-bold dark:text-slate-100 text-slate-900 mt-0.5">{{ data.assignments.length }}</p>
           </div>
         </div>
       </div>
 
-      <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-        <h2 class="text-base font-bold text-slate-900 mb-4">Assigned Students ({{ data.students.length }})</h2>
+      <div class="rounded-2xl border dark:border-slate-600 border-slate-200/80 dark:bg-slate-800 bg-white p-6 shadow-sm">
+        <h2 class="text-base font-bold dark:text-slate-100 text-slate-900 mb-4">Assigned Students ({{ data.students.length }})</h2>
         <div v-if="data.students.length > 0" class="overflow-x-auto">
           <table class="w-full text-left text-sm">
             <thead>
-              <tr class="border-b border-slate-100 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <tr class="border-b dark:border-slate-700 border-slate-100 text-xs font-semibold uppercase tracking-wider dark:text-slate-500 text-slate-400">
                 <th class="py-3 pr-4 font-medium">Name</th>
                 <th class="py-3 pr-4 font-medium">Student ID</th>
                 <th class="py-3 pr-4 font-medium">Batch</th>
@@ -111,39 +111,39 @@
                 <th class="py-3 text-right font-medium"></th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y dark:divide-slate-700 divide-slate-50">
               <template v-for="s in data.students" :key="s.id">
-                <tr @click="toggleStudent(s.id)" class="cursor-pointer hover:bg-slate-50/50">
-                  <td class="py-3 pr-4 font-semibold text-slate-900">{{ s.name }}</td>
-                  <td class="py-3 pr-4 text-slate-500">{{ formatStudentId(s.student_code, s.batch) }}</td>
-                  <td class="py-3 pr-4 text-slate-500">{{ s.batch }}</td>
-                  <td class="py-3 pr-4 text-slate-500">{{ s.worklogs_count }}</td>
-                  <td class="py-3 pr-4 text-slate-500">{{ s.issues_count }}</td>
+                <tr @click="toggleStudent(s.id)" class="cursor-pointer hover:dark:bg-slate-700 bg-slate-50/50">
+                  <td class="py-3 pr-4 font-semibold dark:text-slate-100 text-slate-900">{{ s.name }}</td>
+                  <td class="py-3 pr-4 dark:dark:text-slate-500 text-slate-400 text-slate-500">{{ formatStudentId(s.student_code, s.batch) }}</td>
+                  <td class="py-3 pr-4 dark:dark:text-slate-500 text-slate-400 text-slate-500">{{ s.batch }}</td>
+                  <td class="py-3 pr-4 dark:dark:text-slate-500 text-slate-400 text-slate-500">{{ s.worklogs_count }}</td>
+                  <td class="py-3 pr-4 dark:dark:text-slate-500 text-slate-400 text-slate-500">{{ s.issues_count }}</td>
                   <td class="py-3 pr-4">
                     <span
                       class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
-                      :class="(s.user?.status || s.status || 'active') === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'"
+                      :class="(s.user?.status || s.status || 'active') === 'active' ? 'bg-emerald-50 text-emerald-700' : 'dark:bg-slate-600 bg-slate-100 dark:text-slate-400 text-slate-600'"
                     >
                       <span class="h-1.5 w-1.5 rounded-full" :class="(s.user?.status || s.status || 'active') === 'active' ? 'bg-emerald-500' : 'bg-slate-400'"></span>
                       {{ s.user?.status || s.status || 'active' }}
                     </span>
                   </td>
                   <td class="py-3 text-right">
-                    <svg class="ml-auto h-4 w-4 text-slate-400 transition-transform" :class="expanded.has(s.id) ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="ml-auto h-4 w-4 dark:text-slate-500 text-slate-400 transition-transform" :class="expanded.has(s.id) ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                   </td>
                 </tr>
                 <tr v-if="expanded.has(s.id)">
-                  <td colspan="7" class="bg-slate-50/50 px-6 py-4">
-                    <div v-if="!studentActivity[s.user_id]" class="text-sm text-slate-500">Loading tracking data...</div>
+                  <td colspan="7" class="dark:bg-slate-700 bg-slate-50/50 px-6 py-4">
+                    <div v-if="!studentActivity[s.user_id]" class="text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">Loading tracking data...</div>
                     <div v-else class="space-y-2">
-                      <div v-if="studentActivity[s.user_id].assignment" class="text-xs text-slate-500">
-                        <span class="font-semibold text-slate-700">Internship:</span>
+                      <div v-if="studentActivity[s.user_id].assignment" class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">
+                        <span class="font-semibold dark:text-slate-200 text-slate-700">Internship:</span>
                         {{ studentActivity[s.user_id].assignment.company?.company_name }} — {{ studentActivity[s.user_id].assignment.position }}
                       </div>
-                      <div v-if="studentActivity[s.user_id].average_score" class="text-xs text-slate-500">
-                        <span class="font-semibold text-slate-700">Avg Score:</span>
+                      <div v-if="studentActivity[s.user_id].average_score" class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">
+                        <span class="font-semibold dark:text-slate-200 text-slate-700">Avg Score:</span>
                         {{ studentActivity[s.user_id].average_score }}/10
                       </div>
                     </div>
@@ -153,12 +153,12 @@
             </tbody>
           </table>
         </div>
-        <p v-else class="text-sm text-slate-400">No students assigned.</p>
+        <p v-else class="text-sm dark:text-slate-500 text-slate-400">No students assigned.</p>
       </div>
     </template>
 
-    <div v-else-if="!loading" class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center">
-      <p class="text-sm text-slate-500">Tutor not found.</p>
+    <div v-else-if="!loading" class="rounded-xl border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-6 py-12 text-center">
+      <p class="text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">Tutor not found.</p>
     </div>
   </div>
 </template>

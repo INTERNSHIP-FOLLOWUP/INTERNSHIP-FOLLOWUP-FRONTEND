@@ -511,6 +511,9 @@ import { useThemeStore } from '@/stores/theme'
 import { authService } from '@/services/auth'
 import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const route = useRoute()
 const auth = useAuthStore()
@@ -584,6 +587,19 @@ const userInitials = computed(() => {
 })
 
 const pageTitle = computed(() => {
+  const map: Record<string, string> = {
+    CompanyDashboard: 'nav.company.dashboard',
+    CompanyStudents: 'nav.company.assignedStudents',
+    CompanyEvaluations: 'nav.company.evaluations',
+    CompanyFeedback: 'nav.company.feedback',
+    CompanyInternshipInfo: 'nav.company.internshipInfo',
+    CompanyMessages: 'nav.company.messages',
+    CompanyProfile: 'nav.company.companyProfile',
+  }
+  const name = route.name
+  if (typeof name === 'string' && map[name]) {
+    return t(map[name])
+  }
   const title = route.meta?.title
   return typeof title === 'string' ? title : 'Dashboard'
 })

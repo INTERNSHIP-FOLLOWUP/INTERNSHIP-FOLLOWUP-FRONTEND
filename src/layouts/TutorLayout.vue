@@ -349,6 +349,9 @@ import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import UserAvatar from '@/components/common/UserAvatar.vue'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const route = useRoute()
 const auth = useAuthStore()
@@ -420,6 +423,23 @@ const messagesSubItems = [
 ]
 
 const pageTitle = computed(() => {
+  const map: Record<string, string> = {
+    TutorDashboard: 'nav.tutor.dashboard',
+    TutorStudents: 'nav.tutor.myStudents',
+    TutorStudentDetail: 'nav.tutor.studentDetails',
+    TutorWorklogs: 'nav.tutor.worklogs',
+    TutorWorklogDetail: 'nav.tutor.reviewWorklog',
+    TutorFollowups: 'nav.tutor.followups',
+    TutorIssues: 'nav.tutor.issues',
+    TutorFeedback: 'nav.tutor.companyFeedback',
+    TutorMessages: 'nav.tutor.messages',
+    TutorSelfProfile: 'nav.tutor.profile',
+    TutorProfile: 'nav.tutor.profile',
+  }
+  const name = route.name
+  if (typeof name === 'string' && map[name]) {
+    return t(map[name])
+  }
   const title = route.meta?.title
   return typeof title === 'string' ? title : 'Dashboard'
 })

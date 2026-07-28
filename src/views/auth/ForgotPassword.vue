@@ -9,10 +9,10 @@
             class="mx-auto w-20 h-20 object-contain mb-5"
           />
           <h1 class="text-2xl sm:text-[26px] font-bold dark:text-slate-100 text-slate-900 leading-snug tracking-tight">
-            Forgot Password
+            {{ $t('auth.forgotPassword.title') }}
           </h1>
           <p class="mt-2 text-sm dark:text-slate-500 text-slate-400 font-normal">
-            Enter your email address and we'll send you a link to reset your password.
+            {{ $t('auth.forgotPassword.subtitle') }}
           </p>
         </div>
 
@@ -20,9 +20,9 @@
           <div class="space-y-4">
             <InputField
               v-model="form.email"
-              label="Email Address"
+              :label="$t('auth.forgotPassword.emailLabel')"
               type="email"
-              placeholder="Enter your email"
+              :placeholder="$t('auth.forgotPassword.emailPlaceholder')"
               required
               :error="errors.email"
               autocomplete="email"
@@ -91,7 +91,7 @@
 
           <div class="mt-6">
             <PrimaryButton type="submit" :loading="loading" :disabled="loading || sent">
-              {{ sent ? 'Email Sent' : 'Send Reset Link' }}
+              {{ sent ? $t('auth.forgotPassword.emailSent') : $t('auth.forgotPassword.sendButton') }}
             </PrimaryButton>
           </div>
         </form>
@@ -110,7 +110,7 @@
                   d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
               </svg>
-              Back to Sign In
+              {{ $t('auth.forgotPassword.backToSignIn') }}
             </span>
           </router-link>
         </div>

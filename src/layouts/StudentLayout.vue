@@ -316,6 +316,9 @@ import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const route = useRoute()
 const auth = useAuthStore()
@@ -363,6 +366,20 @@ const userInitials = computed(() => {
 })
 
 const pageTitle = computed(() => {
+  const map: Record<string, string> = {
+    StudentDashboard: 'nav.student.dashboard',
+    StudentWorklogs: 'nav.student.worklogs',
+    StudentWorklogDetail: 'nav.student.worklogDetail',
+    StudentWorklogEdit: 'nav.student.editWorklog',
+    StudentFollowups: 'nav.student.followups',
+    StudentIssues: 'nav.student.issues',
+    StudentMessages: 'nav.student.messages',
+    StudentProfile: 'nav.student.profile',
+  }
+  const name = route.name
+  if (typeof name === 'string' && map[name]) {
+    return t(map[name])
+  }
   const title = route.meta?.title
   return typeof title === 'string' ? title : 'Dashboard'
 })

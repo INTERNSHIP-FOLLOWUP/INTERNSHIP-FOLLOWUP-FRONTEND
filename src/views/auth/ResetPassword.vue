@@ -9,18 +9,18 @@
             class="mx-auto w-20 h-20 object-contain mb-5"
           />
           <h1 class="text-2xl sm:text-[26px] font-bold dark:text-slate-100 text-slate-900 leading-snug tracking-tight">
-            Reset Password
+            {{ $t('auth.resetPassword.title') }}
           </h1>
-          <p class="mt-2 text-sm dark:text-slate-500 text-slate-400 font-normal">Enter your new password below.</p>
+          <p class="mt-2 text-sm dark:text-slate-500 text-slate-400 font-normal">{{ $t('auth.resetPassword.subtitle') }}</p>
         </div>
 
         <form @submit.prevent="handleSubmit" novalidate>
           <div class="space-y-4">
             <InputField
               v-model="form.email"
-              label="Email Address"
+              :label="$t('auth.resetPassword.emailLabel')"
               type="email"
-              placeholder="Enter your email"
+              :placeholder="$t('auth.resetPassword.emailPlaceholder')"
               required
               :error="errors.email"
               autocomplete="email"
@@ -46,7 +46,7 @@
 
             <PasswordInput
               v-model="form.password"
-              label="New Password"
+              :label="$t('auth.resetPassword.newPasswordLabel')"
               placeholder="Enter new password"
               required
               :error="errors.password"
@@ -57,8 +57,8 @@
 
             <PasswordInput
               v-model="form.passwordConfirmation"
-              label="Confirm Password"
-              placeholder="Confirm new password"
+              :label="$t('auth.resetPassword.confirmPasswordLabel')"
+              :placeholder="$t('auth.resetPassword.confirmPasswordPlaceholder')"
               required
               :error="errors.passwordConfirmation"
               autocomplete="new-password"
@@ -112,7 +112,7 @@
 
           <div class="mt-6">
             <PrimaryButton type="submit" :loading="loading" :disabled="loading || !canSubmit">
-              {{ successMessage ? 'Password Reset' : 'Reset Password' }}
+              {{ successMessage ? $t('auth.resetPassword.successMessage') : $t('auth.resetPassword.submitButton') }}
             </PrimaryButton>
           </div>
         </form>
@@ -131,7 +131,7 @@
                   d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
               </svg>
-              Back to Sign In
+              {{ $t('auth.resetPassword.backToSignIn') }}
             </span>
           </router-link>
         </div>

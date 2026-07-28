@@ -479,6 +479,9 @@ import { useThemeStore } from '@/stores/theme'
 import { NAV_ITEMS, type NavItem } from '@/composables/useNavigation'
 import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const SIDEBAR_COLLAPSED_KEY = 'admin-sidebar-collapsed'
 
@@ -588,6 +591,22 @@ const userInitials = computed(() => {
 })
 
 const pageTitle = computed(() => {
+  const map: Record<string, string> = {
+    AdminDashboard: 'nav.admin.dashboard',
+    AdminUsers: 'nav.admin.users',
+    AdminStudents: 'nav.admin.students',
+    AdminTutors: 'nav.admin.tutors',
+    AdminCompanies: 'nav.admin.companies',
+    AdminBatches: 'nav.admin.batches',
+    AdminBatchDetail: 'nav.admin.batches',
+    AdminAssignments: 'nav.admin.internshipAssignments',
+    AdminReports: 'nav.admin.reports',
+    AdminSupervisors: 'nav.admin.supervisors',
+  }
+  const name = route.name
+  if (typeof name === 'string' && map[name]) {
+    return t(map[name])
+  }
   const title = route.meta?.title
   return typeof title === 'string' ? title : 'Admin Dashboard'
 })

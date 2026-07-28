@@ -283,7 +283,7 @@
               Edit
             </router-link>
             <button
-              @click="deleteStudent(student.id)"
+              @click="confirmAction('delete', student)"
               class="flex-1 rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-50"
             >
               Delete
@@ -323,7 +323,7 @@
     </div>
 
     <!-- Delete Confirmation -->
-    <ConfirmDialog :show="dialog.show.value" :title="dialog.title.value" :message="dialog.message.value" :confirm-text="dialog.confirmText.value" :cancel-text="dialog.cancelText.value" :loading="dialog.loading.value" :error="dialog.error.value" @confirm="handleConfirm" @cancel="dialog.cancel()" />
+    <ConfirmDialog :show="dialog.show.value" :title="dialog.title.value" :message="dialog.message.value" :confirm-text="dialog.confirmText.value" :cancel-text="dialog.cancelText.value" :loading="dialog.loading.value" :error="dialog.error.value" @confirm="handleConfirmAction" @cancel="dialog.cancel()" />
 
     <!-- Import Students Modal -->
     <ImportStudentsModal :show="showImportModal" @close="showImportModal = false; fetchPage({ page: 1 })" />
@@ -443,7 +443,6 @@ const isSelectedStudentInactive = computed(() => {
 })
 const statusFilter = ref('')
 const genderFilter = ref('')
-let deleteTargetId: number | null = null
 
 const hasActiveFilters = computed(
   () => {
@@ -618,24 +617,6 @@ function clearFilters(): void {
   statusFilter.value = ''
   genderFilter.value = ''
   resetPage()
-}
-
-async function deleteStudent(id: number): Promise<void> {
-  deleteTargetId = id
-  const confirmed = await dialog.open({
-    title: 'Delete Student',
-    message: 'Are you sure you want to delete this student? This action cannot be undone.',
-  })
-  if (!confirmed) return
-  await handleConfirm()
-}
-
-async function handleConfirm(): Promise<void> {
-  if (deleteTargetId === null) return
-  await dialog.confirmAsync(async () => {
-    await store.deleteStudent(deleteTargetId!)
-    toast.success('Student deleted successfully.')
-  })
 }
 
 const showImportModal = ref(false)

@@ -82,6 +82,7 @@
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100">
         <option value="">All Statuses</option>
         <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
         <option value="deactivated">Deactivated</option>
       </select>
 
@@ -227,7 +228,7 @@
                           Edit Student
                         </button>
 
-                        <button v-if="!student.deleted_at" type="button" @click.stop="openKebabId = null; confirmAction('deactivate', student)"
+                        <button v-if="!student.deleted_at && !student.user?.deleted_at && student.status !== 'deactivated' && student.user?.status !== 'deactivated'" type="button" @click.stop="openKebabId = null; confirmAction('deactivate', student)"
                           class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
                           <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
@@ -558,29 +559,32 @@ function getGender(student: Student): string {
 
 function getStatusText(student: Student): string {
   if (student.deleted_at || student.user?.deleted_at) return 'Deactivated'
-  const st = student.user?.status || student.status || student.student_profile?.status || 'active'
-  if (st.toLowerCase() === 'inactive' || st.toLowerCase() === 'deactivated') return 'Deactivated'
+  const st = (student.user?.status || student.status || student.student_profile?.status || 'active').toLowerCase()
+  if (st === 'deactivated') return 'Deactivated'
+  if (st === 'inactive') return 'Inactive'
   return st.charAt(0).toUpperCase() + st.slice(1)
 }
 
 function getStatusBadgeClass(student: Student): string {
-  if (student.deleted_at || student.user?.deleted_at) return 'bg-rose-50 text-rose-700'
+  if (student.deleted_at || student.user?.deleted_at) return 'bg-rose-50 text-rose-700 border border-rose-200/60'
   const st = (student.user?.status || student.status || student.student_profile?.status || 'active').toLowerCase()
   switch (st) {
-    case 'active': return 'bg-emerald-50 text-emerald-700'
-    case 'inactive': return 'bg-slate-100 text-slate-600'
-    case 'graduated': return 'bg-blue-50 text-blue-700'
-    case 'suspended': return 'bg-rose-50 text-rose-700'
-    default: return 'bg-emerald-50 text-emerald-700'
+    case 'active': return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+    case 'inactive': return 'bg-amber-50 text-amber-700 border border-amber-200/60'
+    case 'deactivated': return 'bg-rose-50 text-rose-700 border border-rose-200/60'
+    case 'graduated': return 'bg-blue-50 text-blue-700 border border-blue-200/60'
+    case 'suspended': return 'bg-rose-50 text-rose-700 border border-rose-200/60'
+    default: return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
   }
 }
 
 function getStatusDotClass(student: Student): string {
-  if (student.deleted_at) return 'bg-rose-500'
-  const st = (student.status || student.student_profile?.status || 'active').toLowerCase()
+  if (student.deleted_at || student.user?.deleted_at) return 'bg-rose-500'
+  const st = (student.user?.status || student.status || student.student_profile?.status || 'active').toLowerCase()
   switch (st) {
     case 'active': return 'bg-emerald-500'
-    case 'inactive': return 'bg-slate-400'
+    case 'inactive': return 'bg-amber-500'
+    case 'deactivated': return 'bg-rose-500'
     case 'graduated': return 'bg-blue-500'
     case 'suspended': return 'bg-rose-500'
     default: return 'bg-emerald-500'
@@ -806,9 +810,9 @@ async function fetchStudents() {
     }
     if (statusFilter.value) {
       if (statusFilter.value === 'deactivated') {
-        list = list.filter(s => !!s.deleted_at || !!s.user?.deleted_at)
+        list = list.filter(s => !!s.deleted_at || !!s.user?.deleted_at || (s.user?.status || s.status || '').toLowerCase() === 'deactivated')
       } else {
-        list = list.filter(s => (s.user?.status || s.status || s.student_profile?.status || 'active').toLowerCase() === statusFilter.value.toLowerCase())
+        list = list.filter(s => !s.deleted_at && !s.user?.deleted_at && (s.user?.status || s.status || s.student_profile?.status || 'active').toLowerCase() === statusFilter.value.toLowerCase())
       }
     }
 

@@ -298,19 +298,19 @@
                 <td class="whitespace-nowrap px-6 py-4">
                   <span
                     class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-extrabold"
-                    :class="supervisor.deleted_at ? 'bg-rose-50 text-rose-700 border border-rose-200/60' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'"
+                    :class="getSupervisorStatusBadgeClass(supervisor)"
                   >
                     <span class="relative flex h-2 w-2">
                       <span
-                        v-if="!supervisor.deleted_at"
+                        v-if="!supervisor.deleted_at && supervisor.status !== 'inactive' && supervisor.status !== 'deactivated'"
                         class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
                       />
                       <span
                         class="relative inline-flex rounded-full h-2 w-2"
-                        :class="supervisor.deleted_at ? 'bg-rose-500' : 'bg-emerald-500'"
+                        :class="getSupervisorStatusDotClass(supervisor)"
                       />
                     </span>
-                    {{ supervisor.deleted_at ? 'Deactivated' : 'Active' }}
+                    {{ getSupervisorStatusText(supervisor) }}
                   </span>
                 </td>
 
@@ -514,6 +514,8 @@ interface Supervisor {
   email: string
   phone: string | null
   avatar_url?: string | null
+  status?: string
+  must_change_password?: boolean
   role?: { id: number; name: string }
   supervisor_profile?: SupervisorProfile
   company_name?: string
@@ -572,6 +574,24 @@ function getSupervisorName(supervisor: Supervisor): string {
 function getInitials(name: string): string {
   if (!name) return 'SV'
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
+}
+
+function getSupervisorStatusText(supervisor: Supervisor): string {
+  if (supervisor.deleted_at || supervisor.status === 'deactivated') return 'Deactivated'
+  if (supervisor.status === 'inactive') return 'Inactive'
+  return 'Active'
+}
+
+function getSupervisorStatusBadgeClass(supervisor: Supervisor): string {
+  if (supervisor.deleted_at || supervisor.status === 'deactivated') return 'bg-rose-50 text-rose-700 border border-rose-200/60'
+  if (supervisor.status === 'inactive') return 'bg-amber-50 text-amber-700 border border-amber-200/60'
+  return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+}
+
+function getSupervisorStatusDotClass(supervisor: Supervisor): string {
+  if (supervisor.deleted_at || supervisor.status === 'deactivated') return 'bg-rose-500'
+  if (supervisor.status === 'inactive') return 'bg-amber-500'
+  return 'bg-emerald-500'
 }
 
 function getCompanyName(supervisor: Supervisor): string {

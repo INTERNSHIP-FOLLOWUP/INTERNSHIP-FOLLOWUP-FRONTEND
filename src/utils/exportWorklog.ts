@@ -23,7 +23,8 @@ function fmtDate(d?: string): string {
 
 function baseFilename(w: Worklog): string {
   const name = (w.student?.name || 'worklog').toString().replace(/[^\w-]+/g, '_')
-  return `worklog_${w.id}_week${w.week_number}_${name}`
+  const dateStr = w.work_date?.replace(/-/g, '') || `worklog_${w.id}`
+  return `worklog_${w.id}_${dateStr}_${name}`
 }
 
 function downloadBlob(blob: Blob, filename: string): void {

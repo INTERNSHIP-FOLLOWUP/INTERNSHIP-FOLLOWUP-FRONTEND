@@ -49,31 +49,56 @@
 
       <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
                 <h2 class="text-sm font-bold text-slate-900">Worklog</h2>
-                <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
+                <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-4">
                     <div>
-                        <p class="text-xs font-semibold text-slate-500">Week</p>
-                        <p class="text-sm font-bold text-slate-900">{{ store.tutorWorklog.week_number }}</p>
+                        <p class="text-xs font-semibold text-slate-500">Date</p>
+                        <p class="text-sm font-bold text-slate-900">{{ store.tutorWorklog.work_date ? formatDate(store.tutorWorklog.work_date) : '—' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500">Time</p>
+                        <p class="text-sm font-bold text-slate-900">{{ formatTimeRange(store.tutorWorklog.work_time) }}</p>
                     </div>
                     <div>
                         <p class="text-xs font-semibold text-slate-500">Submitted</p>
-                        <p class="text-sm font-bold text-slate-900">{{ formatDate(store.tutorWorklog.submitted_at) }}</p>
+                        <p class="text-sm font-bold text-slate-900">{{ formatDate(store.tutorWorklog.submitted_at || store.tutorWorklog.created_at) }}</p>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-slate-500">Current Status</p>
+                        <p class="text-xs font-semibold text-slate-500">Status</p>
                         <div class="mt-1">
                             <WorklogStatusBadge :status="store.tutorWorklog.status" />
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-4">
-                    <p class="text-xs font-semibold text-slate-500">Description</p>
-                    <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.description }}</p>
+                <div class="mt-4" v-if="store.tutorWorklog.work_activities">
+                    <p class="text-xs font-semibold text-slate-500">Work Activities</p>
+                    <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.work_activities }}</p>
                 </div>
 
-                <div class="mt-4" v-if="store.tutorWorklog.challenges">
-                    <p class="text-xs font-semibold text-slate-500">Challenges</p>
-                    <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.challenges }}</p>
+                <div class="mt-4" v-if="store.tutorWorklog.what_learned">
+                    <p class="text-xs font-semibold text-slate-500">What did you learn?</p>
+                    <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.what_learned }}</p>
+                </div>
+
+                <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2" v-if="store.tutorWorklog.difficulties || store.tutorWorklog.solutions">
+                    <div v-if="store.tutorWorklog.difficulties">
+                        <p class="text-xs font-semibold text-slate-500">Difficulties / Issues</p>
+                        <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.difficulties }}</p>
+                    </div>
+                    <div v-if="store.tutorWorklog.solutions">
+                        <p class="text-xs font-semibold text-slate-500">Solutions</p>
+                        <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.solutions }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-4" v-if="store.tutorWorklog.to_do">
+                    <p class="text-xs font-semibold text-slate-500">To Do</p>
+                    <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.to_do }}</p>
+                </div>
+
+                <div class="mt-4" v-if="store.tutorWorklog.comment">
+                    <p class="text-xs font-semibold text-slate-500">Comment</p>
+                    <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ store.tutorWorklog.comment }}</p>
                 </div>
 
                 <div class="mt-4">
@@ -168,6 +193,19 @@ onMounted(async () => {
         feedback.value = store.tutorWorklog.tutor_review.feedback
     }
 })
+
+function formatTimeRange(time?: string): string {
+  if (!time) return '—'
+  const parts = time.split(' to ')
+  return parts.map((t) => {
+    const [h, m] = t.trim().split(':')
+    if (!h || !m) return t.trim()
+    const hour = parseInt(h, 10)
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    const hour12 = hour % 12 || 12
+    return `${hour12}:${m} ${ampm}`
+  }).join(' to ')
+}
 
 function formatDate(date?: string): string {
     if (!date) return '—'

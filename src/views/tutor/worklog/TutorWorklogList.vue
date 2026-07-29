@@ -262,17 +262,14 @@
 
               <div class="mt-4">
                 <div class="flex items-center gap-2">
-                  <span
-                    class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-semibold text-slate-700"
-                    >Week {{ w.week_number }}</span
-                  >
                   <span class="text-xs text-slate-400">{{
-                    formatDate(w.submission_date || w.submitted_at || w.created_at)
+                    formatDate(w.work_date || w.submission_date || w.submitted_at || w.created_at)
                   }}</span>
+                  <span v-if="w.work_time" class="text-xs text-slate-400">{{ formatTimeRange(w.work_time) }}</span>
                 </div>
-                <p class="mt-2 line-clamp-2 text-sm text-slate-700">{{ w.description || '—' }}</p>
-                <p v-if="w.challenges" class="mt-1 line-clamp-2 text-sm text-slate-500">
-                  Challenges: {{ w.challenges }}
+                <p class="mt-2 line-clamp-2 text-sm text-slate-700">{{ w.work_activities || w.description || '—' }}</p>
+                <p v-if="w.what_learned" class="mt-1 line-clamp-2 text-sm text-slate-500">
+                  Learned: {{ w.what_learned }}
                 </p>
                 <div class="mt-3 flex items-center gap-2 text-xs text-slate-500">
                   <svg
@@ -557,7 +554,7 @@
               </span>
               <h2 class="text-sm font-bold text-slate-900">Worklog Information</h2>
             </div>
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
               <div class="flex items-center gap-3">
                 <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-500">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -565,8 +562,19 @@
                   </svg>
                 </span>
                 <div>
-                  <p class="text-xs font-semibold text-slate-500">Week</p>
-                  <p class="text-sm font-bold text-slate-900">{{ detailsWorklog.week_number }}</p>
+                  <p class="text-xs font-semibold text-slate-500">Date</p>
+                  <p class="text-sm font-bold text-slate-900">{{ detailsWorklog.work_date ? formatDate(detailsWorklog.work_date) : '—' }}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </span>
+                <div>
+                  <p class="text-xs font-semibold text-slate-500">Time</p>
+                  <p class="text-sm font-bold text-slate-900">{{ formatTimeRange(detailsWorklog.work_time) }}</p>
                 </div>
               </div>
               <div class="flex items-center gap-3">
@@ -580,7 +588,8 @@
                   <p class="text-sm font-bold text-slate-900">
                     {{
                       formatDate(
-                        detailsWorklog.submission_date ||
+                        detailsWorklog.work_date ||
+                          detailsWorklog.submission_date ||
                           detailsWorklog.submitted_at ||
                           detailsWorklog.created_at,
                       )
@@ -602,15 +611,47 @@
             </div>
           </section>
 
-          <!-- Description & Challenges -->
-          <section class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <!-- Work Activities -->
+          <section v-if="detailsWorklog.work_activities">
+            <h3 class="mb-2 text-sm font-bold text-blue-700">Work Activities</h3>
             <div class="rounded-2xl border border-blue-100 bg-blue-50/40 p-5">
-              <h3 class="mb-2 text-sm font-bold text-blue-700">Description</h3>
-              <p class="whitespace-pre-wrap text-sm text-slate-700">{{ detailsWorklog.description || '—' }}</p>
+              <p class="whitespace-pre-wrap text-sm text-slate-700">{{ detailsWorklog.work_activities }}</p>
             </div>
-            <div class="rounded-2xl border border-blue-100 bg-blue-50/40 p-5">
-              <h3 class="mb-2 text-sm font-bold text-blue-700">Challenges</h3>
-              <p class="whitespace-pre-wrap text-sm text-slate-700">{{ detailsWorklog.challenges || '—' }}</p>
+          </section>
+
+          <!-- What did you learn? -->
+          <section v-if="detailsWorklog.what_learned">
+            <h3 class="mb-2 text-sm font-bold text-emerald-700">What did you learn?</h3>
+            <div class="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-5">
+              <p class="whitespace-pre-wrap text-sm text-slate-700">{{ detailsWorklog.what_learned }}</p>
+            </div>
+          </section>
+
+          <!-- Difficulties & Solutions -->
+          <section v-if="detailsWorklog.difficulties || detailsWorklog.solutions" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div v-if="detailsWorklog.difficulties" class="rounded-2xl border border-amber-100 bg-amber-50/40 p-5">
+              <h3 class="mb-2 text-sm font-bold text-amber-700">Difficulties / Issues</h3>
+              <p class="whitespace-pre-wrap text-sm text-slate-700">{{ detailsWorklog.difficulties }}</p>
+            </div>
+            <div v-if="detailsWorklog.solutions" class="rounded-2xl border border-teal-100 bg-teal-50/40 p-5">
+              <h3 class="mb-2 text-sm font-bold text-teal-700">Solutions</h3>
+              <p class="whitespace-pre-wrap text-sm text-slate-700">{{ detailsWorklog.solutions }}</p>
+            </div>
+          </section>
+
+          <!-- To Do -->
+          <section v-if="detailsWorklog.to_do">
+            <h3 class="mb-2 text-sm font-bold text-purple-700">To Do</h3>
+            <div class="rounded-2xl border border-purple-100 bg-purple-50/40 p-5">
+              <p class="whitespace-pre-wrap text-sm text-slate-700">{{ detailsWorklog.to_do }}</p>
+            </div>
+          </section>
+
+          <!-- Comment -->
+          <section v-if="detailsWorklog.comment">
+            <h3 class="mb-2 text-sm font-bold text-slate-700">Comment</h3>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50/40 p-5">
+              <p class="whitespace-pre-wrap text-sm text-slate-700">{{ detailsWorklog.comment }}</p>
             </div>
           </section>
 
@@ -781,6 +822,19 @@ function refresh() {
 
 function go(page: number) {
   setPage(page)
+}
+
+function formatTimeRange(time?: string): string {
+  if (!time) return '—'
+  const parts = time.split(' to ')
+  return parts.map((t) => {
+    const [h, m] = t.trim().split(':')
+    if (!h || !m) return t.trim()
+    const hour = parseInt(h, 10)
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    const hour12 = hour % 12 || 12
+    return `${hour12}:${m} ${ampm}`
+  }).join(' to ')
 }
 
 function formatDate(date?: string): string {

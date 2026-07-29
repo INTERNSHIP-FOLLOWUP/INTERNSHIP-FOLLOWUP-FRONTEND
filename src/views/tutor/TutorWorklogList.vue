@@ -139,7 +139,7 @@
               class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-500"
             >
               <th class="px-6 py-3.5">Student</th>
-              <th class="px-6 py-3.5">Week</th>
+              <th class="px-6 py-3.5">Date / Time</th>
               <th class="px-6 py-3.5">Submitted</th>
               <th class="px-6 py-3.5">Attachments</th>
               <th class="px-6 py-3.5">Status</th>
@@ -164,7 +164,7 @@
                 </div>
               </td>
               <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                Week {{ w.week_number }}
+                {{ w.work_date ? formatDate(w.work_date) + ' ' + formatTimeRange(w.work_time) : '—' }}
               </td>
               <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-500 dark:text-slate-400">
                 {{ submittedLabel(w) }}
@@ -224,6 +224,24 @@ function changed() {
 function reset() {
   filters.value = { studentId: '', week: '', status: '' }
   load()
+}
+
+function formatTimeRange(time?: string): string {
+  if (!time) return ''
+  const parts = time.split(' to ')
+  return parts.map((t) => {
+    const [h, m] = t.trim().split(':')
+    if (!h || !m) return t.trim()
+    const hour = parseInt(h, 10)
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    const hour12 = hour % 12 || 12
+    return `${hour12}:${m} ${ampm}`
+  }).join(' to ')
+}
+
+function formatDate(date?: string): string {
+  if (!date) return '—'
+  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 function initials(name: string) {

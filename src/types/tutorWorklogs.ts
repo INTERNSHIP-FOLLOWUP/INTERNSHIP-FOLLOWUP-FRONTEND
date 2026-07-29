@@ -1,8 +1,8 @@
 export interface TutorWorklog {
   id: number
   student_id?: number
-  week_number: number
-  description: string
+  week_number?: number
+  description?: string
   status: string
   submitted_at?: string
   created_at?: string
@@ -10,6 +10,14 @@ export interface TutorWorklog {
   challenges?: string
   can_edit?: boolean
   submission_date?: string
+  work_date?: string
+  work_time?: string
+  work_activities?: string
+  what_learned?: string
+  difficulties?: string
+  solutions?: string
+  to_do?: string
+  comment?: string
   student?: {
     id: number
     name?: string

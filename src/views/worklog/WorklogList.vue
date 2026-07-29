@@ -19,15 +19,6 @@
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
       <select
-        v-model="weekFilter"
-        @change="onFilterChange"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
-      >
-        <option value="">All Weeks</option>
-        <option v-for="w in weeks" :key="w" :value="w">Week {{ w }}</option>
-      </select>
-
-      <select
         v-model="statusFilter"
         @change="onFilterChange"
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
@@ -61,10 +52,10 @@
           <table class="w-full border-collapse text-left text-sm">
             <thead>
               <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-500">
-                <th class="px-5 py-3.5">Week</th>
-                <th class="px-5 py-3.5">Description</th>
+                <th class="px-5 py-3.5">Date</th>
+                <th class="px-5 py-3.5">Work Activities</th>
                 <th class="px-5 py-3.5">Status</th>
-                <th class="px-5 py-3.5">Submitted Date</th>
+                <th class="px-5 py-3.5">Submitted</th>
                 <th class="px-5 py-3.5">Tutor Feedback</th>
                 <th class="px-5 py-3.5 text-right">Actions</th>
               </tr>
@@ -75,17 +66,17 @@
                 :key="w.id"
                 class="hover:bg-slate-50/30 transition-colors dark:hover:bg-slate-800/30"
               >
-                <td class="whitespace-nowrap px-5 py-4">{{ w.week_number }}</td>
-                <td              class="whitespace-nowrap px-5 py-4 text-slate-600 dark:text-slate-400">
-                  {{ w.description }}
+                <td class="whitespace-nowrap px-5 py-4">{{ w.work_date ? formatDate(w.work_date) + ' ' + formatTimeRange(w.work_time) : '—' }}</td>
+                <td class="whitespace-nowrap px-5 py-4 text-slate-600 dark:text-slate-400 max-w-xs truncate">
+                  {{ w.work_activities || w.description || '—' }}
                 </td>
                 <td class="whitespace-nowrap px-5 py-4">
                   <WorklogStatusBadge :status="w.status" />
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-slate-500 text-xs dark:text-slate-400">
-                  {{ formatDate(w.submitted_at) }}
+                  {{ formatDate(w.submitted_at || w.created_at) }}
                 </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400">
+                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400 max-w-[160px] truncate">
                   {{ w.tutor_review?.feedback?.slice(0, 42) || '—' }}{{ (w.tutor_review?.feedback?.length || 0) > 42 ? '…' : '' }}
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-right">
@@ -123,13 +114,13 @@
           <div v-for="w in store.worklogs" :key="w.id" class="rounded-2xl border border-slate-100 p-4 bg-white dark:border-slate-700 dark:bg-slate-800">
             <div class="flex items-start justify-between gap-3">
               <div>
-                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Week</p>
-                <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ w.week_number }}</p>
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Date</p>
+                <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ w.work_date ? formatDate(w.work_date) + ' ' + formatTimeRange(w.work_time) : '—' }}</p>
               </div>
               <WorklogStatusBadge :status="w.status" />
             </div>
-            <p class="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">{{ w.description }}</p>
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Submitted: {{ formatDate(w.submitted_at) }}</p>
+            <p class="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">{{ w.work_activities || w.description || '—' }}</p>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Submitted: {{ formatDate(w.submitted_at || w.created_at) }}</p>
             <p class="mt-2 text-xs text-slate-600 dark:text-slate-400">Tutor: {{ w.tutor_review?.feedback ? w.tutor_review.feedback.slice(0, 60) : '—' }}{{ w.tutor_review?.feedback && w.tutor_review.feedback.length > 60 ? '…' : '' }}</p>
 
             <div class="mt-4 flex items-center gap-2">
@@ -170,7 +161,7 @@
     <ConfirmDialog
       :show="confirmDelete"
       title="Delete Worklog"
-      :message="`Are you sure you want to delete Week ${worklogToDelete?.week_number} worklog? This action cannot be undone.`"
+      message="Are you sure you want to delete this worklog? This action cannot be undone."
       confirm-text="Delete"
       cancel-text="Cancel"
       :loading="deleting"
@@ -194,9 +185,6 @@ import type { Worklog, WorklogStatus } from '@/types/worklog'
 const store = useWorklogStore()
 const toast = useToastStore()
 
-const weeks = Array.from({ length: 52 }, (_, i) => i + 1)
-
-const weekFilter = ref<string>('')
 const statusFilter = ref<string>('')
 
 // ── Delete state ──
@@ -223,7 +211,7 @@ async function handleDelete() {
   deleteError.value = null
   try {
     await store.deleteWorklog(worklogToDelete.value.id)
-    toast.success(`Week ${worklogToDelete.value.week_number} worklog deleted.`, 'Deleted')
+    toast.success('Worklog deleted.', 'Deleted')
     confirmDelete.value = false
     worklogToDelete.value = null
   } catch (err: unknown) {
@@ -236,7 +224,6 @@ async function handleDelete() {
 function fetchPage({ page }: { page: number }) {
   store.fetchWorklogs({
     page,
-    week: weekFilter.value ? Number(weekFilter.value) : undefined,
     status: statusFilter.value ? (statusFilter.value as WorklogStatus) : undefined,
   })
 }
@@ -245,6 +232,19 @@ const { setPage, resetPage } = usePagination(fetchPage)
 
 function onFilterChange() {
   resetPage()
+}
+
+function formatTimeRange(time?: string): string {
+  if (!time) return ''
+  const parts = time.split(' to ')
+  return parts.map((t) => {
+    const [h, m] = t.trim().split(':')
+    if (!h || !m) return t.trim()
+    const hour = parseInt(h, 10)
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    const hour12 = hour % 12 || 12
+    return `${hour12}:${m} ${ampm}`
+  }).join(' to ')
 }
 
 function formatDate(date?: string): string {

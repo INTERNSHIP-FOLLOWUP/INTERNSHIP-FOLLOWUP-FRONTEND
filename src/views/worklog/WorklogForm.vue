@@ -17,43 +17,109 @@
 
     <div class="mt-6 max-w-3xl">
       <form @submit.prevent="onSubmit" class="space-y-5">
-        <div>
-          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Week Number</label>
-          <select
-            v-model="form.week_number"
-            required
-            class="mt-2 h-11 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
-            :class="errors.week_number ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
-          >
-            <option disabled value="">Select a week</option>
-            <option v-for="w in weeks" :key="w" :value="w">Week {{ w }}</option>
-          </select>
-          <p v-if="errors.week_number" class="mt-1 text-xs font-semibold text-red-500">{{ errors.week_number }}</p>
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div>
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Date</label>
+            <input
+              v-model="form.work_date"
+              type="date"
+              class="mt-2 h-11 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+              :class="errors.work_date ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
+            />
+            <p v-if="errors.work_date" class="mt-1 text-xs font-semibold text-red-500">{{ errors.work_date }}</p>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Time (From – To)</label>
+            <div class="mt-2 flex items-center gap-2">
+              <input
+                v-model="form.time_from"
+                type="time"
+                class="h-11 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+                :class="errors.time_from ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
+              />
+              <span class="text-sm font-semibold text-slate-400">to</span>
+              <input
+                v-model="form.time_to"
+                type="time"
+                class="h-11 w-full rounded-xl border bg-white px-3.5 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+                :class="errors.time_to ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
+              />
+            </div>
+            <p v-if="errors.time_from || errors.time_to" class="mt-1 text-xs font-semibold text-red-500">{{ errors.time_from || errors.time_to }}</p>
+          </div>
         </div>
 
         <div>
-          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Description</label>
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Work Activities</label>
           <textarea
-            v-model="form.description"
-            required
+            v-model="form.work_activities"
             rows="4"
-            placeholder="What did you work on this week?"
+            placeholder="What work activities did you perform?"
             class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
-            :class="errors.description ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
+            :class="errors.work_activities ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
           />
-          <p v-if="errors.description" class="mt-1 text-xs font-semibold text-red-500">{{ errors.description }}</p>
+          <p v-if="errors.work_activities" class="mt-1 text-xs font-semibold text-red-500">{{ errors.work_activities }}</p>
         </div>
 
         <div>
-          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Challenges</label>
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">What did you learn?</label>
           <textarea
-            v-model="form.challenges"
+            v-model="form.what_learned"
             rows="3"
-            placeholder="What difficulties did you face?"
+            placeholder="What new things did you learn?"
             class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
-            :class="errors.challenges ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
+            :class="errors.what_learned ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
           />
-          <p v-if="errors.challenges" class="mt-1 text-xs font-semibold text-red-500">{{ errors.challenges }}</p>
+          <p v-if="errors.what_learned" class="mt-1 text-xs font-semibold text-red-500">{{ errors.what_learned }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div>
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Difficulties / Issues</label>
+            <textarea
+              v-model="form.difficulties"
+              rows="3"
+              placeholder="What difficulties or issues did you encounter?"
+              class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+              :class="errors.difficulties ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
+            />
+            <p v-if="errors.difficulties" class="mt-1 text-xs font-semibold text-red-500">{{ errors.difficulties }}</p>
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Solutions</label>
+            <textarea
+              v-model="form.solutions"
+              rows="3"
+              placeholder="How did you solve them?"
+              class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+              :class="errors.solutions ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
+            />
+            <p v-if="errors.solutions" class="mt-1 text-xs font-semibold text-red-500">{{ errors.solutions }}</p>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">To Do</label>
+          <textarea
+            v-model="form.to_do"
+            rows="2"
+            placeholder="What do you plan to do next?"
+            class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+            :class="errors.to_do ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
+          />
+          <p v-if="errors.to_do" class="mt-1 text-xs font-semibold text-red-500">{{ errors.to_do }}</p>
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Comment</label>
+          <textarea
+            v-model="form.comment"
+            rows="2"
+            placeholder="Any additional comments?"
+            class="mt-2 w-full resize-none rounded-xl border bg-white px-3.5 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 transition-all duration-200 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
+            :class="errors.comment ? 'border-red-400 ring-2 ring-red-500/20 focus:border-red-400 dark:border-red-500' : 'border-slate-200 focus:border-indigo-300 focus:ring-indigo-500/20 dark:border-slate-600'"
+          />
+          <p v-if="errors.comment" class="mt-1 text-xs font-semibold text-red-500">{{ errors.comment }}</p>
         </div>
 
         <div>
@@ -114,15 +180,29 @@ const store = useWorklogStore()
 const idParam = computed(() => route.params.id)
 const isEdit = computed(() => typeof idParam.value === 'string' && !!idParam.value)
 
-const weeks = Array.from({ length: 52 }, (_, i) => i + 1)
-
 const files = ref<File[]>([])
 
-const form = reactive<{ week_number: number | '' ; description: string; challenges: string }>(
+const form = reactive<{
+  work_date: string
+  time_from: string
+  time_to: string
+  work_activities: string
+  what_learned: string
+  difficulties: string
+  solutions: string
+  to_do: string
+  comment: string
+}>(
   {
-    week_number: '',
-    description: '',
-    challenges: '',
+    work_date: '',
+    time_from: '',
+    time_to: '',
+    work_activities: '',
+    what_learned: '',
+    difficulties: '',
+    solutions: '',
+    to_do: '',
+    comment: '',
   },
 )
 
@@ -138,9 +218,18 @@ onMounted(async () => {
   const w = store.worklog
   if (!w) return
 
-  form.week_number = w.week_number
-  form.description = w.description
-  form.challenges = w.challenges ?? ''
+  form.work_date = w.work_date ?? ''
+  if (w.work_time) {
+    const parts = w.work_time.split(' to ')
+    form.time_from = parts[0] ?? ''
+    form.time_to = parts[1] ?? ''
+  }
+  form.work_activities = w.work_activities ?? ''
+  form.what_learned = w.what_learned ?? ''
+  form.difficulties = w.difficulties ?? ''
+  form.solutions = w.solutions ?? ''
+  form.to_do = w.to_do ?? ''
+  form.comment = w.comment ?? ''
 })
 
 function cancel() {
@@ -154,9 +243,14 @@ async function onSubmit() {
 
   try {
     const fd = new FormData()
-    fd.append('week_number', String(form.week_number))
-    fd.append('description', form.description)
-    if (form.challenges?.trim()) fd.append('challenges', form.challenges)
+    if (form.work_date) fd.append('work_date', form.work_date)
+    if (form.time_from || form.time_to) fd.append('work_time', `${form.time_from} to ${form.time_to}`)
+    if (form.work_activities?.trim()) fd.append('work_activities', form.work_activities)
+    if (form.what_learned?.trim()) fd.append('what_learned', form.what_learned)
+    if (form.difficulties?.trim()) fd.append('difficulties', form.difficulties)
+    if (form.solutions?.trim()) fd.append('solutions', form.solutions)
+    if (form.to_do?.trim()) fd.append('to_do', form.to_do)
+    if (form.comment?.trim()) fd.append('comment', form.comment)
     for (const f of files.value) fd.append('attachments[]', f)
 
     if (isEdit.value) {

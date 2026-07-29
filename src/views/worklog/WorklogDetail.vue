@@ -77,8 +77,12 @@
 
         <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-4">
           <div>
-            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Week</p>
-            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ worklog?.week_number }}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Date</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ worklog?.work_date ? formatDate(worklog.work_date) : '—' }}</p>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Time</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ formatTimeRange(worklog?.work_time) }}</p>
           </div>
           <div>
             <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Status</p>
@@ -86,20 +90,41 @@
               <WorklogStatusBadge :status="worklog!.status" />
             </div>
           </div>
-          <div class="md:col-span-2">
-            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Submitted Date</p>
-            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ formatDate(worklog?.submitted_at) }}</p>
+          <div>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Submitted</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ formatDate(worklog?.submitted_at || worklog?.created_at) }}</p>
           </div>
         </div>
 
-        <div class="mt-4">
-          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Description</p>
-          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog?.description }}</p>
+        <div class="mt-4" v-if="worklog?.work_activities">
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Work Activities</p>
+          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog.work_activities }}</p>
         </div>
 
-        <div class="mt-4" v-if="worklog?.challenges">
-          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Challenges</p>
-          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog?.challenges }}</p>
+        <div class="mt-4" v-if="worklog?.what_learned">
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">What did you learn?</p>
+          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog.what_learned }}</p>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2" v-if="worklog?.difficulties || worklog?.solutions">
+          <div v-if="worklog?.difficulties">
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Difficulties / Issues</p>
+            <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog.difficulties }}</p>
+          </div>
+          <div v-if="worklog?.solutions">
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Solutions</p>
+            <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog.solutions }}</p>
+          </div>
+        </div>
+
+        <div class="mt-4" v-if="worklog?.to_do">
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">To Do</p>
+          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog.to_do }}</p>
+        </div>
+
+        <div class="mt-4" v-if="worklog?.comment">
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Comment</p>
+          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog.comment }}</p>
         </div>
       </section>
 
@@ -146,7 +171,7 @@
     <ConfirmDialog
       :show="confirmDelete"
       title="Delete Worklog"
-      :message="`Are you sure you want to delete Week ${worklog?.week_number} worklog? This action cannot be undone.`"
+      message="Are you sure you want to delete this worklog? This action cannot be undone."
       confirm-text="Delete"
       cancel-text="Cancel"
       :loading="deleting"
@@ -186,6 +211,19 @@ onMounted(async () => {
     await store.fetchWorklog(id)
   }
 })
+
+function formatTimeRange(time?: string): string {
+  if (!time) return '—'
+  const parts = time.split(' to ')
+  return parts.map((t) => {
+    const [h, m] = t.trim().split(':')
+    if (!h || !m) return t.trim()
+    const hour = parseInt(h, 10)
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    const hour12 = hour % 12 || 12
+    return `${hour12}:${m} ${ampm}`
+  }).join(' to ')
+}
 
 function formatDate(date?: string): string {
   if (!date) return '—'

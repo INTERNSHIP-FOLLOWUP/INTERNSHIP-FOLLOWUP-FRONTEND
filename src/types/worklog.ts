@@ -37,8 +37,8 @@ export interface TutorReview {
 
 export interface Worklog {
   id: number
-  week_number: number
-  description: string
+  week_number?: number
+  description?: string
   status: WorklogStatus
   submitted_at?: string
   created_at?: string
@@ -48,6 +48,14 @@ export interface Worklog {
   challenges?: string
   can_edit?: boolean
   submission_date?: string
+  work_date?: string
+  work_time?: string
+  work_activities?: string
+  what_learned?: string
+  difficulties?: string
+  solutions?: string
+  to_do?: string
+  comment?: string
   student?: WorklogStudent | null
   tutor_review?: TutorReview | null
   attachments?: Attachment[]

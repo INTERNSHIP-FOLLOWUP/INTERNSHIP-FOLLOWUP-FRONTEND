@@ -86,9 +86,9 @@
                   <td class="whitespace-nowrap px-6 py-4 text-slate-500 dark:text-slate-400">{{ user.students_count ?? '—' }}</td>
                   <td class="whitespace-nowrap px-6 py-4">
                     <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
-                      :class="user.deleted_at ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700'">
-                      <span class="h-1.5 w-1.5 rounded-full" :class="user.deleted_at ? 'bg-rose-500' : 'bg-emerald-500'" />
-                      {{ user.deleted_at ? 'Deactivated' : 'Active' }}
+                      :class="getUserStatusBadgeClass(user)">
+                      <span class="h-1.5 w-1.5 rounded-full" :class="getUserStatusDotClass(user)" />
+                      {{ getUserStatusText(user) }}
                     </span>
                   </td>
                   <td class="whitespace-nowrap px-6 py-4 text-center">
@@ -130,7 +130,7 @@
                             View Activity
                           </button>
 
-                          <button v-if="!user.deleted_at" type="button" @click.stop="openKebabId = null; deactivateUser(user)"
+                          <button v-if="!user.deleted_at && user.status !== 'deactivated'" type="button" @click.stop="openKebabId = null; deactivateUser(user)"
                             class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
                             <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
@@ -264,11 +264,12 @@ import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import { useDeactivatedUsersStore } from '@/stores/deactivatedUsers'
 import TutorRowDetails from '@/components/admin/TutorRowDetails.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 
 interface Role { id: number; name: string }
-interface User { id: number; first_name?: string; last_name?: string; name: string; email: string; role: Role | null; deleted_at: string | null; students_count?: number }
+interface User { id: number; first_name?: string; last_name?: string; name: string; email: string; role: Role | null; status?: string; must_change_password?: boolean; deleted_at: string | null; students_count?: number }
 
 interface TutorWorklogStats {
   total: number
@@ -287,6 +288,7 @@ interface TutorActivity {
 const router = useRouter()
 const toast = useToastStore()
 const { show: confirmShow, loading: confirmLoading, error: confirmError, open: confirmOpen, cancel: confirmCancel, confirmAsync: confirmAsyncFn } = useConfirmDialog()
+const deactivatedUsersStore = useDeactivatedUsersStore()
 const confirmTitle = ref('')
 const confirmMessage = ref('')
 const confirmButtonText = ref('Confirm')
@@ -401,10 +403,10 @@ async function handleConfirmAction() {
       await api.delete(`/admin/users/${user.id}`)
       toast.success(`Tutor "${name}" deleted.`)
     } else if (type === 'deactivate') {
-      await api.put(`/admin/users/${user.id}/deactivate`)
+      await deactivatedUsersStore.deactivateUser(user.id)
       toast.success(`Tutor "${name}" deactivated.`)
     } else if (type === 'activate') {
-      await api.put(`/admin/users/${user.id}/activate`)
+      await deactivatedUsersStore.reactivateUser(user.id)
       toast.success(`Tutor "${name}" activated.`)
     }
     pendingAction.value = null
@@ -477,9 +479,23 @@ onMounted(() => {
   window.addEventListener('click', handleWindowClick)
 })
 
-onUnmounted(() => {
-  window.removeEventListener('click', handleWindowClick)
-})
+function getUserStatusText(user: User): string {
+  if (user.deleted_at || user.status === 'deactivated') return 'Deactivated'
+  if (user.status === 'inactive') return 'Inactive'
+  return 'Active'
+}
+
+function getUserStatusBadgeClass(user: User): string {
+  if (user.deleted_at || user.status === 'deactivated') return 'bg-rose-50 text-rose-700 border border-rose-200/60'
+  if (user.status === 'inactive') return 'bg-amber-50 text-amber-700 border border-amber-200/60'
+  return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+}
+
+function getUserStatusDotClass(user: User): string {
+  if (user.deleted_at || user.status === 'deactivated') return 'bg-rose-500'
+  if (user.status === 'inactive') return 'bg-amber-500'
+  return 'bg-emerald-500'
+}
 </script>
 
 <style scoped>

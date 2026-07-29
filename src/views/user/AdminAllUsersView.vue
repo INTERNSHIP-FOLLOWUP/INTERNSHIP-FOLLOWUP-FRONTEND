@@ -65,6 +65,7 @@
         class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100">
         <option value="">All Status</option>
         <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
         <option value="deactivated">Deactivated</option>
       </select>
       <button v-if="searchQuery || roleFilter || statusFilter" @click="clearFilters"
@@ -153,9 +154,9 @@
                   </span>
                 </td>
                 <td class="whitespace-nowrap px-6 py-4">
-                  <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold" :class="user.deleted_at ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700'">
-                    <span class="h-1.5 w-1.5 rounded-full" :class="user.deleted_at ? 'bg-rose-500' : 'bg-emerald-500'" />
-                    {{ user.deleted_at ? 'Deactivated' : 'Active' }}
+                  <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold" :class="getUserStatusBadgeClass(user)">
+                    <span class="h-1.5 w-1.5 rounded-full" :class="getUserStatusDotClass(user)" />
+                    {{ getUserStatusText(user) }}
                   </span>
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 text-center">
@@ -342,17 +343,19 @@ import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import { useDeactivatedUsersStore } from '@/stores/deactivatedUsers'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 import ImportUsersModal from '@/components/admin/ImportUsersModal.vue'
 
 const router = useRouter()
 const toast = useToastStore()
 const { show: confirmShow, loading: confirmLoading, error: confirmError, open: confirmOpen, cancel: confirmCancel, confirmAsync: confirmAsyncFn } = useConfirmDialog()
+const deactivatedUsersStore = useDeactivatedUsersStore()
 
 interface Role { id: number; name: string }
 interface User {
   id: number; name: string; email: string
-  role: Role | null; deleted_at: string | null
+  role: Role | null; status?: string; must_change_password?: boolean; deleted_at: string | null
   first_name?: string; last_name?: string
   students_count?: number
 }
@@ -470,15 +473,27 @@ async function fetchUsers(): Promise<void> {
   loading.value = true
   error.value = ''
   try {
-    const params: Record<string, string | number> = { page: currentPage.value, per_page: 15 }
-    if (searchQuery.value) params.search = searchQuery.value
-    if (roleFilter.value) params.role = roleFilter.value
-    if (statusFilter.value) params.status = statusFilter.value
-    const res = await api.get('/admin/users', { params })
-    const body = res.data
-    users.value = body.data ?? []
-    pagination.value = body.meta ?? null
-    if (body.counts) roleStats.value = body.counts
+    if (statusFilter.value === 'deactivated') {
+      await deactivatedUsersStore.fetchDeactivated({
+        page: currentPage.value,
+        per_page: 15,
+        search: searchQuery.value || undefined,
+        role: roleFilter.value || undefined,
+      })
+      users.value = deactivatedUsersStore.users as unknown as User[]
+      pagination.value = deactivatedUsersStore.pagination as unknown as PaginationMeta | null
+      error.value = deactivatedUsersStore.error || ''
+    } else {
+      const params: Record<string, string | number> = { page: currentPage.value, per_page: 15 }
+      if (searchQuery.value) params.search = searchQuery.value
+      if (roleFilter.value) params.role = roleFilter.value
+      if (statusFilter.value) params.status = statusFilter.value
+      const res = await api.get('/admin/users', { params })
+      const body = res.data
+      users.value = body.data ?? []
+      pagination.value = body.meta ?? null
+      if (body.counts) roleStats.value = body.counts
+    }
   } catch (err: unknown) {
     error.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load users.'
   } finally {
@@ -529,10 +544,18 @@ async function handleConfirmAction() {
       await api.delete(`/admin/users/${user.id}`)
       toast.success(`User "${user.name}" deleted.`)
     } else if (type === 'deactivate') {
-      await api.put(`/admin/users/${user.id}/deactivate`)
+      if (statusFilter.value === 'deactivated') {
+        await deactivatedUsersStore.deactivateUser(user.id)
+      } else {
+        await api.put(`/admin/users/${user.id}/deactivate`)
+      }
       toast.success(`User "${user.name}" deactivated.`)
     } else if (type === 'activate') {
-      await api.put(`/admin/users/${user.id}/activate`)
+      if (statusFilter.value === 'deactivated') {
+        await deactivatedUsersStore.reactivateUser(user.id)
+      } else {
+        await api.put(`/admin/users/${user.id}/activate`)
+      }
       toast.success(`User "${user.name}" activated.`)
     }
     pendingAction.value = null
@@ -659,6 +682,23 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('click', handleWindowClick)
 })
+function getUserStatusText(user: User): string {
+  if (user.deleted_at || user.status === 'deactivated') return 'Deactivated'
+  if (user.status === 'inactive') return 'Inactive'
+  return 'Active'
+}
+
+function getUserStatusBadgeClass(user: User): string {
+  if (user.deleted_at || user.status === 'deactivated') return 'bg-rose-50 text-rose-700 border border-rose-200/60'
+  if (user.status === 'inactive') return 'bg-amber-50 text-amber-700 border border-amber-200/60'
+  return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+}
+
+function getUserStatusDotClass(user: User): string {
+  if (user.deleted_at || user.status === 'deactivated') return 'bg-rose-500'
+  if (user.status === 'inactive') return 'bg-amber-500'
+  return 'bg-emerald-500'
+}
 </script>
 
 <style scoped>

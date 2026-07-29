@@ -108,6 +108,7 @@
       >
         <option value="">All Statuses</option>
         <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
         <option value="deactivated">Deactivated</option>
       </select>
 
@@ -362,12 +363,17 @@
             Deactivate
           </button>
 
+<<<<<<< Updated upstream
           <button v-if="selectedStudentForKebab.status === 'inactive' || selectedStudentForKebab.status === 'deactivated'" type="button" @click.stop="handleKebabReactivate"
             class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors dark:text-emerald-400 dark:hover:bg-emerald-950/30">
+=======
+          <button v-else type="button" @click.stop="handleKebabReactivate"
+            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors">
+>>>>>>> Stashed changes
             <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Reactivate
+            Activate
           </button>
 
           <div class="my-1 border-t border-slate-100 dark:border-slate-700"></div>
@@ -626,34 +632,40 @@ const visiblePages = computed(() => {
 })
 
 function formatStatus(status?: string): string {
-  if (!status) return 'Unknown'
-  if (status.toLowerCase() === 'inactive' || status.toLowerCase() === 'deactivated') return 'Deactivated'
-  return status.charAt(0).toUpperCase() + status.slice(1)
+  if (!status) return 'Active'
+  const st = status.toLowerCase()
+  if (st === 'deactivated') return 'Deactivated'
+  if (st === 'inactive') return 'Inactive'
+  return st.charAt(0).toUpperCase() + st.slice(1)
 }
 
 function statusBadgeClass(status?: string): string {
-  switch (status) {
+  const st = (status || 'active').toLowerCase()
+  switch (st) {
     case 'active':
-      return 'bg-emerald-50 text-emerald-700'
+      return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
     case 'inactive':
+      return 'bg-amber-50 text-amber-700 border border-amber-200/60'
     case 'deactivated':
-      return 'bg-slate-100 text-slate-600'
+      return 'bg-rose-50 text-rose-700 border border-rose-200/60'
     case 'graduated':
-      return 'bg-blue-50 text-blue-700'
+      return 'bg-blue-50 text-blue-700 border border-blue-200/60'
     case 'suspended':
-      return 'bg-rose-50 text-rose-700'
+      return 'bg-rose-50 text-rose-700 border border-rose-200/60'
     default:
-      return 'bg-emerald-50 text-emerald-700'
+      return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
   }
 }
 
 function statusDotClass(status?: string): string {
-  switch (status) {
+  const st = (status || 'active').toLowerCase()
+  switch (st) {
     case 'active':
       return 'bg-emerald-500'
     case 'inactive':
+      return 'bg-amber-500'
     case 'deactivated':
-      return 'bg-slate-400'
+      return 'bg-rose-500'
     case 'graduated':
       return 'bg-blue-500'
     case 'suspended':

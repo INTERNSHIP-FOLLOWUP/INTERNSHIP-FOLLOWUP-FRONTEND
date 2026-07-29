@@ -135,7 +135,9 @@
       "evaluations": "Evaluations",
       "batches": "Batches",
       "internshipAssignments": "Internship Assignments",
-      "reports": "Reports"
+      "reports": "Reports",
+      "users": "Users",
+      "supervisors": "Supervisors"
     },
     "tutor": {
       "dashboard": "Dashboard",

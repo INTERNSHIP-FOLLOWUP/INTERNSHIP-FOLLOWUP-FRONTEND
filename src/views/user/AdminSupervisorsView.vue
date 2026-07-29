@@ -30,15 +30,145 @@
       </div>
     </div>
 
-    <!-- Search -->
-    <div class="flex flex-wrap items-center gap-3">
-      <div class="relative min-w-0 flex-1 basis-[200px]">
-        <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Stat Cards Grid -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Total Supervisors -->
+      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Total Supervisors</p>
+            <p class="mt-1 text-2xl font-black text-slate-900 dark:text-slate-100">{{ totalSupervisors }}</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Supervisors -->
+      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Active</p>
+            <p class="mt-1 text-2xl font-black text-emerald-600">{{ activeCount }}</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inactive Supervisors -->
+      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Inactive</p>
+            <p class="mt-1 text-2xl font-black text-amber-600">{{ inactiveCount }}</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deactivated Supervisors -->
+      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Deactivated</p>
+            <p class="mt-1 text-2xl font-black text-rose-600">{{ deactivatedCount }}</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Partner Companies -->
+      <div class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Partner Companies</p>
+            <p class="mt-1 text-2xl font-black text-indigo-600">{{ companies.length }}</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m3 0h1m-1-4h.01M9 16h.01M9 12h.01M9 8h.01M15 16h.01M15 12h.01M15 8h.01" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters & Search Toolbar -->
+    <div class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <!-- Search Input -->
+      <div class="relative min-w-[220px] flex-1">
+        <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         <input v-model="searchQuery" type="text" placeholder="Search supervisors..."
           class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
       </div>
+
+      <!-- Company Filter -->
+      <div class="w-full sm:w-auto">
+        <select
+          v-model="companyFilter"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm font-medium text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
+        >
+          <option value="">All Companies</option>
+          <option v-for="c in companies" :key="c.id" :value="c.id">
+            {{ c.company_name || c.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="w-full sm:w-auto">
+        <select
+          v-model="statusFilter"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm font-medium text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
+        >
+          <option value="all">All Statuses</option>
+          <option value="active">Active Only</option>
+          <option value="inactive">Inactive Only</option>
+          <option value="deactivated">Deactivated Only</option>
+        </select>
+      </div>
+
+      <!-- Sort Filter -->
+      <div class="w-full sm:w-auto">
+        <select
+          v-model="sortOrder"
+          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm font-medium text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
+        >
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="name_asc">Name (A - Z)</option>
+          <option value="name_desc">Name (Z - A)</option>
+        </select>
+      </div>
+
+      <!-- Reset button -->
+      <button
+        v-if="hasActiveFilters"
+        @click="resetFilters"
+        class="flex h-10 items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 text-xs font-bold text-rose-700 transition-colors hover:bg-rose-100"
+      >
+        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Clear Filters
+      </button>
     </div>
 
     <!-- Error Banner -->
@@ -171,11 +301,20 @@
                 <!-- Status -->
                 <td class="whitespace-nowrap px-6 py-4">
                   <span
-                    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold"
-                    :class="supervisor.deleted_at ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700'"
+                    class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-extrabold"
+                    :class="getSupervisorStatusBadgeClass(supervisor)"
                   >
-                    <span class="h-1.5 w-1.5 rounded-full" :class="supervisor.deleted_at ? 'bg-rose-500' : 'bg-emerald-500'" />
-                    {{ supervisor.deleted_at ? 'Deactivated' : 'Active' }}
+                    <span class="relative flex h-2 w-2">
+                      <span
+                        v-if="!supervisor.deleted_at && supervisor.status !== 'inactive' && supervisor.status !== 'deactivated'"
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
+                      />
+                      <span
+                        class="relative inline-flex rounded-full h-2 w-2"
+                        :class="getSupervisorStatusDotClass(supervisor)"
+                      />
+                    </span>
+                    {{ getSupervisorStatusText(supervisor) }}
                   </span>
                 </td>
 
@@ -395,6 +534,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import api from '@/services/api'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
+import { useDeactivatedUsersStore } from '@/stores/deactivatedUsers'
 import SupervisorForm from '@/components/supervisor/SupervisorForm.vue'
 import SupervisorDetailsModal from '@/components/supervisor/SupervisorDetailsModal.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
@@ -424,6 +564,8 @@ interface Supervisor {
   email: string
   phone: string | null
   avatar_url?: string | null
+  status?: string
+  must_change_password?: boolean
   role?: { id: number; name: string }
   supervisor_profile?: SupervisorProfile
   company_name?: string
@@ -440,16 +582,24 @@ const {
   cancel: confirmCancel,
   confirmAsync: confirmAsyncFn,
 } = useConfirmDialog()
+const deactivatedUsersStore = useDeactivatedUsersStore()
 
 const supervisors = ref<Supervisor[]>([])
-const loading = ref(false)
+const companies = ref<Company[]>([])
+const loading = ref(true)
 const error = ref('')
 
 const searchQuery = ref('')
+const companyFilter = ref('')
+const statusFilter = ref('all')
+const sortOrder = ref('newest')
 
 const currentPage = ref(1)
 const pagination = ref<PaginationMeta | null>(null)
 const totalSupervisors = ref(0)
+const activeCount = ref(0)
+const inactiveCount = ref(0)
+const deactivatedCount = ref(0)
 
 const showFormModal = ref(false)
 const showDetailsModal = ref(false)
@@ -471,6 +621,19 @@ const selectedIds = ref<Set<number>>(new Set())
 const showBulkConfirm = ref(false)
 const bulkDeleting = ref(false)
 const bulkError = ref('')
+
+const hasActiveFilters = computed(() =>
+  !!searchQuery.value || !!companyFilter.value || statusFilter.value !== 'all' || sortOrder.value !== 'newest'
+)
+
+function resetFilters() {
+  searchQuery.value = ''
+  companyFilter.value = ''
+  statusFilter.value = 'all'
+  sortOrder.value = 'newest'
+  currentPage.value = 1
+  fetchSupervisors()
+}
 
 function enterSelectMode() {
   selectMode.value = true
@@ -538,6 +701,24 @@ function getInitials(name: string): string {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
 }
 
+function getSupervisorStatusText(supervisor: Supervisor): string {
+  if (supervisor.deleted_at || supervisor.status === 'deactivated') return 'Deactivated'
+  if (supervisor.status === 'inactive') return 'Inactive'
+  return 'Active'
+}
+
+function getSupervisorStatusBadgeClass(supervisor: Supervisor): string {
+  if (supervisor.deleted_at || supervisor.status === 'deactivated') return 'bg-rose-50 text-rose-700 border border-rose-200/60'
+  if (supervisor.status === 'inactive') return 'bg-amber-50 text-amber-700 border border-amber-200/60'
+  return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+}
+
+function getSupervisorStatusDotClass(supervisor: Supervisor): string {
+  if (supervisor.deleted_at || supervisor.status === 'deactivated') return 'bg-rose-500'
+  if (supervisor.status === 'inactive') return 'bg-amber-500'
+  return 'bg-emerald-500'
+}
+
 function getCompanyName(supervisor: Supervisor): string {
   return supervisor.supervisor_profile?.company?.company_name || supervisor.company_name || '—'
 }
@@ -588,6 +769,7 @@ function closeFormModal() {
 function onSupervisorSaved() {
   closeFormModal()
   fetchSupervisors()
+  fetchSupervisorStats()
   toast.success('Supervisor saved successfully.')
 }
 
@@ -609,9 +791,7 @@ async function confirmAction(type: ActionType, supervisor: Supervisor) {
     confirmButtonText.value = 'Activate'
   }
 
-  const confirmed = await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value })
-  if (!confirmed) return
-  await handleConfirmAction()
+  await confirmOpen({ title: confirmTitle.value, message: confirmMessage.value, confirmText: confirmButtonText.value })
 }
 
 async function handleConfirmAction() {
@@ -624,14 +804,23 @@ async function handleConfirmAction() {
       await api.delete(`/admin/users/${supervisor.id}`)
       toast.success(`Supervisor "${name}" deleted successfully.`)
     } else if (type === 'deactivate') {
-      await api.put(`/admin/users/${supervisor.id}/deactivate`)
+      if (statusFilter.value === 'deactivated') {
+        await deactivatedUsersStore.deactivateUser(supervisor.id)
+      } else {
+        await api.put(`/admin/users/${supervisor.id}/deactivate`)
+      }
       toast.success(`Supervisor "${name}" deactivated.`)
     } else if (type === 'activate') {
-      await api.put(`/admin/users/${supervisor.id}/activate`)
+      if (statusFilter.value === 'deactivated') {
+        await deactivatedUsersStore.reactivateUser(supervisor.id)
+      } else {
+        await api.put(`/admin/users/${supervisor.id}/activate`)
+      }
       toast.success(`Supervisor "${name}" activated.`)
     }
     pendingAction.value = null
     fetchSupervisors()
+    fetchSupervisorStats()
   })
 }
 
@@ -653,22 +842,91 @@ function goToPage(page: number) {
   fetchSupervisors()
 }
 
+function refresh() {
+  fetchSupervisors()
+}
+
+/**
+ * Fetch supervisor counts from the backend to compute accurate stat card totals.
+ * Fetches total, inactive, and deactivated counts separately to avoid relying
+ * on unsupported query params.
+ */
+async function fetchSupervisorStats(): Promise<void> {
+  try {
+    const res = await api.get('/admin/users', {
+      params: { role: 'supervisor', per_page: 1 },
+    })
+    totalSupervisors.value = res.data.counts?.supervisor ?? res.data.meta?.total ?? 0
+
+    // Fetch deactivated count
+    try {
+      const deactivatedRes = await api.get('/admin/users', {
+        params: { role: 'supervisor', per_page: 1, status: 'deactivated' },
+      })
+      deactivatedCount.value = deactivatedRes.data.meta?.total ?? 0
+    } catch {
+      deactivatedCount.value = 0
+    }
+
+    // Fetch inactive count
+    try {
+      const inactiveRes = await api.get('/admin/users', {
+        params: { role: 'supervisor', per_page: 1, status: 'inactive' },
+      })
+      inactiveCount.value = inactiveRes.data.meta?.total ?? 0
+    } catch {
+      inactiveCount.value = 0
+    }
+
+    // Active = total - (deactivated + inactive)
+    activeCount.value = totalSupervisors.value - deactivatedCount.value - inactiveCount.value
+    if (activeCount.value < 0) activeCount.value = 0
+  } catch {
+    // Stats fetch failed silently — table data still works
+  }
+}
+
+async function fetchCompanies() {
+  try {
+    const res = await api.get('/admin/companies', {
+      params: { per_page: 1000 },
+    })
+    companies.value = res.data.data ?? []
+  } catch {
+    companies.value = []
+  }
+}
+
 async function fetchSupervisors() {
   loading.value = true
   error.value = ''
   try {
-    const params: Record<string, string | number> = {
-      role: 'supervisor',
-      per_page: 15,
-      page: currentPage.value,
+    if (statusFilter.value === 'deactivated') {
+      await deactivatedUsersStore.fetchDeactivated({
+        page: currentPage.value,
+        per_page: 15,
+        search: searchQuery.value || undefined,
+        role: 'supervisor',
+      })
+      supervisors.value = deactivatedUsersStore.users as unknown as Supervisor[]
+      pagination.value = deactivatedUsersStore.pagination as unknown as PaginationMeta | null
+      error.value = deactivatedUsersStore.error || ''
+    } else {
+      const params: Record<string, string | number> = {
+        role: 'supervisor',
+        per_page: 15,
+        page: currentPage.value,
+      }
+
+      if (searchQuery.value) params.search = searchQuery.value
+      if (companyFilter.value) params.company_id = companyFilter.value
+      if (statusFilter.value !== 'all') params.status = statusFilter.value
+      if (sortOrder.value) params.sort = sortOrder.value
+
+      const res = await api.get('/admin/users', { params })
+      supervisors.value = res.data.data ?? []
+      pagination.value = res.data.meta ?? null
     }
-
-    if (searchQuery.value) params.search = searchQuery.value
-
-    const res = await api.get('/admin/users', { params })
-    supervisors.value = res.data.data ?? []
-    pagination.value = res.data.meta ?? null
-    totalSupervisors.value = res.data.counts?.supervisor ?? res.data.meta?.total ?? 0
   } catch (err: unknown) {
     error.value =
       (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -687,6 +945,11 @@ watch(searchQuery, () => {
   }, 300)
 })
 
+watch([companyFilter, statusFilter, sortOrder], () => {
+  currentPage.value = 1
+  fetchSupervisors()
+})
+
 const openKebabId = ref<number | null>(null)
 
 function toggleKebab(id: number) {
@@ -699,7 +962,9 @@ function handleClickOutside() {
 
 onMounted(() => {
   window.addEventListener('click', handleClickOutside)
+  fetchCompanies()
   fetchSupervisors()
+  fetchSupervisorStats()
 })
 
 onUnmounted(() => {

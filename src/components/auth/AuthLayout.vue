@@ -1,5 +1,10 @@
 <template>
   <div class="flex min-h-screen max-h-screen overflow-hidden dark:bg-slate-900 bg-white">
+    <!-- Language Switcher - Fixed Top Right -->
+    <div class="fixed right-6 top-6 z-50">
+      <LanguageSwitcher variant="standalone" />
+    </div>
+
     <!-- Left Hero Banner with photoLoginForm.png -->
     <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden dark:bg-slate-900/50 bg-white select-none flex-col justify-between p-10 xl:p-14">
       <img
@@ -37,15 +42,11 @@
       <!-- Bottom Frosted Light Glass Card (Flawlessly matching the light form theme) -->
       <div class="relative z-10 max-w-lg p-7.5 rounded-3xl dark:bg-slate-800/80 bg-white/80 backdrop-blur-xl dark:border-slate-700/50 border border-white/90 shadow-xl shadow-slate-900/5 animate-slide-up transition-all hover:shadow-2xl">
         <!-- Title with Luminous #21BAEA & #FF9933 Gradient Accent -->
-        <h2 class="text-2xl sm:text-3xl font-extrabold dark:text-slate-100 text-slate-900 leading-tight tracking-tight">
-          Student Internship<br />
-          <span class="bg-gradient-to-r from-[#21BAEA] to-[#FF9933] bg-clip-text text-transparent">
-            Follow-up System
-          </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold dark:text-slate-100 text-slate-900 leading-tight tracking-tight" v-html="$t('auth.signIn.title')">
         </h2>
 
         <p class="mt-3 text-sm dark:text-slate-400 text-slate-600 font-normal leading-relaxed">
-          Empowering students, tutors, and partner companies to seamlessly connect, track daily worklogs, and monitor progress in real-time.
+          {{ $t('app.tagline') }}
         </p>
 
         <!-- Stats / Feature Pill Grid -->
@@ -76,6 +77,7 @@
 </template>
 
 <script setup lang="ts">
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 // AuthLayout wrapper
 </script>
 

@@ -99,9 +99,46 @@
       </div>
     </div>
 
+    <!-- Company Evaluation -->
+    <div v-if="active === 'evaluation'" class="space-y-4">
+      <div v-if="loadingEvaluations" class="rounded-2xl border dark:border-slate-700 border-slate-100 dark:bg-slate-800 bg-white p-6 text-center shadow-sm">
+        <p class="text-sm dark:text-slate-500 text-slate-500">Loading evaluations…</p>
+      </div>
+      <div
+        v-else-if="evaluations.length === 0"
+        class="rounded-2xl border dark:border-slate-700 border-slate-100 dark:bg-slate-800 bg-white p-6 text-center shadow-sm"
+      >
+        <p class="text-sm dark:text-slate-500 text-slate-500">
+          The company hasn't submitted an evaluation for this student yet.
+        </p>
+      </div>
+      <div
+        v-for="evalItem in evaluations"
+        :key="evalItem.id"
+        class="rounded-2xl border dark:border-slate-700 border-slate-100 dark:bg-slate-800 bg-white p-6 shadow-sm"
+      >
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-sm font-bold dark:text-slate-100 text-slate-900">
+            {{ evalItem.supervisor?.company?.company_name || 'Company' }}
+          </h3>
+          <span class="text-xs dark:text-slate-500 text-slate-400">{{ formatDate(evalItem.created_at) }}</span>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-5">
+          <div v-for="metric in evaluationMetrics(evalItem)" :key="metric.label">
+            <p class="text-xs font-semibold dark:text-slate-500 text-slate-500">{{ metric.label }}</p>
+            <p class="mt-1 text-lg font-bold dark:text-slate-100 text-slate-900">{{ metric.value }}</p>
+          </div>
+        </div>
+        <div v-if="evalItem.feedback" class="mt-4 rounded-xl dark:bg-slate-700/50 bg-slate-50 p-4">
+          <p class="text-xs font-semibold dark:text-slate-500 text-slate-500">Feedback</p>
+          <p class="mt-1 text-sm dark:text-slate-200 text-slate-700">{{ evalItem.feedback }}</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Placeholder tabs: wire these to lazy-load endpoints later -->
     <div
-      v-if="active !== 'overview'"
+      v-if="active !== 'overview' && active !== 'evaluation'"
       class="rounded-2xl border dark:border-slate-700 border-slate-100 dark:bg-slate-800 bg-white p-6 shadow-sm"
     >
       <p class="text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">
@@ -116,12 +153,13 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTutorStudentStore } from '@/stores/tutorStudent'
 import { useToastStore } from '@/stores/toast'
+import api from '@/services/api'
 
 const route = useRoute()
 const store = useTutorStudentStore()
 const toast = useToastStore()
 
-const active = ref('overview')
+const active = ref(typeof route.query.tab === 'string' ? route.query.tab : 'overview')
 const student = ref<any>(null)
 const nextStatus = ref('')
 const confirmed = ref(false)
@@ -132,7 +170,42 @@ const tabs = [
   { key: 'worklogs', label: 'Worklogs' },
   { key: 'followups', label: 'Follow-ups' },
   { key: 'issues', label: 'Issues' },
+  { key: 'evaluation', label: 'Evaluation' },
 ]
+
+const evaluations = ref<any[]>([])
+const loadingEvaluations = ref(false)
+
+function evaluationMetrics(evalItem: Record<string, unknown>) {
+  return [
+    { label: 'Technical', value: evalItem.technical_skill },
+    { label: 'Communication', value: evalItem.communication },
+    { label: 'Professionalism', value: evalItem.professionalism },
+    { label: 'Attendance', value: evalItem.attendance },
+    { label: 'Overall', value: evalItem.overall_score },
+  ]
+}
+
+function formatDate(dateStr?: string): string {
+  if (!dateStr) return ''
+  try {
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  } catch {
+    return dateStr
+  }
+}
+
+async function fetchEvaluations() {
+  loadingEvaluations.value = true
+  try {
+    const res = await api.get('/tutor/evaluations', { params: { student_id: route.params.id } })
+    evaluations.value = res.data?.data ?? []
+  } catch {
+    evaluations.value = []
+  } finally {
+    loadingEvaluations.value = false
+  }
+}
 
 const statusOptions = ['Assigned', 'In Progress', 'Completed', 'Terminated']
 
@@ -162,6 +235,7 @@ async function load() {
   const data = await store.fetchStudent(Number(route.params.id))
   student.value = data || null
   nextStatus.value = student.value?.assignment_status || ''
+  fetchEvaluations()
 }
 
 function confirmStatus() {

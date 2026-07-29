@@ -45,7 +45,14 @@
             >
               <td class="px-4 py-3.5">
                 <div class="flex items-center gap-3">
+                  <img
+                    v-if="student.photoUrl"
+                    :src="student.photoUrl"
+                    :alt="student.name"
+                    class="h-8 w-8 rounded-full object-cover"
+                  />
                   <div
+                    v-else
                     class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white"
                     :class="student.avatarColor"
                   >
@@ -121,6 +128,7 @@ interface StudentRow {
   id: number
   name: string
   initials: string
+  photoUrl: string
   email: string
   batch: string
   position: string
@@ -181,6 +189,7 @@ onMounted(async () => {
       id: Number(item?.id ?? 0),
       name: String(item?.student_name ?? 'Student'),
       initials: initialsFrom(String(item?.student_name ?? '')),
+      photoUrl: String(item?.photo_url ?? ''),
       email: String(item?.student_email ?? ''),
       batch: String(item?.batch ?? ''),
       position: String(item?.position ?? ''),

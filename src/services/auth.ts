@@ -112,9 +112,12 @@ export const authService = {
     current_password: string
     password: string
     password_confirmation: string
-  }): Promise<{ message: string }> {
-    const response = await api.put<{ message: string }>('/profile/password', payload)
-    return response.data
+  }): Promise<{ message: string; user?: User }> {
+    const response = await api.put<{ message: string; user?: User }>('/profile/password', payload)
+    return {
+      ...response.data,
+      user: response.data.user ? normalizeUser(response.data.user) : undefined,
+    }
   },
 
   async refreshToken(): Promise<RefreshResponse> {

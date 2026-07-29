@@ -341,7 +341,6 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/services/api'
-import { studentService } from '@/services/student'
 import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import { useDeactivatedUsersStore } from '@/stores/deactivatedUsers'
@@ -589,8 +588,13 @@ function activateUser(user: User) { confirmAction('activate', user) }
 
 async function exportPdf() {
   try {
-    const blob = await studentService.exportPdf()
-    const url = window.URL.createObjectURL(blob)
+    const params: Record<string, string> = {}
+    if (searchQuery.value) params.search = searchQuery.value
+    if (roleFilter.value) params.role = roleFilter.value
+    if (statusFilter.value) params.status = statusFilter.value
+
+    const res = await api.get('/admin/users/export/pdf', { params, responseType: 'blob' })
+    const url = window.URL.createObjectURL(res.data)
     const a = document.createElement('a')
     a.href = url
     a.download = `users-${new Date().toISOString().slice(0, 10)}.pdf`

@@ -77,9 +77,8 @@ export const useMessageStore = defineStore('message', () => {
     const role = auth.userRole
     if (!userId) return
 
-    const channelName = role === 'supervisor'
-      ? `company.${userId}`
-      : `tutor.${userId}`
+    const isCompany = role === 'supervisor' || role === 'company' || role === 'company representative'
+    const channelName = isCompany ? `company.${userId}` : `tutor.${userId}`
 
     window.Echo.private(channelName).listen('.new-message', (data: Record<string, unknown>) => {
       const msg: MessageItem = {
@@ -110,9 +109,8 @@ export const useMessageStore = defineStore('message', () => {
     const role = auth.userRole
     if (!userId) return
 
-    const channelName = role === 'supervisor'
-      ? `company.${userId}`
-      : `tutor.${userId}`
+    const isCompany = role === 'supervisor' || role === 'company' || role === 'company representative'
+    const channelName = isCompany ? `company.${userId}` : `tutor.${userId}`
 
     try {
       window.Echo.leave(channelName)

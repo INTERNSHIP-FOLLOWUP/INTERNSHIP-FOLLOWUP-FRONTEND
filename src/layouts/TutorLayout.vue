@@ -168,26 +168,9 @@
 
         <div class="flex items-center gap-2">
           <!-- Notifications -->
-          <button
-            class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
-          >
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
-            </svg>
-            <span class="absolute right-2 top-2 flex h-2 w-2">
-              <span
-                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75"
-              />
-              <span class="relative inline-flex h-2 w-2 rounded-full bg-indigo-500"></span>
-              </span>
-              </button>
+          <NotificationBell />
 
-              <!-- Language Switcher -->
+          <!-- Language Switcher -->
               <LanguageSwitcher variant="header" />
               <!-- Dark Mode Toggle -->
           <button
@@ -349,6 +332,10 @@ import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import UserAvatar from '@/components/common/UserAvatar.vue'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
+import NotificationBell from '@/components/common/NotificationBell.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const route = useRoute()
 const auth = useAuthStore()
@@ -420,6 +407,24 @@ const messagesSubItems = [
 ]
 
 const pageTitle = computed(() => {
+  const map: Record<string, string> = {
+    TutorDashboard: 'nav.tutor.dashboard',
+    TutorStudents: 'nav.tutor.myStudents',
+    TutorStudentDetail: 'nav.tutor.studentDetails',
+    TutorWorklogs: 'nav.tutor.worklogs',
+    TutorEvaluations: 'nav.tutor.evaluations',
+    TutorWorklogDetail: 'nav.tutor.reviewWorklog',
+    TutorFollowups: 'nav.tutor.followups',
+    TutorIssues: 'nav.tutor.issues',
+    TutorFeedback: 'nav.tutor.companyFeedback',
+    TutorMessages: 'nav.tutor.messages',
+    TutorSelfProfile: 'nav.tutor.profile',
+    TutorProfile: 'nav.tutor.profile',
+  }
+  const name = route.name
+  if (typeof name === 'string' && map[name]) {
+    return t(map[name])
+  }
   const title = route.meta?.title
   return typeof title === 'string' ? title : 'Dashboard'
 })
@@ -525,6 +530,14 @@ const navItems: NavItem[] = [
     to: '/tutor/issues',
     icon: createIcon(
       'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z',
+    ),
+  },
+  {
+    name: 'evaluations',
+    label: 'Company Evaluations',
+    to: '/tutor/evaluations',
+    icon: createIcon(
+      'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
     ),
   },
   {

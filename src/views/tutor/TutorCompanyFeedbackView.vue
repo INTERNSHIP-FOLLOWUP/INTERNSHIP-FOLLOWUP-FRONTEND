@@ -174,7 +174,7 @@ import { normalizeImageUrl } from '@/utils/normalizeImageUrl'
 
 interface FeedbackItem {
   id: number
-  company_id: number
+  company_supervisors_id?: number
   student_id?: number
   student_name?: string
   name?: string
@@ -185,11 +185,22 @@ interface FeedbackItem {
   strengths?: string[]
   improvement_areas?: string[]
   created_at?: string
-  // Flat company fields (when API doesn't nest company object)
+  // Supervisor object with nested company (actual API shape)
+  supervisor?: {
+    id: number
+    company_id?: number
+    company?: {
+      id: number
+      company_name: string
+      company_image_url?: string | null
+      company_profile_image_url?: string | null
+    }
+  }
+  // Flat company fields (fallback)
   company_name?: string
   company_image_url?: string | null
   company_profile_image_url?: string | null
-  // Nested company object (when API includes the relation)
+  // Nested company object (fallback)
   company?: {
     id: number
     company_name: string
@@ -283,8 +294,10 @@ async function enrichCompanyData(): Promise<void> {
   // Collect unique company IDs from items that lack company info
   const missingIds = new Set<number>()
   for (const item of items) {
-    if (!item.company && !item.company_name && item.company_id) {
-      missingIds.add(item.company_id)
+    const hasCompany = item.supervisor?.company?.company_name || item.company?.company_name || item.company_name
+    if (!hasCompany) {
+      const companyId = item.supervisor?.company_id
+      if (companyId) missingIds.add(companyId)
     }
   }
   if (!missingIds.size) return
@@ -300,8 +313,10 @@ async function enrichCompanyData(): Promise<void> {
 
   // Map company data from store onto feedback items
   for (const item of items) {
-    if (item.company || item.company_name) continue
-    const company = companyStore.companies.find((c) => c.id === item.company_id)
+    if (item.supervisor?.company?.company_name || item.company?.company_name || item.company_name) continue
+    const companyId = item.supervisor?.company_id
+    if (!companyId) continue
+    const company = companyStore.companies.find((c) => c.id === companyId)
     if (company) {
       item.company_name = company.name
       item.company_image_url = company.companyImageUrl || company.companyProfileImageUrl || null
@@ -312,9 +327,9 @@ async function enrichCompanyData(): Promise<void> {
   // If some items still lack company data, try fetching individual companies
   const stillMissing = new Set<number>()
   for (const item of items) {
-    if (!item.company && !item.company_name && item.company_id) {
-      stillMissing.add(item.company_id)
-    }
+    if (item.supervisor?.company?.company_name || item.company?.company_name || item.company_name) continue
+    const companyId = item.supervisor?.company_id
+    if (companyId) stillMissing.add(companyId)
   }
   if (!stillMissing.size) return
 
@@ -347,8 +362,10 @@ async function enrichCompanyData(): Promise<void> {
   }
 
   for (const item of items) {
-    if (item.company || item.company_name) continue
-    const info = fetched.get(item.company_id)
+    if (item.supervisor?.company?.company_name || item.company?.company_name || item.company_name) continue
+    const companyId = item.supervisor?.company_id
+    if (!companyId) continue
+    const info = fetched.get(companyId)
     if (info) {
       item.company_name = info.name
       item.company_image_url = info.logo
@@ -356,14 +373,19 @@ async function enrichCompanyData(): Promise<void> {
   }
 }
 
-/** Extract company name from either nested `company` object or flat fields */
+/** Extract company name from supervisor.company, nested `company` object, or flat fields */
 function getCompanyName(item: FeedbackItem): string {
-  return item.company?.company_name || item.company_name || 'Company'
+  return item.supervisor?.company?.company_name
+    || item.company?.company_name
+    || item.company_name
+    || 'Company'
 }
 
-/** Extract and resolve company logo URL from either nested `company` object or flat fields */
+/** Extract and resolve company logo URL from supervisor.company, nested `company` object, or flat fields */
 function getCompanyLogo(item: FeedbackItem): string | undefined {
-  const raw = item.company?.company_image_url
+  const raw = item.supervisor?.company?.company_image_url
+    || item.supervisor?.company?.company_profile_image_url
+    || item.company?.company_image_url
     || item.company?.company_profile_image_url
     || item.company_image_url
     || item.company_profile_image_url

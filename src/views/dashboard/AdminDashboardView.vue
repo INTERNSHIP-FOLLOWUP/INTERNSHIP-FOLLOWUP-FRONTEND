@@ -269,7 +269,14 @@
             >
               <td class="whitespace-nowrap px-4 py-3 font-semibold text-slate-900 dark:text-slate-100">
                 <div class="flex items-center gap-3">
+                  <img
+                    v-if="tutor.photoUrl"
+                    :src="tutor.photoUrl"
+                    :alt="tutor.name"
+                    class="h-8 w-8 rounded-full object-cover"
+                  />
                   <div
+                    v-else
                     class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-600 text-xs dark:bg-slate-700 dark:text-slate-400"
                   >
                     {{ getInitials(tutor.name) }}
@@ -412,7 +419,7 @@ interface DashboardData {
   companyTrend: number
   companyPlacements: Array<{ name: string; count: number }>
   batchEnrollments: Array<{ name: string; duration: string; count: number }>
-  tutors: Array<{ id: number; name: string; email: string; studentsCount: number }>
+  tutors: Array<{ id: number; name: string; email: string; photoUrl: string | null; studentsCount: number }>
   recentActivity: Array<{
     id: number
     actor: string

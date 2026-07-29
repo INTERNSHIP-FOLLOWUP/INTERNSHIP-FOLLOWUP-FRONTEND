@@ -125,7 +125,14 @@
               >
                 <td class="whitespace-nowrap px-4 py-3 font-semibold dark:text-slate-100 text-slate-900">
                   <div class="flex items-center gap-3">
+                    <img
+                      v-if="student.photo_url"
+                      :src="student.photo_url"
+                      :alt="student.student_name || student.name"
+                      class="h-8 w-8 rounded-full object-cover"
+                    />
                     <div
+                      v-else
                       class="flex h-8 w-8 items-center justify-center rounded-full dark:bg-slate-600 bg-slate-100 font-bold dark:text-slate-400 text-slate-600 text-xs"
                     >
                       {{ getInitials(student.student_name || student.name) }}

@@ -225,6 +225,11 @@ api.interceptors.response.use(
 
     // ── 403 Forbidden ──
     if (status === 403) {
+      const data = response.data as { must_change_password?: boolean } | undefined
+      if (data?.must_change_password === true) {
+        return Promise.reject(error)
+      }
+
       window.location.href = '/forbidden'
       return Promise.reject(error)
     }

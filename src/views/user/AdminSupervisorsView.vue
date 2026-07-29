@@ -3,32 +3,25 @@
     <!-- Header -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Supervisors Management</h1>
-        <p class="mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">
-          Manage company supervisors, assigned companies, and account statuses.
-        </p>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Supervisors</h1>
+        <p class="mt-1 text-sm text-slate-500">{{ totalSupervisors }} registered supervisor{{ totalSupervisors !== 1 ? 's' : '' }}</p>
       </div>
-      <div class="flex items-center gap-3">
-        <button
-          @click="refresh"
-          :disabled="loading"
-          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-all dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 hover:border-amber-200 hover:bg-amber-50/50 disabled:opacity-60"
-        >
-          <svg
-            class="h-4 w-4 text-slate-500"
-            :class="{ 'animate-spin': loading }"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      <div class="flex items-center gap-2">
+        <button @click="selectMode ? clearSelection() : enterSelectMode()"
+          class="flex h-10 items-center gap-2 rounded-xl border px-4 text-sm font-semibold transition-all"
+          :class="selectMode
+            ? 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100'
+            : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-indigo-200 hover:bg-indigo-50'">
+          <svg v-if="selectMode" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
-          Refresh
+          <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          {{ selectMode ? 'Cancel' : 'Select All' }}
         </button>
-        <button
-          @click="openCreateModal"
-          class="flex h-10 items-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 px-4 text-sm font-semibold text-white shadow-md shadow-amber-500/20 transition-all hover:from-amber-700 hover:to-amber-600 hover:shadow-lg active:scale-95"
-        >
+        <button @click="openCreateModal"
+          class="flex h-10 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white shadow-md shadow-indigo-200 transition-all hover:bg-indigo-700">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
@@ -122,19 +115,8 @@
         <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search supervisor name or email..."
-          class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-10 pr-9 text-sm text-slate-900 placeholder-slate-400 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all"
-        />
-        <button
-          v-if="searchQuery"
-          @click="searchQuery = ''"
-          class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-        >
-          &times;
-        </button>
+        <input v-model="searchQuery" type="text" placeholder="Search supervisors..."
+          class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
       </div>
 
       <!-- Company Filter -->
@@ -193,7 +175,7 @@
     <div
       v-if="error"
       role="alert"
-      class="flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50/90 px-4 py-3 text-sm font-medium text-rose-700 shadow-sm"
+      class="flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50/90 px-4 py-3 text-sm font-medium text-rose-700 shadow-sm"
     >
       <svg class="h-5 w-5 shrink-0 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -202,74 +184,79 @@
       <button @click="error = ''" class="rounded-lg p-1 transition-colors hover:bg-rose-100">&times;</button>
     </div>
 
-    <!-- Table & List View -->
-    <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-800">
-      <!-- Loading Skeleton -->
-      <div v-if="loading" class="divide-y divide-slate-100 dark:divide-slate-700">
-        <div v-for="n in 4" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse dark:border-slate-700">
-          <div class="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-600" />
+    <div class="rounded-xl border border-slate-200/80 bg-white shadow-sm">
+      <div v-if="loading" class="space-y-0 divide-y divide-slate-50">
+        <div v-for="n in 3" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse">
+          <div class="h-8 w-8 rounded-full bg-slate-200" />
           <div class="flex-1 space-y-2">
-            <div class="h-4 w-1/3 rounded bg-slate-200 dark:bg-slate-600" />
-            <div class="h-3 w-1/4 rounded bg-slate-100 dark:bg-slate-600" />
+            <div class="h-3 w-1/3 rounded bg-slate-200" />
+            <div class="h-3 w-1/4 rounded bg-slate-100" />
           </div>
-          <div class="h-6 w-24 rounded-full bg-slate-200 dark:bg-slate-600" />
-          <div class="h-8 w-20 rounded-lg bg-slate-200 dark:bg-slate-600" />
+          <div class="flex gap-2">
+            <div class="h-8 w-20 rounded-lg bg-slate-200" />
+          </div>
         </div>
       </div>
 
-      <!-- Data Table -->
       <div v-else-if="supervisors.length > 0">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
             <thead>
-              <tr class="border-b border-slate-100 bg-slate-50/70 text-xs font-bold uppercase tracking-wider text-slate-500 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-400">
-                <th class="px-6 py-4 font-semibold">Photo</th>
-                <th class="px-6 py-4 font-semibold">Supervisor</th>
-                <th class="px-6 py-4 font-semibold">Email</th>
-                <th class="px-6 py-4 font-semibold">Phone</th>
-                <th class="px-6 py-4 font-semibold">Assigned Company</th>
-                <th class="px-6 py-4 font-semibold">Status</th>
-                <th class="px-6 py-4 text-center font-semibold">Actions</th>
+              <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <th v-if="selectMode" class="px-4 py-3.5 w-10">
+                  <input type="checkbox" :checked="isAllSelected" :indeterminate="isIndeterminate"
+                    @change="toggleSelectAll"
+                    class="h-4 w-4 rounded border-slate-300 cursor-pointer accent-rose-600" />
+                </th>
+                <th class="px-6 py-3.5 font-medium">Photo</th>
+                <th class="px-6 py-3.5 font-medium">Supervisor</th>
+                <th class="px-6 py-3.5 font-medium">Email</th>
+                <th class="px-6 py-3.5 font-medium">Phone</th>
+                <th class="px-6 py-3.5 font-medium">Assigned Company</th>
+                <th class="px-6 py-3.5 font-medium">Status</th>
+                <th class="px-6 py-3.5 text-center font-medium">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+            <tbody class="divide-y divide-slate-50">
               <tr
                 v-for="(supervisor, index) in supervisors"
                 :key="supervisor.id"
                 @click="viewSupervisor(supervisor)"
-                class="cursor-pointer transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-700/30"
+                class="cursor-pointer transition-colors hover:bg-slate-50/50"
+                :class="{ 'bg-rose-50/40': selectedIds.has(supervisor.id) }"
               >
+                <td v-if="selectMode" class="px-4 py-4 w-10" @click.stop>
+                  <input type="checkbox" :checked="selectedIds.has(supervisor.id)"
+                    @change="toggleSelect(supervisor.id)"
+                    class="h-4 w-4 rounded border-slate-300 cursor-pointer accent-rose-600" />
+                </td>
+
                 <!-- Photo -->
                 <td class="whitespace-nowrap px-6 py-4">
-                  <div class="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-xs font-extrabold text-emerald-800 shadow-xs ring-2 ring-white">
+                  <div class="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-50 text-xs font-bold text-primary-600 ring-2 ring-white shadow-xs">
                     <img
                       v-if="supervisor.avatar_url"
                       :src="supervisor.avatar_url"
                       :alt="getSupervisorName(supervisor)"
-                      class="h-full w-full rounded-2xl object-cover"
+                      class="h-full w-full rounded-full object-cover"
                     />
                     <span v-else>{{ getInitials(getSupervisorName(supervisor)) }}</span>
                   </div>
                 </td>
 
                 <!-- Supervisor Name -->
-                <td class="whitespace-nowrap px-6 py-4">
-                  <div>
-                    <div class="font-bold text-slate-900 flex items-center gap-1.5 dark:text-slate-100">
-                      {{ getSupervisorName(supervisor) }}
-                    </div>
-                    <span class="text-xs text-slate-400 font-medium dark:text-slate-500">Supervisor</span>
-                  </div>
+                <td class="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">
+                  {{ getSupervisorName(supervisor) }}
                 </td>
 
                 <!-- Email -->
-                <td class="whitespace-nowrap px-6 py-4 text-slate-600 dark:text-slate-400">
-                  <div class="flex items-center gap-1.5 group max-w-[220px]">
+                <td class="whitespace-nowrap px-6 py-4 text-slate-500 max-w-[200px]">
+                  <div class="flex items-center gap-1.5 group">
                     <span class="truncate" :title="supervisor.email">{{ supervisor.email }}</span>
                     <button
                       @click.stop="copyEmail(supervisor.email)"
                       title="Copy email address"
-                      class="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-amber-600 p-0.5"
+                      class="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-indigo-600 p-0.5"
                     >
                       <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -279,35 +266,36 @@
                 </td>
 
                 <!-- Phone -->
-                <td class="whitespace-nowrap px-6 py-4 text-slate-600 font-medium dark:text-slate-400">
+                <td class="whitespace-nowrap px-6 py-4 text-slate-500">
                   <a
                     v-if="supervisor.phone"
                     :href="`tel:${supervisor.phone}`"
-                    class="hover:text-amber-600 hover:underline inline-flex items-center gap-1"
+                    @click.stop
+                    class="hover:text-indigo-600 hover:underline"
                   >
                     {{ supervisor.phone }}
                   </a>
-                  <span v-else class="text-slate-300 font-normal">—</span>
+                  <span v-else class="text-slate-300">—</span>
                 </td>
 
                 <!-- Company -->
                 <td class="whitespace-nowrap px-6 py-4">
                   <span
                     v-if="getCompanyName(supervisor) !== '—'"
-                    class="inline-flex items-center gap-1.5 rounded-xl bg-amber-50 py-1 pl-1 pr-3 text-xs font-bold text-amber-800 border border-amber-200/50"
+                    class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 py-1 pl-1 pr-3 text-xs font-semibold text-amber-800 border border-amber-200/50"
                   >
                     <img
                       v-if="getCompanyLogo(supervisor)"
                       :src="getCompanyLogo(supervisor)"
                       :alt="getCompanyName(supervisor)"
-                      class="h-5 w-5 shrink-0 rounded-lg object-cover ring-1 ring-white"
+                      class="h-5 w-5 shrink-0 rounded-full object-cover ring-1 ring-white"
                     />
                     <svg v-else class="h-3.5 w-3.5 shrink-0 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m3 0h1m-1-4h.01M9 16h.01M9 12h.01M9 8h.01M15 16h.01M15 12h.01M15 8h.01" />
                     </svg>
                     {{ getCompanyName(supervisor) }}
                   </span>
-                  <span v-else class="text-slate-400 text-xs italic">Unassigned</span>
+                  <span v-else class="text-slate-300">—</span>
                 </td>
 
                 <!-- Status -->
@@ -344,17 +332,17 @@
                       </svg>
                     </button>
 
-                    <!-- Kebab Dropdown Menu -->
+                    <!-- Kebab Dropdown Menu (Smart positioning: Top rows pop DOWN, Bottom rows pop UP) -->
                     <transition name="fade">
                       <div
                         v-if="openKebabId === supervisor.id"
-                        class="absolute right-0 z-30 w-48 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left"
+                        class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left"
                         :class="index < (supervisors.length > 2 ? supervisors.length - 2 : 1) && supervisors.length > 1 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'"
                       >
                         <button
                           type="button"
                           @click.stop="openKebabId = null; viewSupervisor(supervisor)"
-                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-amber-600 transition-colors"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors"
                         >
                           <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -366,7 +354,7 @@
                         <button
                           type="button"
                           @click.stop="openKebabId = null; editSupervisor(supervisor)"
-                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-amber-600 transition-colors"
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors"
                         >
                           <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -426,34 +414,79 @@
         />
       </div>
 
-      <!-- Empty State -->
       <div v-else class="flex flex-col items-center justify-center px-6 py-16 text-center">
-        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
-          <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        </div>
-        <h3 class="mt-4 text-base font-bold text-slate-900">No supervisors found</h3>
-        <p class="mt-1 text-sm text-slate-500 max-w-sm">
-          {{ hasActiveFilters ? 'No supervisors matched your active filters. Try adjusting your search query or filters.' : 'No company supervisors have been added yet. Click below to add one.' }}
-        </p>
-        <div class="mt-5 flex items-center gap-3">
-          <button
-            v-if="hasActiveFilters"
-            @click="resetFilters"
-            class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
-          >
-            Clear Filters
+        <h3 class="text-base font-bold text-slate-900">No supervisors found</h3>
+        <p class="mt-1 text-sm text-slate-500">No company supervisors have been added yet.</p>
+      </div>
+    </div>
+
+    <!-- ── Floating Bulk Action Bar ── -->
+    <transition name="slide-up">
+      <div v-if="selectedIds.size > 0"
+        class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
+        <div class="flex items-center gap-3 rounded-2xl border border-rose-200 bg-white px-5 py-3 shadow-2xl shadow-rose-100 ring-1 ring-rose-100">
+          <span class="flex h-7 min-w-[28px] items-center justify-center rounded-full bg-rose-600 px-2 text-xs font-bold text-white">
+            {{ selectedIds.size }}
+          </span>
+          <span class="text-sm font-semibold text-slate-700">
+            supervisor{{ selectedIds.size !== 1 ? 's' : '' }} selected
+          </span>
+          <div class="mx-1 h-5 w-px bg-slate-200" />
+          <button @click="bulkDelete" :disabled="bulkDeleting"
+            class="flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition-all hover:bg-rose-700 disabled:opacity-60 active:scale-95">
+            <svg v-if="bulkDeleting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <svg v-else class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            {{ bulkDeleting ? 'Deleting...' : 'Delete Selected' }}
           </button>
-          <button
-            @click="openCreateModal"
-            class="rounded-xl bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-700"
-          >
-            Add Supervisor
+          <button @click="clearSelection"
+            class="flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 active:scale-95">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Cancel
           </button>
         </div>
       </div>
-    </div>
+    </transition>
+
+    <!-- ── Bulk Confirm Modal ── -->
+    <transition name="fade">
+      <div v-if="showBulkConfirm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" @click.self="showBulkConfirm = false">
+        <div class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50">
+              <svg class="h-5 w-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-slate-900">Delete {{ selectedIds.size }} Supervisor{{ selectedIds.size !== 1 ? 's' : '' }}</h3>
+              <p class="mt-0.5 text-sm text-slate-500">This action is permanent and cannot be undone.</p>
+            </div>
+          </div>
+          <div v-if="bulkError" class="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">{{ bulkError }}</div>
+          <div class="mt-5 flex items-center justify-end gap-3">
+            <button @click="showBulkConfirm = false" :disabled="bulkDeleting"
+              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
+              Cancel
+            </button>
+            <button @click="confirmBulkDelete" :disabled="bulkDeleting"
+              class="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-rose-700 disabled:opacity-60">
+              <svg v-if="bulkDeleting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              {{ bulkDeleting ? 'Deleting...' : `Delete ${selectedIds.size}` }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
 
     <!-- Supervisor Form Modal -->
     <transition name="fade">
@@ -557,9 +590,9 @@ const loading = ref(true)
 const error = ref('')
 
 const searchQuery = ref('')
-const companyFilter = ref<string | number>('')
-const statusFilter = ref<'all' | 'active' | 'deactivated'>('all')
-const sortOrder = ref<'newest' | 'oldest' | 'name_asc' | 'name_desc'>('newest')
+const companyFilter = ref('')
+const statusFilter = ref('all')
+const sortOrder = ref('newest')
 
 const currentPage = ref(1)
 const pagination = ref<PaginationMeta | null>(null)
@@ -582,9 +615,82 @@ const confirmButtonText = ref('Confirm')
 type ActionType = 'delete' | 'activate' | 'deactivate'
 const pendingAction = ref<{ type: ActionType; supervisor: Supervisor } | null>(null)
 
-const hasActiveFilters = computed(() => {
-  return !!searchQuery.value || !!companyFilter.value || statusFilter.value !== 'all' || sortOrder.value !== 'newest'
-})
+// ── Bulk select state ──
+const selectMode = ref(false)
+const selectedIds = ref<Set<number>>(new Set())
+const showBulkConfirm = ref(false)
+const bulkDeleting = ref(false)
+const bulkError = ref('')
+
+const hasActiveFilters = computed(() =>
+  !!searchQuery.value || !!companyFilter.value || statusFilter.value !== 'all' || sortOrder.value !== 'newest'
+)
+
+function resetFilters() {
+  searchQuery.value = ''
+  companyFilter.value = ''
+  statusFilter.value = 'all'
+  sortOrder.value = 'newest'
+  currentPage.value = 1
+  fetchSupervisors()
+}
+
+function enterSelectMode() {
+  selectMode.value = true
+}
+
+const isAllSelected = computed(() =>
+  supervisors.value.length > 0 && supervisors.value.every((s) => selectedIds.value.has(s.id))
+)
+const isIndeterminate = computed(() =>
+  supervisors.value.some((s) => selectedIds.value.has(s.id)) && !isAllSelected.value
+)
+
+function toggleSelect(id: number) {
+  const next = new Set(selectedIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  selectedIds.value = next
+}
+
+function toggleSelectAll() {
+  if (isAllSelected.value) {
+    const next = new Set(selectedIds.value)
+    supervisors.value.forEach((s) => next.delete(s.id))
+    selectedIds.value = next
+  } else {
+    const next = new Set(selectedIds.value)
+    supervisors.value.forEach((s) => next.add(s.id))
+    selectedIds.value = next
+  }
+}
+
+function clearSelection() {
+  selectedIds.value = new Set()
+  selectMode.value = false
+}
+
+function bulkDelete() {
+  bulkError.value = ''
+  showBulkConfirm.value = true
+}
+
+async function confirmBulkDelete() {
+  bulkDeleting.value = true
+  bulkError.value = ''
+  try {
+    const ids = Array.from(selectedIds.value)
+    await api.post('/admin/users/bulk-delete', { ids })
+    toast.success(`Deleted ${ids.length} supervisor${ids.length !== 1 ? 's' : ''} successfully.`)
+    showBulkConfirm.value = false
+    clearSelection()
+    fetchSupervisors()
+  } catch (err: unknown) {
+    bulkError.value = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Bulk delete failed.'
+  } finally {
+    bulkDeleting.value = false
+  }
+}
 
 function getSupervisorName(supervisor: Supervisor): string {
   return supervisor.name || `${supervisor.first_name || ''} ${supervisor.last_name || ''}`.trim()
@@ -665,15 +771,6 @@ function onSupervisorSaved() {
   fetchSupervisors()
   fetchSupervisorStats()
   toast.success('Supervisor saved successfully.')
-}
-
-function resetFilters() {
-  searchQuery.value = ''
-  companyFilter.value = ''
-  statusFilter.value = 'all'
-  sortOrder.value = 'newest'
-  currentPage.value = 1
-  fetchSupervisors()
 }
 
 async function confirmAction(type: ActionType, supervisor: Supervisor) {
@@ -789,6 +886,17 @@ async function fetchSupervisorStats(): Promise<void> {
   }
 }
 
+async function fetchCompanies() {
+  try {
+    const res = await api.get('/admin/companies', {
+      params: { per_page: 1000 },
+    })
+    companies.value = res.data.data ?? []
+  } catch {
+    companies.value = []
+  }
+}
+
 async function fetchSupervisors() {
   loading.value = true
   error.value = ''
@@ -852,14 +960,9 @@ function handleClickOutside() {
   openKebabId.value = null
 }
 
-onMounted(async () => {
+onMounted(() => {
   window.addEventListener('click', handleClickOutside)
-  try {
-    const res = await api.get('/admin/companies', { params: { per_page: 200 } })
-    companies.value = res.data.data ?? res.data ?? []
-  } catch {
-    companies.value = []
-  }
+  fetchCompanies()
   fetchSupervisors()
   fetchSupervisorStats()
 })
@@ -878,4 +981,9 @@ onUnmounted(() => {
 .fade-leave-to {
   opacity: 0;
 }
+
+.slide-up-enter-active { transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.slide-up-leave-active { transition: all 0.2s ease-in; }
+.slide-up-enter-from  { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.95); }
+.slide-up-leave-to    { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.95); }
 </style>

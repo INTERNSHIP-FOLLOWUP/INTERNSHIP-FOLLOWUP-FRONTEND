@@ -15,9 +15,9 @@
             {{ store.totalUnreadCount }} new
           </span>
         </div>
-        <p class="mt-0.5 text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">
-          Communicate with your assigned tutors
-        </p>
+          <p class="mt-0.5 text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">
+            {{ isCompanyUser ? 'Communicate with your assigned tutors' : 'Communicate with companies' }}
+          </p>
       </div>
 
       <!-- Search -->
@@ -133,7 +133,7 @@
             </div>
 
             <!-- Info -->
-            <div class="min-w-0 flex-1">
+              <div class="min-w-0 flex-1">
               <div class="flex items-center justify-between">
                 <h3
                   class="truncate text-sm font-semibold"
@@ -149,6 +149,15 @@
                   {{ formatTime(conv.last_message.created_at) }}
                 </span>
               </div>
+
+              <!-- Company name (shown for tutor conversations) -->
+              <p
+                v-if="!conv.user && conv.company_name"
+                class="mt-0.5 truncate text-xs dark:text-slate-500 text-slate-400"
+              >
+                {{ conv.company_name }}
+              </p>
+
               <p
                 v-if="conv.last_message"
                 class="mt-0.5 truncate text-xs"
@@ -168,7 +177,7 @@
                   ? 'bg-purple-50 text-purple-700'
                   : 'bg-emerald-50 text-emerald-700'"
               >
-                {{ conv.user ? 'Tutor' : 'Company' }}
+                {{ conv.user ? 'Tutor' : 'Supervisor' }}
               </span>
             </div>
           </button>
@@ -202,9 +211,9 @@
           </svg>
         </div>
         <h3 class="mt-4 text-lg font-bold text-slate-800">Your Messages</h3>
-        <p class="mt-1 max-w-xs text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">
-          Select a conversation from the left to start chatting with a tutor.
-        </p>
+          <p class="mt-1 max-w-xs text-sm dark:dark:text-slate-500 text-slate-400 text-slate-500">
+            {{ isCompanyUser ? 'Select a conversation from the left to start chatting with a tutor.' : 'Select a conversation from the left to start chatting.' }}
+          </p>
       </div>
 
       <!-- Active conversation -->
@@ -248,7 +257,10 @@
               {{ getConversationName(activeConversation) }}
             </h3>
             <p class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">
-              {{ activeConversation.user ? 'Tutor' : 'Company Representative' }}
+              {{ activeConversation.user ? 'Tutor' : 'Supervisor' }}
+              <template v-if="!activeConversation.user && activeConversation.company_name">
+                &middot; {{ activeConversation.company_name }}
+              </template>
             </p>
           </div>
         </div>
@@ -436,9 +448,14 @@ const filteredConversations = computed(() => {
   const q = searchQuery.value.toLowerCase()
   return store.conversations.filter((conv) => {
     const name = getConversationName(conv).toLowerCase()
-    return name.includes(q)
+    const company = conv.company_name?.toLowerCase() ?? ''
+    return name.includes(q) || company.includes(q)
   })
 })
+
+function isCompanyRole(role: string | null | undefined): boolean {
+  return role === 'supervisor' || role === 'company' || role === 'company representative'
+}
 
 /**
  * Is the current user the sender of this message?
@@ -447,15 +464,16 @@ const filteredConversations = computed(() => {
  */
 function isOwnMessage(msg: MessageItem | { sender_type: string }): boolean {
   const role = auth.userRole
-  if (role === 'supervisor') {
+  if (isCompanyRole(role)) {
     return msg.sender_type === 'company'
   }
   if (role === 'tutor') {
     return msg.sender_type === 'tutor'
   }
-  // Fallback
   return msg.sender_type === 'company'
 }
+
+const isCompanyUser = computed(() => isCompanyRole(auth.userRole))
 
 function getConversationName(conv: MessageConversation): string {
   return conv.user?.name || conv.company?.name || 'Unknown'

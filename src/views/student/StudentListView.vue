@@ -284,7 +284,7 @@
               Edit
             </router-link>
             <button
-              @click="deleteStudent(student.id)"
+              @click="confirmAction('delete', student)"
               class="flex-1 rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-50"
             >
               Delete
@@ -324,7 +324,7 @@
     </div>
 
     <!-- Delete Confirmation -->
-    <ConfirmDialog :show="dialog.show.value" :title="dialog.title.value" :message="dialog.message.value" :confirm-text="dialog.confirmText.value" :cancel-text="dialog.cancelText.value" :loading="dialog.loading.value" :error="dialog.error.value" @confirm="handleConfirm" @cancel="dialog.cancel()" />
+    <ConfirmDialog :show="dialog.show.value" :title="dialog.title.value" :message="dialog.message.value" :confirm-text="dialog.confirmText.value" :cancel-text="dialog.cancelText.value" :loading="dialog.loading.value" :error="dialog.error.value" @confirm="handleConfirmAction" @cancel="dialog.cancel()" />
 
     <!-- Import Students Modal -->
     <ImportStudentsModal :show="showImportModal" @close="showImportModal = false; fetchPage({ page: 1 })" />
@@ -444,7 +444,6 @@ const isSelectedStudentDeactivated = computed(() => {
 })
 const statusFilter = ref('')
 const genderFilter = ref('')
-let deleteTargetId: number | null = null
 
 const hasActiveFilters = computed(
   () => {

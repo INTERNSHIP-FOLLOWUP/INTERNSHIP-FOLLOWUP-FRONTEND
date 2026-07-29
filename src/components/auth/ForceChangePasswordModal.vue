@@ -385,16 +385,14 @@ async function submitPasswordChange() {
 
   submitting.value = true
   try {
-    await authService.changePassword({
+    const result = await authService.changePassword({
       current_password: form.value.current_password,
       password: form.value.password,
       password_confirmation: form.value.password_confirmation,
     })
 
-    // Update local auth store - set must_change_password to false
-    auth.updateUser({ must_change_password: false })
+    auth.updateUser(result.user ?? { must_change_password: false, status: 'active' })
 
-    // Reset and close modal
     resetFields()
   } catch (err: unknown) {
     const axiosErr = err as {

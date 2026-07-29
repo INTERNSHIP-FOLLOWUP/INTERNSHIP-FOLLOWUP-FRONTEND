@@ -2,7 +2,7 @@
   <button
     :type="type"
     :disabled="disabled || loading"
-    class="w-full h-[48px] inline-flex items-center justify-center rounded-xl font-semibold text-[16px] text-white transition-all duration-200 ease-out outline-none focus:outline-none focus:ring-2 focus:ring-[#21BAEA]/50 focus:ring-offset-2"
+    class="w-full h-[48px] inline-flex items-center justify-center rounded-xl font-semibold text-[16px] text-white transition-all duration-200 ease-out outline-none focus:outline-none focus:ring-2 focus:ring-[#21BAEA]/50 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
     :class="[
       disabled || loading
         ? 'opacity-60 cursor-not-allowed'

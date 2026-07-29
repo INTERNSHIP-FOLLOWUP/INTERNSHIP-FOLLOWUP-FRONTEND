@@ -9,7 +9,7 @@
         <button
           v-if="worklog && isEditable(worklog)"
           type="button"
-          class="rounded-xl bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-100 transition-colors"
+          class="rounded-xl bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-100 transition-colors dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-900/40"
           @click="confirmDelete = true"
         >
           <svg class="-ml-0.5 mr-1.5 inline-block h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,13 +20,13 @@
         <router-link
           :to="`/student/worklogs/${worklog?.id}/edit`"
           v-if="worklog && isEditable(worklog)"
-          class="rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700 hover:bg-amber-100 transition-colors"
+          class="rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700 hover:bg-amber-100 transition-colors dark:bg-amber-950/30 dark:text-amber-400 dark:hover:bg-amber-900/40"
         >
           Edit
         </router-link>
         <router-link
           to="/student/worklogs"
-          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+          class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
         >
           Back
         </router-link>
@@ -53,77 +53,77 @@
 
     <div v-else class="space-y-6">
       <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 class="text-sm font-bold text-slate-900">Student Information</h2>
+        <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Student Information</h2>
         <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
           <div>
-            <p class="text-xs font-semibold text-slate-500">Student</p>
-            <p class="text-sm font-bold text-slate-900">{{ worklog?.student?.name || '—' }}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Student</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ worklog?.student?.name || '—' }}</p>
           </div>
           <div>
-            <p class="text-xs font-semibold text-slate-500">Company</p>
-            <p class="text-sm font-bold text-slate-900">{{ (worklog?.student as any)?.company_name || '—' }}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Company</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ (worklog?.student as any)?.company_name || '—' }}</p>
 
           </div>
           <div>
-            <p class="text-xs font-semibold text-slate-500">Position</p>
-            <p class="text-sm font-bold text-slate-900">{{ (worklog?.student as any)?.position || (worklog?.student as any)?.internship_position || '—' }}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Position</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ (worklog?.student as any)?.position || (worklog?.student as any)?.internship_position || '—' }}</p>
 
           </div>
         </div>
       </section>
 
       <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 class="text-sm font-bold text-slate-900">Worklog Information</h2>
+        <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Worklog Information</h2>
 
         <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-4">
           <div>
-            <p class="text-xs font-semibold text-slate-500">Week</p>
-            <p class="text-sm font-bold text-slate-900">{{ worklog?.week_number }}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Week</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ worklog?.week_number }}</p>
           </div>
           <div>
-            <p class="text-xs font-semibold text-slate-500">Status</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Status</p>
             <div class="mt-1">
               <WorklogStatusBadge :status="worklog!.status" />
             </div>
           </div>
           <div class="md:col-span-2">
-            <p class="text-xs font-semibold text-slate-500">Submitted Date</p>
-            <p class="text-sm font-bold text-slate-900">{{ formatDate(worklog?.submitted_at) }}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Submitted Date</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ formatDate(worklog?.submitted_at) }}</p>
           </div>
         </div>
 
         <div class="mt-4">
-          <p class="text-xs font-semibold text-slate-500">Description</p>
-          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ worklog?.description }}</p>
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Description</p>
+          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog?.description }}</p>
         </div>
 
         <div class="mt-4" v-if="worklog?.challenges">
-          <p class="text-xs font-semibold text-slate-500">Challenges</p>
-          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ worklog?.challenges }}</p>
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Challenges</p>
+          <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog?.challenges }}</p>
         </div>
       </section>
 
       <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 class="text-sm font-bold text-slate-900">Attachments</h2>
+        <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Attachments</h2>
         <div class="mt-3">
           <AttachmentList :attachments="worklog?.attachments || []" />
         </div>
       </section>
 
       <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 class="text-sm font-bold text-slate-900">Tutor Review</h2>
+        <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Tutor Review</h2>
         <div v-if="worklog?.tutor_review" class="mt-3 space-y-3">
           <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
             <div>
-              <p class="text-xs font-semibold text-slate-500">Tutor</p>
-              <p class="text-sm font-bold text-slate-900">{{ worklog.tutor_review.tutor_name }}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Tutor</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ worklog.tutor_review.tutor_name }}</p>
             </div>
             <div>
-              <p class="text-xs font-semibold text-slate-500">Review Date</p>
-              <p class="text-sm font-bold text-slate-900">{{ formatDate(worklog.tutor_review.reviewed_at) }}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Review Date</p>
+            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ formatDate(worklog.tutor_review.reviewed_at) }}</p>
             </div>
             <div>
-              <p class="text-xs font-semibold text-slate-500">Review Status</p>
+              <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Review Status</p>
               <div class="mt-1">
                 <WorklogStatusBadge :status="worklog.tutor_review.status" />
               </div>
@@ -131,8 +131,8 @@
           </div>
 
           <div>
-            <p class="text-xs font-semibold text-slate-500">Feedback</p>
-            <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ worklog.tutor_review.feedback }}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Feedback</p>
+            <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog.tutor_review.feedback }}</p>
           </div>
         </div>
 

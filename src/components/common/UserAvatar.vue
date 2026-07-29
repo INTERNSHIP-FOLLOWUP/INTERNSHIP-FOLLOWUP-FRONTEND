@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-100"
+    class="flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full dark:bg-slate-700 bg-slate-100"
     :class="[sizeClass, clickable ? 'cursor-pointer hover:opacity-90 transition-opacity' : '']"
     @click="handleClick"
   >
@@ -11,7 +11,7 @@
       class="h-full w-full object-cover"
       @error="onError"
     />
-    <span v-else class="text-xs font-bold text-slate-500">{{ initials }}</span>
+    <span v-else class="text-xs font-bold dark:text-slate-400 text-slate-500">{{ initials }}</span>
 
     <AvatarLightboxModal
       v-if="clickable"

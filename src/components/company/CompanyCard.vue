@@ -1,6 +1,6 @@
 <template>
   <div
-    class="group relative rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:border-gray-200 hover:shadow-md"
+    class="group relative rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:border-gray-200 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600"
   >
     <!-- Top Content Area -->
     <div class="flex items-start gap-4">
@@ -10,11 +10,11 @@
         :src="companyLogoUrl"
         alt=""
         @error="companyImageError = true"
-        class="h-12 w-12 shrink-0 rounded-xl object-cover ring-4 ring-gray-50 transition-transform group-hover:scale-[1.02]"
+        class="h-12 w-12 shrink-0 rounded-xl object-cover ring-4 ring-gray-50 transition-transform group-hover:scale-[1.02] dark:ring-slate-700"
       />
       <div
         v-else
-        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-blue-100 text-base font-bold text-primary-700 ring-4 ring-gray-50 select-none shadow-xs"
+        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-50 to-blue-100 text-base font-bold text-primary-700 ring-4 ring-gray-50 select-none shadow-xs dark:ring-slate-700"
       >
         {{ company.name ? company.name.charAt(0).toUpperCase() : 'C' }}
       </div>
@@ -22,17 +22,17 @@
       <!-- Main Text Details -->
       <div class="min-w-0 flex-1">
         <h3
-          class="truncate text-base font-semibold tracking-tight text-gray-900 group-hover:text-sky-950"
+          class="truncate text-base font-semibold tracking-tight text-gray-900 group-hover:text-sky-950 dark:text-slate-100 dark:group-hover:text-sky-300"
         >
           {{ company.name }}
         </h3>
 
         <!-- Contact & Location Metadata -->
-        <div class="mt-2.5 space-y-2 text-sm text-gray-500">
+        <div class="mt-2.5 space-y-2 text-sm text-gray-500 dark:text-slate-400">
           <!-- Location -->
-          <div v-if="company.location" class="flex items-center gap-2 text-gray-600">
+          <div v-if="company.location" class="flex items-center gap-2 text-gray-600 dark:text-slate-400">
             <svg
-              class="h-4 w-4 shrink-0 text-gray-400"
+              class="h-4 w-4 shrink-0 text-gray-400 dark:text-slate-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke-width="2"
@@ -55,7 +55,7 @@
           <!-- Email -->
           <div v-if="company.email" class="flex items-center gap-2">
             <svg
-              class="h-4 w-4 shrink-0 text-gray-400"
+              class="h-4 w-4 shrink-0 text-gray-400 dark:text-slate-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke-width="2"
@@ -74,7 +74,7 @@
     </div>
 
     <!-- Divider Line -->
-    <div class="my-4 border-t border-gray-100" />
+    <div class="my-4 border-t border-gray-100 dark:border-slate-700" />
 
     <!-- Action Bar Footer -->
     <div class="flex items-center justify-between gap-3">
@@ -85,7 +85,7 @@
           :href="normalizedTelegram"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 rounded-lg bg-sky-50 px-2.5 py-1.5 text-xs font-semibold text-sky-700 transition-colors hover:bg-sky-100 hover:text-sky-800"
+          class="inline-flex items-center gap-1.5 rounded-lg bg-sky-50 px-2.5 py-1.5 text-xs font-semibold text-sky-700 transition-colors hover:bg-sky-100 hover:text-sky-800 dark:bg-sky-950/30 dark:text-sky-400 dark:hover:bg-sky-900/40 dark:hover:text-sky-300"
         >
           <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
             <path
@@ -100,7 +100,7 @@
       <div class="flex items-center gap-1.5">
         <button
           type="button"
-          class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-semibold text-indigo-600 transition-colors hover:bg-indigo-100 hover:text-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 px-2.5 py-1.5 text-xs font-semibold text-indigo-600 transition-colors hover:bg-indigo-100 hover:text-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-indigo-950/30 dark:text-indigo-400 dark:hover:bg-indigo-900/40 dark:hover:text-indigo-300"
           @click="$emit('view')"
         >
           <svg
@@ -126,7 +126,7 @@
 
         <button
           type="button"
-          class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
           @click="$emit('edit')"
         >
           <svg
@@ -147,7 +147,7 @@
 
         <button
           type="button"
-          class="inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-100 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-100 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-900/40 dark:hover:text-red-300"
           @click="$emit('delete')"
         >
           <svg

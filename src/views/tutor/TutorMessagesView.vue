@@ -1,11 +1,11 @@
 <template>
     <!-- Company Messages -->
-    <div v-if="activeTab === 'company'">
+    <div v-if="activeTab === 'company'" class="dark:bg-slate-900 dark:text-slate-100">
       <MessageView />
     </div>
 
     <!-- Student Messages -->
-    <div v-if="activeTab === 'students'">
+    <div v-if="activeTab === 'students'" class="dark:bg-slate-900 dark:text-slate-100">
       <TutorStudentMessageView />
     </div>
 </template>

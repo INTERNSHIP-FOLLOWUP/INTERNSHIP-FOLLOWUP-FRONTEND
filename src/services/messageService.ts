@@ -8,10 +8,14 @@ import type {
   SendMessageResponse,
 } from '@/types/message'
 
+function isCompanyRole(role: string | null | undefined): boolean {
+  return role === 'supervisor' || role === 'company' || role === 'company representative'
+}
+
 function getMessagePrefix(): string {
   const auth = useAuthStore()
   const role = auth.userRole
-  if (role === 'supervisor') {
+  if (isCompanyRole(role)) {
     return '/company'
   }
   return '/tutor'

@@ -7,9 +7,11 @@ import { createPinia } from 'pinia'
 import Echo from 'laravel-echo'
 import Pusher from 'pusher-js'
 import { tokenService } from '@/services/token'
+import i18n from '@/i18n'
 
 const app = createApp(App)
 
+app.use(i18n)
 app.use(router)
 app.use(createPinia())
 

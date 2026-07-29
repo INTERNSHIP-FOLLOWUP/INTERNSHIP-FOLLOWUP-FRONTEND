@@ -3,10 +3,10 @@
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-xl font-bold text-slate-900">
+        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
           {{ isEdit ? 'Edit Tutor' : 'Add Tutor' }}
         </h2>
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {{
             isEdit
               ? 'Update tutor details below.'
@@ -19,7 +19,7 @@
     <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
       <!-- First Name -->
       <div class="space-y-1.5">
-        <label for="firstName" class="block text-sm font-medium text-slate-700">
+        <label for="firstName" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
           First Name <span class="text-error">*</span>
         </label>
         <input
@@ -29,7 +29,7 @@
           placeholder="e.g. Sokha"
           :aria-invalid="!!errors.first_name"
           :aria-describedby="errors.first_name ? 'firstName-error' : undefined"
-          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200"
+          class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           :class="inputClass('first_name')"
           @input="clearFieldError('first_name')"
           @blur="validateField('first_name')"
@@ -39,7 +39,7 @@
 
       <!-- Last Name -->
       <div class="space-y-1.5">
-        <label for="lastName" class="block text-sm font-medium text-slate-700">
+        <label for="lastName" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
           Last Name <span class="text-error">*</span>
         </label>
         <input
@@ -59,7 +59,7 @@
 
       <!-- Email -->
       <div class="space-y-1.5">
-        <label for="email" class="block text-sm font-medium text-slate-700">
+        <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
           Email <span class="text-error">*</span>
         </label>
         <input
@@ -118,7 +118,7 @@
 
       <!-- Password (create only) -->
       <div v-if="!isEdit" class="space-y-1.5 sm:col-span-2">
-        <label for="password" class="block text-sm font-medium text-slate-700">
+        <label for="password" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
           Password <span class="text-error">*</span>
         </label>
         <input
@@ -150,11 +150,11 @@
     </div>
 
     <!-- Actions -->
-    <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-5">
+    <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-5 dark:border-slate-700">
       <button
         type="button"
         @click="$emit('cancel')"
-        class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+        class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
       >
         Cancel
       </button>
@@ -228,7 +228,7 @@ const conditionalFields = ['password'] as const
 function inputClass(field: string): string {
   return errors[field]
     ? 'border-error ring-1 ring-error/20 focus:border-error focus:ring-2 focus:ring-error/30'
-    : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
+    : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-slate-600'
 }
 
 function clearFieldError(field: string): void {

@@ -1,4 +1,5 @@
 export interface MessageConversation {
+  company_name?: string
   user?: {
     id: number
     name: string

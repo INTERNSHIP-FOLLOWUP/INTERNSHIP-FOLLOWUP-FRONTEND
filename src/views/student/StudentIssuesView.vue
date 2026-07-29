@@ -27,13 +27,13 @@
          ════════════════════════════════════════════ -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <!-- Total -->
-      <div class="group rounded-xl border border-[#E5E7EB] bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+      <div class="group rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-xs font-medium uppercase tracking-wide text-[#6B7280]">Total Issues</p>
             <p class="mt-1 text-2xl font-bold text-[#111827]">{{ stats.total }}</p>
           </div>
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E5E7EB] bg-white text-[#2563EB]">
+          <div class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E5E7EB] dark:bg-slate-800 bg-white text-[#2563EB]">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
@@ -43,13 +43,13 @@
       </div>
 
       <!-- Open -->
-      <div class="group rounded-xl border border-[#E5E7EB] bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+      <div class="group rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-xs font-medium uppercase tracking-wide text-[#6B7280]">Open</p>
             <p class="mt-1 text-2xl font-bold text-[#111827]">{{ stats.open }}</p>
           </div>
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E5E7EB] bg-white text-[#D97706]">
+          <div class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E5E7EB] dark:bg-slate-800 bg-white text-[#D97706]">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
@@ -59,13 +59,13 @@
       </div>
 
       <!-- In Progress -->
-      <div class="group rounded-xl border border-[#E5E7EB] bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+      <div class="group rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-xs font-medium uppercase tracking-wide text-[#6B7280]">In Progress</p>
             <p class="mt-1 text-2xl font-bold text-[#111827]">{{ stats.inProgress }}</p>
           </div>
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E5E7EB] bg-white text-[#2563EB]">
+          <div class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E5E7EB] dark:bg-slate-800 bg-white text-[#2563EB]">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
@@ -75,13 +75,13 @@
       </div>
 
       <!-- Resolved -->
-      <div class="group rounded-xl border border-[#E5E7EB] bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+      <div class="group rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-xs font-medium uppercase tracking-wide text-[#6B7280]">Resolved</p>
             <p class="mt-1 text-2xl font-bold text-[#111827]">{{ stats.resolved }}</p>
           </div>
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E5E7EB] bg-white text-[#10B981]">
+          <div class="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E5E7EB] dark:bg-slate-800 bg-white text-[#10B981]">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -94,7 +94,7 @@
     <!-- ════════════════════════════════════════════
          Search & Filters Bar
          ════════════════════════════════════════════ -->
-    <div class="rounded-xl border border-[#E5E7EB] bg-white p-4 shadow-sm">
+    <div class="rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-4 shadow-sm">
       <div class="flex flex-wrap items-center gap-3">
         <div class="relative min-w-0 flex-1 basis-[220px]">
           <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[#9CA3AF]">
@@ -106,7 +106,7 @@
             v-model="searchQuery"
             type="text"
             placeholder="Search issues..."
-            class="h-9 w-full rounded-lg border border-[#E5E7EB] bg-white py-2 pl-9 pr-8 text-sm text-[#111827] placeholder-[#9CA3AF] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10"
+            class="h-9 w-full rounded-lg border border-[#E5E7EB] dark:bg-slate-800 bg-white py-2 pl-9 pr-8 text-sm text-[#111827] placeholder-[#9CA3AF] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10"
           />
           <button
             v-if="searchQuery.length > 0"
@@ -123,7 +123,7 @@
         <select
           v-model="statusFilter"
           @change="onFilterChange"
-          class="h-9 min-w-[130px] rounded-lg border border-[#E5E7EB] bg-white px-3 text-sm text-[#111827] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10 appearance-none"
+          class="h-9 min-w-[130px] rounded-lg border border-[#E5E7EB] dark:bg-slate-800 bg-white px-3 text-sm text-[#111827] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10 appearance-none"
         >
           <option value="">All Statuses</option>
           <option value="Open">Open</option>
@@ -134,7 +134,7 @@
         <select
           v-model="priorityFilter"
           @change="onFilterChange"
-          class="h-9 min-w-[130px] rounded-lg border border-[#E5E7EB] bg-white px-3 text-sm text-[#111827] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10 appearance-none"
+          class="h-9 min-w-[130px] rounded-lg border border-[#E5E7EB] dark:bg-slate-800 bg-white px-3 text-sm text-[#111827] transition-all focus:border-[#2563EB] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10 appearance-none"
         >
           <option value="">All Priorities</option>
           <option value="Low">Low</option>
@@ -145,7 +145,7 @@
         <button
           type="button"
           @click="resetFilters"
-          class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-sm font-medium text-[#6B7280] transition-all hover:border-[#EF4444]/30 hover:bg-[#FEF2F2] hover:text-[#EF4444] disabled:opacity-40"
+          class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#E5E7EB] dark:bg-slate-800 bg-white px-3.5 text-sm font-medium text-[#6B7280] transition-all hover:border-[#EF4444]/30 hover:bg-[#FEF2F2] hover:text-[#EF4444] disabled:opacity-40"
           :disabled="!hasActiveFilters"
         >
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,7 +158,7 @@
           type="button"
           @click="refresh"
           :disabled="loading"
-          class="ml-auto inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-sm font-medium text-[#6B7280] transition-all hover:border-[#2563EB]/20 hover:bg-[#EFF6FF] hover:text-[#2563EB] disabled:opacity-50"
+          class="ml-auto inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#E5E7EB] dark:bg-slate-800 bg-white px-3.5 text-sm font-medium text-[#6B7280] transition-all hover:border-[#2563EB]/20 hover:bg-[#EFF6FF] hover:text-[#2563EB] disabled:opacity-50"
         >
           <svg class="h-3.5 w-3.5" :class="{ 'animate-spin': loading }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.023 9.348c4.183.626 6.977 3.26 6.977 7.053A7.5 7.5 0 119.75 1.5c4.232 0 7.273 2.527 7.273 5.848z" />
@@ -194,7 +194,7 @@
 
     <!-- Loading Skeletons -->
     <div v-else-if="loading" class="space-y-3">
-      <div v-for="i in 4" :key="i" class="rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-sm">
+      <div v-for="i in 4" :key="i" class="rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white p-5 shadow-sm">
         <div class="flex items-center gap-3">
           <div class="h-8 w-8 animate-pulse rounded-full bg-[#E5E7EB]" />
           <div class="flex-1 space-y-2">
@@ -219,7 +219,7 @@
       <div
         v-for="issue in paginatedIssues"
         :key="issue.id"
-        class="group rounded-xl border border-[#E5E7EB] bg-white shadow-sm transition-all duration-200 hover:border-[#2563EB]/20 hover:shadow-md"
+        class="group rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white shadow-sm transition-all duration-200 hover:border-[#2563EB]/20 hover:shadow-md"
       >
         <div class="flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:justify-between">
           <div class="flex-1 min-w-0">
@@ -271,7 +271,7 @@
             <button
               type="button"
               @click="openDetail(issue)"
-              class="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-semibold text-[#6B7280] transition-all hover:border-[#2563EB]/30 hover:bg-[#EFF6FF] hover:text-[#2563EB]"
+              class="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] dark:bg-slate-800 bg-white px-3 py-1.5 text-xs font-semibold text-[#6B7280] transition-all hover:border-[#2563EB]/30 hover:bg-[#EFF6FF] hover:text-[#2563EB]"
             >
               <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -298,7 +298,7 @@
     <!-- Empty State -->
     <div
       v-else-if="!loading"
-      class="flex flex-col items-center justify-center rounded-xl border border-[#E5E7EB] bg-white px-6 py-20 text-center"
+      class="flex flex-col items-center justify-center rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white px-6 py-20 text-center"
     >
       <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F9FAFB]">
         <svg class="h-8 w-8 text-[#D1D5DB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -332,26 +332,26 @@
          ════════════════════════════════════════════ -->
     <div
       v-if="totalPages > 1"
-      class="flex flex-col items-center justify-between gap-3 rounded-xl border border-[#E5E7EB] bg-white px-4 py-3 shadow-sm sm:flex-row"
+      class="flex flex-col items-center justify-between gap-3 rounded-xl border border-[#E5E7EB] dark:bg-slate-800 bg-white px-4 py-3 shadow-sm sm:flex-row"
     >
       <p class="text-xs text-[#6B7280]">
         Showing <span class="font-semibold text-[#111827]">{{ displayRange }}</span> of <span class="font-semibold text-[#111827]">{{ filteredIssues.length }}</span> issues
       </p>
       <div class="flex items-center gap-2">
-        <button class="rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-xs font-semibold text-[#6B7280] transition-colors hover:bg-gray-50 disabled:opacity-60" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">Previous</button>
+        <button class="rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-xs font-semibold text-[#6B7280] transition-colors hover:dark:bg-slate-700 bg-gray-50 disabled:opacity-60" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">Previous</button>
         <template v-for="(page, idx) in visiblePages" :key="idx">
           <span v-if="page === '...'" class="flex h-7 w-7 items-center justify-center text-xs text-[#9CA3AF] select-none">…</span>
           <button
             v-else
             @click="goToPage(page as number)"
             class="flex h-7 min-w-[1.75rem] items-center justify-center rounded-lg px-1.5 text-xs font-semibold transition-colors"
-            :class="page === currentPage ? 'bg-[#2563EB] text-white' : 'text-[#6B7280] hover:bg-gray-100'"
+            :class="page === currentPage ? 'bg-[#2563EB] text-white' : 'text-[#6B7280] hover:dark:bg-slate-600 bg-gray-100'"
           >{{ page }}</button>
         </template>
-        <button class="rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-xs font-semibold text-[#6B7280] transition-colors hover:bg-gray-50 disabled:opacity-60" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)">Next</button>
+        <button class="rounded-lg border border-[#E5E7EB] px-3 py-1.5 text-xs font-semibold text-[#6B7280] transition-colors hover:dark:bg-slate-700 bg-gray-50 disabled:opacity-60" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)">Next</button>
         <div class="ml-2 flex items-center gap-1.5">
           <label class="text-xs text-[#6B7280]">Rows</label>
-          <select v-model="perPage" @change="onPerPageChange" class="h-7 rounded-lg border border-[#E5E7EB] bg-white px-1.5 text-xs text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10">
+          <select v-model="perPage" @change="onPerPageChange" class="h-7 rounded-lg border border-[#E5E7EB] dark:bg-slate-800 bg-white px-1.5 text-xs text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/10">
             <option :value="6">6</option>
             <option :value="12">12</option>
             <option :value="24">24</option>
@@ -369,14 +369,14 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"
         @click.self="closeCreateModal"
       >
-        <div class="flex max-h-[90vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl overflow-hidden border border-slate-100 animate-in">
+        <div class="flex max-h-[90vh] w-full max-w-lg flex-col rounded-2xl dark:bg-slate-800 bg-white shadow-2xl overflow-hidden border dark:border-slate-700 border-slate-100 animate-in">
           <!-- Header -->
-          <div class="flex shrink-0 items-center justify-between border-b border-slate-100 px-5 py-4">
+          <div class="flex shrink-0 items-center justify-between border-b dark:border-slate-700 border-slate-100 px-5 py-4">
             <div>
-              <h2 class="text-base font-semibold text-slate-900">{{ editingIssueId ? 'Edit Issue' : 'Report New Issue' }}</h2>
-              <p class="mt-0.5 text-xs text-slate-500">{{ editingIssueId ? 'Update the details of your reported issue.' : 'Describe the challenge you\'re facing during your internship.' }}</p>
+              <h2 class="text-base font-semibold dark:text-slate-100 text-slate-900">{{ editingIssueId ? 'Edit Issue' : 'Report New Issue' }}</h2>
+              <p class="mt-0.5 text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500">{{ editingIssueId ? 'Update the details of your reported issue.' : 'Describe the challenge you\'re facing during your internship.' }}</p>
             </div>
-            <button type="button" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors" @click="closeCreateModal">
+            <button type="button" class="rounded-lg p-1.5 dark:text-slate-500 text-slate-400 hover:dark:bg-slate-600 bg-slate-100 hover:dark:text-slate-400 text-slate-600 transition-colors" @click="closeCreateModal">
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -387,31 +387,31 @@
           <div class="flex-1 overflow-y-auto px-5 py-4 space-y-4">
             <!-- Title -->
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-700">Issue Title <span class="text-red-500">*</span></label>
+              <label class="mb-1 block text-xs font-semibold dark:text-slate-200 text-slate-700">Issue Title <span class="text-red-500">*</span></label>
               <input
                 v-model="form.title"
-                class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/10"
+                class="w-full rounded-lg border dark:border-slate-600 border-slate-200 px-3 py-2 text-sm text-slate-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/10"
                 placeholder="What's the issue about?"
               />
             </div>
 
             <!-- Description -->
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-700">Description <span class="text-red-500">*</span></label>
+              <label class="mb-1 block text-xs font-semibold dark:text-slate-200 text-slate-700">Description <span class="text-red-500">*</span></label>
               <textarea
                 v-model="form.description"
                 rows="4"
-                class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/10 resize-none"
+                class="w-full rounded-lg border dark:border-slate-600 border-slate-200 px-3 py-2 text-sm text-slate-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/10 resize-none"
                 placeholder="Describe the issue in detail..."
               />
             </div>
 
             <!-- Priority -->
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-700">Priority <span class="text-red-500">*</span></label>
+              <label class="mb-1 block text-xs font-semibold dark:text-slate-200 text-slate-700">Priority <span class="text-red-500">*</span></label>
               <select
                 v-model="form.priority"
-                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/10"
+                class="w-full rounded-lg border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-3 py-2 text-sm text-slate-800 outline-none transition-all focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/10"
               >
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
@@ -421,25 +421,25 @@
 
             <!-- Attachments -->
             <div>
-              <label class="mb-1 block text-xs font-semibold text-slate-700">Attachments</label>
+              <label class="mb-1 block text-xs font-semibold dark:text-slate-200 text-slate-700">Attachments</label>
               <button
                 type="button"
-                class="group flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-200 p-4 text-center transition-all hover:border-[#2563EB] hover:bg-blue-50/40 bg-slate-50/40"
+                class="group flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed dark:border-slate-600 border-slate-200 p-4 text-center transition-all hover:border-[#2563EB] hover:bg-blue-50/40 dark:bg-slate-700 bg-slate-50/40"
                 @click="fileInputRef?.click()"
               >
-                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-400 group-hover:bg-blue-100 group-hover:text-[#2563EB] transition-colors">
+                <div class="flex h-8 w-8 items-center justify-center rounded-full dark:bg-slate-600 bg-slate-100 dark:text-slate-500 text-slate-400 group-hover:bg-blue-100 group-hover:text-[#2563EB] transition-colors">
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 000 2.828 2 2 0 002.828 0L18 10m0 0h-6m6 0v6" />
                   </svg>
                 </div>
-                <p class="mt-1.5 text-xs font-semibold text-slate-600 group-hover:text-[#2563EB]">Click to upload files</p>
-                <p class="text-[11px] text-slate-400">PDF, DOCX, PNG, ZIP</p>
+                <p class="mt-1.5 text-xs font-semibold dark:text-slate-400 text-slate-600 group-hover:text-[#2563EB]">Click to upload files</p>
+                <p class="text-[11px] dark:text-slate-500 text-slate-400">PDF, DOCX, PNG, ZIP</p>
               </button>
               <input ref="fileInputRef" type="file" multiple accept=".pdf,.docx,.png,.zip" class="hidden" @change="handleFiles" />
               <div v-if="form.files.length > 0" class="mt-2 space-y-1">
-                <div v-for="(file, idx) in form.files" :key="file.name + idx" class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-700">
+                <div v-for="(file, idx) in form.files" :key="file.name + idx" class="flex items-center justify-between rounded-lg border dark:border-slate-600 border-slate-200 dark:bg-slate-700 bg-slate-50 px-3 py-1.5 text-xs dark:text-slate-200 text-slate-700">
                   <span class="truncate font-medium">{{ file.name }}</span>
-                  <button type="button" class="ml-2 text-slate-400 hover:text-red-500" @click="removeFile(idx)">&times;</button>
+                  <button type="button" class="ml-2 dark:text-slate-500 text-slate-400 hover:text-red-500" @click="removeFile(idx)">&times;</button>
                 </div>
               </div>
             </div>
@@ -458,8 +458,8 @@
           </div>
 
           <!-- Footer -->
-          <div class="flex shrink-0 items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50/50 px-5 py-3.5">
-            <button type="button" class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50" @click="closeCreateModal">Cancel</button>
+          <div class="flex shrink-0 items-center justify-end gap-2.5 border-t dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/50 px-5 py-3.5">
+            <button type="button" class="rounded-lg border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-4 py-2 text-sm font-semibold dark:text-slate-200 text-slate-700 transition-all hover:dark:bg-slate-700 bg-slate-50" @click="closeCreateModal">Cancel</button>
             <button
               type="button"
               class="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#1D4ED8] active:scale-[0.97] disabled:opacity-60"
@@ -486,21 +486,21 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"
         @click.self="closeDetail"
       >
-        <div class="flex max-h-[90vh] w-full max-w-xl flex-col rounded-2xl bg-white shadow-2xl overflow-hidden border border-slate-100 animate-in">
+        <div class="flex max-h-[90vh] w-full max-w-xl flex-col rounded-2xl dark:bg-slate-800 bg-white shadow-2xl overflow-hidden border dark:border-slate-700 border-slate-100 animate-in">
           <!-- Header -->
-          <div class="flex shrink-0 items-start justify-between gap-3 border-b border-slate-100 px-5 py-4">
+          <div class="flex shrink-0 items-start justify-between gap-3 border-b dark:border-slate-700 border-slate-100 px-5 py-4">
             <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-2 text-xs text-slate-400">
+              <div class="flex items-center gap-2 text-xs dark:text-slate-500 text-slate-400">
                 <span class="font-mono font-semibold">{{ detailIssue.id }}</span>
                 <span class="text-slate-300">·</span>
                 <span>{{ formatDate(detailIssue.createdAt) }}</span>
               </div>
-              <h2 class="mt-1 text-base font-semibold text-slate-900 truncate">{{ detailIssue.title }}</h2>
+              <h2 class="mt-1 text-base font-semibold dark:text-slate-100 text-slate-900 truncate">{{ detailIssue.title }}</h2>
             </div>
             <div class="flex shrink-0 items-center gap-1.5">
               <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold" :class="statusBadgeClass(detailIssue.status)">{{ detailIssue.status }}</span>
               <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold" :class="priorityBadgeClass(detailIssue.priority)">{{ detailIssue.priority }}</span>
-              <button type="button" class="ml-1 rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600" @click="closeDetail">
+              <button type="button" class="ml-1 rounded-lg p-1 dark:text-slate-500 text-slate-400 hover:dark:bg-slate-600 bg-slate-100 hover:dark:text-slate-400 text-slate-600" @click="closeDetail">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -510,37 +510,37 @@
 
           <!-- Body -->
           <div class="flex-1 overflow-y-auto px-5 py-4 space-y-5">
-            <p class="text-sm leading-relaxed text-slate-600 whitespace-pre-wrap">{{ detailIssue.description }}</p>
+            <p class="text-sm leading-relaxed dark:text-slate-400 text-slate-600 whitespace-pre-wrap">{{ detailIssue.description }}</p>
 
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div class="rounded-lg border border-slate-100 bg-slate-50/50 p-3.5">
-                <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Reporter</p>
-                <p class="mt-0.5 text-sm font-semibold text-slate-900">{{ detailIssue.reporter }}</p>
+              <div class="rounded-lg border dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/50 p-3.5">
+                <p class="text-[11px] font-semibold uppercase tracking-wide dark:text-slate-500 text-slate-400">Reporter</p>
+                <p class="mt-0.5 text-sm font-semibold dark:text-slate-100 text-slate-900">{{ detailIssue.reporter }}</p>
               </div>
-              <div class="rounded-lg border border-slate-100 bg-slate-50/50 p-3.5">
-                <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Assigned To</p>
-                <p class="mt-0.5 text-sm font-semibold text-slate-900">{{ detailIssue.assignedTo || 'Unassigned' }}</p>
+              <div class="rounded-lg border dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/50 p-3.5">
+                <p class="text-[11px] font-semibold uppercase tracking-wide dark:text-slate-500 text-slate-400">Assigned To</p>
+                <p class="mt-0.5 text-sm font-semibold dark:text-slate-100 text-slate-900">{{ detailIssue.assignedTo || 'Unassigned' }}</p>
               </div>
             </div>
 
             <!-- Attachments -->
             <div v-if="detailIssue.attachmentList && detailIssue.attachmentList.length > 0">
-              <h3 class="text-xs font-semibold text-slate-700 mb-2">Attachments</h3>
+              <h3 class="text-xs font-semibold dark:text-slate-200 text-slate-700 mb-2">Attachments</h3>
               <div class="space-y-1.5">
                 <a
                   v-for="att in detailIssue.attachmentList"
                   :key="att.id || att.filename"
                   :href="att.url || att.file_path"
                   target="_blank"
-                  class="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm transition-all hover:border-[#2563EB]/30 hover:bg-[#EFF6FF] group"
+                  class="flex items-center gap-2.5 rounded-lg border dark:border-slate-600 border-slate-200 dark:bg-slate-700 bg-slate-50/50 px-3.5 py-2.5 text-sm transition-all hover:border-[#2563EB]/30 hover:bg-[#EFF6FF] group"
                 >
-                  <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-slate-400 group-hover:text-[#2563EB]">
+                  <div class="flex h-8 w-8 items-center justify-center rounded-lg dark:bg-slate-800 bg-white dark:text-slate-500 text-slate-400 group-hover:text-[#2563EB]">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 000 2.828 2 2 0 002.828 0L18 10m0 0h-6m6 0v6" />
                     </svg>
                   </div>
-                  <span class="flex-1 font-medium text-slate-700 group-hover:text-[#2563EB] truncate">{{ att.filename }}</span>
-                  <svg class="h-4 w-4 shrink-0 text-slate-400 group-hover:text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span class="flex-1 font-medium dark:text-slate-200 text-slate-700 group-hover:text-[#2563EB] truncate">{{ att.filename }}</span>
+                  <svg class="h-4 w-4 shrink-0 dark:text-slate-500 text-slate-400 group-hover:text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
                 </a>
@@ -549,26 +549,26 @@
 
             <!-- Timeline -->
             <div>
-              <h3 class="text-xs font-semibold text-slate-700 mb-3">Activity Timeline</h3>
+              <h3 class="text-xs font-semibold dark:text-slate-200 text-slate-700 mb-3">Activity Timeline</h3>
               <div v-if="detailIssue.history && detailIssue.history.length > 0" class="relative">
-                <div class="absolute left-3.5 top-0 bottom-0 w-px bg-slate-200" />
+                <div class="absolute left-3.5 top-0 bottom-0 w-px dark:bg-slate-600 bg-slate-200" />
                 <div class="space-y-4">
                   <div v-for="(event, idx) in detailIssue.history" :key="idx" class="relative flex gap-3 pl-9">
-                    <div class="absolute left-2.5 top-1 h-2.5 w-2.5 rounded-full border-2" :class="idx === 0 ? 'border-[#2563EB] bg-[#2563EB]' : 'border-slate-300 bg-white'" />
+                    <div class="absolute left-2.5 top-1 h-2.5 w-2.5 rounded-full border-2" :class="idx === 0 ? 'border-[#2563EB] bg-[#2563EB]' : 'border-slate-300 dark:bg-slate-800 bg-white'" />
                     <div>
-                      <p class="text-sm font-medium text-slate-900">{{ event.text }}</p>
-                      <p class="text-xs text-slate-500 mt-0.5">{{ event.user }} · {{ formatDate(event.time) }}</p>
+                      <p class="text-sm font-medium dark:text-slate-100 text-slate-900">{{ event.text }}</p>
+                      <p class="text-xs dark:dark:text-slate-500 text-slate-400 text-slate-500 mt-0.5">{{ event.user }} · {{ formatDate(event.time) }}</p>
                     </div>
                   </div>
                 </div>
               </div>
-              <p v-else class="text-sm text-slate-400 italic">No activity recorded yet.</p>
+              <p v-else class="text-sm dark:text-slate-500 text-slate-400 italic">No activity recorded yet.</p>
             </div>
           </div>
 
           <!-- Footer -->
-          <div class="flex shrink-0 items-center justify-end border-t border-slate-100 bg-slate-50/50 px-5 py-3">
-            <button type="button" class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50" @click="closeDetail">Close</button>
+          <div class="flex shrink-0 items-center justify-end border-t dark:border-slate-700 border-slate-100 dark:bg-slate-700 bg-slate-50/50 px-5 py-3">
+            <button type="button" class="rounded-lg border dark:border-slate-600 border-slate-200 dark:bg-slate-800 bg-white px-4 py-2 text-sm font-semibold dark:text-slate-200 text-slate-700 transition-all hover:dark:bg-slate-700 bg-slate-50" @click="closeDetail">Close</button>
           </div>
         </div>
       </div>

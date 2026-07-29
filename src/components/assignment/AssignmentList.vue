@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Assignments</h1>
-        <p class="mt-1 text-sm text-slate-500">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Assignments</h1>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Manage internship assignments across students, companies, and tutors.
         </p>
       </div>
@@ -26,21 +26,21 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <div class="rounded-lg border border-slate-200/80 bg-white px-4 py-3 shadow-sm">
-        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Total</p>
-        <p class="mt-1 text-2xl font-bold text-slate-900">{{ store.assignmentCount }}</p>
+      <div class="rounded-lg border border-slate-200/80 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Total</p>
+        <p class="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{{ store.assignmentCount }}</p>
       </div>
-      <div class="rounded-lg border border-slate-200/80 bg-white px-4 py-3 shadow-sm">
-        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Active</p>
-        <p class="mt-1 text-2xl font-bold text-emerald-600">{{ activeCount }}</p>
+      <div class="rounded-lg border border-slate-200/80 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Active</p>
+        <p class="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ activeCount }}</p>
       </div>
-      <div class="rounded-lg border border-slate-200/80 bg-white px-4 py-3 shadow-sm">
-        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Pending</p>
-        <p class="mt-1 text-2xl font-bold text-amber-600">{{ pendingCount }}</p>
+      <div class="rounded-lg border border-slate-200/80 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Pending</p>
+        <p class="mt-1 text-2xl font-bold text-amber-600 dark:text-amber-400">{{ pendingCount }}</p>
       </div>
-      <div class="rounded-lg border border-slate-200/80 bg-white px-4 py-3 shadow-sm">
-        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Completed</p>
-        <p class="mt-1 text-2xl font-bold text-slate-600">{{ completedCount }}</p>
+      <div class="rounded-lg border border-slate-200/80 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Completed</p>
+        <p class="mt-1 text-2xl font-bold text-slate-600 dark:text-slate-400">{{ completedCount }}</p>
       </div>
     </div>
 
@@ -49,7 +49,7 @@
       <!-- Search -->
       <div class="relative min-w-0 flex-1 basis-[200px]">
         <svg
-          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -65,14 +65,14 @@
           v-model="searchQuery"
           type="text"
           placeholder="Search by student, company, or tutor..."
-          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
+          class="h-10 w-full rounded-lg border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
         />
       </div>
 
       <!-- Status Filter -->
       <select
         v-model="filters.status"
-        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
       >
         <option value="">All Statuses</option>
         <option value="Assigned">Assigned</option>
@@ -84,7 +84,7 @@
       <!-- Company Filter -->
       <select
         v-model="filters.company_id"
-        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
+        class="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
       >
         <option value="">All Companies</option>
         <option v-for="c in companies" :key="c.id" :value="String(c.id)">
@@ -96,7 +96,7 @@
       <button
         v-if="hasActiveFilters"
         @click="clearFilters"
-        class="flex h-10 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+        class="flex h-10 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600 dark:hover:text-slate-200"
       >
         <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -113,7 +113,7 @@
     <!-- Error Banner -->
     <div
       v-if="localError"
-      class="flex items-center gap-3 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700"
+      class="flex items-center gap-3 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-400"
     >
       <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -126,7 +126,7 @@
       <span>{{ localError }}</span>
       <button
         @click="localError = ''"
-        class="ml-auto rounded-md p-1 transition-colors hover:bg-rose-100"
+        class="ml-auto rounded-md p-1 transition-colors hover:bg-rose-100 dark:hover:bg-rose-900/40"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -140,12 +140,12 @@
     </div>
 
     <!-- Table -->
-    <div class="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
+    <div class="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm">
           <thead>
             <tr
-              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400"
+              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-500"
             >
               <th class="px-6 py-3.5 font-medium">Student</th>
               <th class="px-6 py-3.5 font-medium">Company</th>
@@ -154,7 +154,7 @@
               <th class="px-6 py-3.5 text-right font-medium">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-50">
+          <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
             <!-- Loading -->
             <tr v-if="store.loading && filteredAssignments.length === 0">
               <td colspan="5" class="px-6 py-16">
@@ -178,7 +178,7 @@
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                     />
                   </svg>
-                  <p class="mt-3 text-sm font-medium text-slate-500">Loading assignments...</p>
+                  <p class="mt-3 text-sm font-medium text-slate-500 dark:text-slate-400">Loading assignments...</p>
                 </div>
               </td>
             </tr>
@@ -187,9 +187,9 @@
             <tr v-else-if="filteredAssignments.length === 0">
               <td colspan="5" class="px-6 py-16">
                 <div class="flex flex-col items-center justify-center text-center">
-                  <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50">
+                  <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-700">
                     <svg
-                      class="h-7 w-7 text-slate-300"
+                      class="h-7 w-7 text-slate-300 dark:text-slate-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -202,8 +202,8 @@
                       />
                     </svg>
                   </div>
-                  <h3 class="mt-4 text-sm font-semibold text-slate-700">No assignments found</h3>
-                  <p class="mt-1 text-xs text-slate-400">
+                  <h3 class="mt-4 text-sm font-semibold text-slate-700 dark:text-slate-300">No assignments found</h3>
+                  <p class="mt-1 text-xs text-slate-400 dark:text-slate-500">
                     {{
                       hasActiveFilters
                         ? 'Try adjusting your filters.'
@@ -218,12 +218,12 @@
             <tr
               v-for="assignment in filteredAssignments"
               :key="assignment.id"
-              class="transition-colors hover:bg-slate-50/50"
+              class="transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-700/50"
             >
               <td class="whitespace-nowrap px-6 py-4">
                 <div class="flex items-center gap-3">
                   <div
-                    class="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-50 text-xs font-bold text-primary-600"
+                    class="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-50 text-xs font-bold text-primary-600 dark:bg-primary-900/30 dark:text-primary-300"
                   >
                     <img
                       v-if="getStudentPhoto(assignment)"
@@ -233,19 +233,19 @@
                     />
                     <span v-else>{{ getInitials(assignment.student_name) }}</span>
                   </div>
-                  <span class="font-semibold text-slate-900">{{ assignment.student_name }}</span>
+                  <span class="font-semibold text-slate-900 dark:text-slate-100">{{ assignment.student_name }}</span>
                 </div>
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-500">
+              <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-500 dark:text-slate-400">
                 {{ assignment.company_name }}
               </td>
-              <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
+              <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
                 {{ assignment.tutor_name }}
               </td>
               <td class="whitespace-nowrap px-6 py-4">
                 <span
                   class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                  :class="statusBadgeClass(assignment.status)"
+                  :class="statusBadgeClass(assignment.status) + ' dark:opacity-90'"
                 >
                   {{ formatStatus(assignment.status) }}
                 </span>
@@ -254,13 +254,13 @@
                 <div class="flex items-center justify-end gap-1">
                   <button
                     @click="$emit('edit', assignment.id)"
-                    class="rounded-lg px-3 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800"
+                    class="rounded-lg px-3 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800 dark:text-primary-400 dark:hover:bg-primary-950/30 dark:hover:text-primary-300"
                   >
                     Edit
                   </button>
                   <button
                     @click="confirmDelete(assignment)"
-                    class="rounded-lg px-3 py-1.5 text-xs font-bold text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-800"
+                    class="rounded-lg px-3 py-1.5 text-xs font-bold text-rose-600 transition-all hover:bg-rose-50 hover:text-rose-800 dark:text-rose-400 dark:hover:bg-rose-950/30 dark:hover:text-rose-300"
                   >
                     Delete
                   </button>
@@ -274,15 +274,15 @@
       <!-- Pagination -->
       <div
         v-if="store.pagination && store.pagination.last_page > 1"
-        class="flex items-center justify-between border-t border-slate-100 px-6 py-3"
+        class="flex items-center justify-between border-t border-slate-100 px-6 py-3 dark:border-slate-700"
       >
-        <p class="text-xs font-medium text-slate-500">
+        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
           Showing
-          <span class="font-semibold text-slate-700">{{ store.pagination.from }}</span>
+          <span class="font-semibold text-slate-700 dark:text-slate-200">{{ store.pagination.from }}</span>
           to
-          <span class="font-semibold text-slate-700">{{ store.pagination.to }}</span>
+          <span class="font-semibold text-slate-700 dark:text-slate-200">{{ store.pagination.to }}</span>
           of
-          <span class="font-semibold text-slate-700">{{ store.pagination.total }}</span>
+          <span class="font-semibold text-slate-700 dark:text-slate-200">{{ store.pagination.total }}</span>
           assignments
         </p>
 
@@ -303,15 +303,15 @@
           </button>
 
           <template v-for="page in visiblePages" :key="page">
-            <span v-if="page === '...'" class="px-1 text-xs text-slate-400">...</span>
+            <span v-if="page === '...'" class="px-1 text-xs text-slate-400 dark:text-slate-500">...</span>
             <button
               v-else
               @click="goToPage(page as number)"
               class="flex h-8 min-w-[32px] items-center justify-center rounded-lg px-2 text-xs font-bold transition-colors"
               :class="
                 page === store.pagination.current_page
-                  ? 'bg-primary-50 text-primary-700'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                  : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700'
               "
             >
               {{ page }}
@@ -346,11 +346,11 @@
         @click="deletingTarget = null"
       >
         <div
-          class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl"
+          class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800"
           @click.stop
         >
           <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-950/30">
               <svg
                 class="h-5 w-5 text-rose-500"
                 fill="none"
@@ -366,10 +366,10 @@
               </svg>
             </div>
             <div>
-              <h3 class="text-base font-semibold text-slate-900">Delete Assignment</h3>
-              <p class="mt-0.5 text-sm text-slate-500">
+              <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">Delete Assignment</h3>
+              <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                 Are you sure you want to delete the assignment for
-                <span class="font-semibold text-slate-700">{{ deletingTarget.student_name }}</span
+                <span class="font-semibold text-slate-700 dark:text-slate-200">{{ deletingTarget.student_name }}</span
                 >? This action cannot be undone.
               </p>
             </div>
@@ -378,7 +378,7 @@
             <button
               @click="deletingTarget = null"
               :disabled="deleting"
-              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
             >
               Cancel
             </button>
@@ -512,8 +512,8 @@ function getInitials(name: string): string {
     .slice(0, 2)
 }
 
-function getStudentPhoto(assignment: Assignment): string | null {
-  return assignment.student_photo_url || assignment.student?.photo_url || null
+function getStudentPhoto(assignment: Assignment): string | undefined {
+  return assignment.student_photo_url || assignment.student?.photo_url || undefined
 }
 
 function statusBadgeClass(status?: string): string {

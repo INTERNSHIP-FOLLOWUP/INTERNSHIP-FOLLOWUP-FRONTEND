@@ -2,17 +2,17 @@
   <div class="space-y-3">
     <!-- Empty state -->
     <div v-if="!attachments.length"
-      class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 py-10 text-center">
-      <svg class="mb-2 h-8 w-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 py-10 text-center dark:border-slate-600 dark:bg-slate-800/30">
+      <svg class="mb-2 h-8 w-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
           d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
       </svg>
-      <p class="text-sm font-medium text-slate-400">No attachments</p>
+      <p class="text-sm font-medium text-slate-400 dark:text-slate-500">No attachments</p>
     </div>
 
     <!-- Attachment cards -->
     <div v-for="att in attachments" :key="att.id ?? att.filename"
-      class="group flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 transition-all duration-200 hover:border-slate-200 hover:shadow-sm">
+      class="group flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 transition-all duration-200 hover:border-slate-200 hover:shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600">
       
       <!-- File type icon -->
       <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
@@ -41,13 +41,13 @@
 
       <!-- File info -->
       <div class="min-w-0 flex-1">
-        <p class="truncate text-sm font-semibold text-slate-800">{{ att.filename }}</p>
+        <p class="truncate text-sm font-semibold text-slate-800 dark:text-slate-200">{{ att.filename }}</p>
         <div class="flex items-center gap-2 mt-0.5">
           <span class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
             :class="fileTypeBadgeClass(att.filename)">
             {{ fileTypeLabel(att.filename) }}
           </span>
-          <span class="text-xs text-slate-400">{{ formatFileSize(att.size_bytes ?? 0) }}</span>
+          <span class="text-xs text-slate-400 dark:text-slate-500">{{ formatFileSize(att.size_bytes ?? 0) }}</span>
         </div>
       </div>
 
@@ -55,7 +55,7 @@
       <div class="flex items-center gap-1.5 shrink-0">
         <button
           type="button"
-          class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition-all hover:bg-slate-50 hover:text-slate-900"
+          class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition-all hover:bg-slate-50 hover:text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600 dark:hover:text-slate-200"
           @click="download(att)">
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -66,7 +66,7 @@
         <button
           v-if="isPreviewable(att)"
           type="button"
-          class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-indigo-600 shadow-sm transition-all hover:bg-indigo-50 hover:text-indigo-700"
+          class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-indigo-600 shadow-sm transition-all hover:bg-indigo-50 hover:text-indigo-700 dark:border-slate-600 dark:bg-slate-700 dark:text-indigo-400 dark:hover:bg-indigo-950/30 dark:hover:text-indigo-300"
           @click="preview(att)">
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

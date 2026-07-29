@@ -257,6 +257,12 @@ const router = createRouter({
           meta: { title: 'Issue Tracker' },
         },
         {
+          path: 'evaluations',
+          name: 'TutorEvaluations',
+          component: () => import('@/views/tutor/TutorEvaluationListView.vue'),
+          meta: { title: 'Company Evaluations' },
+        },
+        {
           path: 'feedback',
           name: 'TutorFeedback',
           component: () => import('@/views/tutor/TutorCompanyFeedbackView.vue'),
@@ -354,7 +360,7 @@ const router = createRouter({
     {
       path: '/company',
       component: () => import('@/layouts/CompanyLayout.vue'),
-      meta: { roles: ['supervisor'] as UserRole[], title: 'Company' } as AppRouteMeta,
+      meta: { roles: ['supervisor', 'company'] as UserRole[], title: 'Company' } as AppRouteMeta,
       children: [
         {
           path: '',

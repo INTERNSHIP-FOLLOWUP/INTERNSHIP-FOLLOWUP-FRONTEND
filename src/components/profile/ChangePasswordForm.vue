@@ -1,25 +1,25 @@
 <template>
-  <div class="rounded-2xl border border-slate-100 bg-white shadow-sm">
-    <div class="border-b border-slate-100 px-6 py-4">
-      <h2 class="text-lg font-semibold text-slate-900">Change Password</h2>
-      <p class="text-xs text-slate-500">Update your password to keep your account secure.</p>
+  <div class="rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+    <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-700">
+      <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Change Password</h2>
+      <p class="text-xs text-slate-500 dark:text-slate-400">Update your password to keep your account secure.</p>
     </div>
     <form @submit.prevent="onSubmit" class="space-y-5 px-6 py-5">
       <ErrorAlert :message="store.error" />
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">Current Password</label>
+          <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Current Password</label>
           <div class="relative">
             <input
               v-model="form.current_password"
               :type="showCurrent ? 'text' : 'password'"
-              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20"
-              :class="{ 'border-red-400': errors.current_password }"
+              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+              :class="{ 'border-red-400 dark:border-red-600': errors.current_password }"
             />
             <button
               type="button"
-              class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
+              class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
               @click="showCurrent = !showCurrent"
             >
               <svg v-if="!showCurrent" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,23 +31,23 @@
               </svg>
             </button>
           </div>
-          <p v-if="errors.current_password" class="text-red-600 text-xs mt-1">{{ errors.current_password }}</p>
+          <p v-if="errors.current_password" class="text-red-600 dark:text-red-400 text-xs mt-1">{{ errors.current_password }}</p>
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">New Password</label>
+          <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">New Password</label>
           <div class="relative">
             <input
               v-model="form.password"
               :type="showNew ? 'text' : 'password'"
-              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20"
-              :class="{ 'border-red-400': errors.password }"
+              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+              :class="{ 'border-red-400 dark:border-red-600': errors.password }"
             />
             <button
               type="button"
-              class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
+              class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
               @click="showNew = !showNew"
             >
               <svg v-if="!showNew" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,20 +59,20 @@
               </svg>
             </button>
           </div>
-          <p v-if="errors.password" class="text-red-600 text-xs mt-1">{{ errors.password }}</p>
+          <p v-if="errors.password" class="text-red-600 dark:text-red-400 text-xs mt-1">{{ errors.password }}</p>
         </div>
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">Confirm New Password</label>
+          <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Confirm New Password</label>
           <div class="relative">
             <input
               v-model="form.password_confirmation"
               :type="showConfirm ? 'text' : 'password'"
-              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20"
-              :class="{ 'border-red-400': errors.password_confirmation }"
+              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 outline-none transition-all focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+              :class="{ 'border-red-400 dark:border-red-600': errors.password_confirmation }"
             />
             <button
               type="button"
-              class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
+              class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
               @click="showConfirm = !showConfirm"
             >
               <svg v-if="!showConfirm" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,7 +84,7 @@
               </svg>
             </button>
           </div>
-          <p v-if="errors.password_confirmation" class="text-red-600 text-xs mt-1">{{ errors.password_confirmation }}</p>
+          <p v-if="errors.password_confirmation" class="text-red-600 dark:text-red-400 text-xs mt-1">{{ errors.password_confirmation }}</p>
         </div>
       </div>
 

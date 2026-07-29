@@ -8,7 +8,7 @@
       <div
         v-for="toast in store.toasts"
         :key="toast.id"
-        class="pointer-events-auto flex items-start gap-3 rounded-xl border bg-white p-4 shadow-lg"
+        class="pointer-events-auto flex items-start gap-3 rounded-xl border bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-800"
         :class="borderClass(toast.type)"
         role="alert"
       >
@@ -16,14 +16,14 @@
           <component :is="iconComponent(toast.type)" />
         </span>
         <div class="min-w-0 flex-1">
-          <p v-if="toast.title" class="text-sm font-bold text-slate-900">{{ toast.title }}</p>
-          <p class="text-sm" :class="toast.title ? 'mt-0.5 text-slate-600' : 'text-slate-700'">
+          <p v-if="toast.title" class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ toast.title }}</p>
+          <p class="text-sm" :class="toast.title ? 'mt-0.5 text-slate-600 dark:text-slate-400' : 'text-slate-700 dark:text-slate-300'">
             {{ toast.message }}
           </p>
         </div>
         <button
           @click="store.remove(toast.id)"
-          class="-mr-1 -mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+          class="-mr-1 -mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
           aria-label="Dismiss notification"
         >
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

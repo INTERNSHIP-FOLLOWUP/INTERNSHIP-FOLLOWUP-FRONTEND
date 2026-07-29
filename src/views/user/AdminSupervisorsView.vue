@@ -542,9 +542,9 @@ function getCompanyName(supervisor: Supervisor): string {
   return supervisor.supervisor_profile?.company?.company_name || supervisor.company_name || '—'
 }
 
-function getCompanyLogo(supervisor: Supervisor): string | null {
+function getCompanyLogo(supervisor: Supervisor): string | undefined {
   const company = supervisor.supervisor_profile?.company
-  return company?.company_image_url || company?.company_profile_image_url || null
+  return company?.company_image_url || company?.company_profile_image_url || undefined
 }
 
 function copyEmail(email: string) {

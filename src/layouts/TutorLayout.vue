@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen overflow-hidden bg-gray-50">
+  <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-slate-900">
     <!-- Mobile overlay -->
     <transition name="fade">
       <div
@@ -138,11 +138,11 @@
     <div class="flex flex-1 flex-col lg:pl-0">
       <!-- Header -->
       <header
-        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6"
+        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6 dark:border-slate-700 dark:bg-slate-800/80"
       >
         <div class="flex items-center gap-3">
           <button
-            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden"
+            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-300"
             @click="sidebarOpen = !sidebarOpen"
             aria-label="Toggle navigation"
           >
@@ -163,42 +163,41 @@
               />
             </svg>
           </button>
-          <h2 class="text-lg font-semibold text-gray-800">{{ pageTitle }}</h2>
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-slate-100">{{ pageTitle }}</h2>
         </div>
 
         <div class="flex items-center gap-2">
           <!-- Notifications -->
+          <NotificationBell />
+
+          <!-- Language Switcher -->
+              <LanguageSwitcher variant="header" />
+              <!-- Dark Mode Toggle -->
           <button
-            class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            @click="themeStore.setDarkMode(!themeStore.darkMode)"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+            :title="themeStore.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
           >
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
+            <svg v-if="!themeStore.darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
-            <span class="absolute right-2 top-2 flex h-2 w-2">
-              <span
-                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75"
-              />
-              <span class="relative inline-flex h-2 w-2 rounded-full bg-indigo-500" />
-            </span>
+            <svg v-else class="h-5 w-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
           </button>
 
           <!-- User dropdown -->
           <div class="relative">
             <button
-              class="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100"
+              class="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-700"
               @click.stop="dropdownOpen = !dropdownOpen"
             >
           <UserAvatar :avatar="user?.avatar" :name="user?.name" size="sm" />
               <div class="hidden text-left md:block">
-                <p class="text-sm font-medium leading-tight text-gray-700">
+                <p class="text-sm font-medium leading-tight text-gray-700 dark:text-slate-300">
                   {{ user?.name }}
                 </p>
-                <p class="text-xs leading-tight text-gray-400">Tutor</p>
+                <p class="text-xs leading-tight text-gray-400 dark:text-slate-500">Tutor</p>
               </div>
               <svg
                 class="h-4 w-4 text-gray-400 transition-transform"
@@ -219,19 +218,19 @@
             <transition name="dropdown">
               <div
                 v-if="dropdownOpen"
-                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-gray-100 bg-white py-1 shadow-lg ring-1 ring-black/5"
+                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-gray-100 bg-white py-1 shadow-lg ring-1 ring-black/5 dark:border-slate-700 dark:bg-slate-800"
                 @click="dropdownOpen = false"
               >
-                <div class="border-b border-gray-100 px-4 py-3">
-                  <p class="text-sm font-medium text-gray-900">{{ user?.name }}</p>
-                  <p class="truncate text-xs text-gray-500">{{ user?.email }}</p>
+                <div class="border-b border-gray-100 px-4 py-3 dark:border-slate-700">
+                  <p class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ user?.name }}</p>
+                  <p class="truncate text-xs text-gray-500 dark:text-slate-400">{{ user?.email }}</p>
                 </div>
                 <router-link
                   to="/tutor/profile"
-                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
                 >
                   <svg
-                    class="h-4.5 w-4.5 text-gray-400"
+                    class="h-4.5 w-4.5 text-gray-400 dark:text-slate-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -251,10 +250,10 @@
                   </svg>
                   Profile Settings
                 </router-link>
-                <hr class="my-1 border-gray-100" />
+                <hr class="my-1 border-gray-100 dark:border-slate-700" />
                 <button
                   @click="openLogoutModal"
-                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
+                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50 dark:hover:bg-red-950/30"
                 >
                   <svg
                     class="h-4.5 w-4.5 text-red-500"
@@ -296,17 +295,17 @@
         @click="closeLogoutModal"
       >
         <div
-          class="w-[92%] max-w-md rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl"
+          class="w-[92%] max-w-md rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800"
           @click.stop
         >
-          <h3 id="logout-modal-title" class="text-base font-semibold text-gray-900">
+          <h3 id="logout-modal-title" class="text-base font-semibold text-gray-900 dark:text-slate-100">
             Are you sure you want to log out?
           </h3>
-          <p class="mt-1 text-sm text-gray-600">You can cancel if you changed your mind.</p>
+          <p class="mt-1 text-sm text-gray-600 dark:text-slate-400">You can cancel if you changed your mind.</p>
 
           <div class="mt-5 flex items-center justify-end gap-3">
             <button
-              class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+              class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
               @click="closeLogoutModal"
               :disabled="loggingOut"
             >
@@ -330,10 +329,17 @@
 import { ref, computed, watch, onMounted, onUnmounted, h, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useThemeStore } from '@/stores/theme'
 import UserAvatar from '@/components/common/UserAvatar.vue'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
+import NotificationBell from '@/components/common/NotificationBell.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const route = useRoute()
 const auth = useAuthStore()
+const themeStore = useThemeStore()
 
 const sidebarOpen = ref(false)
 const dropdownOpen = ref(false)
@@ -401,6 +407,24 @@ const messagesSubItems = [
 ]
 
 const pageTitle = computed(() => {
+  const map: Record<string, string> = {
+    TutorDashboard: 'nav.tutor.dashboard',
+    TutorStudents: 'nav.tutor.myStudents',
+    TutorStudentDetail: 'nav.tutor.studentDetails',
+    TutorWorklogs: 'nav.tutor.worklogs',
+    TutorEvaluations: 'nav.tutor.evaluations',
+    TutorWorklogDetail: 'nav.tutor.reviewWorklog',
+    TutorFollowups: 'nav.tutor.followups',
+    TutorIssues: 'nav.tutor.issues',
+    TutorFeedback: 'nav.tutor.companyFeedback',
+    TutorMessages: 'nav.tutor.messages',
+    TutorSelfProfile: 'nav.tutor.profile',
+    TutorProfile: 'nav.tutor.profile',
+  }
+  const name = route.name
+  if (typeof name === 'string' && map[name]) {
+    return t(map[name])
+  }
   const title = route.meta?.title
   return typeof title === 'string' ? title : 'Dashboard'
 })
@@ -506,6 +530,14 @@ const navItems: NavItem[] = [
     to: '/tutor/issues',
     icon: createIcon(
       'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z',
+    ),
+  },
+  {
+    name: 'evaluations',
+    label: 'Company Evaluations',
+    to: '/tutor/evaluations',
+    icon: createIcon(
+      'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
     ),
   },
   {

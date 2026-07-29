@@ -8,19 +8,19 @@
             alt="PN Logo"
             class="mx-auto w-20 h-20 object-contain mb-5"
           />
-          <h1 class="text-2xl sm:text-[26px] font-bold text-slate-900 leading-snug tracking-tight">
-            Reset Password
+          <h1 class="text-2xl sm:text-[26px] font-bold dark:text-slate-100 text-slate-900 leading-snug tracking-tight">
+            {{ $t('auth.resetPassword.title') }}
           </h1>
-          <p class="mt-2 text-sm text-slate-400 font-normal">Enter your new password below.</p>
+          <p class="mt-2 text-sm dark:text-slate-500 text-slate-400 font-normal">{{ $t('auth.resetPassword.subtitle') }}</p>
         </div>
 
         <form @submit.prevent="handleSubmit" novalidate>
           <div class="space-y-4">
             <InputField
               v-model="form.email"
-              label="Email Address"
+              :label="$t('auth.resetPassword.emailLabel')"
               type="email"
-              placeholder="Enter your email"
+              :placeholder="$t('auth.resetPassword.emailPlaceholder')"
               required
               :error="errors.email"
               autocomplete="email"
@@ -29,7 +29,7 @@
             >
               <template #icon>
                 <svg
-                  class="h-5 w-5 text-slate-400"
+                  class="h-5 w-5 dark:text-slate-500 text-slate-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -46,7 +46,7 @@
 
             <PasswordInput
               v-model="form.password"
-              label="New Password"
+              :label="$t('auth.resetPassword.newPasswordLabel')"
               placeholder="Enter new password"
               required
               :error="errors.password"
@@ -57,8 +57,8 @@
 
             <PasswordInput
               v-model="form.passwordConfirmation"
-              label="Confirm Password"
-              placeholder="Confirm new password"
+              :label="$t('auth.resetPassword.confirmPasswordLabel')"
+              :placeholder="$t('auth.resetPassword.confirmPasswordPlaceholder')"
               required
               :error="errors.passwordConfirmation"
               autocomplete="new-password"
@@ -69,9 +69,9 @@
 
           <div
             v-if="successMessage"
-            class="mt-4 p-3 rounded-xl bg-green-50 border border-green-200"
+            class="mt-4 p-3 rounded-xl bg-green-50 border border-green-200 dark:bg-green-950/30 dark:border-green-900/50"
           >
-            <p class="text-sm text-green-700 flex items-center gap-2">
+            <p class="text-sm text-green-700 flex items-center gap-2 dark:text-green-400">
               <svg
                 class="h-5 w-5 shrink-0 text-green-500"
                 fill="none"
@@ -91,7 +91,7 @@
 
           <div
             v-if="errorMessage && !successMessage"
-            class="mt-4 p-3 rounded-xl bg-red-50 border border-red-200"
+            class="mt-4 p-3 rounded-xl bg-red-50 border border-red-200 dark:bg-red-950/30 dark:border-red-900/50"
           >
             <p class="text-sm text-error flex items-center gap-2">
               <svg
@@ -112,7 +112,7 @@
 
           <div class="mt-6">
             <PrimaryButton type="submit" :loading="loading" :disabled="loading || !canSubmit">
-              {{ successMessage ? 'Password Reset' : 'Reset Password' }}
+              {{ successMessage ? $t('auth.resetPassword.successMessage') : $t('auth.resetPassword.submitButton') }}
             </PrimaryButton>
           </div>
         </form>
@@ -131,7 +131,7 @@
                   d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
               </svg>
-              Back to Sign In
+              {{ $t('auth.resetPassword.backToSignIn') }}
             </span>
           </router-link>
         </div>

@@ -1,7 +1,12 @@
 <template>
-  <div class="flex min-h-screen max-h-screen overflow-hidden bg-white">
+  <div class="flex min-h-screen max-h-screen overflow-hidden dark:bg-slate-900 bg-white">
+    <!-- Language Switcher - Fixed Top Right -->
+    <div class="fixed right-6 top-6 z-50">
+      <LanguageSwitcher variant="standalone" />
+    </div>
+
     <!-- Left Hero Banner with photoLoginForm.png -->
-    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-white select-none flex-col justify-between p-10 xl:p-14">
+    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden dark:bg-slate-900/50 bg-white select-none flex-col justify-between p-10 xl:p-14">
       <img
         src="@/assets/images/photoLoginForm.png"
         alt="Student Internship"
@@ -18,7 +23,7 @@
 
       <!-- Top Header Badges -->
       <div class="relative z-10 flex items-center justify-between animate-fade-in">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-xl text-slate-800 text-xs font-semibold border border-white/90 shadow-md">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full dark:bg-slate-800/80 bg-white/80 backdrop-blur-xl dark:text-slate-200 text-slate-800 text-xs font-semibold dark:border-slate-700/50 border border-white/90 shadow-md">
           <span class="relative flex h-2 w-2">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#21BAEA] opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-[#21BAEA]"></span>
@@ -35,39 +40,35 @@
       </div>
 
       <!-- Bottom Frosted Light Glass Card (Flawlessly matching the light form theme) -->
-      <div class="relative z-10 max-w-lg p-7.5 rounded-3xl bg-white/80 backdrop-blur-xl border border-white/90 shadow-xl shadow-slate-900/5 animate-slide-up transition-all hover:shadow-2xl">
+      <div class="relative z-10 max-w-lg p-7.5 rounded-3xl dark:bg-slate-800/80 bg-white/80 backdrop-blur-xl dark:border-slate-700/50 border border-white/90 shadow-xl shadow-slate-900/5 animate-slide-up transition-all hover:shadow-2xl">
         <!-- Title with Luminous #21BAEA & #FF9933 Gradient Accent -->
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight tracking-tight">
-          Student Internship<br />
-          <span class="bg-gradient-to-r from-[#21BAEA] to-[#FF9933] bg-clip-text text-transparent">
-            Follow-up System
-          </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold dark:text-slate-100 text-slate-900 leading-tight tracking-tight" v-html="$t('auth.signIn.title')">
         </h2>
 
-        <p class="mt-3 text-sm text-slate-600 font-normal leading-relaxed">
-          Empowering students, tutors, and partner companies to seamlessly connect, track daily worklogs, and monitor progress in real-time.
+        <p class="mt-3 text-sm dark:text-slate-400 text-slate-600 font-normal leading-relaxed">
+          {{ $t('app.tagline') }}
         </p>
 
         <!-- Stats / Feature Pill Grid -->
-        <div class="mt-5 pt-4 border-t border-slate-200/60 grid grid-cols-3 gap-2.5">
-          <div class="bg-white/70 backdrop-blur-md rounded-2xl p-2.5 text-center border border-white/80 shadow-2xs">
+        <div class="mt-5 pt-4 border-t dark:border-slate-600 border-slate-200/60 grid grid-cols-3 gap-2.5">
+          <div class="dark:bg-slate-800/70 bg-white/70 backdrop-blur-md rounded-2xl p-2.5 text-center dark:border-slate-700/50 border border-white/80 shadow-2xs">
             <p class="text-base sm:text-lg font-bold text-[#21BAEA]">100%</p>
-            <p class="text-[11px] text-slate-600 font-medium">Digital Tracking</p>
+            <p class="text-[11px] dark:text-slate-400 text-slate-600 font-medium">Digital Tracking</p>
           </div>
-          <div class="bg-white/70 backdrop-blur-md rounded-2xl p-2.5 text-center border border-white/80 shadow-2xs">
+          <div class="dark:bg-slate-800/70 bg-white/70 backdrop-blur-md rounded-2xl p-2.5 text-center dark:border-slate-700/50 border border-white/80 shadow-2xs">
             <p class="text-base sm:text-lg font-bold text-[#FF9933]">Real-time</p>
-            <p class="text-[11px] text-slate-600 font-medium">Evaluations</p>
+            <p class="text-[11px] dark:text-slate-400 text-slate-600 font-medium">Evaluations</p>
           </div>
-          <div class="bg-white/70 backdrop-blur-md rounded-2xl p-2.5 text-center border border-white/80 shadow-2xs">
+          <div class="dark:bg-slate-800/70 bg-white/70 backdrop-blur-md rounded-2xl p-2.5 text-center dark:border-slate-700/50 border border-white/80 shadow-2xs">
             <p class="text-base sm:text-lg font-bold text-[#21BAEA]">PNC</p>
-            <p class="text-[11px] text-slate-600 font-medium">Tutor Support</p>
+            <p class="text-[11px] dark:text-slate-400 text-slate-600 font-medium">Tutor Support</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Right Login Form Area -->
-    <div class="flex-1 flex items-center justify-center px-6 sm:px-12 lg:px-16 bg-white overflow-y-auto">
+    <div class="flex-1 flex items-center justify-center px-6 sm:px-12 lg:px-16 dark:bg-slate-900 bg-white overflow-y-auto">
       <div class="w-full max-w-[440px] py-8 animate-slide-up">
         <slot />
       </div>
@@ -76,6 +77,7 @@
 </template>
 
 <script setup lang="ts">
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 // AuthLayout wrapper
 </script>
 

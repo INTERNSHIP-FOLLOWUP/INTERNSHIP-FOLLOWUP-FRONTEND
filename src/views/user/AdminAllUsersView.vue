@@ -2,28 +2,28 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">All Users</h1>
-        <p class="mt-1 text-sm text-slate-500">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">All Users</h1>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {{ totalUsers }} registered user{{ totalUsers !== 1 ? 's' : '' }} across all roles
         </p>
       </div>
       <div class="flex gap-2">
         <button @click="showImportModal = true"
-          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-indigo-200">
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-indigo-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
           Import Excel
         </button>
         <button @click="exportPdf"
-          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-red-200 hover:bg-red-50">
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-red-200 hover:bg-red-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:border-red-800">
           <svg class="h-4 w-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
           Export PDF
         </button>
         <button @click="exportUsers"
-          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-emerald-200 hover:bg-emerald-50">
+          class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-emerald-200 hover:bg-emerald-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:border-emerald-800">
           <svg class="h-4 w-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
@@ -32,8 +32,8 @@
         <button @click="selectMode ? clearSelection() : enterSelectMode()"
           class="flex h-10 items-center gap-2 rounded-xl border px-4 text-sm font-semibold transition-all"
           :class="selectMode
-            ? 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100'
-            : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-rose-200 hover:bg-rose-50'">
+            ? 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-400 dark:hover:bg-rose-950/50'
+            : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-rose-200 hover:bg-rose-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:border-rose-800'">
           <svg v-if="selectMode" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -51,10 +51,10 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         <input v-model="searchQuery" type="text" placeholder="Search by name or email..."
-          class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 transition-all duration-200 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100" />
+          class="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 transition-all duration-200 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500" />
       </div>
       <select v-model="roleFilter"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100">
         <option value="">All Roles</option>
         <option value="admin">Admin</option>
         <option value="tutor">Tutor</option>
@@ -62,38 +62,38 @@
         <option value="supervisor">Supervisor</option>
       </select>
       <select v-model="statusFilter"
-        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100">
+        class="h-10 rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100">
         <option value="">All Status</option>
         <option value="active">Active</option>
         <option value="deactivated">Deactivated</option>
       </select>
       <button v-if="searchQuery || roleFilter || statusFilter" @click="clearFilters"
-        class="flex h-10 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700">
+        class="flex h-10 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600 dark:hover:text-slate-200">
         Clear
       </button>
     </div>
 
     <div v-if="error" role="alert"
-      class="flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+      class="flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-400">
       <span class="flex-1">{{ error }}</span>
-      <button @click="error = ''" class="rounded-lg p-1.5 transition-colors hover:bg-rose-100">&times;</button>
+      <button @click="error = ''" class="rounded-lg p-1.5 transition-colors hover:bg-rose-100 dark:hover:bg-rose-950/50">&times;</button>
     </div>
 
-    <div class="rounded-xl border border-slate-200/80 bg-white shadow-sm">
+    <div class="rounded-xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <!-- Loading skeleton -->
       <div v-if="loading && users.length === 0">
-        <div class="space-y-0 divide-y divide-slate-50">
+        <div class="space-y-0 divide-y divide-slate-50 dark:divide-slate-700">
           <div v-for="n in 5" :key="n" class="flex items-center gap-4 px-6 py-4 animate-pulse">
-            <div class="h-4 w-4 rounded bg-slate-200" />
-            <div class="h-8 w-8 rounded-full bg-slate-200" />
+            <div class="h-4 w-4 rounded bg-slate-200 dark:bg-slate-600" />
+            <div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-600" />
             <div class="flex-1 space-y-2">
-              <div class="h-3 w-1/3 rounded bg-slate-200" />
-              <div class="h-3 w-1/4 rounded bg-slate-100" />
+              <div class="h-3 w-1/3 rounded bg-slate-200 dark:bg-slate-600" />
+              <div class="h-3 w-1/4 rounded bg-slate-100 dark:bg-slate-700" />
             </div>
-            <div class="h-5 w-16 rounded-full bg-slate-200" />
+            <div class="h-5 w-16 rounded-full bg-slate-200 dark:bg-slate-600" />
             <div class="flex gap-2">
-              <div class="h-8 w-12 rounded-lg bg-slate-200" />
-              <div class="h-8 w-14 rounded-lg bg-slate-200" />
+              <div class="h-8 w-12 rounded-lg bg-slate-200 dark:bg-slate-600" />
+              <div class="h-8 w-14 rounded-lg bg-slate-200 dark:bg-slate-600" />
             </div>
           </div>
         </div>
@@ -103,7 +103,7 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
             <thead>
-              <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <tr class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-500">
                 <th v-if="selectMode" class="px-4 py-3.5 w-10">
                   <input type="checkbox" :checked="isAllSelected" :indeterminate="isIndeterminate"
                     @change="toggleSelectAll"
@@ -116,11 +116,11 @@
                 <th class="px-6 py-3.5 text-center font-medium">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
               <tr v-for="(user, index) in users" :key="user.id"
                 @click="goToProfile(user)"
-                class="cursor-pointer transition-colors hover:bg-slate-50/70"
-                :class="{ 'bg-rose-50/40': selectedIds.has(user.id) }">
+                class="cursor-pointer transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-700/50"
+                :class="{ 'bg-rose-50/40 dark:bg-rose-950/20': selectedIds.has(user.id) }">
                 <td v-if="selectMode" class="px-4 py-4 w-10" @click.stop>
                   <input type="checkbox" :checked="selectedIds.has(user.id)"
                     @change="toggleSelect(user.id)"
@@ -142,10 +142,10 @@
                     >
                       {{ getInitials(user.name) }}
                     </div>
-                    <span class="font-semibold text-slate-900">{{ user.name }}</span>
+                    <span class="font-semibold text-slate-900 dark:text-slate-100">{{ user.name }}</span>
                   </div>
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500 max-w-[200px] truncate">{{ user.email }}</td>
+                <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-[200px] truncate">{{ user.email }}</td>
                 <td class="whitespace-nowrap px-6 py-4">
                   <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold" :class="roleBadgeClass(user.role?.name)">
                     <span class="h-1.5 w-1.5 rounded-full" :class="roleDotClass(user.role?.name)" />
@@ -161,7 +161,7 @@
                 <td class="whitespace-nowrap px-6 py-4 text-center">
                   <div class="relative inline-block text-center">
                     <button type="button" @click.stop="toggleKebab(user.id)" title="Actions"
-                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 mx-auto">
+                      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-700 active:scale-95 mx-auto dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200">
                       <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                       </svg>
@@ -170,10 +170,10 @@
                     <!-- Kebab Dropdown Menu -->
                     <transition name="fade">
                       <div v-if="openKebabId === user.id"
-                        class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left"
+                        class="absolute right-0 z-30 w-44 rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl ring-1 ring-black/5 focus:outline-none text-left dark:border-slate-700 dark:bg-slate-800"
                         :class="index < (users.length > 2 ? users.length - 2 : 1) && users.length > 1 ? 'top-full mt-1 origin-top-right' : 'bottom-full mb-1 origin-bottom-right'">
                         <button type="button" @click.stop="openKebabId = null; goToProfile(user)"
-                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors">
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary-600 transition-colors dark:text-slate-200 dark:hover:bg-slate-700">
                           <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -182,7 +182,7 @@
                         </button>
 
                         <button v-if="!user.deleted_at" type="button" @click.stop="openKebabId = null; deactivateUser(user)"
-                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors">
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50 transition-colors dark:text-amber-400 dark:hover:bg-amber-950/30">
                           <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                           </svg>
@@ -190,17 +190,17 @@
                         </button>
 
                         <button v-else type="button" @click.stop="openKebabId = null; activateUser(user)"
-                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors">
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors dark:text-emerald-400 dark:hover:bg-emerald-950/30">
                           <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           Activate
                         </button>
 
-                        <div class="my-1 h-px bg-slate-100" />
+                        <div class="my-1 h-px bg-slate-100 dark:bg-slate-700" />
 
                         <button type="button" @click.stop="openKebabId = null; deleteUser(user)"
-                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors">
+                          class="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors dark:text-rose-400 dark:hover:bg-rose-950/30">
                           <svg class="h-4 w-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
@@ -216,33 +216,33 @@
         </div>
 
         <!-- Pagination -->
-        <div v-if="pagination && pagination.last_page > 1" class="flex flex-col gap-3 border-t border-slate-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <p class="text-xs font-medium text-slate-500">
-            Showing <span class="font-semibold text-slate-700">{{ pagination.from }}</span> – <span class="font-semibold text-slate-700">{{ pagination.to }}</span> of <span class="font-semibold text-slate-700">{{ pagination.total }}</span> user{{ pagination.total !== 1 ? 's' : '' }}
+        <div v-if="pagination && pagination.last_page > 1" class="flex flex-col gap-3 border-t border-slate-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-slate-700">
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
+            Showing <span class="font-semibold text-slate-700 dark:text-slate-300">{{ pagination.from }}</span> – <span class="font-semibold text-slate-700 dark:text-slate-300">{{ pagination.to }}</span> of <span class="font-semibold text-slate-700 dark:text-slate-300">{{ pagination.total }}</span> user{{ pagination.total !== 1 ? 's' : '' }}
           </p>
           <div class="flex items-center gap-1">
             <button @click="goToPage(currentPage - 1)" :disabled="currentPage <= 1"
-              class="flex h-9 w-9 items-center justify-center rounded-lg text-xs font-bold text-slate-600 transition-all hover:bg-slate-100 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-30">&lsaquo;</button>
+              class="flex h-9 w-9 items-center justify-center rounded-lg text-xs font-bold text-slate-600 transition-all hover:bg-slate-100 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-30 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-indigo-400">&lsaquo;</button>
             <template v-for="p in visiblePages" :key="p">
-              <span v-if="p === '...'" class="px-1 text-xs font-bold text-slate-400">...</span>
+              <span v-if="p === '...'" class="px-1 text-xs font-bold text-slate-400 dark:text-slate-500">...</span>
               <button v-else @click="goToPage(Number(p))"
                 class="flex h-9 min-w-[36px] items-center justify-center rounded-lg px-3 text-xs font-bold transition-all"
-                :class="p === currentPage ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-indigo-600'">{{ p }}</button>
+                :class="p === currentPage ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-indigo-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-indigo-400'">{{ p }}</button>
             </template>
             <button @click="goToPage(currentPage + 1)" :disabled="currentPage >= (pagination?.last_page || 1)"
-              class="flex h-9 w-9 items-center justify-center rounded-lg text-xs font-bold text-slate-600 transition-all hover:bg-slate-100 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-30">&rsaquo;</button>
+              class="flex h-9 w-9 items-center justify-center rounded-lg text-xs font-bold text-slate-600 transition-all hover:bg-slate-100 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-30 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-indigo-400">&rsaquo;</button>
           </div>
         </div>
       </div>
 
       <div v-else-if="!loading" class="flex flex-col items-center justify-center px-6 py-20 text-center">
-        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
-          <svg class="h-8 w-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-700">
+          <svg class="h-8 w-8 text-slate-300 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
           </svg>
         </div>
-        <h3 class="mt-5 text-base font-bold text-slate-900">No users found</h3>
-        <p class="mt-1.5 text-sm text-slate-500 max-w-sm">
+        <h3 class="mt-5 text-base font-bold text-slate-900 dark:text-slate-100">No users found</h3>
+        <p class="mt-1.5 text-sm text-slate-500 dark:text-slate-400 max-w-sm">
           {{ searchQuery || roleFilter || statusFilter ? 'Try adjusting your filters.' : 'No registered users yet.' }}
         </p>
       </div>

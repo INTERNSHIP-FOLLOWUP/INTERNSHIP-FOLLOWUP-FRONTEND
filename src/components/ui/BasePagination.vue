@@ -1,15 +1,15 @@
 <template>
   <div
     v-if="meta && meta.last_page > 1"
-    class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 px-5 py-3"
+    class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 px-5 py-3 dark:border-slate-700"
   >
-    <p class="text-xs text-slate-500">
+    <p class="text-xs text-slate-500 dark:text-slate-400">
       Showing
-      <span class="font-semibold text-slate-700">{{ meta.from }}</span>
+      <span class="font-semibold text-slate-700 dark:text-slate-300">{{ meta.from }}</span>
       –
-      <span class="font-semibold text-slate-700">{{ meta.to }}</span>
+      <span class="font-semibold text-slate-700 dark:text-slate-300">{{ meta.to }}</span>
       of
-      <span class="font-semibold text-slate-700">{{ meta.total }}</span>
+      <span class="font-semibold text-slate-700 dark:text-slate-300">{{ meta.total }}</span>
       results
     </p>
 
@@ -20,8 +20,8 @@
         class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-all duration-200"
         :class="
           meta.current_page <= 1
-            ? 'cursor-not-allowed text-slate-300'
-            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95'
+            ? 'cursor-not-allowed text-slate-300 dark:text-slate-600'
+            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200'
         "
         @click="goTo(meta.current_page - 1)"
       >
@@ -38,7 +38,7 @@
       <template v-for="(page, index) in visiblePages" :key="index">
         <span
           v-if="page === '...'"
-          class="inline-flex h-8 w-8 items-center justify-center text-xs text-slate-400 select-none"
+          class="inline-flex h-8 w-8 items-center justify-center text-xs text-slate-400 select-none dark:text-slate-500"
           >…</span
         >
         <button
@@ -48,8 +48,8 @@
           class="inline-flex h-8 min-w-[2rem] items-center justify-center rounded-lg px-2 text-sm font-medium transition-all duration-200"
           :class="
             page === meta.current_page
-              ? 'bg-indigo-50 text-indigo-700 shadow-sm scale-105'
-              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95'
+              ? 'bg-indigo-50 text-indigo-700 shadow-sm scale-105 dark:bg-indigo-950/40 dark:text-indigo-400'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200'
           "
           @click="goTo(page as number)"
         >
@@ -63,8 +63,8 @@
         class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-all duration-200"
         :class="
           meta.current_page >= meta.last_page
-            ? 'cursor-not-allowed text-slate-300'
-            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95'
+            ? 'cursor-not-allowed text-slate-300 dark:text-slate-600'
+            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:scale-95 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200'
         "
         @click="goTo(meta.current_page + 1)"
       >

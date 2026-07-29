@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-1.5">
-    <label :for="inputId" class="block text-sm font-medium text-slate-700">
+    <label :for="inputId" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
       {{ label }}
       <span v-if="required" class="text-red-500 ml-0.5">*</span>
     </label>
@@ -16,11 +16,11 @@
         :autocomplete="autocomplete"
         :aria-invalid="!!error"
         :aria-describedby="error ? errorId : undefined"
-        class="block w-full rounded-xl border px-4 py-3 pr-11 text-[15px] text-slate-900 placeholder-slate-400 transition-all duration-200 ease-in-out outline-none font-normal"
+        class="block w-full rounded-xl border px-4 py-3 pr-11 text-[15px] text-slate-900 placeholder-slate-400 transition-all duration-200 ease-in-out outline-none font-normal dark:text-slate-100 dark:placeholder-slate-500"
         :class="[
           error
-            ? 'border-red-300 bg-red-50/50 ring-1 ring-red-400/20 focus:border-red-500 focus:ring-2 focus:ring-red-500/20'
-            : 'border-blue-100/60 bg-[#EDF4FE] focus:bg-white focus:border-[#21BAEA] focus:ring-2 focus:ring-[#21BAEA]/20',
+            ? 'border-red-300 bg-red-50/50 ring-1 ring-red-400/20 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 dark:border-red-700 dark:bg-red-950/30 dark:ring-red-800/30'
+            : 'border-blue-100/60 bg-[#EDF4FE] focus:bg-white focus:border-[#21BAEA] focus:ring-2 focus:ring-[#21BAEA]/20 dark:border-slate-600 dark:bg-slate-700 dark:focus:bg-slate-700 dark:focus:border-[#3B82F6]',
         ]"
         @input="onInput"
         @blur="emit('blur')"
@@ -28,7 +28,7 @@
 
       <button
         type="button"
-        class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-[#21BAEA] transition-colors focus:outline-none focus:text-[#21BAEA]"
+        class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-[#21BAEA] transition-colors focus:outline-none focus:text-[#21BAEA] dark:text-slate-500 dark:hover:text-[#3B82F6] dark:focus:text-[#3B82F6]"
         :aria-label="showPassword ? 'Hide password' : 'Show password'"
         @click="togglePasswordVisibility"
       >

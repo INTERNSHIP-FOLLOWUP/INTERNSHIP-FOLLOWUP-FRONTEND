@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Follow-up Records</h1>
-        <p class="text-sm text-slate-500">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Follow-up Records</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">
           {{ isStudent ? 'Your follow-up meetings, notes, and next actions.' : 'Tutor follow-up meetings, notes, and next actions for your students.' }}
         </p>
       </div>
@@ -41,7 +41,7 @@
             @input="onFilterSearchInput"
             @focus="showFilterDropdown = filterResults.length > 0"
             @blur="onFilterSearchBlur"
-            class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-700 transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-400"
           />
           <!-- Clear filter button -->
           <button
@@ -49,14 +49,14 @@
             type="button"
             @click="clearFilterStudent"
             title="Clear student filter"
-            class="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+            class="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors dark:text-slate-500 dark:hover:bg-slate-600 dark:hover:text-slate-300"
           >
             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-        <p v-if="selectedStudentFilter" class="text-xs font-medium text-indigo-600 bg-indigo-50 rounded-lg px-3 py-1.5 inline-flex items-center gap-1.5">
+        <p v-if="selectedStudentFilter" class="text-xs font-medium text-indigo-600 bg-indigo-50 rounded-lg px-3 py-1.5 inline-flex items-center gap-1.5 dark:text-indigo-400 dark:bg-indigo-950/40">
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
@@ -68,17 +68,17 @@
       <transition name="dropdown">
         <div
           v-if="showFilterDropdown && filterResults.length > 0"
-          class="absolute z-50 mt-1 w-full max-w-xs rounded-xl border border-slate-200 bg-white py-1 shadow-lg shadow-slate-200/50 max-h-60 overflow-y-auto"
+          class="absolute z-50 mt-1 w-full max-w-xs rounded-xl border border-slate-200 bg-white py-1 shadow-lg shadow-slate-200/50 max-h-60 overflow-y-auto dark:border-slate-600 dark:bg-slate-700 dark:shadow-black/20"
         >
           <button
             v-for="(s, idx) in filterResults"
             :key="s.id"
             type="button"
             @mousedown.prevent="selectFilterStudent(s)"
-            class="flex w-full items-center gap-3 px-3.5 py-2.5 text-left text-sm transition-colors hover:bg-indigo-50"
-            :class="idx < filterResults.length - 1 ? 'border-b border-slate-50' : ''"
+            class="flex w-full items-center gap-3 px-3.5 py-2.5 text-left text-sm transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-950/40"
+            :class="idx < filterResults.length - 1 ? 'border-b border-slate-50 dark:border-slate-600' : ''"
           >
-            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-xs font-bold text-indigo-600">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-xs font-bold text-indigo-600 dark:from-indigo-800 dark:to-indigo-900 dark:text-indigo-300">
               {{ s.name?.charAt(0)?.toUpperCase() || '?' }}
             </div>
             <div class="min-w-0">
@@ -97,9 +97,9 @@
       <transition name="dropdown">
         <div
           v-if="showFilterDropdown && filterSearch.length >= 2 && filterResults.length === 0 && !searchingFilter"
-          class="absolute z-50 mt-1 w-full max-w-xs rounded-xl border border-slate-200 bg-white p-3 shadow-lg shadow-slate-200/50 text-center"
+          class="absolute z-50 mt-1 w-full max-w-xs rounded-xl border border-slate-200 bg-white p-3 shadow-lg shadow-slate-200/50 text-center dark:border-slate-600 dark:bg-slate-700 dark:shadow-black/20"
         >
-          <p class="text-sm text-slate-500">No students found matching "{{ filterSearch }}"</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400">No students found matching "{{ filterSearch }}"</p>
         </div>
       </transition>
     </div>
@@ -110,7 +110,7 @@
     <!-- Loading -->
     <div
       v-if="followupStore.loading"
-      class="flex items-center justify-center rounded-2xl border border-slate-100 bg-white py-16 shadow-sm"
+      class="flex items-center justify-center rounded-2xl border border-slate-100 bg-white py-16 shadow-sm dark:border-slate-700 dark:bg-slate-800"
     >
       <svg class="h-8 w-8 animate-spin text-indigo-500" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
@@ -123,12 +123,12 @@
     </div>
 
     <!-- Data Table -->
-    <div v-else class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+    <div v-else class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <div class="overflow-x-auto">
         <table class="w-full border-collapse text-left text-sm">
           <thead>
             <tr
-              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
+              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-500"
             >
               <th class="px-5 py-3.5">Student</th>
               <th class="px-5 py-3.5">Meeting Type</th>
@@ -137,23 +137,23 @@
               <th class="px-5 py-3.5 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-50">
+          <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
             <tr
               v-for="f in followupStore.followups"
               :key="f.id"
               @click="openViewDetail(f)"
-              class="cursor-pointer hover:bg-slate-50/70 transition-colors"
+              class="cursor-pointer hover:bg-slate-50/70 transition-colors dark:hover:bg-slate-700/50"
             >
-              <td class="whitespace-nowrap px-5 py-4 text-slate-700 font-semibold">
+              <td class="whitespace-nowrap px-5 py-4 text-slate-700 font-semibold dark:text-slate-200">
                 {{ studentLabel(f) }}
               </td>
-              <td class="whitespace-nowrap px-5 py-4 text-slate-600">
+              <td class="whitespace-nowrap px-5 py-4 text-slate-600 dark:text-slate-400">
                 {{ f.meeting_type }}
               </td>
-              <td class="whitespace-nowrap px-5 py-4 text-slate-600">
+              <td class="whitespace-nowrap px-5 py-4 text-slate-600 dark:text-slate-400">
                 {{ formatDate(f.meeting_date) }}
               </td>
-              <td class="whitespace-nowrap px-5 py-4 text-slate-600">
+              <td class="whitespace-nowrap px-5 py-4 text-slate-600 dark:text-slate-400">
                 {{ f.next_followup ? formatDate(f.next_followup) : '—' }}
               </td>
               <td class="whitespace-nowrap px-5 py-4 text-right" @click.stop>
@@ -161,7 +161,7 @@
                   <!-- View Detail -->
                   <button
                     @click.stop="openViewDetail(f)"
-                    class="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+                    class="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600 dark:hover:text-slate-200"
                     title="View details"
                   >
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,7 +178,7 @@
                   <!-- Edit -->
                   <button
                     @click.stop="openEditForm(f)"
-                    class="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+                    class="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:text-slate-100"
                     title="Edit"
                   >
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,7 +195,7 @@
                   <!-- Delete -->
                   <button
                     @click="confirmDelete(f)"
-                    class="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-red-600 shadow-sm transition-colors hover:bg-red-50 hover:border-red-300"
+                    class="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-red-600 shadow-sm transition-colors hover:bg-red-50 hover:border-red-300 dark:border-red-900 dark:bg-slate-700 dark:text-red-400 dark:hover:bg-red-950/30 dark:hover:border-red-700"
                     title="Delete"
                   >
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,7 +212,7 @@
               </td>
             </tr>
             <tr v-if="followupStore.followups.length === 0">
-              <td colspan="5" class="px-5 py-10 text-center text-sm text-slate-500">
+              <td colspan="5" class="px-5 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
                 No follow-up records found.
               </td>
             </tr>
@@ -228,7 +228,7 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
         @click.self="viewingFollowup = null"
       >
-        <div class="w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-2xl border border-slate-100 bg-white shadow-2xl">
+        <div class="w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-2xl border border-slate-100 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-800">
           <!-- Header with gradient -->
           <div class="sticky top-0 z-10 flex items-center justify-between bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-4 rounded-t-2xl">
             <div class="flex items-center gap-3">
@@ -255,18 +255,18 @@
           <div class="p-6 space-y-5">
             <!-- Row: Student & Meeting Type -->
             <div class="grid grid-cols-2 gap-5">
-              <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50">
-                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                  <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800/50 dark:hover:bg-slate-700/50">
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 dark:text-slate-500">
+                  <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                   Student
                 </div>
-                <p class="text-sm font-medium text-slate-800">{{ studentLabel(viewingFollowup) }}</p>
+                <p class="text-sm font-medium text-slate-800 dark:text-slate-200">{{ studentLabel(viewingFollowup) }}</p>
               </div>
-              <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50">
-                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                  <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800/50 dark:hover:bg-slate-700/50">
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 dark:text-slate-500">
+                  <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   Meeting Type
@@ -283,59 +283,59 @@
 
             <!-- Row: Meeting Date & Next Follow-up -->
             <div class="grid grid-cols-2 gap-5">
-              <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50">
-                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                  <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800/50 dark:hover:bg-slate-700/50">
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 dark:text-slate-500">
+                  <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   Meeting Date
                 </div>
-                <p class="text-sm font-medium text-slate-800">{{ formatDate(viewingFollowup.meeting_date) }}</p>
+                <p class="text-sm font-medium text-slate-800 dark:text-slate-200">{{ formatDate(viewingFollowup.meeting_date) }}</p>
               </div>
-              <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50">
-                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                  <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800/50 dark:hover:bg-slate-700/50">
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 dark:text-slate-500">
+                  <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                   Next Follow-up
                 </div>
-                <p class="text-sm font-medium" :class="viewingFollowup.next_followup ? 'text-slate-800' : 'text-slate-400'">
+                <p class="text-sm font-medium" :class="viewingFollowup.next_followup ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500'">
                   {{ viewingFollowup.next_followup ? formatDate(viewingFollowup.next_followup) : 'Not scheduled' }}
                 </p>
               </div>
             </div>
 
             <!-- Notes card -->
-            <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50">
-              <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800/50 dark:hover:bg-slate-700/50">
+              <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 dark:text-slate-500">
+                <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
                 Notes
               </div>
-              <p class="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
+              <p class="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed dark:text-slate-200">
                 {{ viewingFollowup.notes || '—' }}
               </p>
             </div>
 
             <!-- Action Items card -->
-            <div v-if="viewingFollowup.action_items" class="rounded-xl border border-amber-100 bg-amber-50/50 p-4">
-              <div class="flex items-center gap-2 text-xs font-semibold text-amber-600 uppercase tracking-wider mb-2">
-                <svg class="h-4 w-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div v-if="viewingFollowup.action_items" class="rounded-xl border border-amber-100 bg-amber-50/50 p-4 dark:border-amber-900/50 dark:bg-amber-950/30">
+              <div class="flex items-center gap-2 text-xs font-semibold text-amber-600 uppercase tracking-wider mb-2 dark:text-amber-400">
+                <svg class="h-4 w-4 text-amber-500 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
                 Action Items
               </div>
-              <p class="text-sm text-amber-800 whitespace-pre-wrap leading-relaxed">
+              <p class="text-sm text-amber-800 whitespace-pre-wrap leading-relaxed dark:text-amber-200">
                 {{ viewingFollowup.action_items }}
               </p>
             </div>
 
             <!-- Footer: timestamps + actions -->
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-4 border-t border-slate-100">
-              <div class="flex gap-4 text-xs text-slate-400">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+              <div class="flex gap-4 text-xs text-slate-400 dark:text-slate-500">
                 <span>Created {{ formatDateTime(viewingFollowup.created_at) }}</span>
-                <span class="text-slate-300">·</span>
+                <span class="text-slate-300 dark:text-slate-600">·</span>
                 <span>Updated {{ formatDateTime(viewingFollowup.updated_at) }}</span>
               </div>
               <div class="flex items-center gap-2">
@@ -350,7 +350,7 @@
                 </button>
                 <button
                   @click="viewingFollowup = null"
-                  class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50"
+                  class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600"
                 >
                   Close
                 </button>

@@ -158,6 +158,18 @@ const router = createRouter({
           meta: { title: 'Profile' } as AppRouteMeta,
         },
         {
+          path: 'notifications',
+          name: 'AdminNotifications',
+          component: () => import('@/views/notifications/NotificationsView.vue'),
+          meta: { title: 'Notifications' } as AppRouteMeta,
+        },
+        {
+          path: 'notifications/:id',
+          name: 'AdminNotificationDetail',
+          component: () => import('@/views/notifications/NotificationDetailView.vue'),
+          meta: { title: 'Notification Detail' } as AppRouteMeta,
+        },
+        {
           path: 'tutors',
           name: 'AdminTutors',
           component: () => import('@/views/tutor/TutorList.vue'),
@@ -236,6 +248,18 @@ const router = createRouter({
           component: () => import('@/views/profile/ProfileView.vue'),
           meta: { title: 'Profile' },
         },
+        {
+          path: 'notifications',
+          name: 'TutorNotifications',
+          component: () => import('@/views/notifications/NotificationsView.vue'),
+          meta: { title: 'Notifications' },
+        },
+        {
+          path: 'notifications/:id',
+          name: 'TutorNotificationDetail',
+          component: () => import('@/views/notifications/NotificationDetailView.vue'),
+          meta: { title: 'Notification Detail' },
+        },
       ],
     },
 
@@ -309,6 +333,18 @@ const router = createRouter({
           component: () => import('@/views/profile/StudentProfileView.vue'),
           meta: { title: 'Profile' },
         },
+        {
+          path: 'notifications',
+          name: 'StudentNotifications',
+          component: () => import('@/views/notifications/NotificationsView.vue'),
+          meta: { title: 'Notifications' },
+        },
+        {
+          path: 'notifications/:id',
+          name: 'StudentNotificationDetail',
+          component: () => import('@/views/notifications/NotificationDetailView.vue'),
+          meta: { title: 'Notification Detail' },
+        },
       ],
     },
 
@@ -357,6 +393,18 @@ const router = createRouter({
           name: 'CompanyProfile',
           component: () => import('@/views/company/CompanyFormView.vue'),
           meta: { title: 'Company Profile' },
+        },
+        {
+          path: 'notifications',
+          name: 'CompanyNotifications',
+          component: () => import('@/views/notifications/NotificationsView.vue'),
+          meta: { title: 'Notifications' },
+        },
+        {
+          path: 'notifications/:id',
+          name: 'CompanyNotificationDetail',
+          component: () => import('@/views/notifications/NotificationDetailView.vue'),
+          meta: { title: 'Notification Detail' },
         },
         {
           path: 'messages',

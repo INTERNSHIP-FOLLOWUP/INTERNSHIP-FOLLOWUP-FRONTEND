@@ -79,8 +79,29 @@
   </div>
 </template>
 
-<script setup lang="ts">
-<<<<<<< HEAD
+import { fileIconBgClass, formatFileSize, fileTypeLabel, fileTypeBadgeClass } from '@/utils/fileIcons'
+import type { Attachment } from '@/types/worklog'
+
+defineProps<{
+  attachments: Attachment[]
+}>
+
+
+function download(att: Attachment) {
+  if (!att.url) return
+  window.open(att.url, '_blank')
+}
+
+function isPreviewable(att: Attachment): boolean {
+  const name = (att.filename || att.file_path || '').toLowerCase()
+  return name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.pdf')
+}
+
+function preview(att: Attachment) {
+  if (!att.url) return
+  window.open(att.url, '_blank')
+}
+</script>
 =======
 import { fileIconBgClass, formatFileSize, fileTypeLabel, fileTypeBadgeClass } from '@/utils/fileIcons'
 import type { Attachment } from '@/types/worklog'

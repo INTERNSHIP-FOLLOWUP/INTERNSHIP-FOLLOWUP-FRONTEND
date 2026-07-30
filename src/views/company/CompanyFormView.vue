@@ -129,6 +129,7 @@
                   :onSubmit="onSubmit"
                   :showCancel="false"
                   hideHeader
+                  submitLabel="Save Changes"
                 />
               </div>
             </div>

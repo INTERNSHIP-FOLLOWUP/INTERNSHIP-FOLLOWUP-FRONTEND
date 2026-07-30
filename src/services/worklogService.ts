@@ -11,14 +11,14 @@ export const worklogService = {
 
   async getWorklog(id: number): Promise<Worklog> {
     const response = await api.get(`/worklogs/${id}`)
-    return response.data as Worklog
+    return response.data.data as Worklog
   },
 
   async createWorklog(formData: FormData): Promise<Worklog> {
     const response = await api.post('/worklogs', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
-    return response.data as Worklog
+    return response.data.data as Worklog
   },
 
   async updateWorklog(id: number, payload: FormData | Record<string, unknown>): Promise<Worklog> {
@@ -29,7 +29,7 @@ export const worklogService = {
     const response = await api.post(`/worklogs/${id}`, payload, {
       headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
     })
-    return response.data as Worklog
+    return response.data.data as Worklog
   },
 
   async deleteWorklog(id: number): Promise<void> {
@@ -44,11 +44,11 @@ export const worklogService = {
 
   async getTutorWorklog(id: number): Promise<Worklog> {
     const response = await api.get(`/tutor/worklogs/${id}`)
-    return response.data as Worklog
+    return response.data.data as Worklog
   },
 
   async reviewWorklog(id: number, data: { status?: string; feedback?: string }): Promise<Worklog> {
     const response = await api.post(`/tutor/worklogs/${id}`, data)
-    return response.data as Worklog
+    return response.data.data as Worklog
   },
 }

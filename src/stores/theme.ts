@@ -249,6 +249,11 @@ export const useThemeStore = defineStore('theme', () => {
       )
       root.style.setProperty('--sidebar-section-text', '#64748b')
       root.style.setProperty('--sidebar-logo-text', '#94a3b8')
+      root.style.setProperty('--sidebar-heading', '#ffffff')
+      root.style.setProperty('--sidebar-subheading', '#94a3b8')
+      root.style.setProperty('--sidebar-user-name', '#ffffff')
+      root.style.setProperty('--sidebar-user-role', '#94a3b8')
+      root.style.setProperty('--sidebar-avatar-bg', `linear-gradient(135deg, ${s[500]}, ${s[700]})`)
     } else if (style === 'colored') {
       root.style.setProperty('--sidebar-bg', theme.sidebarFrom)
       root.style.setProperty('--sidebar-border', 'rgba(255, 255, 255, 0.08)')
@@ -264,6 +269,11 @@ export const useThemeStore = defineStore('theme', () => {
       )
       root.style.setProperty('--sidebar-section-text', 'rgba(255, 255, 255, 0.35)')
       root.style.setProperty('--sidebar-logo-text', 'rgba(255, 255, 255, 0.5)')
+      root.style.setProperty('--sidebar-heading', '#ffffff')
+      root.style.setProperty('--sidebar-subheading', 'rgba(255, 255, 255, 0.5)')
+      root.style.setProperty('--sidebar-user-name', '#ffffff')
+      root.style.setProperty('--sidebar-user-role', 'rgba(255, 255, 255, 0.5)')
+      root.style.setProperty('--sidebar-avatar-bg', `linear-gradient(135deg, ${s[500]}, ${s[700]})`)
     } else {
       // light
       root.style.setProperty('--sidebar-bg', '#ffffff')
@@ -280,6 +290,11 @@ export const useThemeStore = defineStore('theme', () => {
       )
       root.style.setProperty('--sidebar-section-text', '#94a3b8')
       root.style.setProperty('--sidebar-logo-text', '#64748b')
+      root.style.setProperty('--sidebar-heading', '#1e293b')
+      root.style.setProperty('--sidebar-subheading', '#64748b')
+      root.style.setProperty('--sidebar-user-name', '#1e293b')
+      root.style.setProperty('--sidebar-user-role', '#64748b')
+      root.style.setProperty('--sidebar-avatar-bg', `linear-gradient(135deg, ${s[500]}, ${s[700]})`)
     }
 
     // Common theme-aware sidebar properties

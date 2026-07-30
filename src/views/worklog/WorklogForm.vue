@@ -266,7 +266,12 @@ async function onSubmit() {
     serverError.value = parsed.message
     if (parsed.fields) {
       for (const [k, v] of Object.entries(parsed.fields)) {
-        errors[k] = v
+        if (k === 'work_time') {
+          errors.time_from = v
+          errors.time_to = v
+        } else {
+          errors[k] = v
+        }
       }
     }
   } finally {

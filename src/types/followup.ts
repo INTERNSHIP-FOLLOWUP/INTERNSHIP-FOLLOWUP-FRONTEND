@@ -1,9 +1,12 @@
-export type MeetingType = 'Monthly' | 'Quarterly' | 'Annual'
+// 'Annual' is kept only so older records still render; new follow-ups use Weekly/Monthly/Quarterly.
+export type MeetingType = 'Weekly' | 'Monthly' | 'Quarterly' | 'Annual'
 
 export interface FollowupUser {
   id: number
   name: string
   email: string
+  phone?: string | null
+  photo_url?: string | null
 }
 
 export interface Followup {

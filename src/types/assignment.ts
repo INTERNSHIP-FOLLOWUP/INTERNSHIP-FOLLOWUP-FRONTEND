@@ -10,7 +10,11 @@ export interface Assignment {
   student_name: string
   student_photo_url?: string | null
   company_name: string
+  company_logo_url?: string | null
   tutor_name: string
+  tutor_photo_url?: string | null
+  supervisor_name?: string | null
+  supervisor_photo_url?: string | null
   position: string
   start_date: string
   end_date: string

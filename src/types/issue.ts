@@ -19,6 +19,7 @@ export interface Issue {
   description: string
   reporter: string
   studentName?: string
+  studentPhotoUrl?: string | null
   assignedTo: string
   createdAt: string
   updatedAt: string

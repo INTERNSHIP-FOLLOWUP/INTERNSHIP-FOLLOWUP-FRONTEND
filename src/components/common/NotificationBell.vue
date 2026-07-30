@@ -95,6 +95,8 @@ function resolveLink(notif: AppNotification): string | null {
       return d.worklog_id ? `/tutor/worklogs/${d.worklog_id}` : null
     case 'worklog_reviewed':
       return d.worklog_id ? `/student/worklogs/${d.worklog_id}` : null
+    case 'followup_scheduled':
+      return '/student/followups'
     case 'issue_assigned':
     case 'issue_resolved':
       return '/student/issues'

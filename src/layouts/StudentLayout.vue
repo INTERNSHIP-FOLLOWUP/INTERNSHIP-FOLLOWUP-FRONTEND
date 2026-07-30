@@ -11,36 +11,48 @@
 
     <!-- Sidebar -->
     <aside
-      class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-slate-900 shadow-2xl transition-transform duration-300 lg:static lg:translate-x-0"
+      class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col shadow-2xl transition-transform duration-300 lg:static lg:translate-x-0"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+      :style="sidebarStyles"
     >
       <!-- Logo -->
-      <div class="flex h-16 items-center gap-3 border-b border-slate-700/50 px-6">
+      <div
+        class="flex h-16 items-center gap-3 px-6"
+        :style="{ borderBottom: '1px solid var(--sidebar-border)' }"
+      >
         <div
-          class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-sm font-bold text-white shadow-lg shadow-emerald-500/25"
+          class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white shadow-lg"
+          :style="{
+            background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
+            boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+          }"
         >
           S
         </div>
         <div>
-          <h1 class="text-base font-semibold tracking-tight text-white">Student Panel</h1>
-          <p class="text-xs text-slate-400">Internship System</p>
+          <h1 class="text-base font-semibold tracking-tight" :style="{ color: 'var(--sidebar-heading)' }">
+            Student Panel
+          </h1>
+          <p class="text-xs" :style="{ color: 'var(--sidebar-subheading)' }">Internship System</p>
         </div>
       </div>
 
       <!-- Navigation -->
       <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" :class="{ 'pointer-events-none opacity-40 select-none': isInactive }">
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Menu</p>
+        <p
+          class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider"
+          :style="{ color: 'var(--sidebar-section-text)' }"
+        >
+          Menu
+        </p>
         <router-link
           v-for="item in navItems"
           :key="item.name"
           :to="item.to"
           @click="sidebarOpen = false"
-          class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
-          :class="
-            isActive(item.to)
-              ? 'bg-gradient-to-r from-emerald-500/15 to-teal-500/10 text-emerald-400 shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
-          "
+          class="sidebar-nav-link group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200"
+          :class="isActive(item.to) ? 'sidebar-nav-active' : ''"
+          :style="navLinkStyle(item.to)"
         >
           <span
             class="flex h-5 w-5 items-center justify-center transition-transform duration-200"
@@ -61,8 +73,11 @@
       </div>
 
       <!-- Bottom user card -->
-      <div class="border-t border-slate-700/50 p-4">
-        <div class="flex items-center gap-3 rounded-lg bg-slate-800/50 p-3">
+      <div class="border-t p-4" :style="{ borderColor: 'var(--sidebar-border)' }">
+        <div
+          class="flex items-center gap-3 rounded-xl p-3"
+          :style="{ backgroundColor: 'var(--sidebar-user-bg)' }"
+        >
           <div
             class="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-full shadow-lg"
           >
@@ -74,14 +89,19 @@
             />
             <div
               v-else
-              class="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-400 to-teal-500 text-sm font-bold text-white"
+              class="flex h-full w-full items-center justify-center text-sm font-bold text-white"
+              :style="{
+                background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
+              }"
             >
               {{ userInitials }}
             </div>
           </div>
           <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-medium text-white">{{ user?.name }}</p>
-            <p class="truncate text-xs text-slate-400">Student</p>
+            <p class="truncate text-sm font-medium" :style="{ color: 'var(--sidebar-user-name)' }">
+              {{ user?.name }}
+            </p>
+            <p class="truncate text-xs" :style="{ color: 'var(--sidebar-user-role)' }">Student</p>
           </div>
         </div>
       </div>
@@ -137,6 +157,27 @@
             <svg v-else class="h-5 w-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
+          </button>
+
+          <!-- Theme Settings Button -->
+          <button
+            @click.stop="themeSettingsOpen = !themeSettingsOpen"
+            class="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+            :class="{ 'bg-slate-100 text-slate-700 ring-2 ring-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:ring-slate-600': themeSettingsOpen }"
+            title="Theme Settings"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+              />
+            </svg>
+            <span
+              class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white shadow-sm dark:border-slate-700"
+              :style="{ backgroundColor: themeStore.currentTheme().shades[500] }"
+            />
           </button>
 
           <!-- User dropdown -->
@@ -252,6 +293,9 @@
       </main>
     </div>
 
+    <!-- Theme Settings Panel -->
+    <ThemeSettingsPanel :is-open="themeSettingsOpen" @close="themeSettingsOpen = false" />
+
     <!-- Logout Confirmation Modal -->
     <transition name="fade">
       <div
@@ -300,6 +344,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 import NotificationBell from '@/components/common/NotificationBell.vue'
+import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -310,6 +355,7 @@ const themeStore = useThemeStore()
 
 const sidebarOpen = ref(false)
 const dropdownOpen = ref(false)
+const themeSettingsOpen = ref(false)
 
 function handleClickOutside() {
   if (dropdownOpen.value) {
@@ -349,6 +395,30 @@ const userInitials = computed(() => {
     .slice(0, 2)
 })
 
+const sidebarStyles = computed(() => ({
+  backgroundColor: 'var(--sidebar-bg)',
+}))
+
+function isActive(path: string) {
+  if (path === '/student') {
+    return route.path === '/student'
+  }
+  return route.path.startsWith(path)
+}
+
+function navLinkStyle(to: string): Record<string, string> {
+  if (isActive(to)) {
+    return {
+      background: 'var(--sidebar-nav-active-bg)',
+      color: 'var(--sidebar-nav-active-text)',
+      borderLeft: '2px solid var(--sidebar-nav-active-border)',
+    }
+  }
+  return {
+    color: 'var(--sidebar-nav-text)',
+  }
+}
+
 const pageTitle = computed(() => {
   const map: Record<string, string> = {
     StudentDashboard: 'nav.student.dashboard',
@@ -367,13 +437,6 @@ const pageTitle = computed(() => {
   const title = route.meta?.title
   return typeof title === 'string' ? title : 'Dashboard'
 })
-
-function isActive(path: string) {
-  if (path === '/student') {
-    return route.path === '/student'
-  }
-  return route.path.startsWith(path)
-}
 
 const logoutModalOpen = ref(false)
 const loggingOut = ref(false)
@@ -511,5 +574,15 @@ const navItems: NavItem[] = [
 .dropdown-leave-to {
   opacity: 0;
   transform: translateY(-4px) scale(0.98);
+}
+
+.sidebar-nav-link:hover {
+  background: var(--sidebar-nav-hover-bg) !important;
+  color: var(--sidebar-nav-text-hover) !important;
+}
+
+.sidebar-nav-active {
+  background: var(--sidebar-nav-active-bg) !important;
+  color: var(--sidebar-nav-active-text) !important;
 }
 </style>

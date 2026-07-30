@@ -1,320 +1,215 @@
 <template>
-  <div
-    class="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 dark:border-slate-700 dark:bg-slate-800"
-  >
-    <!-- Hero Header matching Detail View -->
-    <div
-      class="relative overflow-hidden bg-gradient-to-r from-indigo-500 to-sky-400 px-8 py-10 sm:px-10"
-    >
-      <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-      <div class="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-white/5 blur-2xl" />
-
-      <div class="relative flex flex-col items-center gap-5 sm:flex-row sm:items-end">
-        <!-- Live Preview Avatar -->
-        <div
-          class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white/50 bg-white shadow-xl"
-        >
-          <img
-            v-if="companyImagePreview"
-            :src="companyImagePreview"
-            alt="Company logo preview"
-            class="h-full w-full object-cover"
-          />
-          <span v-else class="text-3xl font-bold text-indigo-600 select-none">
-            {{ form.companyName ? form.companyName.charAt(0).toUpperCase() : 'C' }}
-          </span>
-        </div>
-
-        <div class="text-center sm:text-left">
-          <h1 class="text-2xl font-bold text-white drop-shadow-sm">
-            {{ form.companyName || (mode === 'create' ? 'New Company' : 'Edit Company') }}
-          </h1>
-          <div class="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-            <span
-              v-if="form.industry"
-              class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm"
-            >
-              {{ form.industry }}
-            </span>
-            <span
-              v-if="form.companyEmail"
-              class="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm"
-            >
-              <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
-              {{ form.companyEmail }}
-            </span>
-            <span
-              v-if="!form.companyName && !form.industry && !form.companyEmail"
-              class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm"
-            >
-              {{ mode === 'create' ? 'Fill in the details below' : 'Update the fields below' }}
-            </span>
-          </div>
+  <div class="mx-auto w-full max-w-3xl rounded-2xl border border-slate-100 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800 sm:p-8">
+    <form @submit.prevent="handleSubmit" class="space-y-6" novalidate>
+      <div v-if="!hideHeader" class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
+            {{ mode === 'create' ? 'Add Company' : 'Edit Company' }}
+          </h2>
+          <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            {{
+              mode === 'create'
+                ? 'Fill in the details to register a new host company.'
+                : 'Update company details below.'
+            }}
+          </p>
         </div>
       </div>
-    </div>
 
-    <!-- Main Content Grid Form -->
-    <form @submit.prevent="handleSubmit" novalidate>
-      <div class="px-8 py-10 sm:px-10 space-y-10">
-        <!-- Error Banner -->
-        <div
-          v-if="formError"
-          class="flex items-start gap-3 rounded-xl border border-red-100 bg-red-50/60 p-4 dark:border-red-900/50 dark:bg-red-950/30"
-        >
-          <svg
-            class="h-5 w-5 shrink-0 text-red-500 mt-0.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
-          <div class="text-sm font-medium text-red-800 dark:text-red-400">{{ formError }}</div>
-        </div>
+      <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+        <FormField label="Company Name" :error="errors.companyName" required>
+          <input
+            v-model="form.companyName"
+            type="text"
+            placeholder="e.g. Acme Technologies"
+            autocomplete="organization"
+            class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+            :class="inputClass('companyName')"
+            @input="clearFieldError('companyName')"
+          />
+        </FormField>
 
-        <!-- Section 1: General Info -->
-        <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
-          <div class="lg:pt-1">
-            <h3
-              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500"
+        <FormField label="Company Email" :error="errors.companyEmail" required>
+          <input
+            v-model="form.companyEmail"
+            type="email"
+            placeholder="e.g. hr@acme.com"
+            autocomplete="email"
+            class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+            :class="inputClass('companyEmail')"
+            @input="clearFieldError('companyEmail')"
+          />
+        </FormField>
+
+        <FormField label="Industry" :error="errors.industry">
+          <input
+            v-model="form.industry"
+            type="text"
+            placeholder="e.g. Banking, Telecom"
+            autocomplete="organization-title"
+            class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+            :class="inputClass('industry')"
+            @input="clearFieldError('industry')"
+          />
+        </FormField>
+
+        <FormField label="Location" :error="errors.location">
+          <input
+            v-model="form.location"
+            type="text"
+            placeholder="e.g. Phnom Penh, Cambodia"
+            autocomplete="address-level2"
+            class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+            :class="inputClass('location')"
+            @input="clearFieldError('location')"
+          />
+        </FormField>
+
+        <FormField label="Website URL" :error="errors.website">
+          <input
+            v-model="form.website"
+            type="url"
+            placeholder="e.g. https://acme.com"
+            autocomplete="url"
+            class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+            :class="inputClass('website')"
+            @input="clearFieldError('website')"
+          />
+        </FormField>
+
+        <FormField label="Telegram Channel Link" :error="errors.telegramLink">
+          <input
+            v-model="form.telegramLink"
+            type="url"
+            placeholder="e.g. https://t.me/company"
+            autocomplete="url"
+            class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+            :class="inputClass('telegramLink')"
+            @input="clearFieldError('telegramLink')"
+          />
+        </FormField>
+
+        <!-- Company Logo (full width) -->
+        <div class="sm:col-span-2">
+          <FormField label="Company Logo" :error="errors.companyImage">
+            <!-- Upload Dropzone -->
+            <div
+              class="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 transition-all duration-200"
+              :class="{
+                'border-primary-300 bg-primary-50/40 dark:border-primary-600 dark:bg-primary-950/20': isDragOver,
+                'border-slate-200 bg-slate-50/50 hover:border-primary-200 hover:bg-primary-50/20 dark:border-slate-600 dark:bg-slate-700/30 dark:hover:border-primary-500': !isDragOver && !errors.companyImage,
+                'border-error ring-1 ring-error/20 dark:border-red-700': !!errors.companyImage,
+              }"
+              @dragover.prevent="isDragOver = true"
+              @dragleave.prevent="isDragOver = false"
+              @drop.prevent="onDrop"
+              @click="fileInput?.click()"
             >
-              <span class="h-1 w-1 rounded-full bg-indigo-500"></span>
-              Core Information
-            </h3>
-            <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Provide identifying information used across internal system modules.
-            </p>
-          </div>
-          <div
-            class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6 dark:border-slate-600 dark:bg-slate-700/30"
-          >
-            <InputField
-              v-model="form.companyName"
-              label="Company Name"
-              placeholder="e.g. Acme Technologies"
-              required
-              :error="errors.companyName"
-              autocomplete="organization"
-            />
-            <InputField
-              v-model="form.companyEmail"
-              label="Company Email"
-              type="email"
-              placeholder="e.g. hr@acme.com"
-              required
-              :error="errors.companyEmail"
-              autocomplete="email"
-            />
-            <InputField
-              v-model="form.industry"
-              label="Industry"
-              placeholder="e.g. Banking, Telecom"
-              :error="errors.industry"
-              autocomplete="organization-title"
-            />
-            <InputField
-              v-model="form.location"
-              label="Location"
-              placeholder="e.g. Kigali, Rwanda"
-              :error="errors.location"
-              autocomplete="address-level2"
-            />
-          </div>
-        </div>
-
-        <!-- Section 2: Digital Presence -->
-        <div class="grid grid-cols-1 gap-x-10 gap-y-6 lg:grid-cols-3">
-          <div class="lg:pt-1">
-            <h3
-              class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500"
-            >
-              <span class="h-1 w-1 rounded-full bg-violet-400"></span>
-              Digital Presence
-            </h3>
-            <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Public external hyperlinks and media structures representing the entity brand.
-            </p>
-          </div>
-
-          <div            class="lg:col-span-2 rounded-xl border border-slate-100 bg-slate-50/50 p-6 space-y-5 dark:border-slate-600 dark:bg-slate-700/30">
-            <!-- Company Logo Upload -->
-            <div class="space-y-1.5">
-              <label class="flex items-center gap-1 text-sm font-medium text-slate-700 dark:text-slate-300">
-                Company Logo
-                <span class="text-xs font-normal text-slate-400 dark:text-slate-500">(PNG, JPG, max 2MB)</span>
-              </label>
-
-              <!-- Upload Dropzone -->
-              <div
-                class="relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 transition-all duration-200"
-                :class="{
-                  'border-indigo-300 bg-indigo-50/40 dark:border-indigo-600 dark:bg-indigo-950/20': isDragOver,
-                  'border-slate-200 bg-slate-50/50 hover:border-indigo-200 hover:bg-indigo-50/20 dark:border-slate-600 dark:bg-slate-700/30 dark:hover:border-indigo-500 dark:hover:bg-indigo-950/10': !isDragOver,
-                  'border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-950/20': errors.companyImage,
-                }"
-                @dragover.prevent="isDragOver = true"
-                @dragleave.prevent="isDragOver = false"
-                @drop.prevent="onDrop"
-                @click="fileInput?.click()"
-              >
-                <!-- Preview when a file is selected -->
-                <template v-if="form.companyImage">
-                  <div class="relative mb-3">
-                    <img
-                      :src="companyImagePreview"
-                      alt="Company logo preview"
-                      class="h-24 w-24 rounded-xl object-cover shadow-sm ring-2 ring-indigo-100"
-                    />
-                    <button
-                      type="button"
-                      class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm transition-colors hover:bg-red-600"
-                      @click.stop="removeCompanyImage"
-                    >
-                      <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                  <p class="text-xs font-medium text-indigo-600">
-                    {{ isFile(form.companyImage) ? form.companyImage.name : 'Logo uploaded' }}
-                  </p>
-                  <p class="mt-0.5 text-[10px] text-slate-400 dark:text-slate-500">
-                    Tap to replace
-                  </p>
-                </template>
-
-                <!-- Empty state -->
-                <template v-else>
-                  <div                    class="mb-3 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
-                    <svg class="h-7 w-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                    </svg>
-                  </div>
-                  <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
-                    Drop your logo here or <span class="text-indigo-600 underline underline-offset-2">browse</span>
-                  </p>
-                  <p class="mt-0.5 text-[10px] text-slate-400 dark:text-slate-500">
-                    Supported: JPEG, PNG
-                  </p>
-                </template>
-
-                <input
-                  ref="fileInput"
-                  type="file"
-                  accept="image/jpeg,image/png,image/jpg"
-                  class="hidden"
-                  @change="onFileSelected"
-                />
-              </div>
-              <p v-if="errors.companyImage" class="text-xs font-medium text-red-500 dark:text-red-400">{{ errors.companyImage }}</p>
-
-              <!-- URL Input -->
-              <div class="mt-3">
-                <div class="relative">
-                  <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                    </svg>
-                  </div>
-                  <input
-                    v-model="companyLogoUrlInput"
-                    type="url"
-                    placeholder="Or paste an image URL..."
-                    class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 placeholder-slate-400 transition-colors focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-indigo-500"
-                    @input="onLogoUrlInput"
+              <!-- Preview when a file is selected -->
+              <template v-if="form.companyImage">
+                <div class="relative mb-3">
+                  <img
+                    :src="companyImagePreview"
+                    alt="Company logo preview"
+                    class="h-24 w-24 rounded-xl object-cover shadow-sm ring-2 ring-primary-100 dark:ring-primary-900/50"
                   />
                   <button
-                    v-if="companyLogoUrlInput"
                     type="button"
-                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
-                    @click="clearLogoUrl"
+                    class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm transition-colors hover:bg-red-600"
+                    @click.stop="removeCompanyImage"
                   >
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
                 </div>
+                <p class="text-xs font-medium text-primary-600 dark:text-primary-400">
+                  {{ isFile(form.companyImage) ? form.companyImage.name : 'Logo uploaded' }}
+                </p>
+                <p class="mt-0.5 text-[10px] text-slate-400 dark:text-slate-500">Tap to replace</p>
+              </template>
+
+              <!-- Empty state -->
+              <template v-else>
+                <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700">
+                  <svg class="h-7 w-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                  </svg>
+                </div>
+                <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                  Drop your logo here or <span class="text-primary-600 underline underline-offset-2 dark:text-primary-400">browse</span>
+                </p>
+                <p class="mt-0.5 text-[10px] text-slate-400 dark:text-slate-500">PNG or JPG, max 2MB</p>
+              </template>
+
+              <input
+                ref="fileInput"
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                class="hidden"
+                @change="onFileSelected"
+              />
+            </div>
+
+            <!-- URL Input -->
+            <div class="relative mt-2">
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                <svg class="h-4 w-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
               </div>
-            </div>
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <InputField
-                v-model="form.website"
-                label="Website URL"
-                placeholder="e.g. https://acme.com"
-                :error="errors.website"
-                autocomplete="url"
+              <input
+                v-model="companyLogoUrlInput"
+                type="url"
+                placeholder="Or paste an image URL..."
+                class="block w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-10 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+                @input="onLogoUrlInput"
               />
-              <InputField
-                v-model="form.telegramLink"
-                label="Telegram Channel Link"
-                placeholder="e.g. https://t.me/company"
-                :error="errors.telegramLink"
-                autocomplete="url"
-              />
+              <button
+                v-if="companyLogoUrlInput"
+                type="button"
+                class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+                @click="clearLogoUrl"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-          </div>
+          </FormField>
         </div>
       </div>
 
-      <!-- Action Panel Footer matching Detail View -->
       <div
-        class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-8 py-5 sm:flex-row dark:border-slate-700 dark:bg-slate-700/30"
+        v-if="formError"
+        role="alert"
+        aria-live="polite"
+        class="rounded-lg border border-error/20 bg-error/5 px-4 py-3 text-sm font-medium text-error dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400"
       >
-        <div class="flex items-center gap-2">
-          <span class="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
-          <span class="text-xs font-medium text-slate-400 dark:text-slate-500">Complete all required fields</span>
-        </div>
+        {{ formError }}
+      </div>
 
-        <div class="flex items-center gap-2">
-          <button
-            v-if="showCancel"
-            type="button"
-            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:text-slate-200"
-            :disabled="submitting"
-            @click="emit('cancel')"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="button"
-            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:text-slate-200"
-            :disabled="submitting"
-            @click="reset"
-          >
-            Reset
-          </button>
-
-          <PrimaryButton
-            type="submit"
-            :loading="submitting"
-            :disabled="submitting"
-            class="min-w-[140px] !rounded-xl shadow-sm shadow-indigo-100"
-          >
-            {{
-              submitting
-                ? mode === 'create'
-                  ? 'Creating...'
-                  : 'Saving...'
-                : mode === 'create'
-                  ? 'Create Profile'
-                  : 'Save Changes'
-            }}
-          </PrimaryButton>
-        </div>
+      <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-5 dark:border-slate-700">
+        <button
+          v-if="showCancel"
+          type="button"
+          :disabled="submitting"
+          @click="emit('cancel')"
+          class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          :disabled="submitting"
+          class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-primary-500/20 transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <svg v-if="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          {{ submitLabelText }}
+        </button>
       </div>
     </form>
   </div>
@@ -322,8 +217,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
-import InputField from '@/components/ui/InputField.vue'
-import PrimaryButton from '@/components/ui/PrimaryButton.vue'
+import FormField from '@/components/ui/FormField.vue'
 
 export type CompanyFormMode = 'create' | 'edit'
 
@@ -343,6 +237,8 @@ type Props = {
   mode: CompanyFormMode
   initialData?: Partial<CompanyFormData>
   showCancel?: boolean
+  hideHeader?: boolean
+  submitLabel?: string
   apiErrors?: Record<string, string>
   onSubmit?: (data: CompanyFormData) => Promise<void>
 }
@@ -354,6 +250,8 @@ type Emits = {
 const props = withDefaults(defineProps<Props>(), {
   initialData: () => ({}),
   showCancel: false,
+  hideHeader: false,
+  submitLabel: undefined,
   apiErrors: () => ({}),
 })
 
@@ -401,6 +299,26 @@ const form = reactive<CompanyFormData>({ ...initialForm })
 const errors = reactive<CompanyFormErrors>({})
 
 const showCancel = computed(() => props.showCancel)
+const hideHeader = computed(() => props.hideHeader)
+
+const submitLabelText = computed(() => {
+  if (submitting.value) {
+    return props.mode === 'create' ? 'Creating...' : 'Saving...'
+  }
+  if (props.submitLabel) return props.submitLabel
+  return props.mode === 'create' ? 'Add Company' : 'Update Company'
+})
+
+function inputClass(field: keyof CompanyFormData): string {
+  return errors[field]
+    ? 'border-error ring-1 ring-error/20 focus:border-error focus:ring-2 focus:ring-error/30 dark:border-red-700 dark:ring-red-800/30'
+    : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-slate-600'
+}
+
+function clearFieldError(field: keyof CompanyFormData): void {
+  errors[field] = ''
+  formError.value = ''
+}
 
 function isFile(value: unknown): value is File {
   return value instanceof File

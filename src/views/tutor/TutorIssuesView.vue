@@ -309,10 +309,20 @@
       >
         <!-- Student Info Header -->
         <div class="flex items-center gap-3 border-b border-[#F3F4F6] px-5 py-4">
-          <div
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-sm font-bold text-[#2563EB]"
-          >
-            {{ getInitials(issue.reporter || issue.studentName || 'Unknown') }}
+          <div class="relative h-10 w-10 shrink-0 overflow-hidden rounded-full">
+            <img
+              v-if="issueStudentPhotoUrl(issue)"
+              :src="issueStudentPhotoUrl(issue) || undefined"
+              alt="Student photo"
+              class="h-full w-full object-cover"
+              @error="onIssuePhotoError(issue)"
+            />
+            <div
+              v-else
+              class="flex h-full w-full items-center justify-center bg-[#EFF6FF] text-sm font-bold text-[#2563EB]"
+            >
+              {{ getInitials(issue.reporter || issue.studentName || 'Unknown') }}
+            </div>
           </div>
           <div class="min-w-0 flex-1">
             <p class="text-sm font-semibold text-[#111827] truncate">
@@ -545,10 +555,20 @@
             <!-- Student Info -->
             <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
               <div class="flex items-center gap-3">
-                <div
-                  class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-base font-bold text-[#2563EB]"
-                >
-                  {{ getInitials(detailIssue.reporter || detailIssue.studentName || '?') }}
+                <div class="relative h-12 w-12 shrink-0 overflow-hidden rounded-full">
+                  <img
+                    v-if="issueStudentPhotoUrl(detailIssue)"
+                    :src="issueStudentPhotoUrl(detailIssue) || undefined"
+                    alt="Student photo"
+                    class="h-full w-full object-cover"
+                    @error="onIssuePhotoError(detailIssue)"
+                  />
+                  <div
+                    v-else
+                    class="flex h-full w-full items-center justify-center bg-[#EFF6FF] text-base font-bold text-[#2563EB]"
+                  >
+                    {{ getInitials(detailIssue.reporter || detailIssue.studentName || '?') }}
+                  </div>
                 </div>
                 <div class="min-w-0">
                   <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Student</p>
@@ -893,6 +913,26 @@ function closeDetail(): void {
 }
 
 // ── Helpers ──
+const failedIssuePhotos = ref<Set<string>>(new Set())
+
+function issueStudentPhotoUrl(issue: Issue): string | null {
+  const url = issue.studentPhotoUrl
+  if (!url || failedIssuePhotos.value.has(url)) return null
+  if (/^https?:\/\//.test(url)) return url
+  const base = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/?api\/?$/, '')
+  if (url.startsWith('/storage/')) return `${base}${url}`
+  return `${base}/storage/${url.replace(/^\//, '')}`
+}
+
+function onIssuePhotoError(issue: Issue) {
+  const url = issue.studentPhotoUrl
+  if (url) {
+    const next = new Set(failedIssuePhotos.value)
+    next.add(url)
+    failedIssuePhotos.value = next
+  }
+}
+
 function getInitials(name: string): string {
   if (!name) return '?'
   return name

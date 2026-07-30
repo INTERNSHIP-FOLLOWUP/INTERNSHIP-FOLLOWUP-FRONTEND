@@ -267,7 +267,7 @@
               </div>
             </div>
           </div>
-          <div class="flex shrink-0 items-center gap-2 sm:flex-col">
+          <div class="flex shrink-0 items-center gap-2">
             <button
               type="button"
               @click="openDetail(issue)"

@@ -11,36 +11,48 @@
 
     <!-- Sidebar -->
     <aside
-      class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-slate-900 shadow-2xl transition-transform duration-300 lg:static lg:translate-x-0"
+      class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col shadow-2xl transition-transform duration-300 lg:static lg:translate-x-0"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+      :style="sidebarStyles"
     >
       <!-- Logo -->
-      <div class="flex h-16 items-center gap-3 border-b border-slate-700/50 px-6">
+      <div
+        class="flex h-16 items-center gap-3 px-6"
+        :style="{ borderBottom: '1px solid var(--sidebar-border)' }"
+      >
         <div
-          class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-lg shadow-indigo-500/25"
+          class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white shadow-lg"
+          :style="{
+            background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
+            boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+          }"
         >
           S
         </div>
         <div>
-          <h1 class="text-base font-semibold tracking-tight text-white">Tutor Panel</h1>
-          <p class="text-xs text-slate-400">Internship System</p>
+          <h1 class="text-base font-semibold tracking-tight" :style="{ color: 'var(--sidebar-heading)' }">
+            Tutor Panel
+          </h1>
+          <p class="text-xs" :style="{ color: 'var(--sidebar-subheading)' }">Internship System</p>
         </div>
       </div>
 
       <!-- Navigation -->
       <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" :class="{ 'pointer-events-none opacity-40 select-none': isInactive }">
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Menu</p>
+        <p
+          class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider"
+          :style="{ color: 'var(--sidebar-section-text)' }"
+        >
+          Menu
+        </p>
         <router-link
           v-for="item in navItems"
           :key="item.name"
           :to="item.to"
           @click="sidebarOpen = false"
-          class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
-          :class="
-            isActive(item.to)
-              ? 'bg-gradient-to-r from-indigo-500/15 to-purple-500/10 text-indigo-400 shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
-          "
+          class="sidebar-nav-link group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200"
+          :class="isActive(item.to) ? 'sidebar-nav-active' : ''"
+          :style="navLinkStyle(item.to)"
         >
           <span
             class="flex h-5 w-5 items-center justify-center transition-transform duration-200"
@@ -61,12 +73,9 @@
         <div>
           <button
             @click="toggleMessagesSubmenu"
-            class="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
-            :class="
-              messagesSubmenuOpen || isMessagesActive
-                ? 'bg-gradient-to-r from-indigo-500/15 to-purple-500/10 text-indigo-400 shadow-sm'
-                : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
-            "
+            class="sidebar-nav-link group flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200"
+            :class="(messagesSubmenuOpen || isMessagesActive) ? 'sidebar-nav-active' : ''"
+            :style="navMenuButtonStyle"
           >
             <span
               class="flex h-5 w-5 items-center justify-center transition-transform duration-200"
@@ -101,19 +110,15 @@
                 :to="sub.to"
                 @click="sidebarOpen = false"
                 class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200"
-                :class="
-                  route.query.type === sub.type || (!route.query.type && sub.type === 'company')
-                    ? 'bg-indigo-500/20 text-indigo-300'
-                    : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-300'
-                "
+                :class="isMessagesSubActive(sub.type) ? 'shadow-sm' : ''"
+                :style="navChildStyle(sub.type)"
               >
                 <span
-                  class="flex h-1.5 w-1.5 rounded-full transition-colors duration-200"
-                  :class="
-                    route.query.type === sub.type || (!route.query.type && sub.type === 'company')
-                      ? 'bg-indigo-400'
-                      : 'bg-slate-500'
-                  "
+                  class="flex h-1.5 w-1.5 rounded-full transition-all duration-200"
+                  :class="isMessagesSubActive(sub.type) ? 'scale-125' : ''"
+                  :style="{
+                    backgroundColor: isMessagesSubActive(sub.type) ? 'var(--sidebar-nav-active-border)' : 'var(--sidebar-nav-text)',
+                  }"
                 />
                 {{ sub.label }}
               </router-link>
@@ -123,12 +128,17 @@
       </nav>
 
       <!-- Bottom user card -->
-      <div class="border-t border-slate-700/50 p-4">
-        <div class="flex items-center gap-3 rounded-lg bg-slate-800/50 p-3">
+      <div class="border-t p-4" :style="{ borderColor: 'var(--sidebar-border)' }">
+        <div
+          class="flex items-center gap-3 rounded-xl p-3"
+          :style="{ backgroundColor: 'var(--sidebar-user-bg)' }"
+        >
           <UserAvatar :avatar="user?.avatar" :name="user?.name" size="sm" />
           <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-medium text-white">{{ user?.name }}</p>
-            <p class="truncate text-xs text-slate-400">Tutor</p>
+            <p class="truncate text-sm font-medium" :style="{ color: 'var(--sidebar-user-name)' }">
+              {{ user?.name }}
+            </p>
+            <p class="truncate text-xs" :style="{ color: 'var(--sidebar-user-role)' }">Tutor</p>
           </div>
         </div>
       </div>
@@ -184,6 +194,27 @@
             <svg v-else class="h-5 w-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
+          </button>
+
+          <!-- Theme Settings Button -->
+          <button
+            @click.stop="themeSettingsOpen = !themeSettingsOpen"
+            class="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+            :class="{ 'bg-slate-100 text-slate-700 ring-2 ring-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:ring-slate-600': themeSettingsOpen }"
+            title="Theme Settings"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+              />
+            </svg>
+            <span
+              class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white shadow-sm dark:border-slate-700"
+              :style="{ backgroundColor: themeStore.currentTheme().shades[500] }"
+            />
           </button>
 
           <!-- User dropdown -->
@@ -284,6 +315,9 @@
       </main>
     </div>
 
+    <!-- Theme Settings Panel -->
+    <ThemeSettingsPanel :is-open="themeSettingsOpen" @close="themeSettingsOpen = false" />
+
     <!-- Logout Confirmation Modal -->
     <transition name="fade">
       <div
@@ -333,6 +367,7 @@ import { useThemeStore } from '@/stores/theme'
 import UserAvatar from '@/components/common/UserAvatar.vue'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 import NotificationBell from '@/components/common/NotificationBell.vue'
+import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -343,6 +378,7 @@ const themeStore = useThemeStore()
 
 const sidebarOpen = ref(false)
 const dropdownOpen = ref(false)
+const themeSettingsOpen = ref(false)
 
 function handleClickOutside() {
   if (dropdownOpen.value) {
@@ -380,6 +416,10 @@ function toggleMessagesSubmenu() {
 
 const isMessagesActive = computed(() => route.path.startsWith('/tutor/messages'))
 
+function isMessagesSubActive(type: string) {
+  return route.query.type === type || (!route.query.type && type === 'company')
+}
+
 // Auto-open submenu when navigating to a messages page
 watch(
   () => route.path,
@@ -406,6 +446,56 @@ const messagesSubItems = [
   },
 ]
 
+const sidebarStyles = computed(() => ({
+  backgroundColor: 'var(--sidebar-bg)',
+}))
+
+function isActive(path: string) {
+  if (path === '/tutor') {
+    return route.path === '/tutor'
+  }
+  return route.path.startsWith(path)
+}
+
+function navLinkStyle(to: string): Record<string, string> {
+  if (isActive(to)) {
+    return {
+      background: 'var(--sidebar-nav-active-bg)',
+      color: 'var(--sidebar-nav-active-text)',
+      borderLeft: '2px solid var(--sidebar-nav-active-border)',
+    }
+  }
+  return {
+    color: 'var(--sidebar-nav-text)',
+  }
+}
+
+const navMenuButtonStyle = computed((): Record<string, string> => {
+  if (messagesSubmenuOpen.value || isMessagesActive.value) {
+    return {
+      background: 'var(--sidebar-nav-active-bg)',
+      color: 'var(--sidebar-nav-active-text)',
+      borderLeft: '2px solid var(--sidebar-nav-active-border)',
+    }
+  }
+  return {
+    color: 'var(--sidebar-nav-text)',
+  }
+})
+
+function navChildStyle(type: string): Record<string, string> {
+  const isSubActive = isMessagesSubActive(type)
+  if (isSubActive) {
+    return {
+      background: 'var(--sidebar-nav-active-bg)',
+      color: 'var(--sidebar-nav-active-text)',
+    }
+  }
+  return {
+    color: 'var(--sidebar-nav-text)',
+  }
+}
+
 const pageTitle = computed(() => {
   const map: Record<string, string> = {
     TutorDashboard: 'nav.tutor.dashboard',
@@ -428,13 +518,6 @@ const pageTitle = computed(() => {
   const title = route.meta?.title
   return typeof title === 'string' ? title : 'Dashboard'
 })
-
-function isActive(path: string) {
-  if (path === '/tutor') {
-    return route.path === '/tutor'
-  }
-  return route.path.startsWith(path)
-}
 
 const logoutModalOpen = ref(false)
 const loggingOut = ref(false)
@@ -596,5 +679,15 @@ const navItems: NavItem[] = [
 .dropdown-leave-to {
   opacity: 0;
   transform: translateY(-4px) scale(0.98);
+}
+
+.sidebar-nav-link:hover {
+  background: var(--sidebar-nav-hover-bg) !important;
+  color: var(--sidebar-nav-text-hover) !important;
+}
+
+.sidebar-nav-active {
+  background: var(--sidebar-nav-active-bg) !important;
+  color: var(--sidebar-nav-active-text) !important;
 }
 </style>

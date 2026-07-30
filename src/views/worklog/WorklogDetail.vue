@@ -135,36 +135,7 @@
         </div>
       </section>
 
-      <section class="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 class="text-sm font-bold text-slate-900 dark:text-slate-100">Tutor Review</h2>
-        <div v-if="worklog?.tutor_review" class="mt-3 space-y-3">
-          <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
-            <div>
-            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Tutor</p>
-            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ worklog.tutor_review.tutor_name }}</p>
-            </div>
-            <div>
-            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Review Date</p>
-            <p class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ formatDate(worklog.tutor_review.reviewed_at) }}</p>
-            </div>
-            <div>
-              <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Review Status</p>
-              <div class="mt-1">
-                <WorklogStatusBadge :status="worklog.tutor_review.status" />
-              </div>
-            </div>
-          </div>
 
-          <div>
-            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Feedback</p>
-            <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300">{{ worklog.tutor_review.feedback }}</p>
-          </div>
-        </div>
-
-        <div v-else class="mt-3 flex flex-col items-center justify-center text-center py-10">
-          <p class="text-sm font-semibold text-slate-500">No tutor feedback yet.</p>
-        </div>
-      </section>
     </div>
 
     <!-- Delete Confirmation Dialog -->

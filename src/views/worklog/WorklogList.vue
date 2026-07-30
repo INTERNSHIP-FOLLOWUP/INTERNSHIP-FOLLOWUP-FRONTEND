@@ -56,7 +56,6 @@
                 <th class="px-5 py-3.5">Work Activities</th>
                 <th class="px-5 py-3.5">Status</th>
                 <th class="px-5 py-3.5">Submitted</th>
-                <th class="px-5 py-3.5">Tutor Feedback</th>
                 <th class="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
@@ -75,9 +74,6 @@
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-slate-500 text-xs dark:text-slate-400">
                   {{ formatDate(w.submitted_at || w.created_at) }}
-                </td>
-                <td class="whitespace-nowrap px-5 py-4 text-slate-500 dark:text-slate-400 max-w-[160px] truncate">
-                  {{ w.tutor_review?.feedback?.slice(0, 42) || '—' }}{{ (w.tutor_review?.feedback?.length || 0) > 42 ? '…' : '' }}
                 </td>
                 <td class="whitespace-nowrap px-5 py-4 text-right">
                   <div class="inline-flex items-center gap-1.5">
@@ -121,7 +117,6 @@
             </div>
             <p class="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">{{ w.work_activities || w.description || '—' }}</p>
             <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Submitted: {{ formatDate(w.submitted_at || w.created_at) }}</p>
-            <p class="mt-2 text-xs text-slate-600 dark:text-slate-400">Tutor: {{ w.tutor_review?.feedback ? w.tutor_review.feedback.slice(0, 60) : '—' }}{{ w.tutor_review?.feedback && w.tutor_review.feedback.length > 60 ? '…' : '' }}</p>
 
             <div class="mt-4 flex items-center gap-2">
               <router-link

@@ -53,42 +53,58 @@
       </div>
 
       <!-- Rich internship data -->
-      <div v-else class="space-y-5">
+      <div v-else class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-        <!-- Hero Status Banner -->
-        <div
-          class="relative overflow-hidden rounded-2xl p-6 sm:p-8 text-white shadow-lg"
-          :class="{
-            'bg-gradient-to-r from-[#21BAEA] to-[#00A3D9]': myInternship.status === 'In Progress',
-            'bg-gradient-to-r from-indigo-500 to-indigo-600': myInternship.status === 'Assigned',
-            'bg-gradient-to-r from-emerald-500 to-emerald-600': myInternship.status === 'Completed',
-            'bg-gradient-to-r from-red-500 to-red-600': myInternship.status === 'Terminated',
-          }"
-        >
-          <!-- Background decoration -->
-          <div class="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white/5" />
-          <div class="absolute -bottom-12 -right-6 h-36 w-36 rounded-full bg-white/5" />
+        <!-- Hero Header -->
+        <div class="relative overflow-hidden bg-gradient-to-r from-indigo-500 to-sky-400 px-8 py-10">
+          <div class="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div class="pointer-events-none absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-white/5 blur-2xl" />
 
-          <div class="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div class="space-y-2">
-              <div class="flex items-center gap-2.5">
-                <span class="flex h-2.5 w-2.5 rounded-full bg-white" :class="{ 'animate-pulse': myInternship.status === 'In Progress' }" />
-                <span class="text-xs font-bold uppercase tracking-[0.15em] text-white/75">
+          <div class="relative flex flex-col items-center gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div class="flex flex-col items-center gap-5 sm:flex-row sm:items-end">
+              <div class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white/50 bg-white shadow-xl dark:bg-slate-800">
+                <img
+                  v-if="getImageUrl(myInternship.company_logo_url)"
+                  :src="getImageUrl(myInternship.company_logo_url)"
+                  :alt="myInternship.company_name"
+                  class="h-full w-full object-cover"
+                  @error="onImageError($event)"
+                />
+                <span v-else class="text-3xl font-bold text-indigo-600">
+                  {{ getInitials(myInternship.company_name) }}
+                </span>
+              </div>
+              <div class="text-center sm:text-left">
+                <p class="text-xs font-semibold uppercase tracking-wider text-white/80">
                   <template v-if="myInternship.status === 'In Progress'">Currently Active</template>
                   <template v-else-if="myInternship.status === 'Assigned'">Waiting to Start</template>
                   <template v-else-if="myInternship.status === 'Completed'">Successfully Completed</template>
                   <template v-else>Internship Ended</template>
-                </span>
+                </p>
+                <h2 class="text-2xl font-bold text-white drop-shadow-sm">{{ myInternship.position }}</h2>
+                <div class="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                    <span class="h-1.5 w-1.5 rounded-full bg-white" :class="{ 'animate-pulse': myInternship.status === 'In Progress' }" />
+                    {{ myInternship.status }}
+                  </span>
+                  <span class="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
+                    <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    {{ myInternship.company_name }}
+                  </span>
+                  <span class="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
+                    <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {{ formatDate(myInternship.start_date) }} – {{ formatDate(myInternship.end_date) }}
+                  </span>
+                </div>
               </div>
-              <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight drop-shadow-sm">{{ myInternship.position }}</h2>
-              <p class="text-base sm:text-lg text-white/80 font-medium">
-                <span class="opacity-60">at</span>
-                <span class="font-bold"> {{ myInternship.company_name }}</span>
-              </p>
             </div>
 
             <!-- Progress circle -->
-            <div v-if="myInternship.status === 'In Progress' || myInternship.status === 'Completed'" class="flex flex-col items-center gap-1 shrink-0">
+            <div v-if="myInternship.status === 'In Progress' || myInternship.status === 'Completed'" class="flex shrink-0 flex-col items-center gap-1 text-white">
               <div class="relative flex h-20 w-20 items-center justify-center">
                 <svg class="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 36 36">
                   <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2.5" />
@@ -103,13 +119,13 @@
                 </svg>
                 <span class="text-xl font-black">{{ internshipProgress }}%</span>
               </div>
-              <p class="text-[11px] font-semibold text-white/70 uppercase tracking-wider">Complete</p>
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-white/70">Complete</p>
             </div>
           </div>
 
           <!-- Progress bar (for In Progress) -->
-          <div v-if="myInternship.status === 'In Progress'" class="relative mt-5">
-            <div class="flex justify-between text-xs text-white/70 mb-1.5">
+          <div v-if="myInternship.status === 'In Progress'" class="relative mt-6">
+            <div class="mb-1.5 flex justify-between text-xs text-white/70">
               <span>{{ formatDate(myInternship.start_date) }}</span>
               <span>{{ formatDate(myInternship.end_date) }}</span>
             </div>
@@ -119,274 +135,245 @@
                 :style="{ width: internshipProgress + '%' }"
               />
             </div>
-            <p class="mt-1.5 text-center text-xs text-white/60 font-medium">
+            <p class="mt-1.5 text-center text-xs font-medium text-white/60">
               {{ daysElapsed }} of {{ totalDays }} days completed · {{ remainingDays }} days remaining
             </p>
           </div>
+        </div>
 
-          <!-- Quick summary for Assigned/Completed/Terminated -->
-          <div v-else class="mt-3 flex flex-wrap items-center gap-4 text-xs text-white/70">
-            <div class="flex items-center gap-1.5">
-              <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span>{{ formatDate(myInternship.start_date) }} – {{ formatDate(myInternship.end_date) }}</span>
+        <!-- Content Body -->
+        <div class="px-8 py-8">
+          <!-- Section: Progress Overview -->
+          <div class="space-y-5">
+            <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <span class="h-1 w-1 rounded-full bg-indigo-500"></span>
+              Progress Overview
+            </h3>
+            <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              <div class="rounded-xl bg-slate-50/60 p-4 text-center dark:bg-slate-700">
+                <p class="text-2xl font-bold text-sky-500">{{ daysElapsed }}</p>
+                <p class="mt-0.5 text-xs font-medium text-slate-400 dark:text-slate-500">Days Elapsed</p>
+              </div>
+              <div class="rounded-xl bg-slate-50/60 p-4 text-center dark:bg-slate-700">
+                <p class="text-2xl font-bold text-amber-500">{{ remainingDays > 0 ? remainingDays : 0 }}</p>
+                <p class="mt-0.5 text-xs font-medium text-slate-400 dark:text-slate-500">Days Remaining</p>
+              </div>
+              <div class="rounded-xl bg-slate-50/60 p-4 text-center dark:bg-slate-700">
+                <p class="text-2xl font-bold text-emerald-500">{{ Math.ceil(totalDays / 7) }}</p>
+                <p class="mt-0.5 text-xs font-medium text-slate-400 dark:text-slate-500">Total Weeks</p>
+              </div>
+              <div class="rounded-xl bg-slate-50/60 p-4 text-center dark:bg-slate-700">
+                <p class="text-2xl font-bold text-indigo-500">{{ Math.ceil(totalDays / 30) }}</p>
+                <p class="mt-0.5 text-xs font-medium text-slate-400 dark:text-slate-500">Est. Months</p>
+              </div>
             </div>
-            <div class="flex items-center gap-1.5">
-              <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>{{ totalDays }} days total</span>
+          </div>
+
+          <!-- Divider -->
+          <div class="my-8 border-t border-slate-100 dark:border-slate-700" />
+
+          <!-- Section: Your Team -->
+          <div class="space-y-5">
+            <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <span class="h-1 w-1 rounded-full bg-sky-400"></span>
+              Your Team
+            </h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <!-- Company -->
+              <div class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-700/50 dark:hover:bg-slate-700">
+                <div class="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-700">
+                  <img
+                    v-if="getImageUrl(myInternship.company_logo_url)"
+                    :src="getImageUrl(myInternship.company_logo_url)"
+                    :alt="myInternship.company_name"
+                    class="h-full w-full object-cover"
+                    @error="onImageError($event)"
+                  />
+                  <div v-else class="flex h-full w-full items-center justify-center bg-sky-50 dark:bg-sky-900/30">
+                    <svg class="h-6 w-6 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-medium text-slate-400 dark:text-slate-500">Host Company</p>
+                  <p class="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{{ myInternship.company_name }}</p>
+                </div>
+              </div>
+
+              <!-- Tutor -->
+              <div class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-700/50 dark:hover:bg-slate-700">
+                <div class="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-emerald-100 dark:border-emerald-800">
+                  <img
+                    v-if="getImageUrl(myInternship.tutor_photo_url)"
+                    :src="getImageUrl(myInternship.tutor_photo_url)"
+                    :alt="myInternship.tutor_name"
+                    class="h-full w-full object-cover"
+                    @error="onImageError($event)"
+                  />
+                  <div v-else class="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-400 to-emerald-600 text-sm font-bold text-white">
+                    {{ getInitials(myInternship.tutor_name) }}
+                  </div>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-medium text-slate-400 dark:text-slate-500">PNC Tutor</p>
+                  <p class="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{{ myInternship.tutor_name }}</p>
+                </div>
+              </div>
+
+              <!-- Supervisor -->
+              <div class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-700/50 dark:hover:bg-slate-700">
+                <div class="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-amber-100 dark:border-amber-800">
+                  <img
+                    v-if="getImageUrl(myInternship.supervisor_photo_url)"
+                    :src="getImageUrl(myInternship.supervisor_photo_url)"
+                    :alt="myInternship.supervisor_name || 'Supervisor'"
+                    class="h-full w-full object-cover"
+                    @error="onImageError($event)"
+                  />
+                  <div v-else class="flex h-full w-full items-center justify-center bg-gradient-to-br from-amber-400 to-orange-500 text-sm font-bold text-white">
+                    {{ getInitials(myInternship.supervisor_name) }}
+                  </div>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-medium text-slate-400 dark:text-slate-500">Company Supervisor</p>
+                  <p class="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{{ myInternship.supervisor_name || 'Not assigned' }}</p>
+                </div>
+              </div>
             </div>
-            <div class="flex items-center gap-1.5">
-              <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span>Tutor: {{ myInternship.tutor_name }}</span>
+          </div>
+
+          <!-- Divider -->
+          <div class="my-8 border-t border-slate-100 dark:border-slate-700" />
+
+          <!-- Section: Assignment Details -->
+          <div class="space-y-5">
+            <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <span class="h-1 w-1 rounded-full bg-violet-400"></span>
+              Assignment Details
+            </h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div class="rounded-xl bg-slate-50/60 p-4 dark:bg-slate-700">
+                <p class="text-xs font-medium text-slate-400 dark:text-slate-500">Position / Role</p>
+                <p class="mt-1 text-sm font-semibold text-slate-700 dark:text-slate-200">{{ myInternship.position }}</p>
+              </div>
+              <div class="rounded-xl bg-slate-50/60 p-4 dark:bg-slate-700">
+                <p class="text-xs font-medium text-slate-400 dark:text-slate-500">Start Date</p>
+                <p class="mt-1 text-sm font-semibold text-slate-700 dark:text-slate-200">{{ formatDate(myInternship.start_date) }}</p>
+                <p class="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{{ formatRelativeDate(myInternship.start_date) }}</p>
+              </div>
+              <div class="rounded-xl bg-slate-50/60 p-4 dark:bg-slate-700">
+                <p class="text-xs font-medium text-slate-400 dark:text-slate-500">End Date</p>
+                <p class="mt-1 text-sm font-semibold text-slate-700 dark:text-slate-200">{{ formatDate(myInternship.end_date) }}</p>
+                <p class="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{{ myInternship.status === 'Completed' ? 'Completed' : formatRelativeDate(myInternship.end_date) }}</p>
+              </div>
+              <div class="rounded-xl bg-slate-50/60 p-4 dark:bg-slate-700">
+                <p class="text-xs font-medium text-slate-400 dark:text-slate-500">Current Status</p>
+                <span
+                  class="mt-1.5 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold"
+                  :class="statusBadgeClass(myInternship.status)"
+                >
+                  <span class="h-1.5 w-1.5 rounded-full" :class="statusDotClass(myInternship.status)" />
+                  {{ myInternship.status }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="my-8 border-t border-slate-100 dark:border-slate-700" />
+
+          <!-- Section: Internship Timeline -->
+          <div class="space-y-5">
+            <div class="flex items-center justify-between">
+              <h3 class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <span class="h-1 w-1 rounded-full bg-emerald-400"></span>
+                Internship Timeline
+              </h3>
+              <span class="text-xs text-slate-400 dark:text-slate-500">{{ totalDays }} days total</span>
+            </div>
+            <div class="relative pl-6">
+              <!-- Vertical line -->
+              <div class="absolute bottom-2 left-2.5 top-2 w-0.5 rounded-full bg-gradient-to-b from-indigo-500 via-slate-200 to-slate-100 dark:via-slate-600 dark:to-slate-700" />
+
+              <!-- Start event -->
+              <div class="relative mb-8 flex items-start gap-4">
+                <div class="absolute -left-[14px] flex h-6 w-6 items-center justify-center rounded-full bg-indigo-500 shadow ring-4 ring-white dark:ring-slate-800">
+                  <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div class="pt-0.5">
+                  <p class="text-sm font-bold text-slate-800 dark:text-slate-200">Internship Started</p>
+                  <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{{ formatDate(myInternship.start_date) }} · {{ formatRelativeDate(myInternship.start_date) }}</p>
+                </div>
+              </div>
+
+              <!-- Today marker (only when in progress) -->
+              <div v-if="myInternship.status === 'In Progress'" class="relative mb-8 flex items-start gap-4">
+                <div class="absolute -left-[14px] flex h-6 w-6 animate-pulse items-center justify-center rounded-full bg-amber-500 shadow ring-4 ring-white dark:ring-slate-800">
+                  <svg class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" /></svg>
+                </div>
+                <div>
+                  <p class="text-sm font-extrabold text-amber-600 dark:text-amber-400">Today — Day {{ daysElapsed }}</p>
+                  <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{{ formatDate(new Date().toISOString()) }} · {{ remainingDays }} days remaining until completion</p>
+                </div>
+              </div>
+
+              <!-- End event -->
+              <div class="relative flex items-start gap-4">
+                <div class="absolute -left-[14px] flex h-6 w-6 items-center justify-center rounded-full shadow ring-4 ring-white dark:ring-slate-800"
+                  :class="myInternship.status === 'Completed' ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'">
+                  <svg v-if="myInternship.status === 'Completed'" class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <svg v-else class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" /></svg>
+                </div>
+                <div class="pt-0.5">
+                  <p class="text-sm font-bold" :class="myInternship.status === 'Completed' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'">
+                    {{ myInternship.status === 'Completed' ? 'Internship Completed 🎉' : 'Expected End Date' }}
+                  </p>
+                  <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{{ formatDate(myInternship.end_date) }} · {{ formatRelativeDate(myInternship.end_date) }}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Progress Metric Cards Row -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center dark:border-slate-700 dark:bg-slate-800">
-            <p class="text-2xl font-black text-[#21BAEA]">{{ daysElapsed }}</p>
-            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">Days Elapsed</p>
+        <!-- Action Footer -->
+        <div class="flex flex-col items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-8 py-5 sm:flex-row dark:border-slate-700 dark:bg-slate-700">
+          <div class="flex items-center gap-2">
+            <span class="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
+            <span class="text-xs font-medium text-slate-400 dark:text-slate-400">{{ myInternship.status }} internship record</span>
           </div>
-          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center dark:border-slate-700 dark:bg-slate-800">
-            <p class="text-2xl font-black text-[#FF9933]">{{ remainingDays > 0 ? remainingDays : 0 }}</p>
-            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">Days Remaining</p>
-          </div>
-          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center dark:border-slate-700 dark:bg-slate-800">
-            <p class="text-2xl font-black text-emerald-500">{{ Math.ceil(totalDays / 7) }}</p>
-            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">Total Weeks</p>
-          </div>
-          <div class="rounded-xl border border-slate-100 bg-white p-4 shadow-xs text-center dark:border-slate-700 dark:bg-slate-800">
-            <p class="text-2xl font-black text-indigo-500">{{ Math.ceil(totalDays / 30) }}</p>
-            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">Est. Months</p>
-          </div>
-        </div>
-
-        <!-- Info Grid -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-
-          <!-- Company Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#21BAEA]/10 group-hover:scale-110 transition-transform duration-200">
-                <svg class="h-5 w-5 text-[#21BAEA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Company</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#21BAEA]/20 to-blue-100 text-sm font-bold text-[#21BAEA] dark:from-[#21BAEA]/30 dark:to-blue-900/30">
-                {{ getInitials(myInternship.company_name) }}
-              </div>
-              <div class="min-w-0">
-                <p class="text-base font-bold text-slate-900 truncate dark:text-slate-100">{{ myInternship.company_name }}</p>
-                <p class="text-xs text-slate-400 dark:text-slate-500">Host Company</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Position Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF9933]/10 group-hover:scale-110 transition-transform duration-200">
-                <svg class="h-5 w-5 text-[#FF9933]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.893 23.893 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Position / Role</p>
-              </div>
-            </div>
-            <p class="text-base font-bold text-slate-900 dark:text-slate-100">{{ myInternship.position }}</p>
-            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Internship Role</p>
-          </div>
-
-          <!-- Tutor Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 group-hover:scale-110 transition-transform duration-200 dark:bg-emerald-900/30">
-                <svg class="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Assigned Tutor</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-sm font-bold text-white">
-                {{ getInitials(myInternship.tutor_name) }}
-              </div>
-              <div class="min-w-0">
-                <p class="text-base font-bold text-slate-900 truncate dark:text-slate-100">{{ myInternship.tutor_name }}</p>
-                <p class="text-xs text-slate-400 dark:text-slate-500">PNC Tutor</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Start Date Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 dark:border-slate-700 dark:bg-slate-800">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-900/30">
-                <svg class="h-5 w-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Start Date</p>
-              </div>
-            </div>
-            <p class="text-base font-bold text-slate-900 dark:text-slate-100">{{ formatDate(myInternship.start_date) }}</p>
-            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{{ formatRelativeDate(myInternship.start_date) }}</p>
-          </div>
-
-          <!-- End Date Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 dark:border-slate-700 dark:bg-slate-800">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-900/30">
-                <svg class="h-5 w-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">End Date</p>
-              </div>
-            </div>
-            <p class="text-base font-bold text-slate-900 dark:text-slate-100">{{ formatDate(myInternship.end_date) }}</p>
-            <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{{ myInternship.status === 'Completed' ? 'Completed' : formatRelativeDate(myInternship.end_date) }}</p>
-          </div>
-
-          <!-- Status Card -->
-          <div class="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-200 dark:border-slate-700 dark:bg-slate-800">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl dark:bg-slate-700" :class="statusIconBgClass(myInternship.status)">
-                <svg class="h-5 w-5" :class="statusIconColorClass(myInternship.status)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Current Status</p>
-              </div>
-            </div>
-            <span
-              class="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-bold"
-              :class="statusBadgeClass(myInternship.status)"
-            >
-              <span class="h-2 w-2 rounded-full" :class="statusDotClass(myInternship.status)" />
-              {{ myInternship.status }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Quick Actions Section -->
-        <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
-          <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Quick Actions</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <router-link
-              to="/student/worklogs"
-              class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 hover:bg-[#21BAEA]/5 hover:border-[#21BAEA]/30 transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800/50 dark:hover:bg-[#21BAEA]/10"
-            >
-              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#21BAEA]/10 group-hover:scale-110 transition-transform">
-                <svg class="h-5 w-5 text-[#21BAEA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-bold text-slate-800 group-hover:text-[#21BAEA] transition-colors dark:text-slate-200">Submit Worklog</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Log your weekly hours & tasks</p>
-              </div>
-            </router-link>
-
-            <router-link
-              to="/student/followups"
-              class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 hover:bg-[#FF9933]/5 hover:border-[#FF9933]/30 transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800/50 dark:hover:bg-[#FF9933]/10"
-            >
-              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#FF9933]/10 group-hover:scale-110 transition-transform">
-                <svg class="h-5 w-5 text-[#FF9933]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-bold text-slate-800 group-hover:text-[#FF9933] transition-colors dark:text-slate-200">View Follow-ups</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Check your meeting schedules</p>
-              </div>
-            </router-link>
-
+          <div class="flex flex-wrap items-center justify-end gap-2">
             <router-link
               to="/student/messages"
-              class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 p-4 hover:bg-emerald-50 hover:border-emerald-200 transition-all duration-200 group dark:border-slate-700 dark:bg-slate-800/50 dark:hover:bg-emerald-950/30 dark:hover:border-emerald-800"
+              class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
             >
-              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 group-hover:scale-110 transition-transform dark:bg-emerald-900/30">
-                <svg class="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition-colors dark:text-slate-200 dark:group-hover:text-emerald-400">Messages</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Chat with your tutor</p>
-              </div>
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              Messages
             </router-link>
-          </div>
-        </div>
-
-        <!-- Timeline -->
-        <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
-          <div class="flex items-center justify-between mb-5">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Internship Timeline</h3>
-            <span class="text-xs text-slate-400 dark:text-slate-500">{{ totalDays }} days total</span>
-          </div>
-          <div class="relative pl-6">
-            <!-- Vertical line -->
-            <div class="absolute left-2.5 top-2 bottom-2 w-0.5 bg-gradient-to-b from-[#21BAEA] via-slate-200 to-slate-100 rounded-full" />
-
-            <!-- Start event -->
-            <div class="relative mb-8 flex items-start gap-4">
-              <div class="absolute -left-[14px] flex h-6 w-6 items-center justify-center rounded-full bg-[#21BAEA] ring-4 ring-white shadow">
-                <svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <div class="pt-0.5">
-                <p class="text-sm font-bold text-slate-800 dark:text-slate-200">Internship Started</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ formatDate(myInternship.start_date) }} · {{ formatRelativeDate(myInternship.start_date) }}</p>
-              </div>
-            </div>
-
-            <!-- Today marker (only when in progress) -->
-            <div v-if="myInternship.status === 'In Progress'" class="relative mb-8 flex items-start gap-4">
-              <div class="absolute -left-[14px] flex h-6 w-6 items-center justify-center rounded-full bg-[#FF9933] ring-4 ring-white shadow animate-pulse">
-                <svg class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" /></svg>
-              </div>
-              <div>
-                <p class="text-sm font-extrabold text-[#FF9933]">🔴  Today — Day {{ daysElapsed }}</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ formatDate(new Date().toISOString()) }} · {{ remainingDays }} days remaining until completion</p>
-              </div>
-            </div>
-
-            <!-- End event -->
-            <div class="relative flex items-start gap-4">
-              <div class="absolute -left-[14px] flex h-6 w-6 items-center justify-center rounded-full ring-4 ring-white shadow"
-                :class="myInternship.status === 'Completed' ? 'bg-emerald-500' : 'bg-slate-300'">
-                <svg v-if="myInternship.status === 'Completed'" class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                </svg>
-                <svg v-else class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" /></svg>
-              </div>
-              <div class="pt-0.5">
-                <p class="text-sm font-bold" :class="myInternship.status === 'Completed' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'">
-                  {{ myInternship.status === 'Completed' ? 'Internship Completed 🎉' : 'Expected End Date' }}
-                </p>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ formatDate(myInternship.end_date) }} · {{ formatRelativeDate(myInternship.end_date) }}</p>
-              </div>
-            </div>
+            <router-link
+              to="/student/followups"
+              class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            >
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Follow-ups
+            </router-link>
+            <router-link
+              to="/student/worklogs"
+              class="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700"
+            >
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Submit Worklog
+            </router-link>
           </div>
         </div>
 
@@ -827,6 +814,7 @@ import { useToastStore } from '@/stores/toast'
 import { useConfirmDialog } from '@/composables/useConfirmDialog'
 import { studentInternshipService } from '@/services/studentInternship'
 import type { Assignment } from '@/types/assignment'
+import { normalizeImageUrl } from '@/utils/normalizeImageUrl'
 import AssignmentForm from '@/components/assignment/AssignmentForm.vue'
 import BasePagination from '@/components/ui/BasePagination.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
@@ -938,6 +926,23 @@ function getInitials(name: string | null | undefined): string {
     .join('')
     .toUpperCase()
     .slice(0, 2)
+}
+
+function getImageUrl(url: string | null | undefined): string | undefined {
+  if (!url) return undefined
+  const normalized = normalizeImageUrl(url)
+  if (!normalized) return undefined
+  if (/^https?:\/\//.test(normalized)) return normalized
+  const base = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/?api\/?$/, '')
+  if (normalized.startsWith('/storage/')) {
+    return `${base}${normalized}`
+  }
+  return `${base}/storage/${normalized.replace(/^\//, '')}`
+}
+
+function onImageError(event: Event) {
+  const target = event.target as HTMLElement
+  target.style.display = 'none'
 }
 
 function getStudentPhoto(assignment: Assignment): string | undefined {

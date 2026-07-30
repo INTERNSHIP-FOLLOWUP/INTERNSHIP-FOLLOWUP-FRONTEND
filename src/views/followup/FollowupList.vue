@@ -9,6 +9,7 @@
         </p>
       </div>
       <button
+        v-if="isTutor"
         type="button"
         @click="openCreateForm"
         class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95"
@@ -144,8 +145,25 @@
               @click="openViewDetail(f)"
               class="cursor-pointer hover:bg-slate-50/70 transition-colors dark:hover:bg-slate-700/50"
             >
-              <td class="whitespace-nowrap px-5 py-4 text-slate-700 font-semibold dark:text-slate-200">
-                {{ studentLabel(f) }}
+              <td class="whitespace-nowrap px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="relative h-9 w-9 shrink-0 overflow-hidden rounded-full">
+                    <img
+                      v-if="rowStudentPhotoUrl(f)"
+                      :src="rowStudentPhotoUrl(f) || undefined"
+                      alt="Student photo"
+                      class="h-full w-full object-cover"
+                      @error="onRowPhotoError(f)"
+                    />
+                    <div
+                      v-else
+                      class="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-50 text-xs font-bold text-indigo-600 dark:from-indigo-800 dark:to-indigo-900 dark:text-indigo-300"
+                    >
+                      {{ studentLabel(f).charAt(0).toUpperCase() }}
+                    </div>
+                  </div>
+                  <span class="font-semibold text-slate-700 dark:text-slate-200">{{ studentLabel(f) }}</span>
+                </div>
               </td>
               <td class="whitespace-nowrap px-5 py-4 text-slate-600 dark:text-slate-400">
                 {{ f.meeting_type }}
@@ -177,6 +195,7 @@
 
                   <!-- Edit -->
                   <button
+                    v-if="isTutor"
                     @click.stop="openEditForm(f)"
                     class="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 dark:hover:text-slate-100"
                     title="Edit"
@@ -194,6 +213,7 @@
 
                   <!-- Delete -->
                   <button
+                    v-if="isTutor"
                     @click="confirmDelete(f)"
                     class="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-red-600 shadow-sm transition-colors hover:bg-red-50 hover:border-red-300 dark:border-red-900 dark:bg-slate-700 dark:text-red-400 dark:hover:bg-red-950/30 dark:hover:border-red-700"
                     title="Delete"
@@ -340,6 +360,7 @@
               </div>
               <div class="flex items-center gap-2">
                 <button
+                  v-if="isTutor"
                   @click="quickEdit(viewingFollowup)"
                   class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:from-indigo-700 hover:to-indigo-600 active:scale-95"
                 >
@@ -517,8 +538,30 @@ function studentLabel(f: Followup): string {
   return `Student #${f.student_id}`
 }
 
+const failedRowPhotos = ref<Set<string>>(new Set())
+
+function rowStudentPhotoUrl(f: Followup): string | null {
+  const url = f.student?.photo_url
+  if (!url || failedRowPhotos.value.has(url)) return null
+  if (/^https?:\/\//.test(url)) return url
+  const base = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/?api\/?$/, '')
+  if (url.startsWith('/storage/')) return `${base}${url}`
+  return `${base}/storage/${url.replace(/^\//, '')}`
+}
+
+function onRowPhotoError(f: Followup) {
+  const url = f.student?.photo_url
+  if (url) {
+    const next = new Set(failedRowPhotos.value)
+    next.add(url)
+    failedRowPhotos.value = next
+  }
+}
+
 function meetingTypeBadge(type: string): string {
   switch (type) {
+    case 'Weekly':
+      return 'bg-emerald-50 text-emerald-700'
     case 'Monthly':
       return 'bg-blue-50 text-blue-700'
     case 'Quarterly':
@@ -532,6 +575,8 @@ function meetingTypeBadge(type: string): string {
 
 function meetingTypeDot(type: string): string {
   switch (type) {
+    case 'Weekly':
+      return 'bg-emerald-500'
     case 'Monthly':
       return 'bg-blue-500'
     case 'Quarterly':
@@ -581,7 +626,7 @@ async function handleDelete() {
     toast.success('Follow-up record deleted successfully.', 'Deleted')
     showDeleteConfirm.value = false
     deletingFollowup.value = null
-  } catch (err) {
+  } catch {
     deleteError.value = followupStore.error || 'Failed to delete follow-up.'
   } finally {
     deleting.value = false

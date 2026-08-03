@@ -2,13 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import type { UserRole } from '@/types/auth'
 import type { AppRouteMeta } from './guards'
-import {
-  ensureBooted,
-  isGuestRoute,
-  redirectAuthenticatedGuest,
-  requireAuth,
-  checkRoles,
-} from './guards'
+import { ensureBooted, isGuestRoute, getDashboardForRole } from './guards'
+import { PUBLIC_ROUTES, ROLE_ROUTES } from '@/types/auth'
+import { getRouteRoles, hasAnyRole, isAdminRole, routeRequiresAdmin } from '@/utils/permission'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,13 +17,13 @@ const router = createRouter({
     {
       path: '/login',
       name: 'Login',
-      component: () => import('@/views/auth/Login.vue'),
+      component: () => import('@/views/auth/SignIn.vue'),
       meta: { guest: true, title: 'Sign In' } as AppRouteMeta,
     },
     {
       path: '/register',
       name: 'Register',
-      component: () => import('@/views/auth/Login.vue'),
+      component: () => import('@/views/auth/SignIn.vue'),
       meta: { guest: true, title: 'Register' } as AppRouteMeta,
     },
     {
@@ -45,13 +41,13 @@ const router = createRouter({
     {
       path: '/403',
       name: 'Forbidden',
-      component: () => import('@/views/auth/Login.vue'),
-      meta: { guest: true, title: 'Forbidden' } as AppRouteMeta,
+      component: () => import('@/views/error/UnauthorizedView.vue'),
+      meta: { requiresAuth: false, title: 'Forbidden' } as AppRouteMeta,
     },
     {
       path: '/404',
       name: 'NotFound',
-      component: () => import('@/views/auth/Login.vue'),
+      component: () => import('@/views/auth/SignIn.vue'),
       meta: { guest: true, title: 'Not Found' } as AppRouteMeta,
     },
 
@@ -65,7 +61,7 @@ const router = createRouter({
           path: '',
           name: 'AdminDashboard',
           component: () => import('@/views/dashboard/AdminDashboardView.vue'),
-          meta: { title: 'Dashboard' },
+          meta: { title: 'Dashboard' } as AppRouteMeta,
         },
         {
           path: 'dashboard',
@@ -74,20 +70,142 @@ const router = createRouter({
         {
           path: 'users',
           name: 'AdminUsers',
-          component: () => import('@/views/student/StudentDashboardView.vue'),
-          meta: { title: 'Users' },
+          alias: ['all-users'],
+          component: () => import('@/views/user/AdminAllUsersView.vue'),
+          meta: { title: 'Users' } as AppRouteMeta,
+        },
+        {
+          path: 'users/create',
+          name: 'AdminUsersCreate',
+          component: () => import('@/views/user/AdminAllUsersView.vue'),
+          meta: { adminOnly: true, title: 'Add Student' } as AppRouteMeta,
+        },
+        {
+          path: 'users/:id',
+          name: 'AdminUsersEdit',
+          alias: ['users/:id/edit'],
+          component: () => import('@/views/user/AdminAllUsersView.vue'),
+          meta: { adminOnly: true, title: 'Edit Student' } as AppRouteMeta,
+        },
+        {
+          path: 'student-profile/:id',
+          name: 'AdminStudentProfileDetail',
+          component: () => import('@/views/student_profile/StudentProfileView.vue'),
+          meta: { title: 'Student Profile' } as AppRouteMeta,
+        },
+        {
+          path: 'tutor-profile/:id',
+          name: 'AdminTutorProfileDetail',
+          component: () => import('@/views/tutor/TutorDetailView.vue'),
+          meta: { title: 'Tutor Profile' } as AppRouteMeta,
+        },
+        {
+          path: 'students',
+          name: 'AdminStudents',
+          component: () => import('@/views/student/StudentListView.vue'),
+          meta: { title: 'Students' } as AppRouteMeta,
         },
         {
           path: 'companies',
           name: 'AdminCompanies',
           component: () => import('@/views/company/CompanyListView.vue'),
-          meta: { title: 'Companies' },
+          meta: { title: 'Companies' } as AppRouteMeta,
+        },
+        {
+          path: 'companies/create',
+          name: 'AdminCompaniesCreate',
+          component: () => import('@/views/company/CompanyFormView.vue'),
+          meta: { adminOnly: true, title: 'Create Company' } as AppRouteMeta,
+        },
+        {
+          path: 'companies/:id/edit',
+          name: 'AdminCompaniesEdit',
+          component: () => import('@/views/company/CompanyFormView.vue'),
+          meta: { adminOnly: true, title: 'Edit Company' } as AppRouteMeta,
+        },
+        {
+          path: 'companies/:id',
+          name: 'AdminCompaniesDetail',
+          component: () => import('@/views/company/CompanyDetailView.vue'),
+          meta: { title: 'Company Details' } as AppRouteMeta,
+        },
+        {
+          path: 'batches',
+          name: 'AdminBatches',
+          component: () => import('@/views/batch/BatchListView.vue'),
+          meta: { adminOnly: true, title: 'Batches' } as AppRouteMeta,
+        },
+        {
+          path: 'batches/:id',
+          name: 'AdminBatchDetail',
+          component: () => import('@/views/batch/BatchDetailView.vue'),
+          meta: { adminOnly: true, title: 'Batch Details' } as AppRouteMeta,
+        },
+        {
+          path: 'assignments',
+          name: 'AdminAssignments',
+          component: () => import('@/views/assignment/AssignmentView.vue'),
+          meta: { title: 'Internship Assignments' } as AppRouteMeta,
+        },
+        {
+          path: 'assignments/create',
+          name: 'AdminAssignmentsCreate',
+          component: () => import('@/views/assignment/AssignmentView.vue'),
+          meta: { adminOnly: true, title: 'New Assignment' } as AppRouteMeta,
+        },
+        {
+          path: 'assignments/:id',
+          name: 'AdminAssignmentsEdit',
+          component: () => import('@/views/assignment/AssignmentView.vue'),
+          meta: { adminOnly: true, title: 'Edit Assignment' } as AppRouteMeta,
+        },
+        {
+          path: 'reports',
+          name: 'AdminReports',
+          component: () => import('@/views/report/ReportGenerationView.vue'),
+          meta: { title: 'Reports' } as AppRouteMeta,
+        },
+        {
+          path: 'reports/generate',
+          name: 'AdminReportsGenerate',
+          component: () => import('@/views/report/ReportGenerationView.vue'),
+          meta: { title: 'Generate Report' } as AppRouteMeta,
         },
         {
           path: 'profile',
           name: 'AdminProfile',
           component: () => import('@/views/profile/ProfileView.vue'),
-          meta: { title: 'Profile' },
+          meta: { title: 'Profile' } as AppRouteMeta,
+        },
+        {
+          path: 'tutors',
+          name: 'AdminTutors',
+          component: () => import('@/views/tutor/TutorList.vue'),
+          meta: { title: 'Tutors' } as AppRouteMeta,
+        },
+        {
+          path: 'tutors/create',
+          name: 'AdminTutorsCreate',
+          component: () => import('@/views/tutor/TutorFormView.vue'),
+          meta: { adminOnly: true, title: 'Add Tutor' } as AppRouteMeta,
+        },
+        {
+          path: 'tutors/:id',
+          name: 'AdminTutorsDetail',
+          component: () => import('@/views/tutor/TutorDetailView.vue'),
+          meta: { title: 'Tutor Details' } as AppRouteMeta,
+        },
+        {
+          path: 'tutors/:id/edit',
+          name: 'AdminTutorsEdit',
+          component: () => import('@/views/tutor/TutorFormView.vue'),
+          meta: { adminOnly: true, title: 'Edit Tutor' } as AppRouteMeta,
+        },
+        {
+          path: 'supervisors',
+          name: 'AdminSupervisors',
+          component: () => import('@/views/user/AdminSupervisorsView.vue'),
+          meta: { title: 'Supervisors' } as AppRouteMeta,
         },
       ],
     },
@@ -111,14 +229,20 @@ const router = createRouter({
         {
           path: 'students',
           name: 'TutorStudents',
-          component: () => import('@/views/student/StudentDashboardView.vue'),
+          component: () => import('@/views/tutor/MyStudentsView.vue'),
           meta: { title: 'My Students' },
         },
         {
           path: 'worklogs',
           name: 'TutorWorklogs',
-          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
+          component: () => import('@/views/tutor/worklog/TutorWorklogList.vue'),
           meta: { title: 'Worklogs' },
+        },
+        {
+          path: 'worklogs/:id',
+          name: 'TutorWorklogDetail',
+          component: () => import('@/views/worklog/TutorWorklogDetail.vue'),
+          meta: { title: 'Worklog Detail' },
         },
         {
           path: 'followups',
@@ -129,13 +253,31 @@ const router = createRouter({
         {
           path: 'issues',
           name: 'TutorIssues',
-          component: () => import('@/views/issue/IssueTrackerView.vue'),
-          meta: { title: 'Issues' },
+          component: () => import('@/views/tutor/TutorIssuesView.vue'),
+          meta: { title: 'Issue Tracker' },
+        },
+        {
+          path: 'evaluations',
+          name: 'TutorEvaluations',
+          component: () => import('@/views/tutor/TutorEvaluationListView.vue'),
+          meta: { title: 'Company Evaluations' },
+        },
+        {
+          path: 'feedback',
+          name: 'TutorFeedback',
+          component: () => import('@/views/tutor/TutorCompanyFeedbackView.vue'),
+          meta: { title: 'Company Feedback' },
+        },
+        {
+          path: 'messages',
+          name: 'TutorMessages',
+          component: () => import('@/views/tutor/TutorMessagesView.vue'),
+          meta: { title: 'Messages' },
         },
         {
           path: 'profile',
           name: 'TutorProfile',
-          component: () => import('@/views/profile/ProfileView.vue'),
+          component: () => import('@/views/profile/TutorProfileView.vue'),
           meta: { title: 'Profile' },
         },
       ],
@@ -166,8 +308,26 @@ const router = createRouter({
         {
           path: 'worklogs',
           name: 'StudentWorklogs',
-          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
+          component: () => import('@/views/worklog/WorklogList.vue'),
           meta: { title: 'Worklogs' },
+        },
+        {
+          path: 'worklogs/create',
+          name: 'StudentWorklogsCreate',
+          component: () => import('@/views/worklog/WorklogForm.vue'),
+          meta: { title: 'Create Worklog' },
+        },
+        {
+          path: 'worklogs/:id',
+          name: 'StudentWorklogsDetail',
+          component: () => import('@/views/worklog/WorklogDetail.vue'),
+          meta: { title: 'Worklog Detail' },
+        },
+        {
+          path: 'worklogs/:id/edit',
+          name: 'StudentWorklogsEdit',
+          component: () => import('@/views/worklog/WorklogForm.vue'),
+          meta: { title: 'Edit Worklog' },
         },
         {
           path: 'followups',
@@ -178,13 +338,19 @@ const router = createRouter({
         {
           path: 'issues',
           name: 'StudentIssues',
-          component: () => import('@/views/issue/IssueTrackerView.vue'),
+          component: () => import('@/views/student/StudentIssuesView.vue'),
           meta: { title: 'Issues' },
+        },
+        {
+          path: 'messages',
+          name: 'StudentMessages',
+          component: () => import('@/views/student/StudentMessagesView.vue'),
+          meta: { title: 'Messages' },
         },
         {
           path: 'profile',
           name: 'StudentProfile',
-          component: () => import('@/views/profile/ProfileView.vue'),
+          component: () => import('@/views/profile/StudentProfileView.vue'),
           meta: { title: 'Profile' },
         },
       ],
@@ -194,7 +360,7 @@ const router = createRouter({
     {
       path: '/company',
       component: () => import('@/layouts/CompanyLayout.vue'),
-      meta: { roles: ['company representative'] as UserRole[], title: 'Company' } as AppRouteMeta,
+      meta: { roles: ['supervisor', 'company'] as UserRole[], title: 'Company' } as AppRouteMeta,
       children: [
         {
           path: '',
@@ -207,46 +373,40 @@ const router = createRouter({
           redirect: { name: 'CompanyDashboard' },
         },
         {
-          path: 'internships',
-          name: 'CompanyInternships',
-          component: () => import('@/views/company/CompanyListView.vue'),
-          meta: { title: 'Internships' },
+          path: 'students',
+          name: 'CompanyStudents',
+          component: () => import('@/views/company/CompanyStudentListView.vue'),
+          meta: { title: 'Assigned Students' },
         },
         {
           path: 'evaluations',
           name: 'CompanyEvaluations',
-          component: () => import('@/views/company/CompanyListView.vue'),
+          component: () => import('@/views/company/CompanyEvaluationView.vue'),
           meta: { title: 'Evaluations' },
         },
         {
-          path: 'students',
-          name: 'CompanyStudents',
-          component: () => import('@/views/student/StudentDashboardView.vue'),
-          meta: { title: 'Students' },
+          path: 'feedback',
+          name: 'CompanyFeedback',
+          component: () => import('@/views/company/CompanyFeedbackView.vue'),
+          meta: { title: 'Feedback' },
         },
         {
-          path: 'worklogs',
-          name: 'CompanyWorklogs',
-          component: () => import('@/views/worklog/WorklogSubmissionView.vue'),
-          meta: { title: 'Worklogs' },
-        },
-        {
-          path: 'followups',
-          name: 'CompanyFollowups',
-          component: () => import('@/views/followup/FollowupListView.vue'),
-          meta: { title: 'Follow-ups' },
-        },
-        {
-          path: 'issues',
-          name: 'CompanyIssues',
-          component: () => import('@/views/issue/IssueTrackerView.vue'),
-          meta: { title: 'Issues' },
+          path: 'internships',
+          name: 'CompanyInternships',
+          component: () => import('@/views/company/CompanyInternshipInfoView.vue'),
+          meta: { title: 'Internship Information' },
         },
         {
           path: 'profile',
           name: 'CompanyProfile',
-          component: () => import('@/views/profile/ProfileView.vue'),
-          meta: { title: 'Profile' },
+          component: () => import('@/views/company/CompanyProfileView.vue'),
+          meta: { title: 'My Profile' },
+        },
+        {
+          path: 'messages',
+          name: 'CompanyMessages',
+          component: () => import('@/views/company/MessageView.vue'),
+          meta: { title: 'Messages' },
         },
       ],
     },
@@ -266,20 +426,47 @@ router.beforeEach(async (to, _from, next) => {
   const meta = to.meta as AppRouteMeta
   const isGuest = isGuestRoute(meta, to.path)
 
-  // 1. Boot the auth store if needed
   await ensureBooted()
 
-  // 2. Guest-only routes — redirect authenticated users to their dashboard
-  if (isGuest) {
-    redirectAuthenticatedGuest(store, next)
-    return next()
+  // Guest-only routes — redirect authenticated users to their dashboard
+  if (isGuest && store.isLoggedIn && store.userRole) {
+    next(getDashboardForRole(store.userRole))
+    return
   }
 
-  // 3. All other routes require authentication
-  if (requireAuth(store, to, next)) return
+  // Protected routes require authentication
+  if (!PUBLIC_ROUTES.includes(to.fullPath) && !store.isLoggedIn) {
+    next({ name: 'Login', query: { redirect: to.fullPath } })
+    return
+  }
 
-  // 4. Role-based access control
-  if (checkRoles(store, meta, next)) return
+  // Role-based access control — inherit parent route roles
+  if (routeRequiresAdmin(to) && !isAdminRole(store.userRole)) {
+    next({ name: 'Forbidden', query: { redirect: to.fullPath } })
+    return
+  }
+
+  const requiredRoles = getRouteRoles(to)
+  if (requiredRoles.length > 0) {
+    if (!store.userRole) {
+      next({ name: 'Login', query: { redirect: to.fullPath } })
+      return
+    }
+    if (!hasAnyRole(store.userRole, requiredRoles)) {
+      const fallback = ROLE_ROUTES[store.userRole] || '/login'
+      next(fallback)
+      return
+    }
+
+    // Block inactive users from accessing any page except their dashboard
+    if (store.user?.status === 'inactive') {
+      const dashboardPath = getDashboardForRole(store.userRole)
+      if (to.path !== dashboardPath) {
+        next(dashboardPath)
+        return
+      }
+    }
+  }
 
   next()
 })

@@ -1,9 +1,42 @@
 import api from '@/services/api'
 import { tokenService } from '@/services/token'
 import { AUTH_CONFIG } from '@/constants/auth'
-import type { AuthResponse, LoginCredentials, RegisterData, User, RefreshResponse } from '@/types/auth'
+import type {
+  AuthResponse,
+  LoginCredentials,
+  RegisterData,
+  User,
+  UserRole,
+  RefreshResponse,
+} from '@/types/auth'
 
 const { ENDPOINTS } = AUTH_CONFIG
+
+/** @note Backend returns "company" but the frontend uses "company representative" everywhere. */
+const ROLE_MAP: Record<string, UserRole> = {
+  company: 'company representative',
+}
+
+function normalizeRole(raw: unknown): UserRole {
+  if (typeof raw === 'string') {
+    const mapped = ROLE_MAP[raw]
+    if (mapped) return mapped
+    return raw as UserRole
+  }
+  if (raw && typeof raw === 'object') {
+    const obj = raw as { name?: string }
+    if (typeof obj.name === 'string') {
+      const mapped = ROLE_MAP[obj.name]
+      if (mapped) return mapped
+      return obj.name as UserRole
+    }
+  }
+  return 'student'
+}
+
+function normalizeUser(user: User): User {
+  return { ...user, role: normalizeRole(user.role) }
+}
 
 /**
  * AuthService
@@ -22,7 +55,7 @@ export const authService = {
       expiresAt: data.expires_in ? Date.now() + data.expires_in * 1000 : undefined,
     })
 
-    return data
+    return { ...data, user: normalizeUser(data.user) }
   },
 
   async register(data: RegisterData): Promise<AuthResponse> {
@@ -35,7 +68,7 @@ export const authService = {
       expiresAt: result.expires_in ? Date.now() + result.expires_in * 1000 : undefined,
     })
 
-    return result
+    return { ...result, user: normalizeUser(result.user) }
   },
 
   async logout(): Promise<void> {
@@ -50,7 +83,7 @@ export const authService = {
 
   async fetchUser(): Promise<User> {
     const response = await api.get<User>(ENDPOINTS.USER)
-    return response.data
+    return normalizeUser(response.data)
   },
 
   async forgotPassword(email: string): Promise<{ message: string }> {
@@ -66,6 +99,25 @@ export const authService = {
   }): Promise<{ message: string }> {
     const response = await api.post<{ message: string }>(ENDPOINTS.RESET_PASSWORD, payload)
     return response.data
+  },
+
+  async updateProfile(data: FormData): Promise<User> {
+    const response = await api.post<{ user: User }>('/profile/update', data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return normalizeUser(response.data.user)
+  },
+
+  async changePassword(payload: {
+    current_password: string
+    password: string
+    password_confirmation: string
+  }): Promise<{ message: string; user?: User }> {
+    const response = await api.put<{ message: string; user?: User }>('/profile/password', payload)
+    return {
+      ...response.data,
+      user: response.data.user ? normalizeUser(response.data.user) : undefined,
+    }
   },
 
   async refreshToken(): Promise<RefreshResponse> {

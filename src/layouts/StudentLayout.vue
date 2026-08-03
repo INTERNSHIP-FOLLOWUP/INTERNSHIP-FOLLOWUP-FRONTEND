@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen overflow-hidden bg-gray-50">
+  <div class="flex h-screen overflow-hidden bg-gray-50 dark:bg-slate-900">
     <!-- Mobile overlay -->
     <transition name="fade">
       <div
@@ -11,25 +11,38 @@
 
     <!-- Sidebar -->
     <aside
-      class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-slate-900 shadow-2xl transition-transform duration-300 lg:static lg:translate-x-0"
+      class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col shadow-2xl transition-transform duration-300 lg:static lg:translate-x-0"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+      :style="sidebarStyles"
     >
       <!-- Logo -->
-      <div class="flex h-16 items-center gap-3 border-b border-slate-700/50 px-6">
+      <div
+        class="flex h-16 items-center gap-3 px-6"
+        :style="{ borderBottom: '1px solid var(--sidebar-border)' }"
+      >
         <div
-          class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-sm font-bold text-white shadow-lg shadow-emerald-500/25"
+          class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold text-white shadow-lg"
+          :style="{
+            background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
+            boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+          }"
         >
           S
         </div>
         <div>
-          <h1 class="text-base font-semibold tracking-tight text-white">Student Panel</h1>
-          <p class="text-xs text-slate-400">Internship System</p>
+          <h1 class="text-base font-semibold tracking-tight" :style="{ color: 'var(--sidebar-heading)' }">
+            Student Panel
+          </h1>
+          <p class="text-xs" :style="{ color: 'var(--sidebar-subheading)' }">Internship System</p>
         </div>
       </div>
 
       <!-- Navigation -->
-      <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+      <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" :class="{ 'pointer-events-none opacity-40 select-none': isInactive }">
+        <p
+          class="px-3 pb-2 text-xs font-semibold uppercase tracking-wider"
+          :style="{ color: 'var(--sidebar-section-text)' }"
+        >
           Menu
         </p>
         <router-link
@@ -37,12 +50,9 @@
           :key="item.name"
           :to="item.to"
           @click="sidebarOpen = false"
-          class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
-          :class="
-            isActive(item.to)
-              ? 'bg-gradient-to-r from-emerald-500/15 to-teal-500/10 text-emerald-400 shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
-          "
+          class="sidebar-nav-link group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200"
+          :class="isActive(item.to) ? 'sidebar-nav-active' : ''"
+          :style="navLinkStyle(item.to)"
         >
           <span
             class="flex h-5 w-5 items-center justify-center transition-transform duration-200"
@@ -54,17 +64,44 @@
         </router-link>
       </nav>
 
+      <!-- Inactive overlay message on sidebar -->
+      <div v-if="isInactive" class="px-4 pb-4">
+        <div class="rounded-lg bg-amber-500/10 border border-amber-500/20 px-3 py-2.5 text-center">
+          <p class="text-xs font-medium text-amber-300">Activate your account</p>
+          <p class="text-[10px] text-amber-400/70 mt-0.5">Set a new password to unlock all features</p>
+        </div>
+      </div>
+
       <!-- Bottom user card -->
-      <div class="border-t border-slate-700/50 p-4">
-        <div class="flex items-center gap-3 rounded-lg bg-slate-800/50 p-3">
+      <div class="border-t p-4" :style="{ borderColor: 'var(--sidebar-border)' }">
+        <div
+          class="flex items-center gap-3 rounded-xl p-3"
+          :style="{ backgroundColor: 'var(--sidebar-user-bg)' }"
+        >
           <div
-            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 text-sm font-bold text-white shadow-lg"
+            class="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-full shadow-lg"
           >
-            {{ userInitials }}
+            <img
+              v-if="userAvatar"
+              :src="userAvatar"
+              :alt="user?.name"
+              class="h-full w-full rounded-full object-cover"
+            />
+            <div
+              v-else
+              class="flex h-full w-full items-center justify-center text-sm font-bold text-white"
+              :style="{
+                background: `linear-gradient(135deg, var(--sidebar-logo-gradient-from), var(--sidebar-logo-gradient-to))`,
+              }"
+            >
+              {{ userInitials }}
+            </div>
           </div>
           <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-medium text-white">{{ user?.name }}</p>
-            <p class="truncate text-xs text-slate-400">Student</p>
+            <p class="truncate text-sm font-medium" :style="{ color: 'var(--sidebar-user-name)' }">
+              {{ user?.name }}
+            </p>
+            <p class="truncate text-xs" :style="{ color: 'var(--sidebar-user-role)' }">Student</p>
           </div>
         </div>
       </div>
@@ -74,11 +111,11 @@
     <div class="flex flex-1 flex-col lg:pl-0">
       <!-- Header -->
       <header
-        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6"
+        class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 shadow-sm backdrop-blur-lg lg:px-6 dark:border-slate-700 dark:bg-slate-800/80"
       >
         <div class="flex items-center gap-3">
           <button
-            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden"
+            class="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-300"
             @click="sidebarOpen = !sidebarOpen"
             aria-label="Toggle navigation"
           >
@@ -99,46 +136,77 @@
               />
             </svg>
           </button>
-          <h2 class="text-lg font-semibold text-gray-800">{{ pageTitle }}</h2>
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-slate-100">{{ pageTitle }}</h2>
         </div>
 
         <div class="flex items-center gap-2">
           <!-- Notifications -->
+          <NotificationBell />
+
+          <!-- Language Switcher -->
+          <LanguageSwitcher variant="header" />
+          <!-- Dark Mode Toggle -->
           <button
-            class="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            @click="themeStore.setDarkMode(!themeStore.darkMode)"
+            class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+            :title="themeStore.darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+          >
+            <svg v-if="!themeStore.darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <svg v-else class="h-5 w-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </button>
+
+          <!-- Theme Settings Button -->
+          <button
+            @click.stop="themeSettingsOpen = !themeSettingsOpen"
+            class="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+            :class="{ 'bg-slate-100 text-slate-700 ring-2 ring-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:ring-slate-600': themeSettingsOpen }"
+            title="Theme Settings"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
               />
             </svg>
-            <span class="absolute right-2 top-2 flex h-2 w-2">
-              <span
-                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"
-              />
-              <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-            </span>
+            <span
+              class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white shadow-sm dark:border-slate-700"
+              :style="{ backgroundColor: themeStore.currentTheme().shades[500] }"
+            />
           </button>
 
           <!-- User dropdown -->
           <div class="relative">
             <button
-              class="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100"
+              class="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-700"
               @click.stop="dropdownOpen = !dropdownOpen"
             >
               <div
-                class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 text-xs font-bold text-white shadow-sm"
+                class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full shadow-sm"
               >
-                {{ userInitials }}
+                <img
+                  v-if="userAvatar"
+                  :src="userAvatar"
+                  :alt="user?.name"
+                  class="h-full w-full rounded-full object-cover"
+                />
+                <div
+                  v-else
+                  class="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-400 to-teal-500 text-xs font-bold text-white"
+                >
+                  {{ userInitials }}
+                </div>
               </div>
               <div class="hidden text-left md:block">
-                <p class="text-sm font-medium leading-tight text-gray-700">
+                <p class="text-sm font-medium leading-tight text-gray-700 dark:text-slate-300">
                   {{ user?.name }}
                 </p>
-                <p class="text-xs leading-tight text-gray-400">Student</p>
+                <p class="text-xs leading-tight text-gray-400 dark:text-slate-500">Student</p>
               </div>
               <svg
                 class="h-4 w-4 text-gray-400 transition-transform"
@@ -159,19 +227,19 @@
             <transition name="dropdown">
               <div
                 v-if="dropdownOpen"
-                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-gray-100 bg-white py-1 shadow-lg ring-1 ring-black/5"
+                class="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-xl border border-gray-100 bg-white py-1 shadow-lg ring-1 ring-black/5 dark:border-slate-700 dark:bg-slate-800"
                 @click="dropdownOpen = false"
               >
-                <div class="border-b border-gray-100 px-4 py-3">
-                  <p class="text-sm font-medium text-gray-900">{{ user?.name }}</p>
-                  <p class="truncate text-xs text-gray-500">{{ user?.email }}</p>
+                <div class="border-b border-gray-100 px-4 py-3 dark:border-slate-700">
+                  <p class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ user?.name }}</p>
+                  <p class="truncate text-xs text-gray-500 dark:text-slate-400">{{ user?.email }}</p>
                 </div>
                 <router-link
                   to="/student/profile"
-                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                  class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
                 >
                   <svg
-                    class="h-4.5 w-4.5 text-gray-400"
+                    class="h-4.5 w-4.5 text-gray-400 dark:text-slate-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -191,10 +259,10 @@
                   </svg>
                   Profile Settings
                 </router-link>
-                <hr class="my-1 border-gray-100" />
+                <hr class="my-1 border-gray-100 dark:border-slate-700" />
                 <button
                   @click="openLogoutModal"
-                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
+                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50 dark:hover:bg-red-950/30"
                 >
                   <svg
                     class="h-4.5 w-4.5 text-red-500"
@@ -225,6 +293,9 @@
       </main>
     </div>
 
+    <!-- Theme Settings Panel -->
+    <ThemeSettingsPanel :is-open="themeSettingsOpen" @close="themeSettingsOpen = false" />
+
     <!-- Logout Confirmation Modal -->
     <transition name="fade">
       <div
@@ -236,17 +307,17 @@
         @click="closeLogoutModal"
       >
         <div
-          class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl"
+          class="w-[92%] max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-800"
           @click.stop
         >
-          <h3 id="logout-modal-title" class="text-base font-semibold text-slate-900">
+          <h3 id="logout-modal-title" class="text-base font-semibold text-slate-900 dark:text-slate-100">
             Are you sure you want to log out?
           </h3>
-          <p class="mt-1 text-sm text-slate-600">You can cancel if you changed your mind.</p>
+          <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">You can cancel if you changed your mind.</p>
 
           <div class="mt-5 flex items-center justify-end gap-3">
             <button
-              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
               @click="closeLogoutModal"
               :disabled="loggingOut"
             >
@@ -270,12 +341,21 @@
 import { ref, computed, onMounted, onUnmounted, h, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useThemeStore } from '@/stores/theme'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
+import NotificationBell from '@/components/common/NotificationBell.vue'
+import ThemeSettingsPanel from '@/components/admin/ThemeSettingsPanel.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const route = useRoute()
 const auth = useAuthStore()
+const themeStore = useThemeStore()
 
 const sidebarOpen = ref(false)
 const dropdownOpen = ref(false)
+const themeSettingsOpen = ref(false)
 
 function handleClickOutside() {
   if (dropdownOpen.value) {
@@ -293,6 +373,18 @@ onUnmounted(() => {
 
 const user = computed(() => auth.user)
 
+const userAvatar = computed(() => {
+  const avatar = user.value?.avatar
+  if (!avatar) return null
+  if (avatar.startsWith('http://') || avatar.startsWith('https://')) return avatar
+  const baseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '')
+  // Backend returns raw relative path (e.g. "students/xxx.jpg") — prepend /storage/
+  const cleanPath = avatar.startsWith('/') ? avatar : `/storage/${avatar}`
+  return `${baseUrl}${cleanPath}`
+})
+
+const isInactive = computed(() => auth.user?.status === 'inactive')
+
 const userInitials = computed(() => {
   if (!user.value?.name) return '?'
   return user.value.name
@@ -303,10 +395,9 @@ const userInitials = computed(() => {
     .slice(0, 2)
 })
 
-const pageTitle = computed(() => {
-  const title = route.meta?.title
-  return typeof title === 'string' ? title : 'Dashboard'
-})
+const sidebarStyles = computed(() => ({
+  backgroundColor: 'var(--sidebar-bg)',
+}))
 
 function isActive(path: string) {
   if (path === '/student') {
@@ -314,6 +405,38 @@ function isActive(path: string) {
   }
   return route.path.startsWith(path)
 }
+
+function navLinkStyle(to: string): Record<string, string> {
+  if (isActive(to)) {
+    return {
+      background: 'var(--sidebar-nav-active-bg)',
+      color: 'var(--sidebar-nav-active-text)',
+      borderLeft: '2px solid var(--sidebar-nav-active-border)',
+    }
+  }
+  return {
+    color: 'var(--sidebar-nav-text)',
+  }
+}
+
+const pageTitle = computed(() => {
+  const map: Record<string, string> = {
+    StudentDashboard: 'nav.student.dashboard',
+    StudentWorklogs: 'nav.student.worklogs',
+    StudentWorklogDetail: 'nav.student.worklogDetail',
+    StudentWorklogEdit: 'nav.student.editWorklog',
+    StudentFollowups: 'nav.student.followups',
+    StudentIssues: 'nav.student.issues',
+    StudentMessages: 'nav.student.messages',
+    StudentProfile: 'nav.student.profile',
+  }
+  const name = route.name
+  if (typeof name === 'string' && map[name]) {
+    return t(map[name])
+  }
+  const title = route.meta?.title
+  return typeof title === 'string' ? title : 'Dashboard'
+})
 
 const logoutModalOpen = ref(false)
 const loggingOut = ref(false)
@@ -337,7 +460,6 @@ async function confirmLogout() {
     logoutModalOpen.value = false
   }
 }
-
 
 function createIcon(path: string) {
   return defineComponent({
@@ -413,12 +535,18 @@ const navItems: NavItem[] = [
     ),
   },
   {
+    name: 'messages',
+    label: 'Messages',
+    to: '/student/messages',
+    icon: createIcon(
+      'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
+    ),
+  },
+  {
     name: 'profile',
     label: 'Profile',
     to: '/student/profile',
-    icon: createIcon(
-      'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
-    ),
+    icon: createIcon('M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'),
   },
 ]
 </script>
@@ -446,5 +574,15 @@ const navItems: NavItem[] = [
 .dropdown-leave-to {
   opacity: 0;
   transform: translateY(-4px) scale(0.98);
+}
+
+.sidebar-nav-link:hover {
+  background: var(--sidebar-nav-hover-bg) !important;
+  color: var(--sidebar-nav-text-hover) !important;
+}
+
+.sidebar-nav-active {
+  background: var(--sidebar-nav-active-bg) !important;
+  color: var(--sidebar-nav-active-text) !important;
 }
 </style>

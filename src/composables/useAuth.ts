@@ -1,7 +1,6 @@
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import type { UserRole } from '@/types/auth'
-import { AUTH_CONFIG } from '@/constants/auth'
 
 /**
  * useAuth
@@ -15,14 +14,16 @@ export function useAuth() {
   const isAdmin = computed(() => store.userRole === 'admin')
   const isTutor = computed(() => store.userRole === 'tutor')
   const isStudent = computed(() => store.userRole === 'student')
-  const isCompany = computed(() => store.userRole === 'company representative')
+  const isSupervisor = computed(
+    () => store.userRole === 'supervisor',
+  )
 
   /**
    * Check if the current user has any of the given roles.
    * Usage: hasRole('admin') or hasRole('admin', 'tutor')
    */
   function hasRole(...roles: UserRole[]): boolean {
-    return store.hasRole(...roles)
+    return store.hasAnyRole(...roles)
   }
 
   /**
@@ -53,14 +54,14 @@ export function useAuth() {
     // User info
     user: computed(() => store.user),
     role: computed(() => store.userRole),
-    isAuthenticated: computed(() => store.isAuthenticated),
-    isLoading: computed(() => store.isLoading),
+    isAuthenticated: computed(() => store.isLoggedIn),
+    isLoading: computed(() => store.loading),
 
     // Role checks
     isAdmin,
     isTutor,
     isStudent,
-    isCompany,
+    isSupervisor,
 
     // Permission checks
     hasRole,
@@ -70,7 +71,6 @@ export function useAuth() {
 
     // Session
     isSessionTimedOut: computed(() => store.isSessionTimedOut),
-    loginAttempts: computed(() => store.loginAttempts),
     updateActivity: store.updateActivity,
 
     // Actions

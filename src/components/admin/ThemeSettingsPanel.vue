@@ -12,14 +12,17 @@
   <transition name="panel-slide">
     <div
       v-if="isOpen"
-      class="fixed right-0 top-0 z-50 flex h-full w-80 flex-col bg-white shadow-2xl shadow-slate-900/20"
+      class="fixed right-0 top-0 z-50 flex h-full w-80 flex-col bg-white shadow-2xl shadow-slate-900/20 dark:bg-slate-800"
     >
       <!-- Panel Header -->
-      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-700">
         <div class="flex items-center gap-2.5">
           <div
             class="flex h-8 w-8 items-center justify-center rounded-lg"
-            :style="{ backgroundColor: themeStore.currentTheme().shades[100], color: themeStore.currentTheme().shades[600] }"
+            :style="{
+              backgroundColor: themeStore.currentTheme().shades[100],
+              color: themeStore.currentTheme().shades[600],
+            }"
           >
             <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -31,30 +34,38 @@
             </svg>
           </div>
           <div>
-            <h3 class="text-sm font-bold text-slate-900">Theme Settings</h3>
-            <p class="text-[11px] text-slate-400">Customize your dashboard</p>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Theme Settings</h3>
+            <p class="text-[11px] text-slate-400 dark:text-slate-500">Customize your dashboard</p>
           </div>
         </div>
         <button
           @click="$emit('close')"
-          class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+          class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
         >
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </div>
 
       <!-- Panel Body -->
       <div class="flex-1 overflow-y-auto px-5 py-5">
-
         <!-- Active Preview Strip -->
         <div
           class="mb-5 overflow-hidden rounded-xl shadow-sm"
-          :style="{ background: `linear-gradient(135deg, ${themeStore.currentTheme().shades[600]}, ${themeStore.currentTheme().shades[400]})` }"
+          :style="{
+            background: `linear-gradient(135deg, ${themeStore.currentTheme().shades[600]}, ${themeStore.currentTheme().shades[400]})`,
+          }"
         >
           <div class="px-4 py-3">
-            <p class="text-[10px] font-semibold uppercase tracking-widest text-white/70">Active Theme</p>
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-white/70">
+              Active Theme
+            </p>
             <p class="text-base font-bold text-white">{{ themeStore.currentTheme().label }}</p>
           </div>
           <div class="flex h-2">
@@ -68,7 +79,9 @@
         </div>
 
         <!-- Color Palette Presets -->
-        <p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Color Palettes</p>
+        <p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          Color Palettes
+        </p>
         <div class="grid grid-cols-2 gap-2.5">
           <button
             v-for="theme in themeStore.COLOR_THEMES"
@@ -78,18 +91,24 @@
             :class="
               themeStore.currentThemeId === theme.id
                 ? 'border-transparent shadow-md ring-2'
-                : 'border-slate-100 hover:border-slate-200 hover:shadow-sm'
+                : 'border-slate-100 hover:border-slate-200 hover:shadow-sm dark:border-slate-700 dark:hover:border-slate-600'
             "
             :style="
               themeStore.currentThemeId === theme.id
-                ? { borderColor: theme.shades[200], backgroundColor: theme.shades[50], outlineColor: theme.shades[400] }
+                ? {
+                    borderColor: theme.shades[200],
+                    backgroundColor: theme.shades[50],
+                    outlineColor: theme.shades[400],
+                  }
                 : {}
             "
           >
             <!-- Color Swatch -->
             <span
               class="relative flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg shadow-sm"
-              :style="{ background: `linear-gradient(135deg, ${theme.shades[500]}, ${theme.shades[700]})` }"
+              :style="{
+                background: `linear-gradient(135deg, ${theme.shades[500]}, ${theme.shades[700]})`,
+              }"
             >
               <!-- Active checkmark -->
               <svg
@@ -99,14 +118,19 @@
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="3"
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </span>
             <div>
               <p
                 class="text-xs font-bold leading-tight"
                 :style="themeStore.currentThemeId === theme.id ? { color: theme.shades[700] } : {}"
-                :class="themeStore.currentThemeId !== theme.id ? 'text-slate-700' : ''"
+                :class="themeStore.currentThemeId !== theme.id ? 'text-slate-700 dark:text-slate-300' : ''"
               >
                 {{ theme.label }}
               </p>
@@ -123,57 +147,83 @@
         </div>
 
         <!-- Divider -->
-        <div class="my-5 border-t border-slate-100" />
+        <div class="my-5 border-t border-slate-100 dark:border-slate-700" />
 
         <!-- Sidebar Style Options -->
-        <p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Sidebar Style</p>
+        <p class="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          Sidebar Style
+        </p>
         <div class="flex gap-2.5">
           <button
             v-for="style in sidebarStyles"
             :key="style.id"
             @click="setSidebarStyle(style.id)"
-            class="flex flex-1 flex-col items-center gap-2 rounded-xl border p-3 text-center transition-all"
-            :class="
+            class="flex flex-1 flex-col items-center gap-2 rounded-xl border p-3 text-center transition-all"              :class="
               themeStore.sidebarStyle === style.id
                 ? 'border-transparent shadow-sm ring-2'
-                : 'border-slate-100 hover:border-slate-200'
+                : 'border-slate-100 hover:border-slate-200 dark:border-slate-700 dark:hover:border-slate-600'
             "
-            :style="themeStore.sidebarStyle === style.id ? { outlineColor: themeStore.currentTheme().shades[400] } : {}"
+            :style="
+              themeStore.sidebarStyle === style.id
+                ? { outlineColor: themeStore.currentTheme().shades[400] }
+                : {}
+            "
           >
             <!-- Mini Sidebar Preview -->
-            <div class="flex h-12 w-full overflow-hidden rounded-lg border border-slate-200">
+            <div class="flex h-12 w-full overflow-hidden rounded-lg border border-slate-200 dark:border-slate-600">
               <div
                 class="flex w-8 flex-col gap-1 p-1"
-                :style="{ background: style.id === 'dark' ? '#0f172a' : (style.id === 'colored' ? themeStore.currentTheme().shades[700] : '#ffffff') }"
+                :style="{
+                  background:
+                    style.id === 'dark'
+                      ? '#0f172a'
+                      : style.id === 'colored'
+                        ? themeStore.currentTheme().shades[700]
+                        : '#ffffff',
+                }"
               >
-                <div class="h-1.5 w-full rounded-sm opacity-80" :style="{ background: style.id === 'light' ? '#e2e8f0' : '#ffffff40' }" />
-                <div class="h-1 w-3/4 rounded-sm opacity-60" :style="{ background: style.id === 'light' ? '#e2e8f0' : '#ffffff30' }" />
-                <div class="h-1 w-full rounded-sm opacity-60" :style="{ background: style.id === 'light' ? '#e2e8f0' : '#ffffff30' }" />
+                <div
+                  class="h-1.5 w-full rounded-sm opacity-80"
+                  :style="{ background: style.id === 'light' ? '#e2e8f0' : '#ffffff40' }"
+                />
+                <div
+                  class="h-1 w-3/4 rounded-sm opacity-60"
+                  :style="{ background: style.id === 'light' ? '#e2e8f0' : '#ffffff30' }"
+                />
+                <div
+                  class="h-1 w-full rounded-sm opacity-60"
+                  :style="{ background: style.id === 'light' ? '#e2e8f0' : '#ffffff30' }"
+                />
               </div>
-              <div class="flex-1 bg-slate-50" />
+              <div class="flex-1 bg-slate-50 dark:bg-slate-900/50" />
             </div>
-            <span class="text-[10px] font-semibold text-slate-600">{{ style.label }}</span>
+            <span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400">{{ style.label }}</span>
           </button>
         </div>
 
         <!-- Divider -->
-        <div class="my-5 border-t border-slate-100" />
+        <div class="my-5 border-t border-slate-100 dark:border-slate-700" />
 
         <!-- Reset -->
         <button
           @click="resetTheme"
-          class="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 py-2.5 text-xs font-semibold text-slate-500 transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-700"
+          class="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 py-2.5 text-xs font-semibold text-slate-500 transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-700 dark:border-slate-600 dark:text-slate-400 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-300"
         >
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.228 5.672L21 9m0 0H9" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.228 5.672L21 9m0 0H9"
+            />
           </svg>
           Reset to Default
         </button>
       </div>
 
       <!-- Panel Footer -->
-      <div class="border-t border-slate-100 px-5 py-3">
-        <p class="text-center text-[10px] text-slate-400">
+      <div class="border-t border-slate-100 px-5 py-3 dark:border-slate-700">
+        <p class="text-center text-[10px] text-slate-400 dark:text-slate-500">
           Theme preferences are saved automatically
         </p>
       </div>

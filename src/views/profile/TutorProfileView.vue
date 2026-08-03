@@ -1,0 +1,725 @@
+<template>
+  <div class="animate-fade-in space-y-6">
+    <!-- Page Header -->
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">My Profile</h1>
+      <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Manage your personal information, profile photo, and security settings.
+      </p>
+    </div>
+
+    <!-- Loading State -->
+    <div
+      v-if="!user"
+      class="flex items-center justify-center py-20"
+    >
+      <div class="flex flex-col items-center gap-3">
+        <LoadingSpinner size="lg" color="primary" />
+        <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Loading your profile...</p>
+      </div>
+    </div>
+
+    <!-- Profile Content -->
+    <template v-else>
+      <!-- Success Toast Notifications -->
+      <div
+        v-if="successMessage"
+        class="flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4 dark:border-emerald-900/50 dark:bg-emerald-950/30"
+        role="alert"
+      >
+        <svg class="h-5 w-5 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="text-sm font-medium text-emerald-800 dark:text-emerald-200">{{ successMessage }}</p>
+        <button
+          @click="successMessage = ''"
+          class="ml-auto -mr-1 flex h-6 w-6 items-center justify-center rounded-full text-emerald-500 transition-colors hover:bg-emerald-100 dark:hover:bg-emerald-950/40"
+          aria-label="Dismiss"
+        >
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Two-column layout -->
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <!-- Left Column: Avatar & Quick Info -->
+        <div class="lg:col-span-1">
+          <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-600 dark:bg-slate-800">
+            <!-- Avatar Section -->
+            <div class="flex flex-col items-center text-center">
+              <div class="relative group cursor-pointer" @click="showLightbox = true" title="Click to view or change profile photo">
+                <div
+                  class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white shadow-lg transition-shadow duration-200 group-hover:shadow-xl ring-4 ring-slate-100/80 dark:border-slate-600 dark:ring-slate-700/80"
+                  :class="photoUploadError ? 'border-red-300 dark:border-red-600' : 'border-slate-100 dark:border-slate-600'"
+                >
+                  <img
+                    v-if="photoPreview || displayPhoto"
+                    :src="photoPreview || displayPhoto || undefined"
+                    :alt="fullName"
+                    class="h-full w-full rounded-full object-cover"
+                  />
+                  <div
+                    v-else
+                    class="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary-400 to-purple-500 text-3xl font-bold text-white"
+                  >
+                    {{ initials }}
+                  </div>
+                </div>
+
+                <!-- Camera badge button -->
+                <button
+                  type="button"
+                  @click.stop="triggerFileInput"
+                  title="Upload New Photo"
+                  class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 text-white shadow-md transition-all hover:bg-primary-700 hover:scale-110 active:scale-95 ring-2 ring-white cursor-pointer"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </button>
+
+                <input
+                  ref="fileInput"
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg,image/webp"
+                  class="hidden"
+                  @change="handlePhotoUpload"
+                />
+              </div>
+
+              <p v-if="photoUploadError" class="mt-2 text-xs text-red-500">{{ photoUploadError }}</p>
+
+              <h2 class="mt-4 text-lg font-bold text-slate-900 dark:text-slate-100">{{ fullName }}</h2>
+              <p class="text-sm text-slate-500 truncate max-w-[250px] dark:text-slate-400">{{ user?.email }}</p>
+
+              <!-- Role Badge -->
+              <span
+                class="mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-purple-50 text-purple-700 dark:bg-purple-950/30 dark:text-purple-300"
+              >
+                <span class="flex h-1.5 w-1.5 rounded-full bg-purple-500" />
+                {{ user?.role || 'N/A' }}
+              </span>
+            </div>
+
+            <!-- Quick Info Divider -->
+            <div class="mt-6 border-t border-slate-100 pt-5 dark:border-slate-700">
+              <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Account Info</h3>
+              <dl class="mt-3 space-y-3">
+                <div>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Email</dt>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800 truncate max-w-[250px] dark:text-slate-200">{{ user?.email }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Role</dt>
+                  <dd class="mt-0.5 text-sm font-medium capitalize text-slate-800 dark:text-slate-200">{{ user?.role || 'N/A' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">First Name</dt>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">{{ user?.first_name || '—' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Last Name</dt>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">{{ user?.last_name || '—' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Member Since</dt>
+                  <dd class="mt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">{{ memberSince }}</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Forms -->
+        <div class="space-y-6 lg:col-span-2">
+          <!-- Personal Information Card -->
+          <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-600 dark:bg-slate-800">
+            <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-700">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">Personal Information</h2>
+                  <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Update your personal details</p>
+                </div>
+                <button
+                  v-if="!editingProfile"
+                  @click="startEditing"
+                  class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3.5 py-2 text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:hover:bg-primary-900/50"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Edit
+                </button>
+              </div>
+            </div>
+
+            <div class="p-6">
+              <!-- View Mode -->
+              <dl v-if="!editingProfile" class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+                <div>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">First Name</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-200">{{ user?.first_name || '—' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Last Name</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-200">{{ user?.last_name || '—' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Email</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800 truncate max-w-[250px] dark:text-slate-200">{{ user?.email || '—' }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs font-medium text-slate-400 dark:text-slate-500">Last Updated</dt>
+                  <dd class="mt-0.5 text-sm font-semibold text-slate-800 dark:text-slate-200">{{ formatDate((user as any)?.updated_at) }}</dd>
+                </div>
+              </dl>
+
+              <!-- Edit Mode -->
+              <form v-else @submit.prevent="saveProfile" class="space-y-4">
+                <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+                  <FormField label="First Name" :error="formErrors.first_name" required>
+                    <input
+                      v-model="editForm.first_name"
+                      type="text"
+                      placeholder="Enter your first name"
+                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+                      :class="inputErrorClass('first_name')"
+                      @input="clearFieldError('first_name')"
+                    />
+                  </FormField>
+
+                  <FormField label="Last Name" :error="formErrors.last_name" required>
+                    <input
+                      v-model="editForm.last_name"
+                      type="text"
+                      placeholder="Enter your last name"
+                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+                      :class="inputErrorClass('last_name')"
+                      @input="clearFieldError('last_name')"
+                    />
+                  </FormField>
+
+                  <FormField label="Email" :error="formErrors.email" required class="sm:col-span-2">
+                    <input
+                      v-model="editForm.email"
+                      type="email"
+                      placeholder="Enter your email"
+                      class="block w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+                      :class="inputErrorClass('email')"
+                      @input="clearFieldError('email')"
+                    />
+                  </FormField>
+                </div>
+
+                <!-- Form-level error -->
+                <ErrorAlert v-if="formErrors._form" :message="formErrors._form" />
+
+                <!-- Actions -->
+                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4 dark:border-slate-700">
+                  <button
+                    type="button"
+                    :disabled="profileSubmitting"
+                    class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
+                    @click="cancelEditing"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    :disabled="profileSubmitting"
+                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <LoadingSpinner v-if="profileSubmitting" size="sm" color="white" />
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Password Change Card -->
+          <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-600 dark:bg-slate-800">
+            <div class="border-b border-slate-100 px-6 py-4 dark:border-slate-700">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-base font-bold text-slate-900 dark:text-slate-100">Security</h2>
+                  <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Update your password</p>
+                </div>
+                <button
+                  v-if="!editingPassword"
+                  @click="editingPassword = true"
+                  class="inline-flex items-center gap-1.5 rounded-lg bg-primary-50 px-3.5 py-2 text-sm font-semibold text-primary-700 transition-colors hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-300 dark:hover:bg-primary-900/50"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                  </svg>
+                  Change Password
+                </button>
+              </div>
+            </div>
+
+            <div class="p-6">
+              <template v-if="!editingPassword">
+                <p class="text-sm text-slate-500 dark:text-slate-400">Keep your account secure by using a strong password and changing it regularly.</p>
+              </template>
+
+              <form v-else @submit.prevent="savePassword" class="space-y-4">
+                <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+                  <PasswordInput
+                    v-model="passwordForm.current_password"
+                    label="Current Password"
+                    placeholder="Enter current password"
+                    required
+                    :error="passwordErrors.current_password ?? ''"
+                    autocomplete="current-password"
+                  />
+
+                  <div class="sm:col-span-2 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+                    <PasswordInput
+                      v-model="passwordForm.password"
+                      label="New Password"
+                      placeholder="Min. 8 characters"
+                      required
+                      :error="passwordErrors.password ?? ''"
+                      autocomplete="new-password"
+                    />
+
+                    <PasswordInput
+                      v-model="passwordForm.password_confirmation"
+                      label="Confirm New Password"
+                      placeholder="Re-enter new password"
+                      required
+                      :error="passwordErrors.password_confirmation ?? ''"
+                      autocomplete="new-password"
+                    />
+                  </div>
+                </div>
+
+                <!-- Password requirements hint -->
+                <div class="rounded-lg bg-amber-50/60 border border-amber-100 px-4 py-3 dark:bg-amber-950/30 dark:border-amber-900/50">
+                  <div class="flex items-start gap-2">
+                    <svg class="mt-0.5 h-4 w-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-xs text-amber-800 dark:text-amber-200">Password must be at least 8 characters and include a mix of letters, numbers, and symbols for better security.</p>
+                  </div>
+                </div>
+
+                <!-- Form-level error -->
+                <ErrorAlert v-if="passwordErrors._form" :message="passwordErrors._form" />
+
+                <!-- Actions -->
+                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4 dark:border-slate-700">
+                  <button
+                    type="button"
+                    :disabled="passwordSubmitting"
+                    class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
+                    @click="cancelPasswordChange"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    :disabled="passwordSubmitting || !isPasswordFormValid"
+                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <LoadingSpinner v-if="passwordSubmitting" size="sm" color="white" />
+                    Update Password
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <!-- Photo Crop & Confirm Modal -->
+    <PhotoCropModal
+      :show="showCropModal"
+      :file="selectedFileForEdit"
+      :saving="uploadingPhoto"
+      @confirm="onCropConfirmed"
+      @cancel="onCropCancelled"
+    />
+
+    <!-- Avatar Lightbox Modal -->
+    <AvatarLightboxModal
+      :show="showLightbox"
+      :image-url="photoPreview || displayPhoto"
+      :title="fullName || 'Tutor Photo'"
+      :subtitle="user?.email || 'Tutor Profile'"
+      :editable="true"
+      @close="showLightbox = false"
+      @upload="triggerFileInput"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { authService } from '@/services/auth'
+import { useToastStore } from '@/stores/toast'
+import FormField from '@/components/ui/FormField.vue'
+import PasswordInput from '@/components/ui/PasswordInput.vue'
+import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import ErrorAlert from '@/components/common/ErrorAlert.vue'
+import AvatarLightboxModal from '@/components/common/AvatarLightboxModal.vue'
+import PhotoCropModal from '@/components/common/PhotoCropModal.vue'
+import { parseApiError } from '@/utils/errorParser'
+import { mapValidationErrors } from '@/utils/mapValidationErrors'
+
+const authStore = useAuthStore()
+const toast = useToastStore()
+
+const user = computed(() => authStore.user)
+
+// ── Helpers ──
+
+const displayPhoto = computed(() => {
+  const u = user.value
+  if (!u) return null
+  const raw = (u as Record<string, unknown>).avatar_url as string | undefined
+    ?? (u as Record<string, unknown>).avatar as string | undefined
+  if (!raw) return null
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw
+  const baseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api').replace(/\/api\/?$/, '')
+  const cleanPath = raw.startsWith('/') ? raw : `/storage/${raw}`
+  return `${baseUrl}${cleanPath}`
+})
+
+const fullName = computed(() => {
+  const u = user.value
+  if (!u) return ''
+  return `${u.first_name || ''} ${u.last_name || ''}`.trim()
+})
+
+const initials = computed(() => {
+  const u = user.value
+  if (!u) return '?'
+  return `${(u.first_name?.[0] || '')}${(u.last_name?.[0] || '')}`.toUpperCase() || '?'
+})
+
+const memberSince = computed(() => {
+  const u = user.value as Record<string, unknown> | null
+  const raw = u?.created_at as string | undefined
+  if (raw) {
+    const d = new Date(raw)
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    }
+  }
+  return '—'
+})
+
+function formatDate(dateStr: string | null | undefined): string {
+  if (!dateStr) return '—'
+  try {
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  } catch {
+    return dateStr
+  }
+}
+
+// ── Success Message (inline toast) ──
+const successMessage = ref('')
+
+// ── Profile Editing ──
+const editingProfile = ref(false)
+const editForm = reactive({
+  first_name: '',
+  last_name: '',
+  email: '',
+})
+const formErrors = reactive<Record<string, string>>({})
+const profileSubmitting = ref(false)
+
+function startEditing(): void {
+  const u = user.value
+  if (!u) return
+  editForm.first_name = u.first_name || ''
+  editForm.last_name = u.last_name || ''
+  editForm.email = u.email || ''
+  editingProfile.value = true
+}
+
+function cancelEditing(): void {
+  editingProfile.value = false
+  clearAllFormErrors()
+}
+
+function inputErrorClass(field: string): string {
+  return formErrors[field]
+    ? 'border-error ring-1 ring-error/20 focus:border-error focus:ring-2 focus:ring-error/30'
+    : 'border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
+}
+
+function clearFieldError(field: string): void {
+  delete formErrors[field]
+}
+
+function clearAllFormErrors(): void {
+  for (const key of Object.keys(formErrors)) {
+    delete formErrors[key]
+  }
+}
+
+function validateProfileForm(): boolean {
+  let valid = true
+  clearAllFormErrors()
+
+  if (!editForm.first_name.trim()) {
+    formErrors.first_name = 'First name is required.'
+    valid = false
+  }
+
+  if (!editForm.last_name.trim()) {
+    formErrors.last_name = 'Last name is required.'
+    valid = false
+  }
+
+  if (!editForm.email.trim()) {
+    formErrors.email = 'Email is required.'
+    valid = false
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editForm.email)) {
+    formErrors.email = 'Please enter a valid email address.'
+    valid = false
+  }
+
+  return valid
+}
+
+async function saveProfile(): Promise<void> {
+  if (!validateProfileForm()) return
+
+  profileSubmitting.value = true
+  try {
+    const fd = new FormData()
+    fd.append('first_name', editForm.first_name)
+    fd.append('last_name', editForm.last_name)
+    fd.append('email', editForm.email)
+    fd.append('_method', 'PUT')
+
+    // Add avatar if a new one was selected
+    const file = fileInput.value?.files?.[0]
+    if (file) fd.append('avatar', file)
+
+    const updated = await authService.updateProfile(fd)
+    authStore.user = updated
+
+    successMessage.value = 'Profile updated successfully!'
+    setTimeout(() => { successMessage.value = '' }, 4000)
+    toast.success('Your profile has been updated.', 'Profile Updated')
+    editingProfile.value = false
+  } catch (err: unknown) {
+    const axiosErr = err as {
+      response?: { status?: number; data?: { errors?: Record<string, string[]>; message?: string } }
+    }
+    if (axiosErr.response?.status === 422 && axiosErr.response.data?.errors) {
+      const mapped = mapValidationErrors(axiosErr.response.data.errors)
+      for (const [key, msg] of Object.entries(mapped)) {
+        (formErrors as Record<string, string>)[key] = msg
+      }
+    } else {
+      const parsed = parseApiError(err)
+      formErrors._form = parsed.message
+    }
+  } finally {
+    profileSubmitting.value = false
+  }
+}
+
+// ── Photo Upload ──
+const fileInput = ref<HTMLInputElement | null>(null)
+const uploadingPhoto = ref(false)
+const photoUploadError = ref('')
+const photoPreview = ref<string | null>(null)
+const showLightbox = ref(false)
+const showCropModal = ref(false)
+const selectedFileForEdit = ref<File | null>(null)
+
+function triggerFileInput(): void {
+  if (fileInput.value) {
+    fileInput.value.click()
+  }
+}
+
+function handlePhotoUpload(event: Event): void {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
+  if (!['image/jpeg', 'image/png', 'image/jpg', 'image/webp'].includes(file.type)) {
+    photoUploadError.value = 'Only JPG, PNG, and WEBP files are allowed.'
+    return
+  }
+
+  photoUploadError.value = ''
+  selectedFileForEdit.value = file
+  showLightbox.value = false
+  showCropModal.value = true
+  if (fileInput.value) fileInput.value.value = ''
+}
+
+function onCropCancelled(): void {
+  showCropModal.value = false
+  selectedFileForEdit.value = null
+}
+
+async function onCropConfirmed(editedFile: File): Promise<void> {
+  uploadingPhoto.value = true
+  try {
+    const fd = new FormData()
+    fd.append('avatar', editedFile)
+    fd.append('_method', 'PUT')
+    fd.append('first_name', user.value?.first_name || '')
+    fd.append('last_name', user.value?.last_name || '')
+    fd.append('email', user.value?.email || '')
+
+    const updated = await authService.updateProfile(fd)
+    authStore.user = updated
+
+    successMessage.value = 'Profile photo updated!'
+    setTimeout(() => { successMessage.value = '' }, 4000)
+    toast.success('Your profile photo has been updated.', 'Photo Updated')
+    showCropModal.value = false
+    selectedFileForEdit.value = null
+  } catch (err: unknown) {
+    const parsed = parseApiError(err)
+    photoUploadError.value = parsed.message
+    toast.error(parsed.message || 'Failed to upload photo.')
+  } finally {
+    uploadingPhoto.value = false
+  }
+}
+
+onUnmounted(() => {
+  if (photoPreview.value) {
+    URL.revokeObjectURL(photoPreview.value)
+    photoPreview.value = null
+  }
+})
+
+// ── Password Change ──
+const editingPassword = ref(false)
+const passwordForm = reactive({
+  current_password: '',
+  password: '',
+  password_confirmation: '',
+})
+const passwordErrors = reactive<Record<string, string>>({})
+const passwordSubmitting = ref(false)
+
+const isPasswordFormValid = computed(() => {
+  return (
+    passwordForm.current_password.length > 0 &&
+    passwordForm.password.length >= 8 &&
+    passwordForm.password_confirmation.length > 0 &&
+    passwordForm.password === passwordForm.password_confirmation
+  )
+})
+
+function cancelPasswordChange(): void {
+  editingPassword.value = false
+  clearPasswordErrors()
+  resetPasswordForm()
+}
+
+function clearPasswordErrors(): void {
+  for (const key of Object.keys(passwordErrors)) {
+    delete passwordErrors[key]
+  }
+}
+
+function resetPasswordForm(): void {
+  passwordForm.current_password = ''
+  passwordForm.password = ''
+  passwordForm.password_confirmation = ''
+}
+
+function validatePasswordForm(): boolean {
+  let valid = true
+  clearPasswordErrors()
+
+  if (!passwordForm.current_password) {
+    passwordErrors.current_password = 'Current password is required.'
+    valid = false
+  }
+
+  if (!passwordForm.password) {
+    passwordErrors.password = 'New password is required.'
+    valid = false
+  } else if (passwordForm.password.length < 8) {
+    passwordErrors.password = 'Password must be at least 8 characters.'
+    valid = false
+  }
+
+  if (!passwordForm.password_confirmation) {
+    passwordErrors.password_confirmation = 'Please confirm your new password.'
+    valid = false
+  } else if (passwordForm.password !== passwordForm.password_confirmation) {
+    passwordErrors.password_confirmation = 'Passwords do not match.'
+    valid = false
+  }
+
+  return valid
+}
+
+async function savePassword(): Promise<void> {
+  if (!validatePasswordForm()) return
+
+  passwordSubmitting.value = true
+  try {
+    const res = await authService.changePassword({
+      current_password: passwordForm.current_password,
+      password: passwordForm.password,
+      password_confirmation: passwordForm.password_confirmation,
+    })
+
+    successMessage.value = 'Password changed successfully!'
+    setTimeout(() => { successMessage.value = '' }, 4000)
+    toast.success('Your password has been updated.', 'Password Changed')
+    editingPassword.value = false
+    resetPasswordForm()
+  } catch (err: unknown) {
+    const axiosErr = err as {
+      response?: { status?: number; data?: { errors?: Record<string, string[]>; message?: string } }
+    }
+    if (axiosErr.response?.status === 422 && axiosErr.response.data?.errors) {
+      const mapped = mapValidationErrors(axiosErr.response.data.errors)
+      for (const [key, msg] of Object.entries(mapped)) {
+        (passwordErrors as Record<string, string>)[key] = msg
+      }
+    } else {
+      const parsed = parseApiError(err)
+      passwordErrors._form = parsed.message
+    }
+  } finally {
+    passwordSubmitting.value = false
+  }
+}
+</script>
+
+<style scoped>
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

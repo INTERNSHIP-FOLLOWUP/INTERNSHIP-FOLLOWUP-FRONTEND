@@ -32,6 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = computed(() => !!user.value)
   const userRole = computed<UserRole | null>(() => user.value?.role ?? null)
   const userName = computed(() => user.value?.name ?? '')
+  const userAvatar = computed(() => user.value?.avatar_url ?? user.value?.avatar ?? null)
   const isAdmin = computed(() => user.value?.role === 'admin')
   const isAuthenticated = computed(() => !!user.value)
   const isLoading = computed(() => loading.value)
@@ -51,7 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function roleLevel(role?: UserRole | null): number {
-    return role ? AUTH_CONFIG.ROLE_HIERARCHY[role] ?? 0 : 0
+    return role ? (AUTH_CONFIG.ROLE_HIERARCHY[role] ?? 0) : 0
   }
 
   function canAccess(minRoleLevel: number): boolean {
@@ -71,6 +72,12 @@ export const useAuthStore = defineStore('auth', () => {
     const tok = data.access_token || data.token
     if (tok) {
       localStorage.setItem(AUTH_TOKEN_KEY, tok)
+    }
+  }
+
+  function updateUser(data: Partial<User>): void {
+    if (user.value) {
+      user.value = { ...user.value, ...data }
     }
   }
 
@@ -100,10 +107,20 @@ export const useAuthStore = defineStore('auth', () => {
   async function getCsrfCookie(): Promise<void> {
     try {
       const { default: axios } = await import('axios')
-      await axios.get(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'}/sanctum/csrf-cookie`, {
-        withCredentials: true,
-        headers: { Accept: 'application/json' },
-      })
+      // Strip "/api" suffix from the API URL to get the base Sanctum URL
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'
+      const baseUrl = apiUrl.replace(/\/api\/?$/, '')
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 3000)
+      try {
+        await axios.get(`${baseUrl}/sanctum/csrf-cookie`, {
+          signal: controller.signal,
+          withCredentials: true,
+          headers: { Accept: 'application/json' },
+        })
+      } finally {
+        clearTimeout(timeoutId)
+      }
     } catch {
       // Bearer-token APIs don't need the CSRF cookie
     }
@@ -151,7 +168,8 @@ export const useAuthStore = defineStore('auth', () => {
       setSession(data)
       updateActivity()
 
-      const redirect = (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
+      const redirect =
+        (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
       await router.push(redirect)
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -174,7 +192,8 @@ export const useAuthStore = defineStore('auth', () => {
       setSession(data)
       updateActivity()
 
-      const redirect = (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
+      const redirect =
+        (router.currentRoute.value.query.redirect as string) || getRedirectPath(data.user.role)
       await router.push(redirect)
     } catch (err: unknown) {
       const parsed = parseApiError(err)
@@ -196,6 +215,16 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // ── Refresh user data (e.g. after profile update) ──
+  async function refreshUser(): Promise<void> {
+    try {
+      const userData = await authService.fetchUser()
+      user.value = userData
+    } catch {
+      // Silent — user can still use the app with stale data
+    }
+  }
+
   // ── Force logout (session timeout, 401) ──
   async function forceLogout(): Promise<void> {
     clearSession()
@@ -206,12 +235,31 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-    user, hasSession, loading, error, initialized, lastActivity, isSessionTimedOut, loginAttempts,
-    isLoggedIn, userRole, userName, isAdmin, isAuthenticated, isLoading,
-    hasRole, hasAnyRole, hasPermission, canAccess, roleLevel,
-    updateActivity, checkSessionTimeout,
-    boot, login, register, logout, forceLogout,
+    user,
+    hasSession,
+    loading,
+    error,
+    initialized,
+    lastActivity,
+    isSessionTimedOut,
+    isLoggedIn,
+    userRole,
+    userName,
+    userAvatar,
+    updateUser,
+    isAdmin,
+    hasRole,
+    hasAnyRole,
+    hasPermission,
+    canAccess,
+    roleLevel,
+    updateActivity,
+    checkSessionTimeout,
+    boot,
+    login,
+    register,
+    logout,
+    refreshUser,
+    forceLogout,
   }
 })
-
-

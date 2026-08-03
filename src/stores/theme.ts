@@ -1,5 +1,6 @@
 import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
+import api from '@/services/api'
 
 export interface ColorTheme {
   id: string
@@ -191,6 +192,7 @@ export const COLOR_THEMES: ColorTheme[] = [
 
 const STORAGE_KEY = 'admin-theme'
 const SIDEBAR_STORAGE_KEY = 'admin-sidebar-style'
+const DARK_MODE_KEY = 'admin-dark-mode'
 
 export const useThemeStore = defineStore('theme', () => {
   const savedId = localStorage.getItem(STORAGE_KEY) || 'indigo'
@@ -200,6 +202,29 @@ export const useThemeStore = defineStore('theme', () => {
   const sidebarStyle = ref<'dark' | 'colored' | 'light'>(
     savedSidebarStyle as 'dark' | 'colored' | 'light',
   )
+
+  const savedDarkMode = localStorage.getItem(DARK_MODE_KEY) === 'true'
+  const darkMode = ref<boolean>(savedDarkMode)
+
+  function applyDarkMode(value: boolean) {
+    if (value) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }
+
+  async function setDarkMode(value: boolean) {
+    darkMode.value = value
+    applyDarkMode(value)
+    localStorage.setItem(DARK_MODE_KEY, String(value))
+    const theme = value ? 'dark' : 'light'
+    try {
+      await api.put('/auth/profile/theme', { theme })
+    } catch {
+      // silently fail
+    }
+  }
 
   function currentTheme(): ColorTheme {
     return COLOR_THEMES.find((t) => t.id === currentThemeId.value)!
@@ -218,9 +243,17 @@ export const useThemeStore = defineStore('theme', () => {
       root.style.setProperty('--sidebar-user-bg', 'rgba(30, 41, 59, 0.4)')
       root.style.setProperty('--sidebar-nav-active-text', s[400])
       root.style.setProperty('--sidebar-nav-active-border', s[500])
-      root.style.setProperty('--sidebar-nav-active-bg', `linear-gradient(to right, ${s[500]}26, ${s[400]}1a)`)
+      root.style.setProperty(
+        '--sidebar-nav-active-bg',
+        `linear-gradient(to right, ${s[500]}26, ${s[400]}1a)`,
+      )
       root.style.setProperty('--sidebar-section-text', '#64748b')
       root.style.setProperty('--sidebar-logo-text', '#94a3b8')
+      root.style.setProperty('--sidebar-heading', '#ffffff')
+      root.style.setProperty('--sidebar-subheading', '#94a3b8')
+      root.style.setProperty('--sidebar-user-name', '#ffffff')
+      root.style.setProperty('--sidebar-user-role', '#94a3b8')
+      root.style.setProperty('--sidebar-avatar-bg', `linear-gradient(135deg, ${s[500]}, ${s[700]})`)
     } else if (style === 'colored') {
       root.style.setProperty('--sidebar-bg', theme.sidebarFrom)
       root.style.setProperty('--sidebar-border', 'rgba(255, 255, 255, 0.08)')
@@ -230,9 +263,17 @@ export const useThemeStore = defineStore('theme', () => {
       root.style.setProperty('--sidebar-user-bg', 'rgba(255, 255, 255, 0.06)')
       root.style.setProperty('--sidebar-nav-active-text', s[300])
       root.style.setProperty('--sidebar-nav-active-border', s[400])
-      root.style.setProperty('--sidebar-nav-active-bg', `linear-gradient(to right, ${s[500]}33, ${s[400]}1a)`)
+      root.style.setProperty(
+        '--sidebar-nav-active-bg',
+        `linear-gradient(to right, ${s[500]}33, ${s[400]}1a)`,
+      )
       root.style.setProperty('--sidebar-section-text', 'rgba(255, 255, 255, 0.35)')
       root.style.setProperty('--sidebar-logo-text', 'rgba(255, 255, 255, 0.5)')
+      root.style.setProperty('--sidebar-heading', '#ffffff')
+      root.style.setProperty('--sidebar-subheading', 'rgba(255, 255, 255, 0.5)')
+      root.style.setProperty('--sidebar-user-name', '#ffffff')
+      root.style.setProperty('--sidebar-user-role', 'rgba(255, 255, 255, 0.5)')
+      root.style.setProperty('--sidebar-avatar-bg', `linear-gradient(135deg, ${s[500]}, ${s[700]})`)
     } else {
       // light
       root.style.setProperty('--sidebar-bg', '#ffffff')
@@ -243,9 +284,17 @@ export const useThemeStore = defineStore('theme', () => {
       root.style.setProperty('--sidebar-user-bg', '#f8fafc')
       root.style.setProperty('--sidebar-nav-active-text', s[600])
       root.style.setProperty('--sidebar-nav-active-border', s[500])
-      root.style.setProperty('--sidebar-nav-active-bg', `linear-gradient(to right, ${s[500]}15, ${s[400]}0d)`)
+      root.style.setProperty(
+        '--sidebar-nav-active-bg',
+        `linear-gradient(to right, ${s[500]}15, ${s[400]}0d)`,
+      )
       root.style.setProperty('--sidebar-section-text', '#94a3b8')
       root.style.setProperty('--sidebar-logo-text', '#64748b')
+      root.style.setProperty('--sidebar-heading', '#1e293b')
+      root.style.setProperty('--sidebar-subheading', '#64748b')
+      root.style.setProperty('--sidebar-user-name', '#1e293b')
+      root.style.setProperty('--sidebar-user-role', '#64748b')
+      root.style.setProperty('--sidebar-avatar-bg', `linear-gradient(135deg, ${s[500]}, ${s[700]})`)
     }
 
     // Common theme-aware sidebar properties
@@ -289,6 +338,7 @@ export const useThemeStore = defineStore('theme', () => {
 
   // Apply on init
   applyTheme(currentTheme())
+  applyDarkMode(darkMode.value)
 
   watch(currentThemeId, () => {
     applyTheme(currentTheme())
@@ -297,9 +347,11 @@ export const useThemeStore = defineStore('theme', () => {
   return {
     currentThemeId,
     sidebarStyle,
+    darkMode,
     currentTheme,
     setTheme,
     setSidebarStyle,
+    setDarkMode,
     COLOR_THEMES,
   }
 })

@@ -1,16 +1,12 @@
 <template>
-  <div id="app">
+  <div id="app" class="dark:bg-slate-900 dark:text-slate-100 min-h-screen">
     <router-view />
+    <ForceChangePasswordModal />
+    <AppToast />
   </div>
 </template>
 
-<script setup lang="ts">
-import { onMounted } from 'vue'
-import { useAuthStore } from '@/stores/auth'
-
-const auth = useAuthStore()
-
-onMounted(() => {
-  auth.boot()
-})
+<script lang="ts" setup>
+import AppToast from '@/components/ui/AppToast.vue'
+import ForceChangePasswordModal from '@/components/auth/ForceChangePasswordModal.vue'
 </script>

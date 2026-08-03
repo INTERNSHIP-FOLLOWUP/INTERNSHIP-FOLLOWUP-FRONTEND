@@ -1,25 +1,18 @@
 <template>
   <div class="animate-fade-in">
     <AuthLayout>
-      <div class="rounded-[20px] p-8 transition-all duration-300">
-        <div class="text-center mb-6">
-          <div
-            class="mx-auto w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-500 rounded-xl flex items-center justify-center shadow-md shadow-primary-500/20 mb-4"
-          >
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-              />
-            </svg>
-          </div>
-          <h1 class="text-[22px] sm:text-[24px] font-bold text-slate-900 leading-tight">
-            Forgot Password
+      <div class="px-2 sm:px-4 py-2">
+        <div class="text-center mb-8">
+          <img
+            src="@/assets/images/logo.png"
+            alt="PN Logo"
+            class="mx-auto w-20 h-20 object-contain mb-5"
+          />
+          <h1 class="text-2xl sm:text-[26px] font-bold dark:text-slate-100 text-slate-900 leading-snug tracking-tight">
+            {{ $t('auth.forgotPassword.title') }}
           </h1>
-          <p class="mt-1.5 text-[14px] text-slate-500">
-            Enter your email address and we'll send you a link to reset your password.
+          <p class="mt-2 text-sm dark:text-slate-500 text-slate-400 font-normal">
+            {{ $t('auth.forgotPassword.subtitle') }}
           </p>
         </div>
 
@@ -27,9 +20,9 @@
           <div class="space-y-4">
             <InputField
               v-model="form.email"
-              label="Email Address"
+              :label="$t('auth.forgotPassword.emailLabel')"
               type="email"
-              placeholder="Enter your email"
+              :placeholder="$t('auth.forgotPassword.emailPlaceholder')"
               required
               :error="errors.email"
               autocomplete="email"
@@ -37,7 +30,7 @@
             >
               <template #icon>
                 <svg
-                  class="h-5 w-5 text-slate-400"
+                  class="h-5 w-5 dark:text-slate-500 text-slate-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -53,19 +46,44 @@
             </InputField>
           </div>
 
-          <div v-if="successMessage" class="mt-4 p-3 rounded-xl bg-green-50 border border-green-200">
-            <p class="text-sm text-green-700 flex items-center gap-2">
-              <svg class="h-5 w-5 shrink-0 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <div
+            v-if="successMessage"
+            class="mt-4 p-3 rounded-xl bg-green-50 border border-green-200 dark:bg-green-950/30 dark:border-green-900/50"
+          >
+            <p class="text-sm text-green-700 flex items-center gap-2 dark:text-green-400">
+              <svg
+                class="h-5 w-5 shrink-0 text-green-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               {{ successMessage }}
             </p>
           </div>
 
-          <div v-if="errorMessage && !successMessage" class="mt-4 p-3 rounded-xl bg-red-50 border border-red-200">
+          <div
+            v-if="errorMessage && !successMessage"
+            class="mt-4 p-3 rounded-xl bg-red-50 border border-red-200 dark:bg-red-950/30 dark:border-red-900/50"
+          >
             <p class="text-sm text-error flex items-center gap-2">
-              <svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+              <svg
+                class="h-5 w-5 shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                  clip-rule="evenodd"
+                />
               </svg>
               {{ errorMessage }}
             </p>
@@ -73,7 +91,7 @@
 
           <div class="mt-6">
             <PrimaryButton type="submit" :loading="loading" :disabled="loading || sent">
-              {{ sent ? 'Email Sent' : 'Send Reset Link' }}
+              {{ sent ? $t('auth.forgotPassword.emailSent') : $t('auth.forgotPassword.sendButton') }}
             </PrimaryButton>
           </div>
         </form>
@@ -85,9 +103,14 @@
           >
             <span class="inline-flex items-center gap-1.5">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
               </svg>
-              Back to Sign In
+              {{ $t('auth.forgotPassword.backToSignIn') }}
             </span>
           </router-link>
         </div>
@@ -149,7 +172,9 @@ async function handleSubmit() {
   try {
     const response = await authService.forgotPassword(form.email.trim())
     sent.value = true
-    successMessage.value = response.message || 'If that email is registered, you will receive a password reset link shortly.'
+    successMessage.value =
+      response.message ||
+      'If that email is registered, you will receive a password reset link shortly.'
   } catch (err: unknown) {
     const parsed = parseApiError(err)
     if (parsed.fields?.email) {

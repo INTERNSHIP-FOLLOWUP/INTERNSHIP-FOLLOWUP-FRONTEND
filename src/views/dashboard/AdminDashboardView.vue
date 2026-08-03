@@ -3,73 +3,13 @@
     <!-- Welcome Header -->
     <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Welcome back, Admin!</h1>
-        <p class="text-sm text-slate-500">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Welcome back, Admin!</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">
           Monitor your internship activities, student placements, and supervisor updates in
           real-time.
         </p>
       </div>
-      <div class="flex items-center gap-3">
-        <!-- Sync Status Pill -->
-        <div
-          class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold shadow-sm transition-all"
-          :class="
-            loading
-              ? 'border-primary-200 bg-primary-50 text-primary-600'
-              : 'border-emerald-200 bg-emerald-50 text-emerald-700'
-          "
-        >
-          <!-- Loading spinner -->
-          <span v-if="loading" class="inline-flex h-3.5 w-3.5 items-center justify-center">
-            <svg class="h-3.5 w-3.5 animate-spin text-primary-500" fill="none" viewBox="0 0 24 24">
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              />
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
-            </svg>
-          </span>
-          <!-- Idle dot -->
-          <span v-else class="relative flex h-2 w-2">
-            <span
-              class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"
-            />
-            <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
-          <span>{{ loading ? 'Syncing data...' : 'Live · Up to date' }}</span>
-        </div>
 
-        <!-- Refresh Button -->
-        <button
-          @click="fetchDashboardData"
-          :disabled="loading"
-          class="group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-2 text-xs font-semibold text-white shadow-sm shadow-primary-500/20 transition-all duration-200 hover:from-primary-700 hover:to-primary-600 hover:shadow-md hover:shadow-primary-500/25 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <svg
-            class="h-3.5 w-3.5 transition-transform duration-500"
-            :class="loading ? 'animate-spin' : 'group-hover:-rotate-180'"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.228 5.672L21 9m0 0H9"
-            />
-          </svg>
-          {{ loading ? 'Refreshing...' : 'Refresh Data' }}
-        </button>
-      </div>
     </div>
 
     <!-- Overview Statistics Cards -->
@@ -77,7 +17,7 @@
       <StatCard
         label="Total Students"
         :value="dashboardData.totalStudents"
-        trend="+12%"
+        :trend="dashboardData.studentTrend"
         description="from last semester"
         color-class="bg-gradient-to-br from-primary-500 to-primary-600 shadow-primary-500/20"
       >
@@ -102,7 +42,7 @@
       <StatCard
         label="Total Companies"
         :value="dashboardData.totalCompanies"
-        trend="+4"
+        :trend="companyTrendLabel"
         description="new partners added"
         color-class="bg-gradient-to-br from-purple-500 to-purple-600 shadow-purple-500/20"
       >
@@ -121,7 +61,7 @@
       <StatCard
         label="Active Internships"
         :value="dashboardData.activeInternships"
-        trend="89%"
+        :trend="placementTrendLabel"
         description="placement rate"
         color-class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-emerald-500/20"
       >
@@ -157,44 +97,18 @@
       </StatCard>
     </div>
 
-    <!-- Quick Actions Module -->
-    <div :class="panelClass">
-      <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">
-        Quick Administrative Actions
-      </h3>
-      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <button
-          v-for="action in quickActions"
-          :key="action.label"
-          @click="handleQuickAction(action.route)"
-          class="group flex min-h-28 flex-col items-center justify-center rounded-lg border border-slate-200/70 bg-slate-50/60 p-4 text-center transition-all duration-200 hover:border-primary-200 hover:bg-primary-50/50 hover:shadow-sm"
-        >
-          <div
-            class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 transition-all duration-200 group-hover:scale-105 group-hover:bg-white group-hover:text-primary-600 group-hover:shadow-sm"
-            :class="action.bgColor"
-          >
-            <component :is="action.icon" class="h-5 w-5" />
-          </div>
-          <span
-            class="text-xs font-semibold leading-snug text-slate-700 group-hover:text-slate-900"
-            >{{ action.label }}</span
-          >
-        </button>
-      </div>
-    </div>
-
     <!-- Multi-Column Layout for Reports & Visuals -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <!-- Placement Distribution (Students per Company) -->
       <div :class="[panelClass, 'lg:col-span-2']">
         <div class="mb-5 flex items-center justify-between">
           <div>
-            <h3 class="text-base font-bold text-slate-950">Placement Distribution</h3>
-            <p class="text-xs text-slate-500">Student count by company placements</p>
+            <h3 class="text-base font-bold text-slate-950 dark:text-slate-100">Placement Distribution</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Student count by company placements</p>
           </div>
           <router-link
             to="/admin/companies"
-            class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800"
+            class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300"
           >
             Manage Companies →
           </router-link>
@@ -204,10 +118,10 @@
           <div
             v-for="placement in dashboardData.companyPlacements"
             :key="placement.name"
-            class="group rounded-lg border border-slate-100 bg-slate-50/40 p-3 transition-colors hover:bg-slate-50"
+            class="group rounded-lg border border-slate-100 bg-slate-50/40 p-3 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-700/30 dark:hover:bg-slate-700/50"
           >
             <div
-              class="mb-2 flex items-center justify-between text-xs font-semibold text-slate-800"
+              class="mb-2 flex items-center justify-between text-xs font-semibold text-slate-800 dark:text-slate-200"
             >
               <span class="flex items-center gap-2">
                 <span class="h-2 w-2 rounded-full bg-primary-500"></span>
@@ -216,7 +130,7 @@
               <span>{{ placement.count }} Students ({{ getPercentage(placement.count) }}%)</span>
             </div>
             <!-- Progress Bar -->
-            <div class="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
+            <div class="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden dark:bg-slate-700">
               <div
                 class="h-full rounded-full bg-gradient-to-r from-primary-500 to-sky-500 transition-all duration-1000"
                 :style="{ width: `${getPercentage(placement.count)}%` }"
@@ -226,7 +140,7 @@
         </div>
         <div v-else class="flex flex-col items-center justify-center py-10 text-center">
           <svg
-            class="mx-auto h-8 w-8 text-slate-300"
+            class="mx-auto h-8 w-8 text-slate-300 dark:text-slate-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -238,7 +152,7 @@
               d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2-2H5a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
             />
           </svg>
-          <p class="mt-2 text-xs font-semibold text-slate-400">
+          <p class="mt-2 text-xs font-semibold text-slate-400 dark:text-slate-500">
             No company placement records found.
           </p>
         </div>
@@ -248,12 +162,12 @@
       <div :class="panelClass">
         <div class="mb-5 flex items-center justify-between">
           <div>
-            <h3 class="text-base font-bold text-slate-950">Batch Statistics</h3>
-            <p class="text-xs text-slate-500">Student metrics per cohort batch</p>
+            <h3 class="text-base font-bold text-slate-950 dark:text-slate-100">Batch Statistics</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Student metrics per cohort batch</p>
           </div>
           <router-link
             to="/admin/batches"
-            class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800"
+            class="text-xs font-semibold text-primary-600 transition-colors hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300"
           >
             Details →
           </router-link>
@@ -263,11 +177,11 @@
           <div
             v-for="batch in dashboardData.batchEnrollments"
             :key="batch.name"
-            class="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/60 p-3 transition-colors hover:bg-slate-50"
+            class="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/60 p-3 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-700/40 dark:hover:bg-slate-700/60"
           >
             <div class="flex items-center gap-3">
               <div
-                class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600"
+                class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
               >
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -279,13 +193,13 @@
                 </svg>
               </div>
               <div>
-                <h4 class="text-xs font-bold text-slate-900">{{ batch.name }}</h4>
-                <p class="text-[10px] font-semibold text-slate-400">{{ batch.duration }}</p>
+                <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100">{{ batch.name }}</h4>
+                <p class="text-[10px] font-semibold text-slate-400 dark:text-slate-500">{{ batch.duration }}</p>
               </div>
             </div>
             <div class="text-right">
               <span
-                class="inline-flex items-center rounded-md bg-primary-50 px-2.5 py-0.5 text-xs font-bold text-primary-700"
+                class="inline-flex items-center rounded-md bg-primary-50 px-2.5 py-0.5 text-xs font-bold text-primary-700 dark:bg-primary-900/30 dark:text-primary-400"
               >
                 {{ batch.count }} Students
               </span>
@@ -294,7 +208,7 @@
         </div>
         <div v-else class="flex flex-col items-center justify-center py-10 text-center">
           <svg
-            class="mx-auto h-8 w-8 text-slate-300"
+            class="mx-auto h-8 w-8 text-slate-300 dark:text-slate-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -306,7 +220,7 @@
               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
-          <p class="mt-2 text-xs font-semibold text-slate-400">No batches registered.</p>
+          <p class="mt-2 text-xs font-semibold text-slate-400 dark:text-slate-500">No batches registered.</p>
         </div>
       </div>
     </div>
@@ -315,12 +229,12 @@
     <div :class="panelClass">
       <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 class="text-base font-bold text-slate-950">Academic Tutors</h3>
-          <p class="text-xs text-slate-500">Supervisors tracking current internship progress</p>
+          <h3 class="text-base font-bold text-slate-950 dark:text-slate-100">Academic Tutors</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Supervisors tracking current internship progress</p>
         </div>
         <button
           @click="handleQuickAction('assign-tutors')"
-          class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-primary-50 px-3 text-xs font-semibold text-primary-700 transition-colors hover:bg-primary-100"
+          class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-primary-50 px-3 text-xs font-semibold text-primary-700 transition-colors hover:bg-primary-100 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/50"
         >
           <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -339,7 +253,7 @@
         <table class="w-full border-collapse text-left text-sm">
           <thead>
             <tr
-              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400"
+              class="border-b border-slate-100 bg-slate-50/50 text-xs font-semibold text-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-500"
             >
               <th class="px-4 py-3">Tutor Name</th>
               <th class="px-4 py-3">Email Address</th>
@@ -347,39 +261,46 @@
               <th class="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-50">
+          <tbody class="divide-y divide-slate-50 dark:divide-slate-700/50">
             <tr
               v-for="tutor in dashboardData.tutors"
               :key="tutor.id"
-              class="hover:bg-slate-50/30 transition-colors"
+              class="hover:bg-slate-50/30 transition-colors dark:hover:bg-slate-700/30"
             >
-              <td class="whitespace-nowrap px-4 py-3 font-semibold text-slate-900">
+              <td class="whitespace-nowrap px-4 py-3 font-semibold text-slate-900 dark:text-slate-100">
                 <div class="flex items-center gap-3">
+                  <img
+                    v-if="tutor.photoUrl"
+                    :src="tutor.photoUrl"
+                    :alt="tutor.name"
+                    class="h-8 w-8 rounded-full object-cover"
+                  />
                   <div
-                    class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-600 text-xs"
+                    v-else
+                    class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-600 text-xs dark:bg-slate-700 dark:text-slate-400"
                   >
                     {{ getInitials(tutor.name) }}
                   </div>
                   {{ tutor.name }}
                 </div>
               </td>
-              <td class="whitespace-nowrap px-4 py-3 text-slate-500 font-medium">
+              <td class="whitespace-nowrap px-4 py-3 text-slate-500 font-medium max-w-[200px] truncate dark:text-slate-400">
                 {{ tutor.email }}
               </td>
               <td class="whitespace-nowrap px-4 py-3">
                 <div class="flex items-center gap-2">
                   <span
-                    class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary-50 text-xs font-bold text-primary-700"
+                    class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary-50 text-xs font-bold text-primary-700 dark:bg-primary-900/30 dark:text-primary-400"
                   >
                     {{ tutor.studentsCount }}
                   </span>
-                  <span class="text-xs text-slate-400">students supervised</span>
+                  <span class="text-xs text-slate-400 dark:text-slate-500">students supervised</span>
                 </div>
               </td>
               <td class="whitespace-nowrap px-4 py-3 text-right">
                 <button
-                  @click="handleTutorManage(tutor.id)"
-                  class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800"
+                  @click="handleTutorManage()"
+                  class="rounded-lg px-2.5 py-1.5 text-xs font-bold text-primary-600 transition-all hover:bg-primary-50 hover:text-primary-800 dark:text-primary-400 dark:hover:bg-primary-900/30 dark:hover:text-primary-300"
                 >
                   Manage Assignments
                 </button>
@@ -390,10 +311,10 @@
       </div>
       <div
         v-else
-        class="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 py-10 text-center"
+        class="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 py-10 text-center dark:border-slate-700 dark:bg-slate-800/50"
       >
         <svg
-          class="mx-auto h-10 w-10 text-slate-300"
+          class="mx-auto h-10 w-10 text-slate-300 dark:text-slate-600"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -405,22 +326,22 @@
             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
           />
         </svg>
-        <p class="mt-2 text-xs font-semibold text-slate-500">No academic tutors assigned yet.</p>
+        <p class="mt-2 text-xs font-semibold text-slate-500 dark:text-slate-400">No academic tutors assigned yet.</p>
       </div>
     </div>
 
     <!-- Recent Activity Trail -->
     <div :class="panelClass">
       <div class="mb-5">
-        <h3 class="text-base font-bold text-slate-950">Recent System Activity</h3>
-        <p class="text-xs text-slate-500">
+        <h3 class="text-base font-bold text-slate-950 dark:text-slate-100">Recent System Activity</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
           Live timeline of actions across company placements and logs
         </p>
       </div>
 
       <!-- Activities Timeline -->
       <div
-        class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100"
+        class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100 dark:before:bg-slate-700"
         v-if="dashboardData.recentActivity.length > 0"
       >
         <div
@@ -436,14 +357,14 @@
           </div>
 
           <div class="space-y-0.5">
-            <p class="text-xs text-slate-700 font-semibold">
-              <span class="font-bold text-slate-900">{{ activity.actor }}</span>
+            <p class="text-xs text-slate-700 font-semibold dark:text-slate-300">
+              <span class="font-bold text-slate-900 dark:text-slate-100">{{ activity.actor }}</span>
               {{ activity.action }}
-              <span class="font-bold text-slate-900" v-if="activity.target">{{
+              <span class="font-bold text-slate-900 dark:text-slate-100" v-if="activity.target">{{
                 activity.target
               }}</span>
             </p>
-            <p class="text-[10px] text-slate-400 font-semibold">{{ activity.time }}</p>
+            <p class="text-[10px] text-slate-400 font-semibold dark:text-slate-500">{{ activity.time }}</p>
           </div>
 
           <div>
@@ -458,7 +379,7 @@
       </div>
       <div v-else class="flex flex-col items-center justify-center py-10 text-center">
         <svg
-          class="mx-auto h-8 w-8 text-slate-300"
+          class="mx-auto h-8 w-8 text-slate-300 dark:text-slate-600"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -470,100 +391,35 @@
             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <p class="mt-2 text-xs font-semibold text-slate-400">No recent system activities found.</p>
+        <p class="mt-2 text-xs font-semibold text-slate-400 dark:text-slate-500">No recent system activities found.</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, h, defineComponent } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import StatCard from '@/components/dashboard/StatCard.vue'
 
+const router = useRouter()
+
 const loading = ref(false)
 const panelClass =
-  'rounded-lg border border-slate-200/80 bg-white p-5 shadow-sm ring-1 ring-white/70 transition-shadow duration-200 hover:shadow-md'
-
-// Dynamic quick actions icons
-const createActionIcon = (path: string) => {
-  return defineComponent({
-    setup() {
-      return () =>
-        h(
-          'svg',
-          {
-            class: 'h-5 w-5',
-            fill: 'none',
-            stroke: 'currentColor',
-            viewBox: '0 0 24 24',
-          },
-          [
-            h('path', {
-              'stroke-linecap': 'round',
-              'stroke-linejoin': 'round',
-              'stroke-width': 2,
-              d: path,
-            }),
-          ],
-        )
-    },
-  })
-}
-
-const quickActions = [
-  {
-    label: 'Add Company',
-    route: 'create-company',
-    bgColor: 'bg-primary-50/80',
-    icon: createActionIcon('M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z'),
-  },
-  {
-    label: 'Add Student',
-    route: 'create-student',
-    bgColor: 'bg-purple-50/50',
-    icon: createActionIcon(
-      'M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z',
-    ),
-  },
-  {
-    label: 'Create Batch',
-    route: 'create-batch',
-    bgColor: 'bg-emerald-50/50',
-    icon: createActionIcon(
-      'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
-    ),
-  },
-  {
-    label: 'Assign Student',
-    route: 'assign-students',
-    bgColor: 'bg-amber-50/50',
-    icon: createActionIcon('M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4'),
-  },
-  {
-    label: 'Export Reports',
-    route: 'reports',
-    bgColor: 'bg-rose-50/50',
-    icon: createActionIcon('M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'),
-  },
-  {
-    label: 'Manage Users',
-    route: 'users',
-    bgColor: 'bg-sky-50/50',
-    icon: createActionIcon(
-      'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z',
-    ),
-  },
-]
+  'rounded-lg border border-slate-200/80 bg-white p-5 shadow-sm ring-1 ring-white/70 transition-shadow duration-200 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:ring-slate-800/70'
 
 interface DashboardData {
   totalStudents: number
   totalCompanies: number
   activeInternships: number
   pendingIssues: number
+  placementRate: number
+  studentTrend: string
+  companyTrend: number
   companyPlacements: Array<{ name: string; count: number }>
   batchEnrollments: Array<{ name: string; duration: string; count: number }>
-  tutors: Array<{ id: number; name: string; email: string; studentsCount: number }>
+  tutors: Array<{ id: number; name: string; email: string; photoUrl: string | null; studentsCount: number }>
   recentActivity: Array<{
     id: number
     actor: string
@@ -579,10 +435,24 @@ const dashboardData = ref<DashboardData>({
   totalCompanies: 0,
   activeInternships: 0,
   pendingIssues: 0,
+  placementRate: 0,
+  studentTrend: '',
+  companyTrend: 0,
   companyPlacements: [],
   batchEnrollments: [],
   tutors: [],
   recentActivity: [],
+})
+
+const companyTrendLabel = computed(() => {
+  const trend = dashboardData.value.companyTrend
+  if (trend > 0) return '+' + trend
+  if (trend < 0) return String(trend)
+  return '0'
+})
+
+const placementTrendLabel = computed(() => {
+  return dashboardData.value.placementRate + '%'
 })
 
 const getPercentage = (count: number) => {
@@ -630,19 +500,17 @@ const getActivityBadgeClass = (type: string) => {
 }
 
 const handleQuickAction = (action: string) => {
-  alert(
-    `Navigating to Quick Action: ${action}\n(This action will open the corresponding management page)`,
-  )
+  router.push(action)
 }
 
-const handleTutorManage = (tutorId: number) => {
-  alert(`Manage assigned students for Tutor ID: ${tutorId}`)
+const handleTutorManage = () => {
+  router.push('/admin/tutors')
 }
 
 async function fetchDashboardData() {
   loading.value = true
   try {
-    const response = await api.get('/dashboard')
+    const response = await api.get('/admin/dashboard')
     dashboardData.value = response.data
   } catch (error) {
     console.error('Failed to fetch dashboard data:', error)

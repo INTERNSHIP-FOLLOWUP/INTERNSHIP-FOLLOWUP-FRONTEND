@@ -2,6 +2,7 @@ import axios, { AxiosError, type AxiosResponse } from 'axios'
 import type { InternalAxiosRequestConfig } from 'axios'
 import { AUTH_CONFIG } from '@/constants/auth'
 import { tokenService } from '@/services/token'
+import { updateEchoAuth } from '@/services/echo'
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -10,9 +11,9 @@ interface QueueItem {
   reject: (error: unknown) => void
 }
 
-interface FailedRequest {
-  config: InternalAxiosRequestConfig
-  reject: (error: unknown) => void
+interface CancellableRequestConfig extends InternalAxiosRequestConfig {
+  cancelToken: ReturnType<typeof axios.CancelToken.source>['token']
+  cancel: () => void
 }
 
 type RequestConfig = InternalAxiosRequestConfig & { cancel?: () => void }
@@ -23,7 +24,7 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
   },
   timeout: 15000,
@@ -34,7 +35,7 @@ const api = axios.create({
 
 let isRefreshing = false
 let failedQueue: QueueItem[] = []
-let pendingRequests: Map<string, RequestConfig> = new Map()
+const pendingRequests: Map<string, InternalAxiosRequestConfig> = new Map()
 let isLoggingOut = false
 
 function processQueue(error: unknown, token: string | null = null) {
@@ -57,7 +58,7 @@ async function attemptTokenRefresh(): Promise<string> {
   const response = await axios.post(
     `${api.defaults.baseURL}${AUTH_CONFIG.ENDPOINTS.REFRESH}`,
     { refresh_token: refreshToken },
-    { headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }
+    { headers: { 'Content-Type': 'application/json', Accept: 'application/json' } },
   )
 
   const { access_token, refresh_token, expires_in } = response.data
@@ -67,6 +68,9 @@ async function attemptTokenRefresh(): Promise<string> {
     refreshToken: refresh_token,
     expiresAt: expires_in ? Date.now() + expires_in * 1000 : undefined,
   })
+
+  // Update Echo's auth headers with the new token
+  updateEchoAuth(access_token)
 
   return access_token
 }
@@ -85,28 +89,39 @@ api.interceptors.request.use(
 
     // Add CSRF token if available (for non-get requests)
     const csrfToken = getCsrfToken()
-    if (csrfToken && requestConfig.method && !['get', 'head', 'options'].includes(requestConfig.method) && requestConfig.headers) {
-      requestConfig.headers['X-CSRF-TOKEN'] = csrfToken
+    if (
+      csrfToken &&
+      config.method &&
+      !['get', 'head', 'options'].includes(config.method) &&
+      config.headers
+    ) {
+      config.headers['X-CSRF-TOKEN'] = csrfToken
     }
 
-    // Deduplicate identical requests
-    const requestKey = `${requestConfig.method}:${requestConfig.url}:${JSON.stringify(requestConfig.data || requestConfig.params)}`
-    if (requestConfig.method?.toLowerCase() === 'get' && pendingRequests.has(requestKey)) {
+    // Let the browser set Content-Type with boundary for FormData
+    if (config.data instanceof FormData && config.headers) {
+      delete config.headers['Content-Type']
+    }
+
+    const requestKey = `${config.method}:${config.url}:${JSON.stringify(config.data || config.params)}`
+    if (config.method?.toLowerCase() === 'get' && pendingRequests.has(requestKey)) {
       return Promise.reject({ cancelled: true, key: requestKey })
     }
-    if (requestConfig.method?.toLowerCase() === 'get') {
-      pendingRequests.set(requestKey, requestConfig)
-      requestConfig.cancelToken = new axios.CancelToken((cancel) => {
-        requestConfig.cancel = () => {
-          pendingRequests.delete(requestKey)
-          cancel('Request cancelled due to duplicate')
-        }
-      })
+
+    if (config.method?.toLowerCase() === 'get') {
+      pendingRequests.set(requestKey, config)
+      const cancellable = config as CancellableRequestConfig
+      const source = axios.CancelToken.source()
+      cancellable.cancelToken = source.token
+      cancellable.cancel = () => {
+        pendingRequests.delete(requestKey)
+        source.cancel('Request cancelled due to duplicate')
+      }
     }
 
     return requestConfig
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 )
 
 // Cleanup completed request keys
@@ -119,7 +134,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.config?.cancel) error.config.cancel()
     return Promise.reject(error)
-  }
+  },
 )
 
 // ── Response Interceptor (Token Refresh) ────────────────────────
@@ -130,11 +145,14 @@ api.interceptors.response.use(
     const { config, response } = error
 
     // Gracefully handle cancelled requests
-    if ((error as any)?.cancelled) return Promise.reject(error)
+    if (axios.isCancel(error) || (error as { cancelled?: boolean } | undefined)?.cancelled) {
+      return Promise.reject({ cancelled: true, message: 'Request cancelled' })
+    }
 
     // No response = network error
     if (!response) {
-      console.warn('Network error:', error.message)
+      const { useToastStore } = await import('@/stores/toast')
+      useToastStore().error('Network error. Please check your connection.', 'Connection Lost')
       return Promise.reject(error)
     }
 
@@ -211,6 +229,11 @@ api.interceptors.response.use(
 
     // ── 403 Forbidden ──
     if (status === 403) {
+      const data = response.data as { must_change_password?: boolean } | undefined
+      if (data?.must_change_password === true) {
+        return Promise.reject(error)
+      }
+
       window.location.href = '/forbidden'
       return Promise.reject(error)
     }
@@ -223,11 +246,15 @@ api.interceptors.response.use(
 
     // ── 500+ Server Errors ──
     if (status >= 500) {
-      console.error('Server error:', error.message)
+      const { useToastStore } = await import('@/stores/toast')
+      useToastStore().error(
+        'An unexpected server error occurred. Please try again.',
+        'Server Error',
+      )
     }
 
     return Promise.reject(error)
-  }
+  },
 )
 
 // ── CSRF Helpers ────────────────────────────────────────────────

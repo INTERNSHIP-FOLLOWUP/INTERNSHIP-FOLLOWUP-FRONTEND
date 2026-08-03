@@ -1,11 +1,17 @@
-export type UserRole = 'admin' | 'tutor' | 'student' | 'company representative'
+export type UserRole = 'admin' | 'tutor' | 'student' | 'supervisor' | 'company' | 'company representative'
 
 export interface User {
   id: number
+  first_name: string
+  last_name: string
   name: string
   email: string
   role: UserRole
   avatar: string | null
+  status?: string
+  theme: 'light' | 'dark'
+  must_change_password?: boolean
+  avatar_url?: string | null
   permissions?: string[]
 }
 
@@ -21,7 +27,8 @@ export interface LoginCredentials {
 }
 
 export interface RegisterData {
-  name: string
+  first_name: string
+  last_name: string
   email: string
   password: string
   password_confirmation: string
@@ -43,10 +50,12 @@ export interface RefreshResponse {
 export type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'unauthenticated'
 
 export const ROLE_ROUTES: Record<UserRole, string> = {
-  admin: '/admin/dashboard',
-  tutor: '/tutor/dashboard',
-  student: '/student/dashboard',
-  'company representative': '/company/dashboard',
+  admin: '/admin',
+  tutor: '/tutor',
+  student: '/student',
+  supervisor: '/company',
+  company: '/company',
+  'company representative': '/company',
 }
 
 export const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/403', '/404']

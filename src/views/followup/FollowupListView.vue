@@ -1,13 +1,10 @@
+<!-- src/views/followup/FollowupListView.vue -->
 <template>
-    <div>
-        <h1>Follow up List</h1>
-    </div>
+  <div class="dark:bg-slate-900 dark:text-slate-100 min-h-screen">
+    <FollowupList />
+  </div>
 </template>
 
-<script setup>
-
+<script setup lang="ts">
+import FollowupList from '@/views/followup/FollowupList.vue'
 </script>
-
-<style scoped>
-
-</style>

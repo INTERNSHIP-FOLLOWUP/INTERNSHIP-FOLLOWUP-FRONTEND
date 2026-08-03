@@ -46,3 +46,43 @@ npm run build
 ```sh
 npm run lint
 ```
+
+## Database Connection
+
+The frontend connects to the database indirectly through the Laravel 12 API.
+
+### Frontend Configuration
+
+Configure the API URL in `.env`:
+```env
+VITE_API_URL=http://localhost:8000/api
+```
+
+### Backend Configuration (Laravel)
+
+The Laravel backend connects directly to MySQL 8. Configure `backend/.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=internship_followup
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Then run migrations:
+```bash
+cd backend
+php artisan migrate
+```
+
+### Connection Verification
+
+Use the `src/services/database.ts` utility to verify the connection:
+```typescript
+import { verifyDatabaseConnection } from '@/services/database'
+
+const result = await verifyDatabaseConnection()
+console.log(result.message)
+```
+
